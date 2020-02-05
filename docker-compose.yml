@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    build:
+        context: .
+    ports:
+      - 5100:5000
+      - 5101:5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5000/

@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29721.120
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Server", "inkycal.server\InkyCal.Server.csproj", "{21A41636-A851-432F-BAC3-514C626BC2BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{C002599D-CFF9-4368-9D4C-971758899F66}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		start.bat = start.bat
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InkyCal.Utils", "InkyCal.Utils\InkyCal.Utils.csproj", "{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21A41636-A851-432F-BAC3-514C626BC2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21A41636-A851-432F-BAC3-514C626BC2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21A41636-A851-432F-BAC3-514C626BC2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21A41636-A851-432F-BAC3-514C626BC2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {392EA233-6BCF-4D42-9396-EE01EA59E655}
+	EndGlobalSection
+EndGlobal
