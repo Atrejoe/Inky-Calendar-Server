@@ -8,6 +8,7 @@ using SixLabors.Primitives;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 
 namespace InkyCal.Utils
 {
@@ -52,8 +53,23 @@ namespace InkyCal.Utils
         /// <returns></returns>
         public Image GetImage(int width, int height, Color[] colors)
         {
-            var result = new Image<Argb32>(new Configuration(), width, height, new Argb32(0, 0, 0, 0));
-            var font = SystemFonts.CreateFont("Courier new", 14, FontStyle.Regular);
+            var result = new Image<Argb32>(new Configuration() { }, width, height, new Argb32(0, 0, 0, 0));
+
+            FontCollection fonts = new FontCollection();
+            var assembly = typeof(CalendarPanel).GetTypeInfo().Assembly;
+
+            //FontFamily NotoSans;
+            //using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.NotoSans-SemiCondensed.ttf"))
+            //{
+            //    NotoSans = fonts.Install(resource);
+            //}
+
+            FontFamily MonteCarlo;
+            using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.MonteCarloFixed12.ttf"))
+                MonteCarlo = fonts.Install(resource);
+
+
+            var font = MonteCarlo.CreateFont(16);
 
             var calendars = new CalendarCollection();
 
@@ -61,35 +77,28 @@ namespace InkyCal.Utils
                 calendars.Add(Calendar.Load(client.GetStreamAsync(iCalUrl.ToString()).Result));
 
 
-            var item = calendars
+            var items = calendars
                         .GetOccurrences(DateTime.Now, DateTime.Now.AddYears(1))
                         .Select(x => x.Source)
                         .Cast<CalendarEvent>()
-                        .FirstOrDefault();
+                        .Take(10);
 
-
-            var p = new PointF(100, 100);
-            var text = $@"{item.Start} = {item.End}
-{item.Name}
-{item.Summary}
-";
+            var p = new PointF(0, 0);
+            var text = string.Join(
+                Environment.NewLine,
+                items.Select(item=>
+                    $@"{(item.Start.HasTime
+                        ?$"{item.Start:dd MMM HH:mm} - {item.End:HH:mm}" 
+                        :$"{item.Start:dd MMM} All day")} {(item.Summary.Length>23? item.Summary.Substring(0, 20)+"...":item.Summary)}"));
 
             System.Diagnostics.Trace.WriteLine(text);
-
+            var brush = new SolidBrush(Color.Black);
             result.Mutate(x =>
             {
-                x.DrawText(new TextGraphicsOptions()
-                {
-                    Antialias = false,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Top
-                }
-                    //x.DrawText(iCalUrl, font, Color.Black, center, new TextGraphicsOptions(true));
-                    , "hALLO", font, Color.Pink, p); ; ;
-
-                });
-
+                x.DrawText(new TextGraphicsOptions(false), text, font, brush, p);
+            });
+        
             return result;
         }
-    }
+}
 }

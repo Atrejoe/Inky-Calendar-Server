@@ -10,7 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MonteCarloFixed12.ttf" />
+    <None Remove="NotoSans-SemiCondensed.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="MonteCarloFixed12.ttf" />
+    <EmbeddedResource Include="NotoSans-SemiCondensed.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ical.Net" Version="4.1.11" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0007" />
   </ItemGroup>
 
 </Project>
