@@ -1,32 +1,24 @@
-﻿using SixLabors.ImageSharp;
+﻿using Ical.Net;
+using Ical.Net.CalendarComponents;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace InkyCal.Utils
 {
-    /// <summary>
-    /// A test version for <see cref="CalendarPanel"/>
-    /// </summary>
-    public class TestCalendar : CalendarPanel
-    {
-        /// <summary>
-        /// A public iCal calendar for demo/test purposes
-        /// </summary>
-        public const string CalenderUrl = @"https://calendar.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics";
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public TestCalendar() : base(new Uri(CalenderUrl))
-        {
-        }
-    }
 
     /// <summary>
     /// A panel that shows one or more calendars
     /// </summary>
     public class CalendarPanel : IPanel
     {
+        private static readonly HttpClient client = new HttpClient();
+
         /// <summary>
         /// Shows a single calendar
         /// </summary>
@@ -61,6 +53,41 @@ namespace InkyCal.Utils
         public Image GetImage(int width, int height, Color[] colors)
         {
             var result = new Image<Argb32>(new Configuration(), width, height, new Argb32(0, 0, 0, 0));
+            var font = SystemFonts.CreateFont("Courier new", 14, FontStyle.Regular);
+
+            var calendars = new CalendarCollection();
+
+            foreach (var iCalUrl in ICalUrls)
+                calendars.Add(Calendar.Load(client.GetStreamAsync(iCalUrl.ToString()).Result));
+
+
+            var item = calendars
+                        .GetOccurrences(DateTime.Now, DateTime.Now.AddYears(1))
+                        .Select(x => x.Source)
+                        .Cast<CalendarEvent>()
+                        .FirstOrDefault();
+
+
+            var p = new PointF(100, 100);
+            var text = $@"{item.Start} = {item.End}
+{item.Name}
+{item.Summary}
+";
+
+            System.Diagnostics.Trace.WriteLine(text);
+
+            result.Mutate(x =>
+            {
+                x.DrawText(new TextGraphicsOptions()
+                {
+                    Antialias = false,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top
+                }
+                    //x.DrawText(iCalUrl, font, Color.Black, center, new TextGraphicsOptions(true));
+                    , "hALLO", font, Color.Pink, p); ; ;
+
+                });
 
             return result;
         }

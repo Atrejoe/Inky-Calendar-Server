@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		start.bat = start.bat
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InkyCal.Utils", "InkyCal.Utils\InkyCal.Utils.csproj", "{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Utils", "InkyCal.Utils\InkyCal.Utils.csproj", "{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InkyCal.Utils.Tests", "InkyCal.Utils.Tests\InkyCal.Utils.Tests.csproj", "{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15AD6A12-7B87-4DA0-B88B-C29C6E12E4EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

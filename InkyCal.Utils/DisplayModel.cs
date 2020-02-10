@@ -88,11 +88,11 @@ namespace InkyCal.Utils
             {
                 case DisplayModel.epd_7_in_5_v2_colour:
                 case DisplayModel.epd_7_in_5_colour:
-                    colors = new[] { Color.Black, Color.White, Color.Red }; //Could be yellow too, maybe introdue a new panel type
+                    colors = new[] { Color.Black, Color.White, Color.Red }; //Could be yellow too, maybe introduce a new panel type
                     break;
                 case DisplayModel.epd_7_in_5_v2:
                 case DisplayModel.epd_7_in_5:
-                    colors = new[] { Color.Black, Color.White };
+                    colors = new[] { Color.Black, Color.White};
                     break;
                 case DisplayModel.epd_5_in_83_colour:
                 case DisplayModel.epd_4_in_2_colour:
