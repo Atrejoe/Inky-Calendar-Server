@@ -41,9 +41,9 @@ namespace InkyCal.Server.Controllers
             model.GetSpecs(out var width, out var height, out var colors);
 
             //NB: Web-based requests will specify portrait oriented dimensions.
-            //    GetSpecs get landscpae-oriented dimensions
+            //    GetSpecs get landscape-oriented dimensions
             //    Therefore flip-em!
-            return controller.Image(panel, requestedHeight ?? width, requestedWidth ?? height, colors);
+            return controller.Image(panel, requestedWidth ?? height, requestedHeight ?? width, colors);
         }
 
         /// <summary>

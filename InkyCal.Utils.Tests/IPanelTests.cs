@@ -6,31 +6,36 @@ using Xunit;
 
 namespace InkyCal.Utils.Tests
 {
-    public abstract class IPanelTests<T> where T:IPanel {
+	public abstract class IPanelTests<T> where T : IPanel
+	{
 
-        protected abstract T GetPanel();
+		protected abstract T GetPanel();
 
-        [Fact()]
-        public void GetImageTest()
-        {
-            //arrange
-            var panel = GetPanel();
-            var filename = $"GetImageTest_{typeof(T).Name}.png";
+		[Fact()]
+		public void GetImageTest()
+		{
+			//arrange
+			var panel = GetPanel();
+			var filename = $"GetImageTest_{typeof(T).Name}.png";
+			DisplayModel.epd_7_in_5_v2_colour.GetSpecs(out var width, out var height, out var colors);
 
-            //act
-            var image = panel.GetImage(400,400, new[] {Color.White, Color.Black, Color.Pink });
+			//act
+			var image = panel.GetImage(
+								width: height, 
+								height: width, 
+								colors: colors);
 
-            //assert
-            Assert.NotNull(image);
+			//assert
+			Assert.NotNull(image);
 
-            using var fileStream = File.Create(filename);
-            image.Save(fileStream, new PngEncoder());
+			using var fileStream = File.Create(filename);
+			image.Save(fileStream, new PngEncoder());
 
-            var fi = new FileInfo(filename);
-            Assert.True(fi.Exists,$"File {fi.FullName} does not exist");
+			var fi = new FileInfo(filename);
+			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");
 
-            Trace.WriteLine(fi.FullName);
+			Trace.WriteLine(fi.FullName);
 
-        }
-    }
+		}
+	}
 }
