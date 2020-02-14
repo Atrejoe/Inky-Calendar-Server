@@ -1,6 +1,7 @@
 ﻿using InkyCal.Utils;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Gif;
 using System.IO;
 
 namespace InkyCal.Server.Controllers
@@ -20,10 +21,10 @@ namespace InkyCal.Server.Controllers
         public static ActionResult Image(this ControllerBase controller, Image image)
         {
             using var stream = new MemoryStream();
-            image.SaveAsPng(stream);
+            image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
             return controller.File(
                 fileContents: stream.ToArray(),
-                contentType: "image/png");
+                contentType: "image/gif");
         }
 
         /// <summary>
@@ -40,9 +41,9 @@ namespace InkyCal.Server.Controllers
             model.GetSpecs(out var width, out var height, out var colors);
 
             //NB: Web-based requests will specify portrait oriented dimensions.
-            //    GetSpecs get landscpae-oriented dimensions
+            //    GetSpecs get landscape-oriented dimensions
             //    Therefore flip-em!
-            return controller.Image(panel, requestedHeight ?? width, requestedWidth ?? height, colors);
+            return controller.Image(panel, requestedWidth ?? height, requestedHeight ?? width, colors);
         }
 
         /// <summary>
@@ -56,8 +57,8 @@ namespace InkyCal.Server.Controllers
         /// <returns></returns>
         public static ActionResult Image(this ControllerBase controller, IPanel panel, int width, int height, Color[] colors)
         {
-            using (var image = panel.GetImage(width, height, colors))
-                return controller.Image(image);
+            using var image = panel.GetImage(width, height, colors);
+            return controller.Image(image);
         }
     }
 }

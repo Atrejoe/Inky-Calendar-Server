@@ -8,21 +8,6 @@ using System.Net.Http;
 namespace InkyCal.Utils
 {
     /// <summary>
-    /// A demo panel for <see cref="ImagePanel"/>
-    /// </summary>
-    public class ImageDemo : ImagePanel
-    {
-        private const string demoImageUrl = "http://eskipaper.com/images/beautiful-grayscale-wallpaper-1.jpg";
-
-        /// <summary>
-        /// Creates the demo panel, uses <see cref="demoImageUrl"/>
-        /// </summary>
-        public ImageDemo() : base(new Uri(demoImageUrl))
-        {
-        }
-    }
-
-    /// <summary>
     /// An image panel, assumes a landscape image, resizes and flips it to portait.
     /// </summary>
     public class ImagePanel : IPanel
@@ -48,13 +33,16 @@ namespace InkyCal.Utils
         }
 
         /// <inheritdoc/>
-        public Image GetImage(int width, int height, Color[] colors)
-        {
+        public Image GetImage(int width, int height, Color[] colors) {
+            if (colors is null)
+                colors = new[] { Color.White, Color.Black };
+            
+
             var image = Image.Load(cachedImage.Value);
             image.Mutate(x => x
                 .Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })
                 .BackgroundColor(Color.White)
-                .Quantize(new PaletteQuantizer(colors, true))
+                .Quantize(new PaletteQuantizer(colors))
                 .Rotate(RotateMode.Rotate270)
                 );
             return image;

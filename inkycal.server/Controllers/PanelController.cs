@@ -31,7 +31,7 @@ namespace InkyCal.Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult Test(DisplayModel model, [Range(0,1200)]int? width = null, [Range(0, 1200)]int? height = null)
         {
-            return this.Image(new ImageDemo(), model, width, height);
+            return this.Image(new ImagePanelDemo(), model, width, height);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace InkyCal.Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult TestCalendar(DisplayModel model, [Range(0,1200)]int? width = null, [Range(0, 1200)]int? height = null)
         {
-            return this.Image(new TestCalendar(), model, width, height);
+            return this.Image(new TestCalendarPanel(), model, width, height);
         }
 
         /// <summary>

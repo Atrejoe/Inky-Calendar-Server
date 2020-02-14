@@ -2,3 +2,6 @@
 *.user
 bin
 obj
+
+*.ncrunchsolution
+_NCrunch_*
