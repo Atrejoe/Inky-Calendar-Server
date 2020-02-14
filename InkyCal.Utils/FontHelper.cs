@@ -1,4 +1,4 @@
-﻿using SixLabors.Fonts;
+using SixLabors.Fonts;
 using System;
 using System.Reflection;
 
@@ -40,7 +40,7 @@ namespace InkyCal.Utils
         {
             if (font.Family.Equals(NotoSans))
                 return null;
-            if (font.Family.Equals(NotoSans))
+			if (font.Family.Equals(MonteCarlo))
                 switch (font.Size)
                 {
                     case 12:
