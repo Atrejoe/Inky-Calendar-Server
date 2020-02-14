@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="MonteCarloFixed12.ttf" />
-    <EmbeddedResource Include="NotoSans-SemiCondensed.ttf" />
+    <EmbeddedResource Include="fonts\MonteCarloFixed12.ttf" />
+    <EmbeddedResource Include="fonts\NotoSans-SemiCondensed.ttf" />
   </ItemGroup>
 
   <ItemGroup>

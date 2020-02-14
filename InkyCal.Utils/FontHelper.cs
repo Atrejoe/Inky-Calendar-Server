@@ -24,10 +24,10 @@ namespace InkyCal.Utils
         {
             var assembly = typeof(CalendarPanel).GetTypeInfo().Assembly;
 
-            using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.NotoSans-SemiCondensed.ttf"))
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
                 NotoSans = fonts.Install(resource);
 
-            using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.MonteCarloFixed12.ttf"))
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
                 MonteCarlo = fonts.Install(resource);
         }
 
