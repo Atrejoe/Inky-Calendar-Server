@@ -98,9 +98,9 @@ namespace InkyCal.Utils
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
 			};
+			options_Date.DpiX = font.GetDPI().GetValueOrDefault(options_Date.DpiX);
+			options_Date.DpiY = options_Date.DpiX;
 
 			var textMeasureOptions_Date = options_Date.ToRendererOptions(font);
 
@@ -161,6 +161,7 @@ namespace InkyCal.Utils
 
 						var options = options_Date.Clone();
 						options.WrapTextWidth = width - indent;
+						options.ApplyKerning = false;
 
 						var textMeasureOptions = options.ToRendererOptions(font);
 
@@ -178,7 +179,11 @@ namespace InkyCal.Utils
 								{
 									var period = DescribePeriod(item);
 									var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
-									canvas.Invert(new Rectangle(indent - 2, y + 5, (int)periodBounds.Width + 4, (int)periodBounds.Height + 2));
+									canvas.Invert(new Rectangle(
+										x: indent - 2, 
+										y: y, 
+										width: (int)periodBounds.Width + 6, 
+										height: (int)periodBounds.Height + 2));
 								}
 
 								y += (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
