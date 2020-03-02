@@ -1,1 +1,1 @@
-dotnet watch --project InkyCal.Server/InkyCal.Server.csproj run
+dotnet watch --project InkyCal.Server run

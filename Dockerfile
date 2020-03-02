@@ -7,8 +7,11 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
+COPY ["InkyCal.Models/.", "InkyCal.Models/."]
 COPY ["InkyCal.Server/.", "InkyCal.Server/."]
+COPY ["InkyCal.Server.Config/.", "InkyCal.Server.Config/."]
 COPY ["InkyCal.Utils/.", "InkyCal.Utils/."]
+COPY ["InkyCal.Data/.", "InkyCal.Data/."]
 COPY ["*.sln", "."]
 RUN dotnet restore "InkyCal.Server/InkyCal.Server.csproj"
 COPY . .

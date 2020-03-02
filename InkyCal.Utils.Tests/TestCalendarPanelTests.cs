@@ -3,11 +3,11 @@
     /// <summary>
     /// Tests <see creaf="TestCalendarPanel"/>
     /// </summary>
-    public sealed class TestCalendarPanelTests : IPanelTests<TestCalendarPanel>
+    public sealed class TestCalendarPanelTests : IPanelTests<TestCalendarPanelRenderer>
     {
-        protected override TestCalendarPanel GetPanel()
+        protected override TestCalendarPanelRenderer GetPanel()
         {
-            return new TestCalendarPanel();
+            return new TestCalendarPanelRenderer();
         }
     }
 }

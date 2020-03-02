@@ -1,5 +1,4 @@
-﻿using Ical.Net;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -9,78 +8,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using static InkyCal.Utils.FontHelper;
 
 namespace InkyCal.Utils
 {
-
-	/// <summary>
-	/// A helper class for obtaining calender info
-	/// </summary>
-	public static class CalenderExtensions
-	{
-
-
-		private static readonly HttpClient client = new HttpClient();
-
-		/// <summary>
-		/// Get 
-		/// </summary>
-		/// <param name="ICalUrls"></param>
-		/// <param name="errorDetailsLength"></param>
-		/// <param name="errors"></param>
-		/// <returns></returns>
-		public static CalendarCollection GetCalendars(this Uri[] ICalUrls, int errorDetailsLength, out StringBuilder errors)
-		{
-			var sbErrors = new StringBuilder();
-			var sw = Stopwatch.StartNew();
-
-			var calendars = new CalendarCollection();
-			ICalUrls
-					.AsParallel()
-					.ForAll(
-						iCalUrl =>
-						{
-							try
-							{
-								calendars.Add(Calendar.Load(client.GetStreamAsync(iCalUrl.ToString()).Result));
-							}
-							catch (HttpRequestException ex)
-							{
-								sbErrors.AppendLine($"Failed to obtain calender data:\n{ex.Message.Limit(errorDetailsLength, " ...")}");
-							}
-							catch (SerializationException ex)
-							{
-								sbErrors.AppendLine($"Failed to parse calender data:\n{ex.Message.Limit(errorDetailsLength, " ...")}");
-							}
-							catch (Exception ex)
-							{
-								sbErrors.AppendLine($"Failed to obtain or parse calender data:\n{ex.Message.Limit(errorDetailsLength, " ...")}");
-							}
-						});
-
-			Trace.WriteLine($"Obtained calendars in {sw.Elapsed}");
-			Trace.WriteLine(sbErrors.ToString());
-
-			errors = sbErrors;
-
-			return calendars;
-		}
-	}
 	/// <summary>
 	/// A panel that shows one or more calendars
 	/// </summary>
-	public class CalendarPanel : IPanel
+	public class CalendarPanelRenderer : IPanelRenderer
 	{
 
 		/// <summary>
 		/// Shows a single calendar
 		/// </summary>
 		/// <param name="iCalUrl"></param>
-		public CalendarPanel(Uri iCalUrl) : this(new[] { iCalUrl })
+		public CalendarPanelRenderer(Uri iCalUrl) : this(new[] { iCalUrl })
 		{
 			if (iCalUrl is null)
 				throw new ArgumentNullException(nameof(iCalUrl));
@@ -90,7 +34,7 @@ namespace InkyCal.Utils
 		/// Show one or more calendars
 		/// </summary>
 		/// <param name="iCalUrls"></param>
-		public CalendarPanel(Uri[] iCalUrls)
+		public CalendarPanelRenderer(Uri[] iCalUrls)
 		{
 			ICalUrls = iCalUrls ?? throw new ArgumentNullException(nameof(iCalUrls));
 		}
@@ -107,10 +51,15 @@ namespace InkyCal.Utils
 		/// <param name="height">The width of the panel (in landscape mode).</param>
 		/// <param name="colors">The number of color to render in.</param>
 		/// <returns></returns>
-		public Image GetImage(int width, int height, Color[] colors)
+		public async Task<Image> GetImage(int width, int height, Color[] colors)
 		{
 
-			var result = new Image<Rgba32>(new Configuration() { }, width, height, Rgba32.White);
+			Color primaryColor = colors.FirstOrDefault();
+			Color supportColor = (colors.Count()>2)?colors[2]:primaryColor;
+			Color errorColor = supportColor;
+			Color backgroundColor = colors.Skip(1).First();
+
+			var result = new Image<Rgba32>(new Configuration() { }, width, height, backgroundColor);
 
 			var font = MonteCarlo.CreateFont(12); //Font that works well anti-aliassed
 
@@ -122,16 +71,27 @@ namespace InkyCal.Utils
 
 			var twoLines = characterPerLine * 2;
 
-			var calendars = ICalUrls.GetCalendars(twoLines, out var sbErrors);
+			var sbErrors = new StringBuilder();
+			var calendars = await ICalUrls.GetCalendars(twoLines, sbErrors);
 
-			var items = calendars
-						.GetOccurrences(DateTime.Now.Date, DateTime.Now.AddYears(1))
-						.Select(x => x.Source)
-						.Cast<CalendarEvent>()
-						.Where(x => x.Start.Value.Date >= DateTime.Now.Date)
-						.ToArray()
-						.OrderBy(x => x.Start.Value)
-						.Take(60);
+			IEnumerable<CalendarEvent> items = new HashSet<CalendarEvent>();
+
+			if (!(ICalUrls?.Any()).GetValueOrDefault())
+				sbErrors.AppendLine($"No calenders loaded");
+			else
+			{
+				items = calendars
+							.GetOccurrences(DateTime.Now.Date, DateTime.Now.AddYears(1))
+							.Select(x => x.Source)
+							.Cast<CalendarEvent>()
+							.Where(x => x.Start.Value.Date >= DateTime.Now.Date)
+							.ToArray()
+							.OrderBy(x => x.Start.Value)
+							.Take(60);
+
+				if (!(items?.Any()).GetValueOrDefault())
+					sbErrors.AppendLine($"No events in {ICalUrls?.Count():n0} calendars");
+			}
 
 			var options_Date = new TextGraphicsOptions(false)
 			{
@@ -163,10 +123,11 @@ namespace InkyCal.Utils
 
 					errorMessageHeight.Width = width;
 					errorMessageHeight.Height += 4; //Pad 2 px on all sides
-					canvas.Fill(Color.Red, errorMessageHeight);
+					
+					canvas.Fill(errorColor, errorMessageHeight);
 
 					var pError = new PointF(2, 2);//Adhere to padding
-					canvas.DrawText(textDrawOptions_Error, errorMessage, font, Color.White, pError);
+					canvas.DrawText(textDrawOptions_Error, errorMessage, font, backgroundColor, pError);
 
 					y += (int)errorMessageHeight.Height;
 				}
@@ -178,10 +139,13 @@ namespace InkyCal.Utils
 					.ToList()
 					.ForEach(x =>
 					{
+						if (y > height)
+							return;
+
 						//Draw a red line for each day
 						y += 4;
 
-						canvas.DrawLines(Color.Red, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
+						canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
 
 						y += 1;
 
@@ -193,7 +157,7 @@ namespace InkyCal.Utils
 						var indent = (int)TextMeasurer.MeasureBounds(day, textMeasureOptions_Date).Width
 								   + 10; //Space of 10 pixels
 
-						canvas.DrawText(options_Date, day, font, Color.Black, new PointF(0, y));
+						canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));
 
 						var options = options_Date.Clone();
 						options.WrapTextWidth = width - indent;
@@ -207,7 +171,7 @@ namespace InkyCal.Utils
 							var line = DescribeEvent(item).Limit(500, " ...");
 							try
 							{
-								canvas.DrawText(options, line, font, Color.Black, new PointF(indent, y));
+								canvas.DrawText(options, line, font, primaryColor, new PointF(indent, y));
 
 								//Invert all day indicator
 								if (item.IsAllDay)
@@ -226,7 +190,7 @@ namespace InkyCal.Utils
 								{
 									var error = $"Error: {ex.Message}".Limit(150);
 									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
-									canvas.DrawText(options, error, font, Color.Red, new PointF(indent, y));
+									canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
 									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
 								}
 								catch

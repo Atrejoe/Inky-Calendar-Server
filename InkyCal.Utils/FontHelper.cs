@@ -22,7 +22,7 @@ namespace InkyCal.Utils
 
         static FontHelper()
         {
-            var assembly = typeof(CalendarPanel).GetTypeInfo().Assembly;
+            var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
                 NotoSans = fonts.Install(resource);

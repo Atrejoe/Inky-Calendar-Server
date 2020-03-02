@@ -1,0 +1,132 @@
+@page "/fetchdata"
+@inherits AuthenticatedComponentBase
+
+<h1>Panels</h1>
+
+<p>This page shows an overview of your panels. Click a panel to preview the panel and the Inky-Cal configuration.</p>
+
+<AuthorizeView>
+	<Authorized>
+
+		@if (_panels == null)
+		{
+			<p><em>Loading...</em></p>
+		}
+		else if (!_panels.Any())
+		{
+			<span>
+				You currently do not have any panels. Why don't you
+				<NavLink class="nav-link" href="panel">
+					<span class="oi oi-plus" aria-hidden="true"></span> configure a panel?
+				</NavLink>
+			</span>
+		}
+		else
+		{
+			<div class="table-responsive">
+				<table class="table table-sm table-hover">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Model</th>
+							<th scope="col">Width</th>
+							<th scope="col">Height</th>
+							<th scope="col">Type</th>
+							<th scope="col">Details</th>
+							<th scope="col" colspan="3"></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var panel in _panels)
+						{
+							<tr @onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
+								<td>@panel.Name</td>
+								<td>
+									<span class="badge badge-primary">@panel.Model</span>
+									<span class="badge badge-primary">
+										@switch (@panel.Rotation)
+										{
+											case Rotation.None:
+												<span class="oi oi-image" title="Unrotated: landscape" />
+												break;
+											case Rotation.CounterClockwise:
+												<span class="oi oi-action-undo" title="Rotated counter clockwise" />
+												break;
+											case Rotation.Clockwise:
+												<span class="oi oi-action-redo" title="Rotated clockwise" />
+												break;
+											case Rotation.UpsideDown:
+												<span class="oi oi-loop-square" title="Upside down" />
+												break;
+											default:
+												break;
+										}
+									</span>
+								</td>
+								<td>@panel.Width</td>
+								<td>@panel.Height</td>
+								<td><span class="badge badge-primary">@panel.GetType().Name</span></td>
+								<td>
+									@switch (panel)
+									{
+										case Models.CalendarPanel cp:
+											<span>@cp.CalenderUrls?.Count calendars</span>
+											break;
+										case Models.ImagePanel ip:
+											<span></span>
+											break;
+										case Models.PanelOfPanels pp:
+											<span>@pp.Panels?.Count panels</span>
+											break;
+										default:
+											<span>Panel type @panel.GetType().Name not yet described.</span>
+											break;
+									}
+								</td>
+								<td>
+									<NavLink class="nav-link" href="/fetchdata" @onclick="@(() => SelectPanel(panel.Id))">
+										<span class="oi oi-eye" aria-hidden="true"></span>
+									</NavLink>
+								</td>
+								<td>
+									<NavLink class="nav-link" href="@($"/panel/{panel.Id}/edit")">
+										<span class="oi oi-pencil" aria-hidden="true"></span>
+									</NavLink>
+								</td>
+								@*<td>
+										<PopContainer Class="btn btn-danger" ConfirmedChanged="@(async (bool confirm)=> { if (confirm) { await Delete(panel.Id); } })"></PopContainer>
+									</td>*@
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+
+			@if (_selectedPanel != null)
+			{
+				<span>
+					In order to show this panel in <a href="https://github.com/aceisace/Inky-Calendar">Inky Calender</a>, change <code>settings.py</code> to:
+					<pre class="pre-scrollable"><code>...
+#Set the middle panel to the image panel
+middle_section = "inkycal_image"
+...
+# Make the image panel use this generated image
+inkycal_image_path = '@(navigationManager.BaseUri)panel/@_selectedPanel.Id' #This is actually the url for THIS panel
+...
+</code></pre>
+				</span>
+				<img src="/panel/@_selectedPanel.Id" title="Image is loading" alt="Panel image is loading" style="min-height:20px; min-width:50px;border: 1px solid silver; background-color:silver;" />
+
+			}
+			else if (_selectedPanelLoading)
+			{
+				<span>Loading panel</span>
+			}
+		}
+	</Authorized>
+	<NotAuthorized>
+		Panel configurations are personal, why don't you:
+		<br />
+		<LoginDisplay />
+	</NotAuthorized>
+</AuthorizeView>

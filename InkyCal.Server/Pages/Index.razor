@@ -1,0 +1,110 @@
+﻿@page "/"
+@code{
+	private DisplayModel model;
+}
+<h1>What's this?</h1>
+
+<p>
+	This small web application allows you to configure pre-renderable panels
+	for display on an E-Ink screen.
+	<br />
+	The images are intended to be projected to the display by
+	<a href="https://github.com/aceisace/Inky-Calendar" target="_blank">Inky-Calendar</a>, but
+	will work with other setups too.
+</p>
+
+<h2>But why?</h2>
+These panels is easier to configure, maintain, extend and debug when available on a centralized application. 
+Inky-Cal panels already have a dependency on the web (for obtaining data), so no new dependencies there. 
+It also allows to reduce power-consumption, making a battery-operated panel a more viable option.
+
+<h2>Demo time!</h2>
+
+Given a selected display panel:
+
+<EditForm Model="@this">
+	<InputSelect class="form-control" id="@nameof(model)" @bind-Value="@model">
+		@foreach (var displayModel in Enum.GetValues(typeof(DisplayModel)))
+		{
+			<option>@displayModel</option>
+		}
+	</InputSelect>
+</EditForm>
+
+<h3>Images</h3>
+Images can be pre-processed for display on an E-Ink screen.
+Reducing the colors just right for your panel.
+<p><img src="/panel/test/@model/image" style="border:1px solid silver"/></p>
+<small><em>Nice black-white-color image converted from: <a href="@Utils.TestImagePanelRenderer.demoImageUrl">@Utils.TestImagePanelRenderer.demoImageUrl</a>.</em></small>
+
+<h2>Calender</h2>
+Configure one or more (iCal) calenders for display:
+<p><img src="/panel/test/@model/calendar" style="border:1px solid silver" /></p>
+<small><em>Public holiday calender, obtained from: <a href="@Utils.TestCalendarPanelRenderer.CalenderUrl">@Utils.TestCalendarPanelRenderer.CalenderUrl</a>.</em></small>
+
+<h2>What's more?</h2>
+<p>
+	<ol>
+		<li>Improved panel management</li>
+		<li>
+			More panel types
+			<ol>
+				<li>
+					Image panel config UI
+					<ol>
+						<li>Configure mutiple images for randomized display.</li>
+						<li>Upload images?</li>
+						<li>Browse local images? (when hosting this service yourself)</li>
+					</ol>
+				</li>
+				<li>RSS feed</li>
+				<li>Alternative calendar view</li>
+				<li>Weather</li>
+				<li>...</li>
+			</ol>
+		</li>
+		<li>
+			Improved display config
+			<ol>
+				<li>Rotation</li>
+				<li>Color configuration overriding</li>
+				<li>Fonts &amp; font sizes</li>
+				<li>Enable/display grayscale images (instead of hard black &amp; white).</li>
+			</ol>
+		</li>
+	</ol>	
+	<br />
+	The good part: once set up, you will not (ever) have to change settings by SSH-ing into your calender in order 
+	to display updated panel configuration. The link to this panel is a simple <code>GET</code> request.
+</p>
+
+<h2>Fantastic, where do I start?</h2>
+<p>
+	First of all, make sure you have a working Inky-Calender
+	setup (E-Ink display connected to Raspberry PI or equivalent, running
+	<a href="https://github.com/aceisace/Inky-Calendar" target="_blank">Inky-Calendar</a>).
+</p>
+<AuthorizeView>
+	<Authorized Context="auth">
+		As you are already logged it, head over to
+		<NavLink class="nav-link" href="fetchdata">
+			<span class="oi oi-list-rich" aria-hidden="true"></span> panel configuration.
+		</NavLink>
+	</Authorized>
+	<NotAuthorized>
+		Then: <LoginDisplay />, and head over to
+		<NavLink class="nav-link" href="fetchdata">
+			<span class="oi oi-list-rich" aria-hidden="true"></span> panel configuration.
+		</NavLink>.
+		<p>
+			Don't like to login? No problem, quite a bit of the panel configuration is available without creating an account, see:
+			<NavLink class="nav-link" href="swagger_frame">
+				<span class="oi oi-code" aria-hidden="true"></span> the API documentation,
+			</NavLink> (which contains endpoints for anonymous panels too).
+		</p>
+	</NotAuthorized>
+</AuthorizeView>
+<p>
+	You could also join the <a href="https://discordapp.com/channels/672082714190544899/675424713652305940" target="_blank">Discord chat</a>.
+</p>
+
