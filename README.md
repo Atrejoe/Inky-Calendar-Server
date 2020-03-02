@@ -4,7 +4,7 @@ An easy-to-configure, web-based image generator to supply E-Ink compatible panel
 
 To enjoy this as a service, see: [inkycal.robertsirre.nl](https://inkycal.robertsirre.nl/) *(domain name subject to change)*
 
-![Sample panel configuration : a panel with two nested panels](Readme_Images/panelconfig.png)
+![Sample panel configuration : a panel with two nested panels](ReadMe_Images/panelconfig.png)
 
 [toc]
 
@@ -50,7 +50,7 @@ The server will be available at: [http://localhost](http://localhost). The appli
 
 ```
 docker run ^
- -env ConnectionStrings__DefaultConnection="Server=MyServerName;Database=MyDataBaseName;User=MyUserName;Password=MyPassword;MultipleActiveResultSets=true" ^
+ -env ConnectionStrings__DefaultConnection=Server=MyServerName;Database=MyDataBaseName;User=MyUserName;Password=MyPassword;MultipleActiveResultSets=true ^
  -p 80:80 ^
  atreyu/inkycal.server:latest
 ```
@@ -71,7 +71,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:5000/
-      - ConnectionStrings__DefaultConnection="Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true"
+      - ConnectionStrings__DefaultConnection=Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true
     depends_on:
       - db
     restart: always
