@@ -5,7 +5,22 @@ services:
         context: .
     ports:
       - 5100:5000
-      - 5101:5001
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:5000/
+      - ConnectionStrings__DefaultConnection="Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true"
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+       SA_PASSWORD: "${DB_SA_PASSWORD}"
+       ACCEPT_EULA: "Y"
+       MSSQL_PID: "Express"
+    #Expose port for development purpose only
+    ports:
+      - 1433:1433
+    volumes:
+      - ./sqlserver:/var/opt/mssql/data
+    restart: always

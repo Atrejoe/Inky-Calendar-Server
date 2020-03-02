@@ -1,0 +1,17 @@
+﻿<div class="form-group">
+	<label for="urls">
+		Url
+	</label>
+	<InputText id="urls" class="form-control" @bind-Value="@Panel.Path" />
+</div>
+
+<div class="form-group">
+	<label for="body">
+		Optional body
+	</label>
+	<InputTextArea id="body" class="form-control" rows="5" @bind-Value="@Panel.Body" PlaceHolder="Any text here will result in the image being obtained using POST. When in doubt, leave empty." />
+</div>
+
+@code {
+	[Parameter] public Models.ImagePanel Panel { get; set; }
+}

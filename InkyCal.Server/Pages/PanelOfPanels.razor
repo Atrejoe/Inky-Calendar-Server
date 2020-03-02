@@ -1,0 +1,80 @@
+﻿@inherits AuthenticatedComponentBase
+
+<style type="text/css">
+	span.grippy {
+		content: '....';
+		width: 10px;
+		height: 20px;
+		display: inline-block;
+		overflow: hidden;
+		line-height: 5px;
+		padding: 3px 4px;
+		cursor: move;
+		vertical-align: middle;
+		margin-top: -.7em;
+		margin-right: .3em;
+		font-size: 12px;
+		font-family: sans-serif;
+		letter-spacing: 2px;
+		color: #cccccc;
+		text-shadow: 1px 0 1px black;
+	}
+
+		span.grippy::after {
+			content: '.. .. .. ..';
+		}
+</style>
+<EditForm Model="@Panel">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+</EditForm>
+
+<EditForm Model="@this" OnValidSubmit="AddPanel">
+	<DataAnnotationsValidator />
+	<div class="form-group">
+		<label>
+			@if ((@Panel.Panels?.Any()).GetValueOrDefault())
+			{
+				<span>Add another panel:</span>
+			}
+			else
+			{
+				<span>Add at least one panel:</span>
+			}
+		</label>
+		<div class="input-group">
+			<InputSelect class="form-control" id="@nameof(newPanelId)" @bind-Value="@newPanelIdAsString">
+				@if ((selectablePanels?.Any()).GetValueOrDefault())
+
+					@foreach (var panel in selectablePanels)
+					{
+						<option value="@panel.Id.ToString()">@panel.Name (@panel.GetType().Name)</option>
+					}
+
+			</InputSelect>
+			<span class="input-group-btn">
+				<button disabled="@(Panel.Panels.Count()>=5)" type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+			</span>
+		</div>
+		<ValidationMessage For="@(() => @Panel.Panels)" />
+	</div>
+</EditForm>
+
+@if ((@Panel.Panels?.Any()).GetValueOrDefault())
+{
+	<div class="form-group" ondragover="event.preventDefault();">
+		Panels, drag to re-order or drag to trash <span class="oi oi-trash" aria-hidden="true" @ondrop="RemovePanel" style="cursor:not-allowed"></span>
+
+		<ul class="list-group" style="padding-left: 0;">
+			@foreach (var panel in @Panel.Panels.OrderBy(x => x.SortIndex))
+			{
+				<li class="list-group-item bg-light" draggable="true" style="cursor:grab" @key="panel.SortIndex" @ondrop="@(()=> Drop(panel))" @ondragstart="@(()=> StartDrag(panel))">
+					<span class="grippy"></span>
+
+					@panel.Panel.Name
+					<span class="badge badge-primary">@panel.Panel.GetType().Name</span>
+				</li>
+			}
+		</ul>
+	</div>
+}

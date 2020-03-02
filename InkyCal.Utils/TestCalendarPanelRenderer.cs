@@ -3,9 +3,9 @@
 namespace InkyCal.Utils
 {
     /// <summary>
-    /// A test version for <see cref="CalendarPanel"/>
+    /// A test version for <see cref="CalendarPanelRenderer"/>
     /// </summary>
-    public class TestCalendarPanel : CalendarPanel
+    public class TestCalendarPanelRenderer : CalendarPanelRenderer
     {
         /// <summary>
         /// A public iCal calendar for demo/test purposes
@@ -15,7 +15,7 @@ namespace InkyCal.Utils
         /// <summary>
         /// 
         /// </summary>
-        public TestCalendarPanel() : base(new Uri(CalenderUrl))
+        public TestCalendarPanelRenderer() : base(new Uri(CalenderUrl))
         {
         }
     }

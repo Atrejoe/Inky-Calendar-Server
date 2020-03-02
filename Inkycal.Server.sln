@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29721.120
@@ -13,10 +12,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
+		.env = .env
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
+		README.md = README.md
 		start.bat = start.bat
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Server.Config", "InkyCal.Server.Config\InkyCal.Server.Config.csproj", "{98C2494D-6E09-45CF-A3CD-769B561412A9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Models", "InkyCal.Models\InkyCal.Models.csproj", "{37554770-8F60-404C-8F31-DF9D76BC5BE9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Data", "InkyCal.Data\InkyCal.Data.csproj", "{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +43,18 @@ Global
 		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7933D96B-FAF6-4EC6-9043-CEF6EA30494E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C2494D-6E09-45CF-A3CD-769B561412A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C2494D-6E09-45CF-A3CD-769B561412A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C2494D-6E09-45CF-A3CD-769B561412A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C2494D-6E09-45CF-A3CD-769B561412A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37554770-8F60-404C-8F31-DF9D76BC5BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37554770-8F60-404C-8F31-DF9D76BC5BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37554770-8F60-404C-8F31-DF9D76BC5BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37554770-8F60-404C-8F31-DF9D76BC5BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

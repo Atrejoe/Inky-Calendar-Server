@@ -1,0 +1,73 @@
+﻿<span>
+	<EditForm Model="@Panel">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+	</EditForm>
+
+	<EditForm Model="@newUrl" OnValidSubmit="AddUrl">
+		<DataAnnotationsValidator />
+		<div class="form-group">
+			<label>
+				@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+				{
+					<span>Add another calender url:</span>
+				}
+				else
+				{
+					<span>Add at least one calender url:</span>
+				}
+			</label>
+			<div class="input-group">
+				<InputText class="form-control" id="newurl" @bind-Value="newUrl.Url" />
+				<span class="input-group-btn">
+					<button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+				</span>
+			</div>
+			<ValidationMessage For="@(() => newUrl.Url)" />
+		</div>
+	</EditForm>
+
+	@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+	{
+		<span>
+			Urls:
+			<ol>
+				@foreach (var url in @Panel.CalenderUrls)
+				{
+					<li>
+						@url.Url
+						<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
+							<span class="oi oi-trash" aria-hidden="true"></span>
+						</NavLink>
+					</li>
+				}
+			</ol>
+		</span>
+	}
+</span>
+
+@code {
+
+	private CalendarPanelUrl newUrl { get; set; } = new CalendarPanelUrl() { };
+
+	[Parameter]
+	public Models.CalendarPanel Panel { get; set; }
+
+	private void AddUrl()
+	{
+		if (Panel.CalenderUrls.Any(x => x.Url.Equals(newUrl.Url, StringComparison.InvariantCulture)))
+			return;
+
+		Panel.CalenderUrls.Add(newUrl);
+		newUrl = new CalendarPanelUrl() { Url = newUrl.Url };
+	}
+
+
+	private void RemoveUrl(string url)
+	{
+		Console.WriteLine($"Removing url {url}");
+
+		//Urls are case-sensitive
+		Panel.CalenderUrls.RemoveWhere(x => x.Url.Equals(url, StringComparison.InvariantCulture));
+	}
+}

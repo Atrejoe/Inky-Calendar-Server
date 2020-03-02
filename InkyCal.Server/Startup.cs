@@ -5,12 +5,17 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using InkyCal.Server.Areas.Identity;
+using InkyCal.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,12 +29,12 @@ namespace InkyCal.Server
 
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+		//public Startup(IConfiguration configuration)
+		//{
+		//	Configuration = configuration;
+		//}
 
-		public IConfiguration Configuration { get; }
+		//public IConfiguration Configuration { get; }
 
 		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
 
@@ -48,6 +53,26 @@ namespace InkyCal.Server
 				.AddJsonOptions(options =>
 					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
 				);
+
+			services.AddDbContext<ApplicationDbContext>(options =>
+			   options.UseSqlServer(
+				   Config.Config.ConnectionString,
+				   options =>
+				   {
+					   options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
+				   }));
+			services.AddDefaultIdentity<IdentityUser>(
+				options =>
+				{
+					options.SignIn.RequireConfirmedAccount = false;
+					options.Password.RequiredLength = 10;
+				}
+				)
+				.AddEntityFrameworkStores<ApplicationDbContext>();
+			services.AddRazorPages();
+			services.AddServerSideBlazor();
+			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+			//services.AddSingleton<WeatherForecastService>();
 
 			// Register the Swagger generator, defining 1 or more Swagger documents
 			services.AddSwaggerGen(c =>
@@ -81,10 +106,11 @@ namespace InkyCal.Server
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseDatabaseErrorPage();
 			}
 
 			app.UseHttpsRedirection();
-
+			app.UseStaticFiles();
 			app.UseRouting();
 
 			app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -93,11 +119,12 @@ namespace InkyCal.Server
 			});
 
 			app.UseAuthorization();
-
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
+			app.UseAuthentication();
+			//app.UseEndpoints(endpoints =>
+			//{
+			//	endpoints.MapControllers();
+			//	endpoints.MapBlazorHub();
+			//});
 
 			// Enable middleware to serve generated Swagger as a JSON endpoint.
 			app.UseSwagger();
@@ -110,10 +137,17 @@ namespace InkyCal.Server
 				c.EnableDeepLinking();
 			});
 
-			var option = new RewriteOptions();
-			option.AddRedirect("^$", "swagger");
+			//var option = new RewriteOptions();
+			//option.AddRedirect("^$", "swagger");
 
-			app.UseRewriter(option);
+			//app.UseRewriter(option);
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+				endpoints.MapBlazorHub();
+				endpoints.MapFallbackToPage("/_Host");
+			});
 		}
 	}
 }

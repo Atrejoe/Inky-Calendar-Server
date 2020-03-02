@@ -1,18 +1,19 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
+using InkyCal.Models;
+using SixLabors.ImageSharp.Formats.Png;
 using Xunit;
 
 namespace InkyCal.Utils.Tests
 {
-	public abstract class IPanelTests<T> where T : IPanel
+	public abstract class IPanelTests<T> where T : IPanelRenderer
 	{
 
 		protected abstract T GetPanel();
 
 		[Fact()]
-		public void GetImageTest()
+		public async Task GetImageTest()
 		{
 			//arrange
 			var panel = GetPanel();
@@ -20,7 +21,7 @@ namespace InkyCal.Utils.Tests
 			DisplayModel.epd_7_in_5_v2_colour.GetSpecs(out var width, out var height, out var colors);
 
 			//act
-			var image = panel.GetImage(
+			var image = await panel.GetImage(
 								width: height, 
 								height: width, 
 								colors: colors);

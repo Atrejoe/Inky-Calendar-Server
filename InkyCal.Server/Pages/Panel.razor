@@ -1,0 +1,149 @@
+﻿@page "/panel"
+@page "/panel/{PanelId:guid}/edit"
+@inherits InkyCal.Server.Pages.AuthenticatedComponentBase
+
+<h1>Add panel</h1>
+
+<div class="form-group">
+	This page allows you to configure a panel.
+</div>
+
+<AuthorizeView>
+	<Authorized Context="auth">
+		@if (_Panel != null)
+		{
+			<div class="container">
+				<div class="row">
+					<div class="col-sm">
+						<EditForm Model="@_Panel" OnValidSubmit="HandleValidSubmit">
+							<DataAnnotationsValidator />
+							<ValidationSummary />
+
+							<div class="form-group">
+								<label for="paneltype">Panel type</label>
+								@if (!PanelId.HasValue)
+								{
+									<br />
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										@foreach (var type in new[] { typeof(Models.CalendarPanel), typeof(Models.ImagePanel), typeof(Models.PanelOfPanels) })
+										{
+											@if (type.IsAssignableFrom(_Panel?.GetType()))
+											{
+												<label class="btn btn-secondary active">
+													<input type="radio" name="paneltype" id="panel_type_@(type.Name)" autocomplete="off" checked>
+													@type.Name
+												</label>
+											}
+											else
+											{
+												<label class="btn btn-secondary">
+													<input type="radio" name="paneltype" id="panel_type_@(type.Name)" autocomplete="off" @onclick="@(() => InitPanelByType(type))">
+													@type.Name
+												</label>
+											}
+										}
+
+									</div>
+								}
+								else
+								{
+									<span class="badge badge-primary">@_Panel.GetType().Name</span>
+								}
+							</div>
+							<div class="form-group">
+								<label>Model</label>
+								<InputSelect class="form-control" id="@nameof(_Panel.Model)" @bind-Value="@_Panel.Model">
+									@foreach (var displayModel in Enum.GetValues(typeof(DisplayModel)))
+										{
+										<option>@displayModel</option>
+										}
+								</InputSelect>
+							</div>
+							<div class="form-group">
+								<label>Name</label>
+								<InputText class="form-control" id="@nameof(_Panel.Name)" @bind-Value="@_Panel.Name" />
+							</div>
+							<div class="form-group">
+								<label>Width:</label>
+								<InputNumber PlaceHolder="@Specs.Width.ToString()" class="form-control" id="width" @bind-Value="_Panel.Width" />
+							</div>
+							<div class="form-group">
+								<label>Height</label>
+								<InputNumber PlaceHolder="@Specs.Height.ToString()" class="form-control" id="height" @bind-Value="_Panel.Height" />
+							</div>
+							<div class="form-group">
+								<label>Orientation</label>
+								<InputSelect class="form-control" id="@nameof(_Panel.Rotation)" @bind-Value="@_Panel.Rotation">
+									@foreach (var rotation in Enum.GetValues(typeof(Rotation)))
+										{
+										<option>@rotation</option>
+										}
+								</InputSelect>
+							</div>
+
+							@if ((@Specs.Colors?.Any()).GetValueOrDefault())
+							{
+								<div class="form-group">
+									<label>
+										Colors
+									</label><br />
+									@foreach (var color in @Specs.Colors)
+									{
+										var tooltip = string.Empty;
+										switch (Array.IndexOf(@Specs.Colors, color))
+										{
+											case 0:
+												tooltip = "Primary foreground color";
+												break;
+											case 1:
+												tooltip = "Background color";
+												break;
+											case 2:
+												tooltip = "First support color";
+												break;
+										}
+										<div title="@tooltip" style="background-color: #@color.ToHex(); width:20px; height:20px; border:1px solid grey; display:inline-block" />
+									}
+								</div>
+							}
+
+							@switch (@_Panel)
+							{
+								case Models.CalendarPanel p:
+									<CalenderPanel Panel="p"></CalenderPanel>
+									break;
+								case Models.ImagePanel p:
+									<ImagePanel Panel="p"></ImagePanel>
+									break;
+								case Models.PanelOfPanels pp:
+									<PanelOfPanels Panel="pp"></PanelOfPanels>
+									break;
+								default:
+									<em>Unknown panel type</em>
+									break;
+							}
+
+
+							<button class="btn btn-primary" type="submit">@(PanelId.HasValue ? "Save" : "Create")</button>
+							@if (PanelId.HasValue)
+							{
+								<PopContainer ConfirmedChanged="Delete"></PopContainer>
+							}
+						</EditForm>
+					</div>
+					@if (PanelId.HasValue)
+					{
+						<div class="col-sm">
+							<img src="/panel/@_Panel.Id?@CacheBreaker" title="Image is loading" alt="Panel image is loading" style="min-height:20px; min-width:50px;border: 1px solid silver; background-color:silver;" />
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</Authorized>
+	<NotAuthorized>
+		Panel configurations are personal, why don't you:
+		<br />
+		<LoginDisplay />
+	</NotAuthorized>
+</AuthorizeView>
