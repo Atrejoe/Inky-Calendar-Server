@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Features>flow-analysis</Features>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0007" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
