@@ -1,6 +1,8 @@
 ﻿using Ical.Net;
+using Ical.Net.CalendarComponents;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -16,6 +18,47 @@ namespace InkyCal.Utils
 	public static class CalenderExtensions
 	{
 		private static readonly HttpClient client = new HttpClient();
+
+		internal static async Task<List<Event>> GetEvents(StringBuilder sbErrors, Uri[] ICalUrls, int lineLength)
+		{
+
+			var items = new List<Event>();
+
+			if (!(ICalUrls?.Any()).GetValueOrDefault())
+			{
+				sbErrors.AppendLine($"No calenders loaded");
+				return items;
+			}
+
+			var calendars = await ICalUrls.GetCalendars(lineLength * 2, sbErrors);
+
+			var date = DateTime.Now.Date;
+
+			while (items.Count() < 60 && date < DateTime.Now.AddYears(1))
+			{
+				items.AddRange(calendars
+										.GetOccurrences(date, date.AddDays(1))
+										.Select(x => x.Source)
+										.Cast<CalendarEvent>()
+					.Take(1000)
+					.Select(x =>
+					new Event()
+					{
+						Date = date,
+						Start = x.IsAllDay ? null : (TimeSpan?)x.Start.AsDateTimeOffset.TimeOfDay,
+						End = x.IsAllDay ? null : (TimeSpan?)x.End.AsDateTimeOffset.TimeOfDay,
+						Summary = x.Summary,
+						CalendarName = (string)x.Calendar.Properties["X-WR-CALNAME"]?.Value
+					}));
+
+				date = date.AddDays(1);
+			}
+
+			if (!(items?.Any()).GetValueOrDefault())
+				sbErrors.AppendLine($"No events in {ICalUrls?.Count():n0} calendars");
+
+			return items;
+		}
 
 		/// <summary>
 		/// Get 

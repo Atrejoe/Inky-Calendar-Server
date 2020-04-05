@@ -18,7 +18,7 @@ namespace InkyCal.Utils.Tests
 										CalenderUrls = new HashSet<CalendarPanelUrl>(
 														new []{
 															new CalendarPanelUrl(){ 
-																Url = TestCalendarPanelRenderer.CalenderUrl 
+																Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl 
 															}
 														})
 													}

@@ -31,7 +31,7 @@ namespace InkyCal.Utils
 			if (truncateIndicator?.Length > maxLength)
 				throw new ArgumentOutOfRangeException(nameof(truncateIndicator), truncateIndicator, $"The length of the truncation indicator cannot exceed `{nameof(maxLength)}`");
 
-			return value?.Length <= maxLength
+			return (value?.Length).GetValueOrDefault() <= maxLength
 				? value
 				: value.Substring(0, maxLength - (truncateIndicator?.Length).GetValueOrDefault()) + truncateIndicator;
 		}

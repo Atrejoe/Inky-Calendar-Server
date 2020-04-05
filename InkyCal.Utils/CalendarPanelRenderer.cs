@@ -1,19 +1,30 @@
-﻿using Ical.Net.CalendarComponents;
-using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 using static InkyCal.Utils.FontHelper;
 
 namespace InkyCal.Utils
 {
+
+
+	internal class Event
+	{
+		public DateTime Date { get; set; }
+		public TimeSpan? Start { get; set; }
+		public TimeSpan? End { get; set; }
+		public string CalendarName { get; set; }
+		public string Summary { get; internal set; }
+		public bool IsAllDay => !Start.HasValue && !End.HasValue;
+	}
+
 	/// <summary>
 	/// A panel that shows one or more calendars
 	/// </summary>
@@ -55,7 +66,7 @@ namespace InkyCal.Utils
 		{
 
 			Color primaryColor = colors.FirstOrDefault();
-			Color supportColor = (colors.Count()>2)?colors[2]:primaryColor;
+			Color supportColor = (colors.Count() > 2) ? colors[2] : primaryColor;
 			Color errorColor = supportColor;
 			Color backgroundColor = colors.Skip(1).First();
 
@@ -69,29 +80,9 @@ namespace InkyCal.Utils
 								? (width / characterWidth.Value)
 								: width / 7; //For now fall back to 100 characters width, which is nonsense
 
-			var twoLines = characterPerLine * 2;
-
 			var sbErrors = new StringBuilder();
-			var calendars = await ICalUrls.GetCalendars(twoLines, sbErrors);
-
-			IEnumerable<CalendarEvent> items = new HashSet<CalendarEvent>();
-
-			if (!(ICalUrls?.Any()).GetValueOrDefault())
-				sbErrors.AppendLine($"No calenders loaded");
-			else
-			{
-				items = calendars
-							.GetOccurrences(DateTime.Now.Date, DateTime.Now.AddYears(1))
-							.Select(x => x.Source)
-							.Cast<CalendarEvent>()
-							.Where(x => x.Start.Value.Date >= DateTime.Now.Date)
-							.ToArray()
-							.OrderBy(x => x.Start.Value)
-							.Take(60);
-
-				if (!(items?.Any()).GetValueOrDefault())
-					sbErrors.AppendLine($"No events in {ICalUrls?.Count():n0} calendars");
-			}
+			
+			var items = await CalenderExtensions.GetEvents(sbErrors, ICalUrls, characterPerLine);
 
 			var options_Date = new TextGraphicsOptions(false)
 			{
@@ -123,7 +114,7 @@ namespace InkyCal.Utils
 
 					errorMessageHeight.Width = width;
 					errorMessageHeight.Height += 4; //Pad 2 px on all sides
-					
+
 					canvas.Fill(errorColor, errorMessageHeight);
 
 					var pError = new PointF(2, 2);//Adhere to padding
@@ -134,7 +125,7 @@ namespace InkyCal.Utils
 
 				//Group by day, then show events
 				items
-					.GroupBy(x => x.Start.Date)
+					.GroupBy(x => x.Date)
 					.OrderBy(x => x.Key)
 					.ToList()
 					.ForEach(x =>
@@ -210,12 +201,14 @@ namespace InkyCal.Utils
 			return result;
 		}
 
-		private static string DescribeCalender(int characterPerLine, IEnumerable<CalendarEvent> items)
+		
+
+		private static string DescribeCalender(int characterPerLine, IEnumerable<Event> items)
 		{
 			return string.Join(
 							Environment.NewLine,
 							items
-								.GroupBy(x => x.Start.Date)
+								.GroupBy(x => x.Date)
 								.OrderBy(x => x.Key)
 								.Select(x =>
 								{
@@ -234,9 +227,9 @@ namespace InkyCal.Utils
 								}));
 		}
 
-		private static string DescribeEvent(CalendarEvent item, int? characterPerLine = null, int indentSize = 0)
+		private static string DescribeEvent(Event item, int? characterPerLine = null, int indentSize = 0)
 		{
-			var calendarName = item.Calendar.Properties["X-WR-CALNAME"]?.Value;
+			//var calendarName = item.CalendarName;
 			var period = DescribePeriod(item);
 
 			var remainingSize = characterPerLine - (period.Length + indentSize + 1);
@@ -250,10 +243,16 @@ namespace InkyCal.Utils
 			return $"{period} {summary}";
 		}
 
-		private static string DescribePeriod(CalendarEvent item)
+		private static string DescribePeriod(Event item)
 		{
-			return $@"{(item.Start.HasTime
-							? $"{item.Start.Value:HH:mm} - {item.End.Value:HH:mm}"
+			if (item is null)
+				return "No event?";
+
+			return $@"{(item.Start.HasValue
+							?
+							 item.End.HasValue
+								? $"{item.Start} - {item.End.Value}"
+								: $"{item.Start}"
 							: $"All day")}";
 		}
 	}
