@@ -51,9 +51,18 @@ namespace InkyCal.Utils
 			else
 			{
 				var y = 0;
-				var subPanelHeight = height / pp.Panels.Count();
-				foreach (var panel in pp.Panels.OrderBy(x => x.SortIndex))
+				var panels = pp.Panels;
+				var totalPanelRatio = panels.Sum(x => x.Ratio);
+				foreach (var panel in panels.OrderBy(x => x.SortIndex))
 				{
+
+					var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
+											? height / panels.Count()
+											: height * ((float)panel.Ratio / totalPanelRatio));
+
+					if (subPanelHeight == 0)
+						continue;
+
 					var renderer = panel.Panel.GetRenderer();
 
 					try
@@ -61,7 +70,7 @@ namespace InkyCal.Utils
 						var subImage = await renderer.GetImage(width, subPanelHeight, colors);
 
 						result.Mutate(
-							x => x.DrawImage(subImage, new Point(0, y),1f));
+							x => x.DrawImage(subImage, new Point(0, y), 1f));
 
 						//result.Mutate(x =>
 						//{
@@ -74,7 +83,8 @@ namespace InkyCal.Utils
 						//			new Point(0, y));
 						//});
 					}
-					catch (Exception ex) {
+					catch (Exception ex)
+					{
 						result.Mutate(x =>
 						{
 							x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, y));

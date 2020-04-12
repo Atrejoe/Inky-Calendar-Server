@@ -55,18 +55,26 @@ namespace InkyCal.Data
 						var existingLinks = await c.Set<SubPanel>()
 													.Where(x =>
 														x.IdParent == panel.Id).ToListAsync();
+
+						//Remove existing links which are not present in posted data
 						c.RemoveRange(
 							existingLinks.Where(
 								x => !pp.Panels.ToList().Any(y => comparison(x, y))));
 
+						//Update existing links
+						foreach (var linkedPanel in existingLinks.Where(x => pp.Panels.Any(y => comparison(x, y))))
+							linkedPanel.Ratio = pp.Panels.Single(x => comparison(x, linkedPanel)).Ratio;
 
+						//Add new links
 						foreach (var linkedPanel in pp.Panels.Where(x => !existingLinks.Any(y => comparison(x, y))))
 							await c.AddAsync(new SubPanel()
 							{
 								SortIndex = linkedPanel.SortIndex,
 								IdParent = pp.Id,
-								IdPanel = linkedPanel.IdPanel
+								IdPanel = linkedPanel.IdPanel,
+								Ratio = linkedPanel.Ratio
 							});
+						
 
 						pp.Panels.Clear();
 					}

@@ -1,3 +1,6 @@
+::obtain latest of all images
+docker-compose pull
+
 ::start database server, requires Docker
 docker-compose up -d db
 

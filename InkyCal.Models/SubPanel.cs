@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,8 @@ namespace InkyCal.Models
 
 		[Key]
 		public byte SortIndex { get; set; }
+
+		[Range(100,byte.MaxValue), DefaultValue(100)]
+		public byte Ratio { get; set; }
 	}
 }

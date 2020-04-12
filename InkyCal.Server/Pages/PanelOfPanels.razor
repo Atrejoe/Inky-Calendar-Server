@@ -68,12 +68,18 @@
 		<ul class="list-group" style="padding-left: 0;">
 			@foreach (var panel in @Panel.Panels.OrderBy(x => x.SortIndex))
 			{
-				<li class="list-group-item bg-light" draggable="true" style="cursor:grab" @key="panel.SortIndex" @ondrop="@(()=> Drop(panel))" @ondragstart="@(()=> StartDrag(panel))">
-					<span class="grippy"></span>
+			<li class="list-group-item bg-light" draggable="true" style="cursor:grab" @key="panel.SortIndex" @ondrop="@(()=> Drop(panel))" @ondragstart="@(()=> StartDrag(panel))">
+				<span class="grippy"></span>
 
-					@panel.Panel.Name
-					<span class="badge badge-primary">@panel.Panel.GetType().Name</span>
-				</li>
+				@panel.Panel.Name
+
+				<small style="float:right" title="The panel height is a ratio, dividing the height amongst all panels.">
+					Heigth <sup class="oi oi-info badge badge-primary"></sup>:
+					<input type="number" step="1" min="1" max="@byte.MaxValue" @bind="@panel.Ratio" />
+				</small>
+
+				<span class="badge badge-primary">@panel.Panel.GetType().Name</span>
+			</li>
 			}
 		</ul>
 	</div>
