@@ -54,13 +54,40 @@ namespace InkyCal.Server
 					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
 				);
 
+			//Migrate on startup
+			using (var db = new ApplicationDbContext())
+			{
+
+				Console.WriteLine("Applied migrations:");
+				foreach (var migration in db.Database.GetAppliedMigrations())
+					Console.WriteLine(migration);
+				Console.WriteLine();
+
+				Console.WriteLine("Available migrations:");
+				foreach (var migration in db.Database.GetMigrations())
+					Console.WriteLine(migration);
+				Console.WriteLine();
+
+				Console.WriteLine("Pending migrations:");
+				foreach (var migration in db.Database.GetPendingMigrations())
+					Console.WriteLine(migration);
+				Console.WriteLine();
+
+				bool isMigrationNeeded = db.Database.GetPendingMigrations().Any();
+				if (isMigrationNeeded)
+					db.Database.Migrate();
+				else
+					Console.WriteLine("No migrations required");
+			}
+
 			services.AddDbContext<ApplicationDbContext>(options =>
-			   options.UseSqlServer(
-				   Config.Config.ConnectionString,
-				   options =>
-				   {
-					   options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
-				   }));
+				options.UseSqlServer(
+					Config.Config.ConnectionString,
+					options =>
+					{
+						options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
+					}));
+
 			services.AddDefaultIdentity<IdentityUser>(
 				options =>
 				{

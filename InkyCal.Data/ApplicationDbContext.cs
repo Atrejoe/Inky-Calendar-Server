@@ -19,7 +19,10 @@ namespace InkyCal.Data
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			
-			optionsBuilder.UseSqlServer(InkyCal.Server.Config.Config.ConnectionString);
+			optionsBuilder.UseSqlServer(
+				InkyCal.Server.Config.Config.ConnectionString, 
+				options=> 
+				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
 			base.OnConfiguring(optionsBuilder);
 		}
