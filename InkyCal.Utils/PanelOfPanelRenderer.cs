@@ -34,12 +34,14 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public async Task<Image> GetImage(int width, int height, Color[] colors)
 		{
-			Color primaryColor = colors.FirstOrDefault();
-			Color supportColor = (colors.Count() > 2) ? colors[2] : primaryColor;
-			Color errorColor = supportColor;
-			Color backgroundColor = colors.Skip(1).First();
+			colors.ExtractMeaningFullColors(
+				out var primaryColor
+				,out var supportColor
+				,out var errorColor
+				,out var backgroundColor
+				);
 
-			var result = new Image<Rgba32>(new Configuration() { }, width, height, Color.Transparent);
+			var result = PanelRenderHelper.CreateImage(width, height, backgroundColor);
 
 			if (!(pp.Panels?.Any()).GetValueOrDefault())
 			{

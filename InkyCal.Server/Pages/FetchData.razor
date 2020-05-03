@@ -78,6 +78,9 @@
 										case Models.PanelOfPanels pp:
 											<span>@pp.Panels?.Count panels</span>
 											break;
+										case Models.WeatherPanel wp:
+											<span>@wp.Location</span>
+											break;
 										default:
 											<span>Panel type @panel.GetType().Name not yet described.</span>
 											break;
