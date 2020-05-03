@@ -1,0 +1,28 @@
+﻿<span>
+	<EditForm Model="@Panel">
+		<DataAnnotationsValidator />
+		<div class="form-group">
+			<label for="@nameof(Panel.Token)">Token</label>
+			<InputText class="form-control" id="newurl" @bind-Value="Panel.Token" />
+			<ValidationMessage For="@(() => Panel.Token)" />
+		</div>
+		<div class="form-group">
+			<label for="@nameof(Panel.Location)">Location</label>
+			<InputText class="form-control" id="newurl" @bind-Value="Panel.Location" />
+			<ValidationMessage For="@(() => Panel.Location)" />
+		</div>
+		<div class="form-group">
+			<span class="input-group-btn">
+				<button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+			</span>
+		</div>
+	</EditForm>
+</span>
+
+@code {
+
+	[Parameter]
+	public Models.WeatherPanel Panel { get; set; }
+
+}
+	

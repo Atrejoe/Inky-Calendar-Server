@@ -101,6 +101,28 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
+		/// Returns a weather forecast panel for a single calendar
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="token"></param>
+		/// <param name="city"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A badge containing the calculated SHA1 hash.</returns>
+		/// <remarks>
+		/// The hash may be cached.
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("weather/{model}/forecast/{token}/{city}")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> GetWeather(DisplayModel model, string token, string city, int? width = null, int? height = null)
+		{
+			return await this.Image(new WeatherPanelRenderer(token, city), model, width, height);
+		}
+
+		/// <summary>
 		/// Returns a calendar panel for multiple calendars
 		/// </summary>
 		/// <param name="model"></param>
@@ -119,43 +141,6 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> GetCalendar(DisplayModel model, Uri[] calendars, int? width = null, int? height = null)
 		{
 			return await this.Image(new CalendarPanelRenderer(calendars), model, width, height);
-		}
-
-		/// <summary>
-		/// Returns a calendar panel for multiple calendars
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="model"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <returns>A badge containing the calculated SHA1 hash.</returns>
-		/// <remarks>
-		/// The hash may be cached.
-		/// </remarks>
-		/// <response code="200">Returns the panel as a PNG image</response>
-		[HttpGet("calendar/{id}")]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetCalendar(Guid id, DisplayModel? model = null, int? width = null, int? height = null)
-		{
-			var panel = await Data.PanelRepository.Get<CalendarPanel>(id: id);
-
-			if (panel is null)
-				return NotFound($"Panel with id {id} not found");
-
-			model = model
-				?? (DisplayModel?)(int?)panel.Model
-				?? DisplayModel.epd_7_in_5_v2_colour;
-
-			var urls = panel.CalenderUrls.Select(x => new Uri(x.Url));
-
-			return await this.Image(
-				new CalendarPanelRenderer(
-					iCalUrls: urls.ToArray()),
-					model: model.Value,
-					requestedWidth: width ?? panel.Width,
-					requestedHeight: height ?? panel.Height);
 		}
 
 		/// <summary>

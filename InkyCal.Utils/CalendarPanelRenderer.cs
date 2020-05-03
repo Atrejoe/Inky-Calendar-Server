@@ -93,7 +93,7 @@ namespace InkyCal.Utils
 				DpiY = 96
 			};
 
-			var textMeasureOptions_Date = options_Date.ToRendererOptions(font);
+			var textRendererOptions_Date = options_Date.ToRendererOptions(font);
 
 			//Start drawing while iterating through items
 			result.Mutate(canvas =>
@@ -106,21 +106,14 @@ namespace InkyCal.Utils
 				{
 					var errorMessage = sbErrors.ToString();
 
-					var textMeasureOptions_Error = textMeasureOptions_Date.Clone();
-					textMeasureOptions_Error.WrappingWidth = width - 4;
-					var textDrawOptions_Error = textMeasureOptions_Error.ToTextGraphicsOptions(false);
+					var errorRenderOptions = textRendererOptions_Date.Clone();
 
-					var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, textMeasureOptions_Error);
-
-					errorMessageHeight.Width = width;
-					errorMessageHeight.Height += 4; //Pad 2 px on all sides
-
-					canvas.Fill(errorColor, errorMessageHeight);
-
-					var pError = new PointF(2, 2);//Adhere to padding
-					canvas.DrawText(textDrawOptions_Error, errorMessage, font, backgroundColor, pError);
-
-					y += (int)errorMessageHeight.Height;
+					canvas.RenderErrorMessage(
+						errorMessage, 
+						errorColor, 
+						backgroundColor, 
+						ref y, 
+						width, errorRenderOptions);
 				}
 
 				//Group by day, then show events
@@ -145,7 +138,7 @@ namespace InkyCal.Utils
 
 						var indentSize = day.Length;
 
-						var indent = (int)TextMeasurer.MeasureBounds(day, textMeasureOptions_Date).Width
+						var indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
 								   + 10; //Space of 10 pixels
 
 						canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));

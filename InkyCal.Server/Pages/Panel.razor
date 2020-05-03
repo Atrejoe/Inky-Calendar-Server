@@ -25,7 +25,11 @@
 								{
 									<br />
 									<div class="btn-group btn-group-toggle" data-toggle="buttons">
-										@foreach (var type in new[] { typeof(Models.CalendarPanel), typeof(Models.ImagePanel), typeof(Models.PanelOfPanels) })
+										@foreach (var type in new[] {
+											 typeof(Models.CalendarPanel),
+											 typeof(Models.ImagePanel),
+											 typeof(Models.PanelOfPanels),
+											 typeof(Models.WeatherPanel) })
 										{
 											@if (type.IsAssignableFrom(_Panel?.GetType()))
 											{
@@ -60,7 +64,7 @@
 								</InputSelect>
 							</div>
 							<div class="form-group">
-								<label>Name</label>
+								<label for="@nameof(_Panel.Name)">Name</label>
 								<InputText class="form-control" id="@nameof(_Panel.Name)" @bind-Value="@_Panel.Name" />
 							</div>
 							<div class="form-group">
@@ -118,8 +122,11 @@
 								case Models.PanelOfPanels pp:
 									<PanelOfPanels Panel="pp"></PanelOfPanels>
 									break;
+								case Models.WeatherPanel wp:
+									<WeatherPanel Panel="wp"></WeatherPanel>
+									break;
 								default:
-									<em>Unknown panel type</em>
+									<em>Unknown panel type @(_Panel.GetType().Name).</em>
 									break;
 							}
 

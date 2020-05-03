@@ -65,6 +65,9 @@ namespace InkyCal.Data
 			builder.Entity<User>()
 				.HasIndex(x=>x.IdentityUserId).IsUnique();
 
+
+			builder.Entity<WeatherPanel>();
+
 			builder.Entity<User>()
 				.HasOne(typeof(IdentityUser));
 		}
