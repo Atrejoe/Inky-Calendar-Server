@@ -10,13 +10,14 @@ using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
+
 	/// <summary>
 	/// A renderer for weather
 	/// </summary>
-	public class WeatherPanelRenderer : IPanelRenderer
+	public class WeatherPanelRenderer : PanelRenderer<WeatherPanel>
 	{
-		private readonly string token;
-		private readonly string city;
+		private string token;
+		private string city;
 
 		/// <summary>
 		/// 
@@ -35,6 +36,12 @@ namespace InkyCal.Utils
 		/// <param name="panel">The panel.</param>
 		public WeatherPanelRenderer(WeatherPanel panel)
 		{
+			Configure(panel);
+		}
+
+		/// <inheritdoc/>
+		protected override void ReadConfig(WeatherPanel panel)
+		{
 			this.token = panel.Token;
 			this.city = panel.Location;
 		}
@@ -46,7 +53,7 @@ namespace InkyCal.Utils
 		/// <param name="height"></param>
 		/// <param name="colors"></param>
 		/// <returns></returns>
-		public async Task<Image> GetImage(int width, int height, Color[] colors)
+		override public async Task<Image> GetImage(int width, int height, Color[] colors)
 		{
 			//Forecast weather;
 			//Station station;

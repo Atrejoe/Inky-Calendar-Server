@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using InkyCal.Models;
 using SixLabors.ImageSharp;
 
 namespace InkyCal.Utils
@@ -18,5 +19,17 @@ namespace InkyCal.Utils
 		/// <returns>An image</returns>
 		/// <remarks>Maybe it wise to keep evrything in portrait mode</remarks>
 		Task<Image> GetImage(int width, int height, Color[] colors);
+	}
+
+	/// <summary>
+	/// Signature for a helper class for rendering a specific type of <see cref="Panel"/>
+	/// </summary>
+	public interface IPanelRenderer<TPanel> : IPanelRenderer where TPanel:Panel
+	{
+		/// <summary>
+		/// Configures the specified panel.
+		/// </summary>
+		/// <param name="panel">The panel.</param>
+		void Configure(TPanel panel);
 	}
 }

@@ -1,10 +1,12 @@
-﻿using InkyCal.Models;
+using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace InkyCal.Utils
@@ -42,16 +44,55 @@ namespace InkyCal.Utils
 					renderer = new PanelOfPanelRenderer(pp);
 					break;
 
-				case WeatherPanel wp:
-					renderer = new WeatherPanelRenderer(wp);
-					break;
+				//case WeatherPanel wp:
+				//	renderer = new WeatherPanelRenderer(wp);
+				//	break;
 
 				default:
+					{
+						
+						var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
 
-					throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+						var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
+
+						if (rendererType == null)
+							throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+
+						var paneltype = rendererType.BaseType.GetGenericArguments().First();
+						var c = rendererType.GetConstructor(new[] { paneltype });
+						renderer = (IPanelRenderer)c.Invoke(new[] { panel });
+						//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+					}
+					break;
 			}
 
 			return renderer;
+		}
+
+		private static readonly Lazy<Type[]> Renderers = new Lazy<Type[]>(GetRenderers);
+
+		private static Type[] GetRenderers()
+		{
+			return AppDomain.CurrentDomain.GetAssemblies()
+														.SelectMany(x => x.GetTypes())
+														.Where(x => typeof(IPanelRenderer).IsAssignableFrom(x)
+																	&& !x.IsInterface
+																	&& !x.IsAbstract)
+														.ToArray();
+		}
+
+		static bool IsSubclassOfRawGeneric(this Type generic, Type toCheck)
+		{
+			while (toCheck != null && toCheck != typeof(object))
+			{
+				var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+				if (generic == cur)
+				{
+					return true;
+				}
+				toCheck = toCheck.BaseType;
+			}
+			return false;
 		}
 
 		/// <summary>
