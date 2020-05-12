@@ -92,14 +92,15 @@ namespace InkyCal.Data
 		{
 			using var c = new ApplicationDbContext();
 			var queryable = c.Set<TPanel>()
-							.AsNoTracking()
-							.Where(x => x.Owner.Id.Equals(user.Id));
+							.Include(x => (x as CalendarPanel).CalenderUrls)
+							.Include(x => (x as PanelOfPanels).Panels)
+							.Where(x => x.Owner.Id.Equals(user.Id))
+							.AsNoTracking();
 
 			//queryable.OfType<PanelOfPanels>().Include(x => x.Panels).AsNoTracking();
-			//queryable.OfType<CalendarPanel>().Include(x => x.CalenderUrls).AsNoTracking();
+			//queryable.OfType<CalendarPanel>().Include(x => x.CalenderUrls);
 
-			return await queryable
-							.ToArrayAsync();
+			return await queryable.ToArrayAsync();
 		}
 
 		public static async Task<TPanel> Get<TPanel>(Guid id, User user) where TPanel : Panel
@@ -107,6 +108,8 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 
 			var result = await c.Set<TPanel>()
+								.Include(x => (x as CalendarPanel).CalenderUrls)
+								.Include(x => (x as PanelOfPanels).Panels)
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x =>
 								   x.Id == id
@@ -119,21 +122,21 @@ namespace InkyCal.Data
 
 		private static async Task EagerLoad<TPanel>(this TPanel result, ApplicationDbContext c) where TPanel : Panel
 		{
-			if (result is CalendarPanel cp)
-				cp.CalenderUrls = (await c.Set<CalendarPanel>()
-						.AsNoTracking()
-						.Include(x => x.CalenderUrls)
-						.AsNoTracking()
-						.SingleAsync(x => x.Id == result.Id)).CalenderUrls;
+			//if (result is CalendarPanel cp)
+			//	cp.CalenderUrls = (await c.Set<CalendarPanel>()
+			//			.AsNoTracking()
+			//			.Include(x => x.CalenderUrls)
+			//			.AsNoTracking()
+			//			.SingleAsync(x => x.Id == result.Id)).CalenderUrls;
 
 			if (result is PanelOfPanels pp)
 			{
-				pp.Panels = (await c.Set<PanelOfPanels>()
-						.AsNoTracking()
-						.Include(x => x.Panels)
-						.ThenInclude(y => y.Panel)
-						.AsNoTracking()
-						.SingleAsync(x => x.Id == result.Id)).Panels;
+				//pp.Panels = (await c.Set<PanelOfPanels>()
+				//		.AsNoTracking()
+				//		.Include(x => x.Panels)
+				//		.ThenInclude(y => y.Panel)
+				//		.AsNoTracking()
+				//		.SingleAsync(x => x.Id == result.Id)).Panels;
 
 				foreach (var panel in pp.Panels.Select(x => x.Panel))
 					await panel.EagerLoad(c);
@@ -154,6 +157,8 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 
 			var result = await c.Set<TPanel>()
+								.Include(x => (x as CalendarPanel).CalenderUrls)
+								.Include(x => (x as PanelOfPanels).Panels)
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x => x.Id == id);
 

@@ -73,7 +73,9 @@
 											<span>@cp.CalenderUrls?.Count calendars</span>
 											break;
 										case Models.ImagePanel ip:
-											<span></span>
+											<a href="@ip.Path" target="_blank" title="Link to original image">
+												<span class="oi oi-link-intact" aria-hidden="true"></span>
+											</a>
 											break;
 										case Models.PanelOfPanels pp:
 											<span>@pp.Panels?.Count panels</span>
