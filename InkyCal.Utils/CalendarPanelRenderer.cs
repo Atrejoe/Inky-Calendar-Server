@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -149,7 +149,7 @@ namespace InkyCal.Utils
 						var textMeasureOptions = options.ToRendererOptions(font);
 
 						//Then write each event, wrap the summary
-						x.ToList().ForEach(item =>
+						x.OrderBy(x=>x.Start).ThenBy(x=>x.End).ToList().ForEach(item =>
 						{
 							//When summary is very long, cut if off
 							var line = DescribeEvent(item).Limit(500, " ...");
