@@ -110,37 +110,13 @@ namespace InkyCal.Data
 			var result = await c.Set<TPanel>()
 								.Include(x => (x as CalendarPanel).CalenderUrls)
 								.Include(x => (x as PanelOfPanels).Panels)
+									.ThenInclude(x => x.Panel)
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x =>
 								   x.Id == id
 								&& x.Owner.Id.Equals(user.Id));
 
-			await result.EagerLoad(c);
-
 			return result;
-		}
-
-		private static async Task EagerLoad<TPanel>(this TPanel result, ApplicationDbContext c) where TPanel : Panel
-		{
-			//if (result is CalendarPanel cp)
-			//	cp.CalenderUrls = (await c.Set<CalendarPanel>()
-			//			.AsNoTracking()
-			//			.Include(x => x.CalenderUrls)
-			//			.AsNoTracking()
-			//			.SingleAsync(x => x.Id == result.Id)).CalenderUrls;
-
-			if (result is PanelOfPanels pp)
-			{
-				//pp.Panels = (await c.Set<PanelOfPanels>()
-				//		.AsNoTracking()
-				//		.Include(x => x.Panels)
-				//		.ThenInclude(y => y.Panel)
-				//		.AsNoTracking()
-				//		.SingleAsync(x => x.Id == result.Id)).Panels;
-
-				foreach (var panel in pp.Panels.Select(x => x.Panel))
-					await panel.EagerLoad(c);
-			}
 		}
 
 		public static async Task Delete(Guid id, User user)
@@ -159,10 +135,9 @@ namespace InkyCal.Data
 			var result = await c.Set<TPanel>()
 								.Include(x => (x as CalendarPanel).CalenderUrls)
 								.Include(x => (x as PanelOfPanels).Panels)
+									.ThenInclude(x => x.Panel)
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x => x.Id == id);
-
-			await result.EagerLoad(c);
 
 			return result;
 		}

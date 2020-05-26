@@ -1,4 +1,4 @@
-using InkyCal.Models;
+﻿using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -24,6 +24,9 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static IPanelRenderer GetRenderer(this Models.Panel panel)
 		{
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+
 			IPanelRenderer renderer;
 
 			switch (panel)
@@ -44,24 +47,32 @@ namespace InkyCal.Utils
 					renderer = new PanelOfPanelRenderer(pp);
 					break;
 
-				//case WeatherPanel wp:
-				//	renderer = new WeatherPanelRenderer(wp);
-				//	break;
+				case WeatherPanel wp:
+					renderer = new WeatherPanelRenderer(wp);
+					break;
 
 				default:
 					{
-						
-						var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
+						try
+						{
+							var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
 
-						var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
+							if(rendererTypes is null)
+								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
-						if (rendererType == null)
-							throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
 
-						var paneltype = rendererType.BaseType.GetGenericArguments().First();
-						var c = rendererType.GetConstructor(new[] { paneltype });
-						renderer = (IPanelRenderer)c.Invoke(new[] { panel });
-						//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+							if (rendererType == null)
+								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+
+							var paneltype = rendererType.BaseType.GetGenericArguments().First();
+							var c = rendererType.GetConstructor(new[] { paneltype });
+							renderer = (IPanelRenderer)c.Invoke(new[] { panel });
+							//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
+						}
+						catch (Exception ex) {
+							throw new Exception($"Could not determine panel renderer for {panel.GetType().Name}, see inner exception for details: {ex.Message}", ex);
+						}
 					}
 					break;
 			}
