@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace InkyCal.Data
 {
@@ -74,7 +75,7 @@ namespace InkyCal.Data
 								IdPanel = linkedPanel.IdPanel,
 								Ratio = linkedPanel.Ratio
 							});
-						
+
 
 						pp.Panels.Clear();
 					}
@@ -108,9 +109,7 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 
 			var result = await c.Set<TPanel>()
-								.Include(x => (x as CalendarPanel).CalenderUrls)
-								.Include(x => (x as PanelOfPanels).Panels)
-									.ThenInclude(x => x.Panel)
+								.EagerLoad()
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x =>
 								   x.Id == id
@@ -133,13 +132,20 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 
 			var result = await c.Set<TPanel>()
-								.Include(x => (x as CalendarPanel).CalenderUrls)
-								.Include(x => (x as PanelOfPanels).Panels)
-									.ThenInclude(x => x.Panel)
+								.EagerLoad()
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x => x.Id == id);
 
 			return result;
+		}
+
+		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel:class{
+			return set
+					.Include(x => (x as CalendarPanel).CalenderUrls)
+					.Include(x => (x as PanelOfPanels).Panels)
+						.ThenInclude(x => x.Panel)
+						.ThenInclude(x => (x as CalendarPanel).CalenderUrls);
+								
 		}
 	}
 }
