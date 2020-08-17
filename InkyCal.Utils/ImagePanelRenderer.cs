@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
-using SixLabors.Primitives;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace InkyCal.Utils
 {

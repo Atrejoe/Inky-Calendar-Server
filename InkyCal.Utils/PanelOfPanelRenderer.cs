@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
@@ -32,9 +32,9 @@ namespace InkyCal.Utils
 		{
 			colors.ExtractMeaningFullColors(
 				out var primaryColor
-				,out var supportColor
-				,out var errorColor
-				,out var backgroundColor
+				, out var supportColor
+				, out var errorColor
+				, out var backgroundColor
 				);
 
 			var result = PanelRenderHelper.CreateImage(width, height, backgroundColor);
@@ -86,7 +86,15 @@ namespace InkyCal.Utils
 						ex.Log();
 						result.Mutate(x =>
 						{
-							x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, y));
+							x.DrawText(
+								new TextGraphicsOptions(new GraphicsOptions() { Antialias = false },
+								new TextOptions() { 
+									WrapTextWidth = width 
+								}), 
+								ex.Message, 
+								new Font(FontHelper.NotoSans, 16), 
+								errorColor, 
+								new Point(0, y));
 						});
 					}
 
