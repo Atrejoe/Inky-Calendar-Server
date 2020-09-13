@@ -68,7 +68,7 @@ namespace InkyCal.Utils
 		//}
 
 		/// <inheritdoc/>
-		public async Task<Image> GetImage(int width, int height, Color[] colors)
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			return await Task.Run(async () =>
 			{

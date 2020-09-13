@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.analyzers" Version="0.10.0" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,10 @@
       <IncludeAssets></IncludeAssets>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Calender\" />
   </ItemGroup>
 
 </Project>

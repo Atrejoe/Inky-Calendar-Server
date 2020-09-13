@@ -1,7 +1,6 @@
-﻿using SixLabors.Fonts;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
+using SixLabors.Fonts;
 
 namespace InkyCal.Utils
 {

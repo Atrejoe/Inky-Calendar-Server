@@ -1,12 +1,11 @@
-﻿using InkyCal.Models;
-using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using InkyCal.Models;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
@@ -25,14 +24,9 @@ namespace InkyCal.Utils
 			this.pp = pp;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="colors"></param>
-		/// <returns></returns>
-		public async Task<Image> GetImage(int width, int height, Color[] colors)
+		/// <inheritdoc/>
+		/// <returns>A panel with nested panels</returns>
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			colors.ExtractMeaningFullColors(
 				out var primaryColor
@@ -69,7 +63,7 @@ namespace InkyCal.Utils
 
 					try
 					{
-						var subImage = await renderer.GetImage(width, subPanelHeight, colors);
+						var subImage = await renderer.GetImage(width, subPanelHeight, colors, log);
 
 						result.Mutate(
 							x => x.DrawImage(subImage, new Point(0, y), 1f));

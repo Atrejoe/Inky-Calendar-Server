@@ -6,6 +6,102 @@ using Newtonsoft.Json;
 
 namespace InkyCal.Utils.Weather
 {
+
+	/// <summary>
+	/// A reason for failing to obtain weather data
+	/// </summary>
+	public enum FailureReason
+	{
+		/// <summary>
+		/// The request to the weather service did not pass authentication
+		/// </summary>
+		Unauthenticated,
+
+		/// <summary>
+		/// The cause of failure has not been determined.
+		/// </summary>
+		Undetermined
+	}
+
+	/// <summary>
+	/// <see cref="WeatherAPIRequestFailure" /> is thrown when....
+	/// </summary>
+	/// <remarks></remarks>
+	[Serializable()]
+	public class WeatherAPIRequestFailure : Exception
+	{
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value>
+		/// The reason.
+		/// </value>
+		public FailureReason Reason { get; } = FailureReason.Undetermined;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailure" /> class.
+		/// </summary>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		public WeatherAPIRequestFailure() : this("An exception has occurred.")
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailure" /> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error</param>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		public WeatherAPIRequestFailure(string message) : this(message, null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailure" /> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error</param>
+		/// <param name="reason">The reason of failure</param>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		public WeatherAPIRequestFailure(string message, FailureReason reason) : this(message, null)
+		{
+			Reason = reason;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailure" /> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error</param>
+		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		public WeatherAPIRequestFailure(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailure" /> class.
+		/// </summary>
+		/// <param name="message">The message that describes the error</param>
+		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
+		/// <param name="reason">The reason of failure</param>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		public WeatherAPIRequestFailure(string message, Exception innerException, FailureReason reason) : this(message, innerException)
+		{
+			Reason = reason;
+		}
+
+		/// <summary>
+		/// Constructor for deserialization
+		/// </summary>
+		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+		protected WeatherAPIRequestFailure(
+			  System.Runtime.Serialization.SerializationInfo info,
+			  System.Runtime.Serialization.StreamingContext context)
+				: base(info, context)
+		{
+			// Implement type-specific serialization constructor logic.
+			Reason = ((FailureReason?)info.GetValue("reason", typeof(FailureReason?))).GetValueOrDefault();
+		}
+	}
+
 	internal class Util : IDisposable
 	{
 		private readonly HttpClient client = new HttpClient();
@@ -22,9 +118,25 @@ namespace InkyCal.Utils.Weather
 
 		private async Task<RootObject> getForeCast(string url)
 		{
-			var response = await client.GetStringAsync(url);
+			var response = await client.GetAsync(url);
 
-			return JsonConvert.DeserializeObject<RootObject>(response);
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsStringAsync();
+				return JsonConvert.DeserializeObject<RootObject>(content);
+			}
+			else
+				switch (response.StatusCode)
+				{
+					case System.Net.HttpStatusCode.Unauthorized:
+						throw new WeatherAPIRequestFailure(response.ReasonPhrase, FailureReason.Unauthenticated);
+					default:
+						response.EnsureSuccessStatusCode();
+						break;
+				}
+
+			return null;
+
 		}
 
 		#region IDisposable Support
@@ -61,7 +173,8 @@ namespace InkyCal.Utils.Weather
 		#endregion
 	}
 
-	internal static class DateTimeHelper{
+	internal static class DateTimeHelper
+	{
 		private static readonly DateTime Epoch = new DateTime(1970, 01, 01, 0, 0, 0, DateTimeKind.Utc);
 
 		public static DateTime ToDateTime(this int secondsSinceEpoch)

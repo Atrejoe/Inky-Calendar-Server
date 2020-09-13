@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using InkyCal.Utils.Calendar;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -13,17 +14,6 @@ using static InkyCal.Utils.FontHelper;
 
 namespace InkyCal.Utils
 {
-
-
-	internal class Event
-	{
-		public DateTime Date { get; set; }
-		public TimeSpan? Start { get; set; }
-		public TimeSpan? End { get; set; }
-		public string CalendarName { get; set; }
-		public string Summary { get; internal set; }
-		public bool IsAllDay => !Start.HasValue && !End.HasValue;
-	}
 
 	/// <summary>
 	/// A panel that shows one or more calendars
@@ -61,14 +51,15 @@ namespace InkyCal.Utils
 		/// <param name="width">The height of the panel (in landscape mode).</param>
 		/// <param name="height">The width of the panel (in landscape mode).</param>
 		/// <param name="colors">The number of color to render in.</param>
+		/// <param name="log">A callbac method for logging errors to</param>
 		/// <returns></returns>
-		public async Task<Image> GetImage(int width, int height, Color[] colors)
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 
-			Color primaryColor = colors.FirstOrDefault();
-			Color supportColor = (colors.Count() > 2) ? colors[2] : primaryColor;
-			Color errorColor = supportColor;
-			Color backgroundColor = colors.Skip(1).First();
+			var primaryColor = colors.FirstOrDefault();
+			var supportColor = colors.Count() > 2 ? colors[2] : primaryColor;
+			var errorColor = supportColor;
+			var backgroundColor = colors.Skip(1).First();
 
 			var result = new Image<Rgba32>(new Configuration() { }, width, height, backgroundColor);
 
@@ -77,12 +68,12 @@ namespace InkyCal.Utils
 			var characterWidth = font.GetCharacterWidth(); //Works only for some known fixed-width fonts
 
 			var characterPerLine = characterWidth > 0
-								? (width / characterWidth.Value)
+								? width / characterWidth.Value
 								: width / 7; //For now fall back to 100 characters width, which is nonsense
 
 			var sbErrors = new StringBuilder();
-			
-			var items = await CalenderExtensions.GetEvents(sbErrors, ICalUrls, characterPerLine);
+
+			var events = await GetEvents(sbErrors);
 
 			var options_Date = new TextGraphicsOptions(false)
 			{
@@ -109,15 +100,15 @@ namespace InkyCal.Utils
 					var errorRenderOptions = textRendererOptions_Date.Clone();
 
 					canvas.RenderErrorMessage(
-						errorMessage, 
-						errorColor, 
-						backgroundColor, 
-						ref y, 
+						errorMessage,
+						errorColor,
+						backgroundColor,
+						ref y,
 						width, errorRenderOptions);
 				}
 
 				//Group by day, then show events
-				items
+				events
 					.GroupBy(x => x.Date)
 					.OrderBy(x => x.Key)
 					.ToList()
@@ -149,7 +140,7 @@ namespace InkyCal.Utils
 						var textMeasureOptions = options.ToRendererOptions(font);
 
 						//Then write each event, wrap the summary
-						x.OrderBy(x=>x.Start).ThenBy(x=>x.End).ToList().ForEach(item =>
+						x.OrderBy(x => x.Start).ThenBy(x => x.End).ToList().ForEach(item =>
 						{
 							//When summary is very long, cut if off
 							var line = DescribeEvent(item).Limit(500, " ...");
@@ -165,17 +156,17 @@ namespace InkyCal.Utils
 									canvas.Invert(new Rectangle(indent - 2, y + 5, (int)periodBounds.Width + 4, (int)periodBounds.Height + 2));
 								}
 
-								y += (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
+								y += (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
 							}
 							catch (Exception ex)
 							{
 								//Log?
 								try
 								{
-									var error = $"Error: {ex.Message}".Limit(150);
-									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
+									var error = $"Error: {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
+									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
 									canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
-									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + (int)(font.LineHeight / 200);
+									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
 								}
 								catch
 								{
@@ -188,13 +179,22 @@ namespace InkyCal.Utils
 			});
 
 			//This previously was the source for rendering
-			var text = DescribeCalender(characterPerLine, items);
+			var text = DescribeCalender(characterPerLine, events);
 			Trace.WriteLine(text);
 
 			return result;
 		}
 
-		
+		/// <summary>
+		/// Gets the events
+		/// </summary>
+		/// <param name="sbErrors">The sb errors.</param>
+		/// <returns></returns>
+		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors)
+		{
+			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
+		}
+
 
 		private static string DescribeCalender(int characterPerLine, IEnumerable<Event> items)
 		{

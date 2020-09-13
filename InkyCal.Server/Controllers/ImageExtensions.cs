@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Processing;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -69,7 +70,18 @@ namespace InkyCal.Server.Controllers
 			Color[] colors,
 			RotateMode rotateMode)
 		{
-			using var image = await panel.GetImage(width, height, colors);
+			IPanelRenderer.Log conditionalLog = (Exception ex, bool handled, string explanation) =>
+			{
+				if (handled)
+					Console.WriteLine($"{explanation ?? "Handled exception"}: {ex.Message}");
+				else
+				{
+					Console.Error.WriteLine($"{explanation ?? "Unhandled exception"}: {ex.Message}");
+					//log?.Invoke(ex);
+				}
+			};
+
+			using var image = await panel.GetImage(width, height, colors, conditionalLog);
 			image.Mutate(x => x.Rotate(rotateMode));
 			return controller.Image(image);
 		}

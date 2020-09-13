@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -12,7 +13,7 @@ namespace InkyCal.Utils.Tests
 
 		protected abstract T GetPanel();
 
-		[Fact()]
+		[SkippableFact]
 		public async Task GetImageTest()
 		{
 			//arrange
@@ -20,11 +21,28 @@ namespace InkyCal.Utils.Tests
 			var filename = $"GetImageTest_{typeof(T).Name}.png";
 			DisplayModel.epd_7_in_5_v2_colour.GetSpecs(out var width, out var height, out var colors);
 
+			IPanelRenderer.Log assertHandledOnly = (Exception ex, bool handled, string explanation) =>
+			{
+				if (handled)
+				{
+					var errorMessage = $"{explanation ?? "Handled exception" }: {ex.Message}";
+					Console.WriteLine(errorMessage);
+					throw new SkipException(errorMessage);
+				}
+				else
+				{
+					if (!string.IsNullOrEmpty(explanation))
+						Console.Error.WriteLine(explanation);
+					throw ex;
+				}
+			};
+
 			//act
 			var image = await panel.GetImage(
 								width: height, 
 								height: width, 
-								colors: colors);
+								colors: colors,
+								assertHandledOnly);
 
 			//assert
 			Assert.NotNull(image);

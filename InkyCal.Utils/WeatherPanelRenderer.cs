@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
-using Newtonsoft.Json;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -46,14 +45,9 @@ namespace InkyCal.Utils
 			this.city = panel.Location;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="colors"></param>
-		/// <returns></returns>
-		override public async Task<Image> GetImage(int width, int height, Color[] colors)
+		/// <inheritdoc/>
+		/// <returns>A panel with weather information</returns>
+		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
 			//Station station;
@@ -85,12 +79,6 @@ namespace InkyCal.Utils
 			//									  parameters);
 			//}
 
-			Weather.RootObject weather;
-			using (var util = new Weather.Util(token))
-				weather = await util.GetForeCast(city);
-
-			var station = weather?.city;
-
 			colors.ExtractMeaningFullColors(
 				out var primaryColor
 				, out var supportColor
@@ -112,6 +100,41 @@ namespace InkyCal.Utils
 			};
 			var rendererOptions = textGraphicsOptions.ToRendererOptions(textFont);
 			var weatherRendererOptions = textGraphicsOptions.ToRendererOptions(weatherFont);
+
+			Weather.RootObject weather;
+			try
+			{
+				using (var util = new Weather.Util(token))
+					weather = await util.GetForeCast(city);
+			}
+			catch (Weather.WeatherAPIRequestFailure ex) {
+				var explanation = "Weather service indicated API authentication failure failure";
+				log?.Invoke(ex, true, explanation);
+
+				result.Mutate(context =>
+				{
+					var y = 100;
+					context.RenderErrorMessage(
+						explanation,
+						errorColor, backgroundColor, ref y, width, rendererOptions);
+				});
+				return result;
+			}
+			catch (Exception ex)
+			{
+				log?.Invoke(ex, true, "Weather service responds with unauthorized");
+
+				result.Mutate(context =>
+				{
+					var y = 100;
+					context.RenderErrorMessage(
+						ex.Message.ToString(),
+						errorColor, backgroundColor, ref y, width, rendererOptions);
+				});
+				return result;
+			}
+
+			var station = weather?.city;
 
 			result.Mutate(context =>
 			{

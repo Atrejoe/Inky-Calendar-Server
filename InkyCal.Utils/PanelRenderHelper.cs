@@ -1,13 +1,12 @@
-﻿using InkyCal.Models;
+﻿using System;
+using System.Linq;
+using System.Text;
+using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
 namespace InkyCal.Utils
 {
@@ -182,7 +181,12 @@ namespace InkyCal.Utils
 			canvas.Fill(errorColor, errorMessageHeight);
 
 			var pError = new PointF(2, 2);//Adhere to padding
-			canvas.DrawText(textDrawOptions_Error, errorMessage, renderOptions.Font, backgroundColor, pError);
+
+			var trimmedErrorMessage = new StringBuilder();
+			foreach (var line in errorMessage.Split(Environment.NewLine))
+				trimmedErrorMessage.AppendLine(line.Limit(width,"..."));
+
+			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString(), renderOptions.Font, backgroundColor, pError);
 
 			y += (int)errorMessageHeight.Height;
 		}
