@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using InkyCal.Server.Areas.Identity;
+using Bugsnag;
+using Bugsnag.AspNet.Core;
 using InkyCal.Data;
+using InkyCal.Server.Areas.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace InkyCal.Server
@@ -48,6 +43,12 @@ namespace InkyCal.Server
 			//    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
 			//    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
 			//});
+
+			if (!string.IsNullOrEmpty(Config.Config.BugSnagAPIKey))
+				services.AddBugsnag(configuration =>
+				{
+					configuration.ApiKey = Config.Config.BugSnagAPIKey;
+				});
 
 			services.AddMvc()
 				.AddJsonOptions(options =>
@@ -125,6 +126,8 @@ namespace InkyCal.Server
 				//... and tell Swagger to use those XML comments.
 				c.IncludeXmlComments(xmlPath, true);
 			});
+
+			Utils.PerformanceMonitor.Log(new Exception("Application has started"));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

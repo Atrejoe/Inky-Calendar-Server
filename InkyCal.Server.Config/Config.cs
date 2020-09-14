@@ -17,5 +17,6 @@ namespace InkyCal.Server.Config
 
 		public static string ConnectionString => configuration.Value.GetConnectionString("DefaultConnection");
 		public static string SentryDSN => configuration.Value.GetValue("SentryDSN", string.Empty);
+		public static string BugSnagAPIKey => configuration.Value.GetValue("BugSnagAPIKey", string.Empty);
 	}
 }
