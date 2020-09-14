@@ -6,6 +6,14 @@
 	public enum DisplayModel
 	{
 		/// <summary>
+		/// 7.5" higher-res black-white-red/yellow
+		/// </summary>
+		epd_7_in_5_v3_colour,
+		/// <summary>
+		/// 7.5" higher-res black-white-red/yellow
+		/// </summary>
+		epd_7_in_5_v3,
+		/// <summary>
 		/// 7.5" high-res black-white-red/yellow
 		/// </summary>
 		epd_7_in_5_v2_colour,

@@ -41,6 +41,11 @@ namespace InkyCal.Utils
 
 			switch (model)
 			{
+				case DisplayModel.epd_7_in_5_v3_colour:
+				case DisplayModel.epd_7_in_5_v3:
+					width = 880;
+					height = 528;
+					break;
 				case DisplayModel.epd_7_in_5_v2_colour:
 				case DisplayModel.epd_7_in_5_v2:
 					width = 800;
@@ -67,10 +72,12 @@ namespace InkyCal.Utils
 
 			switch (model)
 			{
+				case DisplayModel.epd_7_in_5_v3_colour:
 				case DisplayModel.epd_7_in_5_v2_colour:
 				case DisplayModel.epd_7_in_5_colour:
 					colors = new[] { Color.Black, Color.White, Color.Red }; //Could be yellow too, maybe introduce a new panel type
 					break;
+				case DisplayModel.epd_7_in_5_v3:
 				case DisplayModel.epd_7_in_5_v2:
 				case DisplayModel.epd_7_in_5:
 					colors = new[] { Color.Black, Color.White };
