@@ -59,7 +59,7 @@ namespace InkyCal.Utils.Calendar
 			if (!(items?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events in {ICalUrls?.Count():n0} calendars");
 
-			return items;
+			return items.Distinct().ToList();
 		}
 
 		/// <summary>

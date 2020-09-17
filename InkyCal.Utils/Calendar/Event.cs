@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace InkyCal.Utils.Calendar
 {
 	/// <summary>
 	/// An event that may take place on a calendar.
 	/// </summary>
-	public class Event
+	public class Event : IEquatable<Event>
 	{
 		/// <summary>
 		/// The (start) date
@@ -49,5 +50,79 @@ namespace InkyCal.Utils.Calendar
 		///   <c>true</c> if this instance is all day; otherwise, <c>false</c>.
 		/// </value>
 		public bool IsAllDay => !Start.HasValue && !End.HasValue;
+
+		/// <summary>
+		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+		/// </summary>
+		/// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+		/// <returns>
+		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as Event);
+		}
+
+		/// <summary>
+		/// Indicates whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+		/// </returns>
+		public bool Equals(Event other)
+		{
+			return other != null &&
+				   Date == other.Date &&
+				   EqualityComparer<TimeSpan?>.Default.Equals(Start, other.Start) &&
+				   EqualityComparer<TimeSpan?>.Default.Equals(End, other.End) &&
+				   CalendarName == other.CalendarName &&
+				   Summary == other.Summary &&
+				   IsAllDay == other.IsAllDay;
+		}
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(
+			 Date
+			, Start
+			, End
+			, IsAllDay
+			, CalendarName
+			, Summary
+			);
+		}
+
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>
+		/// The result of the operator.
+		/// </returns>
+		public static bool operator ==(Event left, Event right)
+		{
+			return EqualityComparer<Event>.Default.Equals(left, right);
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>
+		/// The result of the operator.
+		/// </returns>
+		public static bool operator !=(Event left, Event right)
+		{
+			return !(left == right);
+		}
 	}
 }
