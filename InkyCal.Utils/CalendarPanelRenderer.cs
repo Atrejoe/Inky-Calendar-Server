@@ -107,7 +107,14 @@ namespace InkyCal.Utils
 						width, errorRenderOptions);
 				}
 
+				//This previously was the source for rendering
+				var text = DescribeCalender(characterPerLine, events);
+				Trace.WriteLine(text);
+
+
 				//Group by day, then show events
+
+				var firstEntry = true;
 				events
 					.GroupBy(x => x.Date)
 					.OrderBy(x => x.Key)
@@ -117,22 +124,17 @@ namespace InkyCal.Utils
 						if (y > height)
 							return;
 
-						//Draw a red line for each day
-						y += 4;
-
-						canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
-
-						y += 1;
+						var lineDrawn = false;
 
 						//Write the day part only once for all events within a day
-						var day = $"{x.Key:ddd dd MMM} ";
+						var day = x.Key.Year == DateTime.Now.Year
+							? $"{x.Key:ddd dd MMM} "
+							: @$"{x.Key:ddd dd MMM `yy} ";
 
 						var indentSize = day.Length;
 
-						var indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
+						int indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
 								   + 10; //Space of 10 pixels
-
-						canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));
 
 						var options = options_Date.Clone();
 						options.WrapTextWidth = width - indent;
@@ -140,27 +142,66 @@ namespace InkyCal.Utils
 						var textMeasureOptions = options.ToRendererOptions(font);
 
 						//Then write each event, wrap the summary
-						x.OrderBy(x => x.Start).ThenBy(x => x.End).ToList().ForEach(item =>
+						x.OrderBy(x => x.Start)
+							.ThenBy(x => x.End)
+							.ToList()
+							.ForEach(item =>
 						{
 							//When summary is very long, cut if off
 							var line = DescribeEvent(item).Limit(500, " ...");
 							try
 							{
-								canvas.DrawText(options, line, font, primaryColor, new PointF(indent, y));
+								var textHeight = (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+
+								if (textHeight + y > height)
+									return;
+
+
+								if (!lineDrawn) {
+
+									if (firstEntry)
+										firstEntry = false;
+									else
+									{
+										//Draw a red line for each day
+										y += 4;
+
+										canvas.DrawLines(supportColor, 2, new	[] { new PointF(2, y), new PointF(width - 2, y) });
+
+										firstEntry = false;
+									}
+
+									canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));
+
+									lineDrawn = true;
+								}
+
+								Console.WriteLine($"Drawing line {item.Start} : '{line}' ");
+
+								canvas.DrawText(options, line.Trim().Replace("é","a"), font, primaryColor, new PointF(indent, y));
 
 								//Invert all day indicator
 								if (item.IsAllDay)
 								{
 									var period = DescribePeriod(item);
 									var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
-									canvas.Invert(new Rectangle(indent - 2, y + 5, (int)periodBounds.Width + 4, (int)periodBounds.Height + 2));
+
+									var rectangle = new Rectangle(
+										indent - 2,
+										y + 5,
+										(int)periodBounds.Width + 4,
+										(int)periodBounds.Height + 2
+										);
+
+									canvas.Invert(rectangle);
 								}
 
-								y += (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+
+								y += textHeight;
 							}
 							catch (Exception ex)
 							{
-								//Log?
+								ex.Log();
 								try
 								{
 									var error = $"Error: {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
@@ -178,9 +219,6 @@ namespace InkyCal.Utils
 
 			});
 
-			//This previously was the source for rendering
-			var text = DescribeCalender(characterPerLine, events);
-			Trace.WriteLine(text);
 
 			return result;
 		}

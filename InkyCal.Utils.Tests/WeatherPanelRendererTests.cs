@@ -5,7 +5,7 @@ namespace InkyCal.Utils.Tests
 	/// </summary>
 	public sealed class WeatherPanelRendererTests : IPanelTests<WeatherPanelRenderer>
 	{
-		protected override WeatherPanelRenderer GetPanel()
+		protected override WeatherPanelRenderer GetRenderer()
 		{
 			return new WeatherPanelRenderer(
 				"token", 

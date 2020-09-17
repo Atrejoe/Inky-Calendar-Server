@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,13 +11,13 @@ namespace InkyCal.Utils.Tests
 	public abstract class IPanelTests<T> where T : IPanelRenderer
 	{
 
-		protected abstract T GetPanel();
+		protected abstract T GetRenderer();
 
 		[SkippableFact]
 		public async Task GetImageTest()
 		{
 			//arrange
-			var panel = GetPanel();
+			var panel = GetRenderer();
 			var filename = $"GetImageTest_{typeof(T).Name}.png";
 			DisplayModel.epd_7_in_5_v2_colour.GetSpecs(out var width, out var height, out var colors);
 

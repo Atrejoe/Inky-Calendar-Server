@@ -34,10 +34,10 @@ namespace InkyCal.Utils.Calendar
 
 			var date = DateTime.Now.Date;
 
-			while (items.Count() < 60 && date < DateTime.Now.AddYears(1))
+			while (items.Count() < 60 && date < DateTime.Now.AddYears(2))
 			{
 				items.AddRange(calendars
-										.GetOccurrences(date, date.AddDays(1))
+										.GetOccurrences(date)
 										.Select(x => x.Source)
 										.Cast<CalendarEvent>()
 					.Take(1000)
@@ -74,7 +74,7 @@ namespace InkyCal.Utils.Calendar
 
 			var calendars = new CalendarCollection();
 
-			var tasks = ICalUrls.Select(iCalUrl =>
+			var tasks = ICalUrls.Select((iCalUrl, index) =>
 				Task.Run(async () =>
 				{
 					try
@@ -83,15 +83,15 @@ namespace InkyCal.Utils.Calendar
 					}
 					catch (HttpRequestException ex)
 					{
-						errors?.AppendLine($"Failed to obtain calender data:\n{ex.Message}");
+						errors?.AppendLine($"Failed to obtain calender {index+1} data:\n{ex.Message}");
 					}
 					catch (SerializationException ex)
 					{
-						errors?.AppendLine($"Failed to parse calender data:\n{ex.Message}");
+						errors?.AppendLine($"Failed to parse calender {index + 1} data:\n{ex.Message}");
 					}
 					catch (Exception ex)
 					{
-						errors?.AppendLine($"Failed to obtain or parse calender data:\n{ex.Message}");
+						errors?.AppendLine($"Failed to obtain or parse calender {index + 1} data:\n{ex.Message}");
 					}
 				})
 			);

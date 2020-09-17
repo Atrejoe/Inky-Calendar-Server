@@ -5,7 +5,7 @@
 	/// </summary>
 	public sealed class TestCalendarPanelTests : IPanelTests<TestCalendarPanelRenderer>
 	{
-		protected override TestCalendarPanelRenderer GetPanel()
+		protected override TestCalendarPanelRenderer GetRenderer()
 		{
 			return new TestCalendarPanelRenderer();
 		}

@@ -8,7 +8,7 @@ namespace InkyCal.Utils.Tests
 	/// </summary>
 	public sealed class PanelOfPanelRendererTests : IPanelTests<PanelOfPanelRenderer>
 	{
-		protected override PanelOfPanelRenderer GetPanel()
+		protected override PanelOfPanelRenderer GetRenderer()
 		{
 			var pp = new PanelOfPanels()
 			{

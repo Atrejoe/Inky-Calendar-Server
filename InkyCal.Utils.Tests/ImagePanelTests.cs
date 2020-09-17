@@ -6,7 +6,7 @@
 	/// </summary>
 	public sealed class ImagePanelTests : IPanelTests<TestImagePanelRenderer>
 	{
-		protected override TestImagePanelRenderer GetPanel()
+		protected override TestImagePanelRenderer GetRenderer()
 		{
 			return new TestImagePanelRenderer();
 		}
