@@ -10,7 +10,7 @@ namespace InkyCal.Server.Config
 		private static IConfigurationRoot GetConfiguration()
 		{
 			return new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json")
+				.AddJsonFile("appsettings.json",true)
 				.AddEnvironmentVariables()
 				.Build();
 		}

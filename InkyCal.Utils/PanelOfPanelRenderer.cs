@@ -81,6 +81,7 @@ namespace InkyCal.Utils
 					}
 					catch (Exception ex)
 					{
+						ex.Log();
 						result.Mutate(x =>
 						{
 							x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, y));

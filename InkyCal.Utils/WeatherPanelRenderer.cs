@@ -194,6 +194,8 @@ namespace InkyCal.Utils
 				}
 				catch (Exception ex)
 				{
+					log?.Invoke(ex, false);
+
 					Console.Error.WriteLine(ex.ToString());
 					y = 100;
 					context.RenderErrorMessage(

@@ -76,8 +76,7 @@ namespace InkyCal.Server.Controllers
 					Console.WriteLine($"{explanation ?? "Handled exception"}: {ex.Message}");
 				else
 				{
-					Console.Error.WriteLine($"{explanation ?? "Unhandled exception"}: {ex.Message}");
-					//log?.Invoke(ex);
+					ex.Log();
 				}
 			};
 

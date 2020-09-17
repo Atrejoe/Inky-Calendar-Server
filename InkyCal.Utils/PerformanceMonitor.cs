@@ -21,7 +21,17 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="ex">The ex.</param>
 		public static void Log(this Exception ex) {
-			_bugsnag?.Notify(ex);
+
+			if (_bugsnag is null)
+			{
+				Console.Error.WriteLine($"Bugsnag not configured ({Server.Config.Config.BugSnagAPIKey})");
+				Console.Error.WriteLine(ex.ToString());
+			}
+			else
+			{
+				Console.WriteLine($"Logging error to bugsnag : {ex.Message}");
+				_bugsnag.Notify(ex,Severity.Error);
+			}
 		}
 	}
 }
