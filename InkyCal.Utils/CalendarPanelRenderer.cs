@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -216,9 +216,9 @@ namespace InkyCal.Utils
 									canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
 									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
 								}
-								catch
+								catch (Exception errorDisplayException)
 								{
-									//Ignore,log?
+									errorDisplayException.Log();
 								}
 							}
 						});
