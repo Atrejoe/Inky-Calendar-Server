@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -284,8 +284,8 @@ namespace InkyCal.Utils
 			return $@"{(item.Start.HasValue
 							?
 							 item.End.HasValue
-								? $"{item.Start} - {item.End.Value}"
-								: $"{item.Start}"
+								? @$"{item.Start.Value:hh\:mm} - {item.End.Value:hh\:mm}"
+								: @$"{item.Start.Value:hh\:mm}"
 							: $"All day")}";
 		}
 	}
