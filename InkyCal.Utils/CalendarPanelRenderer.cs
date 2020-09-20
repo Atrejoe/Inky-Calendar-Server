@@ -178,9 +178,14 @@ namespace InkyCal.Utils
 									lineDrawn = true;
 								}
 
-								Console.WriteLine($"Drawing line {item.Start} : '{line}' ");
-
-								canvas.DrawText(options, line.Trim().Replace("é", "a"), font, primaryColor, new PointF(indent, y));
+								canvas.DrawText(
+										options: options,
+										text: line.Trim()
+											.Replace("é", "e"), //Todo: make diacritics safe
+										font: font,
+										color: primaryColor,
+										location: new PointF(indent, y)
+										);
 
 								//Invert all day indicator
 								if (item.IsAllDay)
