@@ -73,10 +73,12 @@ namespace InkyCal.Utils.Calendar
 		public bool Equals(Event other)
 		{
 			return other != null &&
-				   Date == other.Date &&
+				   Date.Date == other.Date.Date &&
+				   Date.Hour == other.Date.Hour &&
+				   Date.Minute == other.Date.Minute &&
 				   EqualityComparer<TimeSpan?>.Default.Equals(Start, other.Start) &&
 				   EqualityComparer<TimeSpan?>.Default.Equals(End, other.End) &&
-				   CalendarName == other.CalendarName &&
+				   //CalendarName == other.CalendarName &&
 				   Summary == other.Summary &&
 				   IsAllDay == other.IsAllDay;
 		}
