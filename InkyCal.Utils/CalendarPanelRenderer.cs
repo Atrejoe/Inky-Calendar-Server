@@ -128,7 +128,7 @@ namespace InkyCal.Utils
 
 						//Write the day part only once for all events within a day
 						var day = x.Key.Year == DateTime.Now.Year
-							? $"{x.Key:ddd dd MMM} "
+							? @$"{x.Key:ddd dd MMM} "
 							: @$"{x.Key:ddd dd MMM `yy} ";
 
 						var indentSize = day.Length;
@@ -144,6 +144,7 @@ namespace InkyCal.Utils
 						//Then write each event, wrap the summary
 						x.OrderBy(x => x.Start)
 							.ThenBy(x => x.End)
+							.ThenBy(x => x.Summary)
 							.ToList()
 							.ForEach(item =>
 						{
@@ -157,7 +158,8 @@ namespace InkyCal.Utils
 									return;
 
 
-								if (!lineDrawn) {
+								if (!lineDrawn)
+								{
 
 									if (firstEntry)
 										firstEntry = false;
@@ -166,7 +168,7 @@ namespace InkyCal.Utils
 										//Draw a red line for each day
 										y += 4;
 
-										canvas.DrawLines(supportColor, 2, new	[] { new PointF(2, y), new PointF(width - 2, y) });
+										canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
 
 										firstEntry = false;
 									}
@@ -178,7 +180,7 @@ namespace InkyCal.Utils
 
 								Console.WriteLine($"Drawing line {item.Start} : '{line}' ");
 
-								canvas.DrawText(options, line.Trim().Replace("é","a"), font, primaryColor, new PointF(indent, y));
+								canvas.DrawText(options, line.Trim().Replace("é", "a"), font, primaryColor, new PointF(indent, y));
 
 								//Invert all day indicator
 								if (item.IsAllDay)
