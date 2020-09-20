@@ -37,21 +37,21 @@ namespace InkyCal.Utils.Calendar
 			while (items.Count() < 60 && date < DateTime.Now.AddYears(2))
 			{
 				items.AddRange(calendars
-										.GetOccurrences(date)
-										.Select(x => x.Source)
-										.Cast<CalendarEvent>()
-					.Take(1000)
-					.ToArray()
-					.Select(x =>
-					new Event()
-					{
-						Date = date,
-						Start = x.IsAllDay ? null : (TimeSpan?)x.Start.AsDateTimeOffset.TimeOfDay,
-						End = x.IsAllDay ? null : (TimeSpan?)x.End.AsDateTimeOffset.TimeOfDay,
-						Summary = x.Summary,
-						CalendarName = (string)x.Calendar.Properties["X-WR-CALNAME"]?.Value
-					})
-					.ToArray());
+								.GetOccurrences(date)
+								.Select(x => x.Source)
+								.Cast<CalendarEvent>()
+								.Take(1000)
+								.ToArray()
+								.Select(x =>
+								new Event()
+								{
+									Date = date,
+									Start = x.IsAllDay ? null : (TimeSpan?)x.Start.AsDateTimeOffset.TimeOfDay,
+									End = x.IsAllDay ? null : (TimeSpan?)x.End.AsDateTimeOffset.TimeOfDay,
+									Summary = x.Summary,
+									CalendarName = (string)x.Calendar.Properties["X-WR-CALNAME"]?.Value
+								})
+								.ToArray());
 
 				date = date.AddDays(1);
 			}
@@ -83,15 +83,24 @@ namespace InkyCal.Utils.Calendar
 					}
 					catch (HttpRequestException ex)
 					{
-						errors?.AppendLine($"Failed to obtain calender {index+1} data:\n{ex.Message}");
+						var messageDisplayed = $"Failed to obtain calender {index + 1} data:\n{ex.Message}";
+						errors?.AppendLine(messageDisplayed);
+						ex.Data.Add("Message displayed", messageDisplayed);
+						ex.Log();
 					}
 					catch (SerializationException ex)
 					{
-						errors?.AppendLine($"Failed to parse calender {index + 1} data:\n{ex.Message}");
+						var messageDisplayed = $"Failed to parse calender {index + 1} data:\n{ex.Message}";
+						errors?.AppendLine(messageDisplayed);
+						ex.Data.Add("Message displayed", messageDisplayed);
+						ex.Log();
 					}
 					catch (Exception ex)
 					{
-						errors?.AppendLine($"Failed to obtain or parse calender {index + 1} data:\n{ex.Message}");
+						var messageDisplayed = $"Failed to obtain or parse calender {index + 1} data:\n{ex.Message}";
+						errors?.AppendLine(messageDisplayed);
+						ex.Data.Add("Message displayed", messageDisplayed);
+						ex.Log();
 					}
 				})
 			);
@@ -110,7 +119,7 @@ namespace InkyCal.Utils.Calendar
 		});
 
 		/// <summary>
-		/// Returns a cached calender, or loads it using <see cref="LoadCalendar"/> and caches it for one minute.
+		/// Returns a cached calender, or loads it using <see cref="LoadCalendarContent"/> and caches it for one minute.
 		/// </summary>
 		/// <param name="iCalUrl"></param>
 		/// <returns></returns>
@@ -120,7 +129,16 @@ namespace InkyCal.Utils.Calendar
 			if (!_cache.TryGetValue(iCalUrl.ToString(), out Ical.Net.Calendar cacheEntry))// Look for cache key.
 			{
 				// Key not in cache, so get data.
-				cacheEntry = await LoadCalendar(iCalUrl);
+				var content = await LoadCalendarContent(iCalUrl);
+
+				try
+				{
+					cacheEntry = Ical.Net.Calendar.Load(content);
+				} catch (Exception ex){
+					ex.Data.Add("RawCalendarContent", content);
+					ex.Log();
+					throw;
+				}
 
 				var cacheEntryOptions = new MemoryCacheEntryOptions()
 					.SetSize(1)
@@ -134,9 +152,13 @@ namespace InkyCal.Utils.Calendar
 			return cacheEntry;
 		}
 
-		private static async Task<Ical.Net.Calendar> LoadCalendar(Uri iCalUrl)
+		private static async Task<string> LoadCalendarContent(Uri iCalUrl)
 		{
-			return Ical.Net.Calendar.Load(await client.GetStreamAsync(iCalUrl.ToString()));
+			var request =  await client.GetAsync(iCalUrl.ToString());
+
+			request.EnsureSuccessStatusCode();
+
+			return await request.Content.ReadAsStringAsync();
 		}
 	}
 }
