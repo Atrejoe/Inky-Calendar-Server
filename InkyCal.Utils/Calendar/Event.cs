@@ -79,8 +79,7 @@ namespace InkyCal.Utils.Calendar
 				   EqualityComparer<TimeSpan?>.Default.Equals(Start, other.Start) &&
 				   EqualityComparer<TimeSpan?>.Default.Equals(End, other.End) &&
 				   //CalendarName == other.CalendarName &&
-				   Summary == other.Summary &&
-				   IsAllDay == other.IsAllDay;
+				   string.Equals(Summary?.Trim(), other.Summary?.Trim(), StringComparison.InvariantCultureIgnoreCase);
 		}
 
 		/// <summary>
@@ -92,11 +91,11 @@ namespace InkyCal.Utils.Calendar
 		public override int GetHashCode()
 		{
 			return HashCode.Combine(
-			 Date
+			 Date.Date
+			, Date.Hour
+			, Date.Minute
 			, Start
 			, End
-			, IsAllDay
-			, CalendarName
 			, Summary
 			);
 		}
