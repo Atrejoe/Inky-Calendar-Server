@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace InkyCal.Data
 {
@@ -12,6 +12,9 @@ namespace InkyCal.Data
 	{
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+
 			using (var c = new ApplicationDbContext())
 			{
 				//Prevent tracking of referenced existing items
@@ -118,7 +121,7 @@ namespace InkyCal.Data
 			return result;
 		}
 
-		public static async Task Delete(Guid id, User user)
+		public static async Task Delete(Guid id)
 		{
 			using var c = new ApplicationDbContext();
 
@@ -139,7 +142,8 @@ namespace InkyCal.Data
 			return result;
 		}
 
-		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel:class{
+		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
+		{
 			return set
 					.Include(x => (x as CalendarPanel).CalenderUrls)
 					.Include(x => (x as PanelOfPanels).Panels)

@@ -94,7 +94,7 @@
 									@foreach (var color in @Specs.Colors)
 									{
 										var tooltip = string.Empty;
-										switch (Array.IndexOf(@Specs.Colors, color))
+										switch (@Specs.Colors.IndexOf(color))
 										{
 											case 0:
 												tooltip = "Primary foreground color";

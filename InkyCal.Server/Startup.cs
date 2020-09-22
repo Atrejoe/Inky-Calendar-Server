@@ -59,17 +59,17 @@ namespace InkyCal.Server
 			using (var db = new ApplicationDbContext())
 			{
 
-				Console.WriteLine("Applied migrations:");
+				Console.WriteLine($@"Applied migrations:");
 				foreach (var migration in db.Database.GetAppliedMigrations())
 					Console.WriteLine(migration);
 				Console.WriteLine();
 
-				Console.WriteLine("Available migrations:");
+				Console.WriteLine(@"Available migrations:");
 				foreach (var migration in db.Database.GetMigrations())
 					Console.WriteLine(migration);
 				Console.WriteLine();
 
-				Console.WriteLine("Pending migrations:");
+				Console.WriteLine(@"Pending migrations:");
 				foreach (var migration in db.Database.GetPendingMigrations())
 					Console.WriteLine(migration);
 				Console.WriteLine();
@@ -78,7 +78,7 @@ namespace InkyCal.Server
 				if (isMigrationNeeded)
 					db.Database.Migrate();
 				else
-					Console.WriteLine("No migrations required");
+					Console.WriteLine(@"No migrations required");
 			}
 
 			services.AddDbContext<ApplicationDbContext>(options =>

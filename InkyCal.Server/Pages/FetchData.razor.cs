@@ -16,7 +16,7 @@ namespace InkyCal.Server.Pages
 	{
 		private List<Models.Panel> _panels;
 		private Models.Panel _selectedPanel;
-		internal bool _selectedPanelLoading = false;
+		internal bool _selectedPanelLoading;
 
 		/// <summary>
 		/// Gets or sets the navigation manager.
@@ -65,7 +65,7 @@ namespace InkyCal.Server.Pages
 		private async Task Delete(Guid id)
 		{
 			var user = await GetAuthenticatedUser();
-			await PanelRepository.Delete(id, user);
+			await PanelRepository.Delete(id);
 			_panels.RemoveAll(x => x.Id == id);
 		}
 	}

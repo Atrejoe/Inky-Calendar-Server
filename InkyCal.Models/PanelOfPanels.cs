@@ -8,7 +8,7 @@ namespace InkyCal.Models
 	public class PanelOfPanels : Panel
 	{
 		[Required, MaxLength(5), MinLength(1)]
-		public HashSet<SubPanel> Panels { get; set; } = new HashSet<SubPanel>();
+		public HashSet<SubPanel> Panels { get; set;  } = new HashSet<SubPanel>();
 
 	}
 }

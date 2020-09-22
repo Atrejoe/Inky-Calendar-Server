@@ -18,7 +18,7 @@ namespace InkyCal.Utils.Tests
 											.Where(x => typeof(Panel).IsAssignableFrom(x)
 														&& !x.Equals(typeof(Panel))
 														&& !x.IsInterface
-														&& !x.IsAbstract).Select(x=>(Panel)x.GetConstructor(Type.EmptyTypes).Invoke(new object[] { }));
+														&& !x.IsAbstract).Select(x=>(Panel)x.GetConstructor(Type.EmptyTypes).Invoke(Array.Empty<object>()));
 			//Act & assert
 			Assert.All(panels, x => {
 				try

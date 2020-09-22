@@ -90,7 +90,7 @@ namespace InkyCal.Server.Pages
 			StateHasChanged();
 		}
 
-		private int currentIndex = 0;
+		private int currentIndex;
 
 		void StartDrag(SubPanel item)
 		{
@@ -100,31 +100,27 @@ namespace InkyCal.Server.Pages
 
 		void Drop(SubPanel item)
 		{
-			if (item != null)
-			{
-				var intermediate = Panel.Panels.OrderBy(x => x.SortIndex).ToList();
-				var index = intermediate.IndexOf(item);
+			if (item == null)
+				return;
+			
+			var intermediate = Panel.Panels.OrderBy(x => x.SortIndex).ToList();
+			var index = intermediate.IndexOf(item);
 
-				Panel.Panels.Clear();
+			Panel.Panels.Clear();
 
-				var current = intermediate[currentIndex];
-				intermediate.RemoveAt(currentIndex);
-				intermediate.Insert(index, current);
+			var current = intermediate[currentIndex];
+			intermediate.RemoveAt(currentIndex);
+			intermediate.Insert(index, current);
 
-				for (byte i = 0; i < intermediate.Count(); i++)
-					intermediate[i].SortIndex = i;
+			for (byte i = 0; i < intermediate.Count; i++)
+				intermediate[i].SortIndex = i;
 
-				Panel.Panels = new HashSet<SubPanel>(intermediate.OrderBy(x => x.SortIndex));
+			Panel.Panels = new HashSet<SubPanel>(intermediate.OrderBy(x => x.SortIndex));
 
-				// update current selection
-				currentIndex = index;
+			// update current selection
+			currentIndex = index;
 
-				StateHasChanged();
-			}
-			else
-			{
-				Console.WriteLine("Drop - null");
-			}
+			StateHasChanged();
 		}
 	}
 }

@@ -62,6 +62,10 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static RendererOptions Clone(this RendererOptions options)
 		{
+			if (options is null)
+				throw new ArgumentNullException(nameof(options));
+			
+
 			var result = new RendererOptions(options.Font)
 			{
 				HorizontalAlignment = options.HorizontalAlignment,
@@ -82,6 +86,9 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static TextGraphicsOptions ToTextGraphicsOptions(this RendererOptions options, bool enableAntialiasing)
 		{
+			if (options is null)
+				throw new ArgumentNullException(nameof(options));			
+
 			var result = new TextGraphicsOptions(enableAntialiasing)
 			{
 				HorizontalAlignment = options.HorizontalAlignment,

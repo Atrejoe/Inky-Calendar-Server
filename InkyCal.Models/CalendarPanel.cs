@@ -9,7 +9,7 @@ namespace InkyCal.Models
 	public class CalendarPanel : Panel
 	{
 		[Required, MaxLength(5), MinLength(1)]
-		public HashSet<CalendarPanelUrl> CalenderUrls { get; set; } = new HashSet<CalendarPanelUrl>();
+		public HashSet<CalendarPanelUrl> CalenderUrls { get; set;  } = new HashSet<CalendarPanelUrl>();
 
 	}
 }

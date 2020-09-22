@@ -81,8 +81,6 @@ namespace InkyCal.Server.Pages
 
 		private async Task HandleValidSubmit()
 		{
-			Console.WriteLine("OnValidSubmit");
-
 			_Panel.Owner = await GetAuthenticatedUser();
 			await _Panel.Update();
 
@@ -97,7 +95,7 @@ namespace InkyCal.Server.Pages
 				return;
 
 			var user = await GetAuthenticatedUser();
-			await PanelRepository.Delete(_Panel.Id, user);
+			await PanelRepository.Delete(_Panel.Id);
 
 			navigationManager.NavigateTo($"/fetchdata");
 		}

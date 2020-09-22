@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Bugsnag;
 
 namespace InkyCal.Utils
@@ -10,6 +11,7 @@ namespace InkyCal.Utils
 	{
 		private static readonly Client _bugsnag;
 
+		[SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Conditional initializatiop")]
 		static PerformanceMonitor()
 		{
 			if (!string.IsNullOrWhiteSpace(Server.Config.Config.BugSnagAPIKey))
@@ -21,10 +23,12 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="ex">The ex.</param>
 		public static void Log(this Exception ex) {
+			if (ex is null)
+				return;
 
 			if (_bugsnag is null)
 			{
-				Console.Error.WriteLine($"Bugsnag not configured ({Server.Config.Config.BugSnagAPIKey})");
+				Console.Error.WriteLine($"Bugsnag not configured (API key: {Server.Config.Config.BugSnagAPIKey})");
 				Console.Error.WriteLine(ex.ToString());
 			}
 			else

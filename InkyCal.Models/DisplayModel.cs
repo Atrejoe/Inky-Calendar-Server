@@ -1,8 +1,11 @@
-﻿namespace InkyCal.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace InkyCal.Models
 {
 	/// <summary>
 	/// All supported E-Ink panels
 	/// </summary>
+	[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Panel types are easier to read with underscores")]
 	public enum DisplayModel
 	{
 		/// <summary>

@@ -120,9 +120,12 @@ namespace InkyCal.Utils
 			out Color errorColor,
 			out Color backgroundColor)
 		{
+			if (colors is null)
+				throw new ArgumentNullException(nameof(colors));
+			
 
 			primaryColor = colors.FirstOrDefault();
-			supportColor = (colors.Count() > 2) ? colors[2] : primaryColor;
+			supportColor = (colors.Length > 2) ? colors[2] : primaryColor;
 			errorColor = supportColor;
 			backgroundColor = colors.Skip(1).FirstOrDefault();
 		}

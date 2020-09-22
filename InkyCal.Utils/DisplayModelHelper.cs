@@ -1,6 +1,7 @@
 ﻿using InkyCal.Models;
 using SixLabors.ImageSharp;
 using System;
+using System.Collections.ObjectModel;
 
 namespace InkyCal.Utils
 {
@@ -26,9 +27,10 @@ namespace InkyCal.Utils
 			{
 				Width = width,
 				Height = height,
-				Colors = colors
+				Colors = new ReadOnlyCollection<Color>(colors)
 			};
 		}
+
 		/// <summary>
 		/// Gets the specs for the <paramref name="model"/>.
 		/// </summary>

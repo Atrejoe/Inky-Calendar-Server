@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InkyCal.Utils.Calendar
 {
 	/// <summary>
 	/// An event that may take place on a calendar.
 	/// </summary>
+	[SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "It's a calendar event")]
 	public class Event : IEquatable<Event>
 	{
 		/// <summary>

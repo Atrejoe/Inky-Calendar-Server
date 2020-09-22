@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
@@ -19,22 +20,24 @@ namespace InkyCal.Utils.Calendar
 	{
 		private static readonly HttpClient client = new HttpClient();
 
-		internal static async Task<List<Event>> GetEvents(StringBuilder sbErrors, Uri[] ICalUrls)
+		internal static async Task<List<Event>> GetEvents(StringBuilder sbErrors, IEnumerable<Uri> ICalUrls)
 		{
+			sbErrors ??= new StringBuilder();
 
+			var urls = ICalUrls.ToArray();
 			var items = new List<Event>();
 
-			if (!(ICalUrls?.Any()).GetValueOrDefault())
+			if (!(urls?.Any()).GetValueOrDefault())
 			{
 				sbErrors.AppendLine($"No calenders loaded");
 				return items;
 			}
 
-			var calendars = await ICalUrls.GetCalendars(sbErrors);
+			var calendars = await urls.GetCalendars(sbErrors);
 
 			var date = DateTime.Now.Date;
 
-			while (items.Count() < 60 && date < DateTime.Now.AddYears(2))
+			while (items.Count < 60 && date < DateTime.Now.AddYears(2))
 			{
 				items.AddRange(calendars
 								.GetOccurrences(date)
@@ -57,10 +60,11 @@ namespace InkyCal.Utils.Calendar
 			}
 
 			if (!(items?.Any()).GetValueOrDefault())
-				sbErrors.AppendLine($"No events in {ICalUrls?.Count():n0} calendars");
+				sbErrors.AppendLine($"No events in {urls?.Length:n0} calendars");
 
 			return items.Distinct().ToList();
 		}
+
 
 		/// <summary>
 		/// Get 
@@ -68,7 +72,8 @@ namespace InkyCal.Utils.Calendar
 		/// <param name="ICalUrls"></param>
 		/// <param name="errors"></param>
 		/// <returns></returns>
-		public static async Task<CalendarCollection> GetCalendars(this Uri[] ICalUrls, StringBuilder errors)
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
+		public static async Task<CalendarCollection> GetCalendars(this IEnumerable<Uri> ICalUrls, StringBuilder errors)
 		{
 			var sw = Stopwatch.StartNew();
 
@@ -108,7 +113,7 @@ namespace InkyCal.Utils.Calendar
 			await Task.WhenAll(tasks);
 
 			Trace.WriteLine($"Obtained calendars in {sw.Elapsed}");
-			Trace.WriteLine(errors.ToString());
+			Trace.WriteLine(errors?.ToString());
 
 			return calendars;
 		}
@@ -134,7 +139,9 @@ namespace InkyCal.Utils.Calendar
 				try
 				{
 					cacheEntry = Ical.Net.Calendar.Load(content);
-				} catch (Exception ex){
+				}
+				catch (Exception ex)
+				{
 					ex.Data.Add("RawCalendarContent", content);
 					ex.Log();
 					throw;
@@ -154,7 +161,7 @@ namespace InkyCal.Utils.Calendar
 
 		private static async Task<string> LoadCalendarContent(Uri iCalUrl)
 		{
-			var request =  await client.GetAsync(iCalUrl.ToString());
+			var request = await client.GetAsync(iCalUrl.ToString());
 
 			request.EnsureSuccessStatusCode();
 

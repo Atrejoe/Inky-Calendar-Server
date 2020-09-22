@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,13 +39,14 @@ namespace InkyCal.Utils
 		/// <param name="iCalUrls"></param>
 		public CalendarPanelRenderer(Uri[] iCalUrls)
 		{
-			ICalUrls = iCalUrls ?? throw new ArgumentNullException(nameof(iCalUrls));
+			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
 		}
 
 		/// <summary>
 		/// The calendars to render
 		/// </summary>
-		public Uri[] ICalUrls { get; }
+		public ReadOnlyCollection<Uri> ICalUrls { get; }
+
 
 		/// <summary>
 		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
@@ -53,11 +56,14 @@ namespace InkyCal.Utils
 		/// <param name="colors">The number of color to render in.</param>
 		/// <param name="log">A callbac method for logging errors to</param>
 		/// <returns></returns>
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
+			if (colors is null)
+				colors = new[] { Color.Black, Color.White };
 
 			var primaryColor = colors.FirstOrDefault();
-			var supportColor = colors.Count() > 2 ? colors[2] : primaryColor;
+			var supportColor = colors.Length > 2 ? colors[2] : primaryColor;
 			var errorColor = supportColor;
 			var backgroundColor = colors.Skip(1).First();
 
@@ -181,7 +187,7 @@ namespace InkyCal.Utils
 								canvas.DrawText(
 										options: options,
 										text: line.Trim()
-											.Replace("é", "e"), //Todo: make diacritics safe
+											.Replace("é", "e", StringComparison.OrdinalIgnoreCase), //Todo: make diacritics safe
 										font: font,
 										color: primaryColor,
 										location: new PointF(indent, y)
@@ -237,6 +243,11 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors)
 		{
+			if (sbErrors is null)
+			
+				throw new ArgumentNullException(nameof(sbErrors));
+			
+
 			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
 		}
 

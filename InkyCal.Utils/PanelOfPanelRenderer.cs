@@ -24,8 +24,10 @@ namespace InkyCal.Utils
 			this.pp = pp;
 		}
 
+
 		/// <inheritdoc/>
 		/// <returns>A panel with nested panels</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-log and do something logic")]
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			colors.ExtractMeaningFullColors(
@@ -53,7 +55,7 @@ namespace InkyCal.Utils
 				{
 
 					var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
-											? height / panels.Count()
+											? height / panels.Count
 											: height * ((float)panel.Ratio / totalPanelRatio));
 
 					if (subPanelHeight == 0)

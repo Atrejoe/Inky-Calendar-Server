@@ -28,7 +28,7 @@ namespace InkyCal.Server.Areas.Identity
             : base(loggerFactory)
         {
             _scopeFactory = scopeFactory;
-            _options = optionsAccessor.Value;
+            _options = optionsAccessor?.Value ?? new IdentityOptions() { };
         }
 
         protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(30);
@@ -36,8 +36,11 @@ namespace InkyCal.Server.Areas.Identity
         protected override async Task<bool> ValidateAuthenticationStateAsync(
             AuthenticationState authenticationState, CancellationToken cancellationToken)
         {
-            // Get the user manager from a new scope to ensure it fetches fresh data
-            var scope = _scopeFactory.CreateScope();
+			if (authenticationState is null)
+				throw new ArgumentNullException(nameof(authenticationState));
+			
+			// Get the user manager from a new scope to ensure it fetches fresh data
+			var scope = _scopeFactory.CreateScope();
             try
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();

@@ -24,6 +24,12 @@ namespace InkyCal.Server.Controllers
 		/// <returns></returns>
 		public static ActionResult Image(this ControllerBase controller, Image image)
 		{
+			if (controller is null)
+				throw new ArgumentNullException(nameof(controller));
+			if (image is null)
+				throw new ArgumentNullException(nameof(image));
+			
+
 			using var stream = new MemoryStream();
 			image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
 			return controller.File(
@@ -70,6 +76,10 @@ namespace InkyCal.Server.Controllers
 			Color[] colors,
 			RotateMode rotateMode)
 		{
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+			
+
 			IPanelRenderer.Log conditionalLog = (Exception ex, bool handled, string explanation) =>
 			{
 				if (handled)

@@ -10,6 +10,9 @@ namespace InkyCal.Data
 
 		public static async Task<User> GetUser(this IdentityUser identityUser)
 		{
+			if (identityUser is null)
+				return null;
+
 			return await GetUser(identityUser.Id);
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -41,12 +42,18 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		protected override void ReadConfig(WeatherPanel panel)
 		{
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+
+
 			this.token = panel.Token;
 			this.city = panel.Location;
 		}
 
+
 		/// <inheritdoc/>
 		/// <returns>A panel with weather information</returns>
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
 		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
@@ -107,7 +114,8 @@ namespace InkyCal.Utils
 				using (var util = new Weather.Util(token))
 					weather = await util.GetForeCast(city);
 			}
-			catch (Weather.WeatherAPIRequestFailure ex) {
+			catch (Weather.WeatherAPIRequestFailureException ex)
+			{
 				var explanation = "Weather service indicated API authentication failure failure";
 				log?.Invoke(ex, true, explanation);
 

@@ -13,15 +13,15 @@ namespace InkyCal.Data
 		}
 
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-		{ 
+		{
 		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			
+
 			optionsBuilder.UseSqlServer(
-				InkyCal.Server.Config.Config.ConnectionString, 
-				options=> 
+				InkyCal.Server.Config.Config.ConnectionString,
+				options =>
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
 			base.OnConfiguring(optionsBuilder);
@@ -29,11 +29,15 @@ namespace InkyCal.Data
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
+			if (builder is null)
+				throw new System.ArgumentNullException(nameof(builder));
+
+
 			base.OnModelCreating(builder);
 
 			builder.Entity<Panel>();
 			builder.Entity<CalendarPanel>();
-			
+
 			builder.Entity<CalendarPanelUrl>()
 				.HasOne(x => x.Panel)
 				.WithMany(x => x.CalenderUrls)
@@ -48,7 +52,7 @@ namespace InkyCal.Data
 			builder.Entity<SubPanel>()
 				   .HasOne(x => x.Panel)
 				   .WithMany()
-				   .HasForeignKey(x=>x.IdPanel)
+				   .HasForeignKey(x => x.IdPanel)
 				   .OnDelete(DeleteBehavior.NoAction);
 
 			builder.Entity<SubPanel>()
@@ -59,11 +63,11 @@ namespace InkyCal.Data
 				.HasConversion<string>();
 
 			builder.Entity<ImagePanel>()
-				.Property(x=>x.Path)
+				.Property(x => x.Path)
 				.HasConversion<string>();
 
 			builder.Entity<User>()
-				.HasIndex(x=>x.IdentityUserId).IsUnique();
+				.HasIndex(x => x.IdentityUserId).IsUnique();
 
 
 			builder.Entity<WeatherPanel>();
