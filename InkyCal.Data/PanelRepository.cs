@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -82,6 +82,17 @@ namespace InkyCal.Data
 
 						pp.Panels.Clear();
 					}
+					else if (panel is CalendarPanel cp)
+					{
+						//Remove existing calendar links
+						var existingLinks = await c.Set<CalendarPanelUrl>()
+							.AsNoTracking()
+							.Where(x => x.IdPanel == panel.Id).ToListAsync();
+
+						var entities = existingLinks.Where(x => !cp.CalenderUrls.ToList().Any(y => y.Url == x.Url));
+
+						c.RemoveRange(entities);
+					}
 				}
 
 				c.Update(panel);
@@ -149,7 +160,7 @@ namespace InkyCal.Data
 					.Include(x => (x as PanelOfPanels).Panels)
 						.ThenInclude(x => x.Panel)
 						.ThenInclude(x => (x as CalendarPanel).CalenderUrls);
-								
+
 		}
 	}
 }
