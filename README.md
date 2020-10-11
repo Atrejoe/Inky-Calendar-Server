@@ -1,3 +1,5 @@
+![Build and test](https://github.com/Atrejoe/Inky-Calendar-Server/workflows/Build%20and%20test/badge.svg)
+
 # Inky-Calendar Server
 
 An easy-to-configure, web-based image generator to supply E-Ink compatible panels to [Inky-Calendar](https://github.com/aceisace/Inky-Calendar) (or any other E-ink display).
