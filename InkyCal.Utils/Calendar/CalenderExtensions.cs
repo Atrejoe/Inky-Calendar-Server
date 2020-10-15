@@ -49,8 +49,21 @@ namespace InkyCal.Utils.Calendar
 								new Event()
 								{
 									Date = date,
-									Start = x.IsAllDay ? null : (TimeSpan?)x.Start.AsDateTimeOffset.TimeOfDay,
-									End = x.IsAllDay ? null : (TimeSpan?)x.End.AsDateTimeOffset.TimeOfDay,
+									//This needs clearer thought:
+									//The calender is set to a time zone
+									//Events can be in a specific timezone and can have a location
+									//Display of events often have the perspective from a specific time zone.
+									Start = x.IsAllDay 
+											? null 
+											:(TimeSpan?)(x.Start.IsUtc
+												? x.Start.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
+												: x.Start.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+												) 
+												.TimeOfDay, 
+									End = x.IsAllDay ? null : (TimeSpan?)(x.End.IsUtc
+												? x.End.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
+												: x.End.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+												).TimeOfDay,
 									Summary = x.Summary,
 									CalendarName = (string)x.Calendar.Properties["X-WR-CALNAME"]?.Value
 								})
