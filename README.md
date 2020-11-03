@@ -10,6 +10,21 @@ To enjoy this as a service, see: [inkycal.robertsirre.nl](https://inkycal.robert
 
 [toc]
 
+## Why use InkyCal *server* at all?
+
+As an owner of an InkyCal panel you want to set up your panel once, and then forget about it. New features and bugfixes should come easy and for all  panels at once.
+
+![On the left: "traditional" InkyCal, on the right: InkyCal using InkyCal Server](Concept.png)
+
+> Note:  some features may still require an update on the PI,  think of pending features like: on-board webserver for configuration (instead of SSH) , managing panel refresh-types (maybe push-updates will supported)
+
+This service about:
+
+- reducing the hassle of updates
+- increasing panel-quality (centralized bug reporting)
+- speeding  up development of features
+- offloading costly operations away from a low-power PI zero. Maybe even lower-power, battery-operated devices will be supported.
+
 ## Why would I run this myself?
 
 There are a few good reasons to want to run this small server by yourself:
