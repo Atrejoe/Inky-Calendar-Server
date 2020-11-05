@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.ImageSharp.Formats.Png;
@@ -13,13 +14,16 @@ namespace InkyCal.Utils.Tests
 
 		protected abstract T GetRenderer();
 
-		[SkippableFact]
-		public async Task GetImageTest()
+		[Theory]
+		[InlineData(DisplayModel.epd_7_in_5_v2_colour)]
+		[InlineData(DisplayModel.epd_7_in_5_v3_colour)]
+		public async Task GetImageTest(DisplayModel displayModel)
 		{
 			//arrange
+			//const DisplayModel displayModel = DisplayModel.epd_7_in_5_v3_colour;
 			var panel = GetRenderer();
-			var filename = $"GetImageTest_{typeof(T).Name}.png";
-			DisplayModel.epd_7_in_5_v2_colour.GetSpecs(out var width, out var height, out var colors);
+			var filename = $"GetImageTest_{typeof(T).Name}_{displayModel}.png";
+			displayModel.GetSpecs(out var width, out var height, out var colors);
 
 			IPanelRenderer.Log assertHandledOnly = (Exception ex, bool handled, string explanation) =>
 			{
@@ -39,13 +43,24 @@ namespace InkyCal.Utils.Tests
 
 			//act
 			var image = await panel.GetImage(
-								width: height, 
-								height: width, 
+								width: height,
+								height: width,
 								colors: colors,
 								assertHandledOnly);
 
+			var bitmap = image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+
 			//assert
 			Assert.NotNull(image);
+
+			var pixels = Enumerable.Range(0, bitmap.Width - 1)
+				.SelectMany(x =>
+				{
+					return Enumerable.Range(0, bitmap.Height - 1).Select(y => bitmap[x, y]);
+				}).ToHashSet();
+
+			Trace.WriteLine($"{pixels.Count:n0} distinct colors in the image, a palette of {colors.Length:n0} colors was specified.");
+			Assert.False(pixels.Count > colors.Length, $"{pixels.Count:n0} distinct colors in the image, while a palette of {colors.Length:n0} was specified.");
 
 			using var fileStream = File.Create(filename);
 			image.Save(fileStream, new PngEncoder());
