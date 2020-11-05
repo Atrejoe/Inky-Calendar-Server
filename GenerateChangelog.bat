@@ -11,5 +11,6 @@ tools\changelog\changelog.exe ^
  --verbosity Info ^
  --repositoryurl "https://github.com/Atrejoe/Inky-Calendar-Server/commit/{0}" ^
  --filename "changelog" ^
+ --branch_master main ^
  --outputformat Markdown ^
  --releasename "%name%"
