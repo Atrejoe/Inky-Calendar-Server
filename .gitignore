@@ -6,3 +6,5 @@ obj
 *.ncrunchsolution
 _NCrunch_*
 sqlserver/
+
+tools/
