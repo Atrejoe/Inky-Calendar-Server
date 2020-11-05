@@ -193,9 +193,12 @@ namespace InkyCal.Utils
 										location: new PointF(indent, y)
 										);
 
-								//Invert all day indicator
-								if (item.IsAllDay)
+								//Hilight special segments
+								if (item.IsAllDay
+								|| (item.IsNow() && backgroundColor != supportColor) //Only highlight now when the highlight color is distinct from 'all day'
+								)
 								{
+									//Fill the boundary of the time indication
 									var period = DescribePeriod(item);
 									var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
 
@@ -206,9 +209,17 @@ namespace InkyCal.Utils
 										(int)periodBounds.Height + 2
 										);
 
-									canvas.Invert(rectangle);
-								}
+									canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle);
 
+									// Write the time indication again, but in the background color (this is part of line (== DescribeEvent))
+									canvas.DrawText(
+										options: options,
+										text: period,
+										font: font,
+										color: backgroundColor,
+										location: new PointF(indent, y)
+										);
+								}
 
 								y += textHeight;
 							}
@@ -244,9 +255,9 @@ namespace InkyCal.Utils
 		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors)
 		{
 			if (sbErrors is null)
-			
+
 				throw new ArgumentNullException(nameof(sbErrors));
-			
+
 
 			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
 		}

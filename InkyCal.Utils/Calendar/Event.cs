@@ -127,5 +127,15 @@ namespace InkyCal.Utils.Calendar
 		{
 			return !(left == right);
 		}
+
+		/// <summary>
+		/// Indicated if the event is now.
+		/// </summary>
+		/// <returns></returns>
+		public bool IsNow()
+		{
+			return Date.Add(Start.GetValueOrDefault()) <= DateTime.Now
+				&& Date.Add(End.GetValueOrDefault())   >= DateTime.Now;
+		}
 	}
 }
