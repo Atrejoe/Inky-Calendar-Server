@@ -63,6 +63,15 @@ namespace InkyCal.Utils
 							}
 						}
 					}
+
+					//Identify authenticated user (this is a gamble)
+					var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
+					if (identity != null) {
+						report.Event.User = new Bugsnag.Payload.User
+						{
+							Name = identity.Name
+						};
+					}
 				});
 			}
 		}
