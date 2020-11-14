@@ -59,13 +59,13 @@ namespace InkyCal.Utils
 			in report.OriginalException
 				.GetType()
 				.GetProperties()
-				.Where(p=>p.CanRead)
+				.Where(p=>p.CanRead && !p.Name.Equals(nameof(System.Exception.StackTrace)))
 				.Where(x => typeof(System.Exception).IsAssignableFrom(x.DeclaringType))
 			)
 			{
 				try
 				{
-					report.Event.Metadata.AddToPayload(p.Name, p.GetValue(report.OriginalException));
+					report.Event.Metadata.AddToPayload(p.Name, p.GetValue(report.OriginalException) ??  "null");
 				}
 				catch (System.Exception pv)
 				{
