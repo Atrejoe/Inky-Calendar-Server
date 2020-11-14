@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Bugsnag;
 using Bugsnag.AspNet.Core;
 using InkyCal.Data;
 using InkyCal.Server.Areas.Identity;
+using InkyCal.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -45,10 +45,14 @@ namespace InkyCal.Server
 			//});
 
 			if (!string.IsNullOrEmpty(Config.Config.BugSnagAPIKey))
+			{
 				services.AddBugsnag(configuration =>
 				{
 					configuration.ApiKey = Config.Config.BugSnagAPIKey;
 				});
+
+				Bugsnag.InternalMiddleware.AttachGlobalMetadata = PerformanceMonitor.FillReport;
+			}
 
 			services.AddMvc()
 				.AddJsonOptions(options =>
@@ -127,7 +131,12 @@ namespace InkyCal.Server
 				c.IncludeXmlComments(xmlPath, true);
 			});
 
-			Utils.PerformanceMonitor.Log(new Exception("Application has started"));
+			try {
+				throw new ApplicationException("Application has started");
+			}
+			catch(ApplicationException ex){
+				ex.Log();
+			}
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

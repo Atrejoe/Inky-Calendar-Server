@@ -38,42 +38,58 @@ namespace InkyCal.Utils
 			}
 			else
 			{
-				Console.WriteLine($"Logging error to bugsnag : {ex.Message}");
-				_bugsnag.Notify(ex, Severity.Error, (report) =>
-				{
-					//List exception properties (this is not done by BugSnag for some reason)
-					foreach (var p
-					in ex
-						.GetType()
-						.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.GetProperty)
-						//.Where(x => !x.DeclaringType.Equals(typeof(System.Exception)))
-						.Where(x => typeof(System.Exception).IsAssignableFrom(x.DeclaringType))
-					)
-					{
-						try
-						{
-							report.Event.Metadata.AddToPayload(p.Name, p.GetValue(ex));
-						}
-						catch (System.Exception pv) {
-							try
-							{
-								report.Event.Metadata.AddToPayload(p.Name, $"Failure to obtain value: {pv.Message}");
-							}
-							finally {
-							}
-						}
-					}
-
-					//Identify authenticated user (this is a gamble)
-					var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
-					if (identity != null) {
-						report.Event.User = new Bugsnag.Payload.User
-						{
-							Name = identity.Name
-						};
-					}
-				});
+				Console.Error.WriteLine($"Logging error to bugsnag : {ex.Message}");
+				_bugsnag.Notify(ex, Severity.Error, FillReport);
 			}
+		}
+
+		/// <summary>
+		/// Fills the report.
+		/// </summary>
+		/// <param name="report">The report.</param>
+
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+		public static void FillReport(Report report)
+		{
+			if (report is null)
+				return;
+
+			//List exception properties (this is not done by BugSnag for some reason)
+			foreach (var p
+			in report.OriginalException
+				.GetType()
+				.GetProperties()
+				.Where(p=>p.CanRead)
+				.Where(x => typeof(System.Exception).IsAssignableFrom(x.DeclaringType))
+			)
+			{
+				try
+				{
+					report.Event.Metadata.AddToPayload(p.Name, p.GetValue(report.OriginalException));
+				}
+				catch (System.Exception pv)
+				{
+					try
+					{
+						report.Event.Metadata.AddToPayload(p.Name, $"Failure to obtain value: {pv.Message}");
+					}
+					finally
+					{
+					}
+				}
+			}
+
+			//Identify authenticated user (this is a gamble)
+			var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
+			if (identity != null)
+			{
+				report.Event.User = new Bugsnag.Payload.User
+				{
+					Name = identity.Name
+				};
+			}
+
+			Console.Error.WriteLine($"Extended report");
 		}
 	}
 }
