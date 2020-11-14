@@ -53,13 +53,13 @@ namespace InkyCal.Utils.Calendar
 									//The calender is set to a time zone
 									//Events can be in a specific timezone and can have a location
 									//Display of events often have the perspective from a specific time zone.
-									Start = x.IsAllDay 
-											? null 
-											:(TimeSpan?)(x.Start.IsUtc
+									Start = x.IsAllDay
+											? null
+											: (TimeSpan?)(x.Start.IsUtc
 												? x.Start.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
 												: x.Start.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
-												) 
-												.TimeOfDay, 
+												)
+												.TimeOfDay,
 									End = x.IsAllDay ? null : (TimeSpan?)(x.End.IsUtc
 												? x.End.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
 												: x.End.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
@@ -144,33 +144,34 @@ namespace InkyCal.Utils.Calendar
 		private static async Task<Ical.Net.Calendar> LoadCachedCalendar(Uri iCalUrl)
 		{
 
-			if (!_cache.TryGetValue(iCalUrl.ToString(), out Ical.Net.Calendar cacheEntry))// Look for cache key.
+			//Cache http response, not the calendar
+			if (!_cache.TryGetValue(iCalUrl.ToString(), out string content))// Look for cache key.
 			{
-				// Key not in cache, so get data.
-				var content = await LoadCalendarContent(iCalUrl);
-
-				try
-				{
-					cacheEntry = Ical.Net.Calendar.Load(content);
-				}
-				catch (Exception ex)
-				{
-					ex.Data.Add("RawCalendarContent", content);
-					ex.Log();
-					throw;
-				}
-
 				var cacheEntryOptions = new MemoryCacheEntryOptions()
 					.SetSize(1)
 					// Remove from cache after this time, regardless of sliding expiration
 					.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
+				// Key not in cache, so get data.
+				content = await LoadCalendarContent(iCalUrl);
+
 				// Save data in cache.
-				_cache.Set(iCalUrl.ToString(), cacheEntry, cacheEntryOptions);
+				_cache.Set(iCalUrl.ToString(), content, cacheEntryOptions);
 			}
 
-			return cacheEntry;
+			try
+			{
+				return LoadCalendar(content);
+			}
+			catch (Exception ex)
+			{
+				ex.Data.Add("RawCalendarContent", content);
+				ex.Log();
+				throw;
+			}
 		}
+
+		internal static Ical.Net.Calendar LoadCalendar(string content) => Ical.Net.Calendar.Load(content);
 
 		private static async Task<string> LoadCalendarContent(Uri iCalUrl)
 		{
@@ -181,4 +182,5 @@ namespace InkyCal.Utils.Calendar
 			return await request.Content.ReadAsStringAsync();
 		}
 	}
+
 }
