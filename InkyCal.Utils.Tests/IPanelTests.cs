@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,14 @@ namespace InkyCal.Utils.Tests
 
 		protected abstract T GetRenderer();
 
+		public static IEnumerable<object[]> DisplayModels() {
+			return Enum.GetValues(typeof(DisplayModel))
+				.Cast<DisplayModel>()
+				.Select(x => new object[] { x });
+		}
+
 		[Theory]
-		[InlineData(DisplayModel.epd_7_in_5_v2_colour)]
-		[InlineData(DisplayModel.epd_7_in_5_v3_colour)]
+		[MemberData(nameof(DisplayModels))]
 		public async Task GetImageTest(DisplayModel displayModel)
 		{
 			//arrange
