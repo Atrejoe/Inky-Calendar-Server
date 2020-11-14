@@ -30,8 +30,4 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Calender\" />
-  </ItemGroup>
-
 </Project>
