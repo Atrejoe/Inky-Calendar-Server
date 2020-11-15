@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Bugsnag;
@@ -59,13 +61,29 @@ namespace InkyCal.Utils
 			in report.OriginalException
 				.GetType()
 				.GetProperties()
-				.Where(p=>p.CanRead && !p.Name.Equals(nameof(System.Exception.StackTrace)))
+				.Where(p => p.CanRead && !p.Name.Equals(nameof(System.Exception.StackTrace)))
 				.Where(x => typeof(System.Exception).IsAssignableFrom(x.DeclaringType))
 			)
 			{
 				try
 				{
-					report.Event.Metadata.AddToPayload(p.Name, p.GetValue(report.OriginalException) ??  "null");
+					var value = p.GetValue(report.OriginalException);
+					object serialiazableValue;
+					if (value is null)
+						serialiazableValue = "null";
+					else if (value is IDictionary d)
+					{
+						var sd = new Dictionary<string, string>();
+						var e = d.GetEnumerator();
+						while (e.MoveNext())
+							sd[e.Key.ToString()] = e.Value?.ToString() ?? "null";
+
+						serialiazableValue = sd;
+					}
+					else
+						serialiazableValue = value.ToString();
+
+					report.Event.Metadata.AddToPayload(p.Name, serialiazableValue);
 				}
 				catch (System.Exception pv)
 				{
