@@ -27,8 +27,9 @@ namespace InkyCal.Utils
 		/// Logs the specified exception to all registered exception handlers.
 		/// </summary>
 		/// <param name="ex">The ex.</param>
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-		public static void Log(this System.Exception ex)
+		/// <param name="user">The authrnticated user, if any</param>
+		/// <param name="severity"></param>
+		public static void Log(this System.Exception ex, Models.User user = null, Severity severity = Severity.Error)
 		{
 			if (ex is null)
 				return;
@@ -41,7 +42,7 @@ namespace InkyCal.Utils
 			else
 			{
 				Console.Error.WriteLine($"Logging error to bugsnag : {ex.Message}");
-				_bugsnag.Notify(ex, Severity.Error, FillReport);
+				_bugsnag.Notify(ex, severity, (report)=>FillReport(report, user));
 			}
 		}
 
@@ -49,9 +50,10 @@ namespace InkyCal.Utils
 		/// Fills the report.
 		/// </summary>
 		/// <param name="report">The report.</param>
+		/// <param name="user"></param>
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-		public static void FillReport(Report report)
+		public static void FillReport(Report report, InkyCal.Models.User user = null)
 		{
 			if (report is null)
 				return;
@@ -97,14 +99,22 @@ namespace InkyCal.Utils
 				}
 			}
 
-			//Identify authenticated user (this is a gamble)
-			var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
-			if (identity != null)
-			{
+			if (!(user is null))
 				report.Event.User = new Bugsnag.Payload.User
 				{
-					Name = identity.Name
+					Id = $"{user.Id}"
 				};
+			else
+			{
+				//Identify authenticated user (this is a gamble)
+				var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
+				if (identity != null)
+				{
+					report.Event.User = new User
+					{
+						Name = identity.Name
+					};
+				}
 			}
 
 			Console.Error.WriteLine($"Extended report");

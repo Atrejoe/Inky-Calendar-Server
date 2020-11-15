@@ -104,14 +104,14 @@ namespace InkyCal.Utils.Calendar
 						var messageDisplayed = $"Failed to obtain calender {index + 1} data:\n{ex.Message}";
 						errors?.AppendLine(messageDisplayed);
 						ex.Data.Add("Message displayed", messageDisplayed);
-						ex.Log();
+						ex.Log(severity: Bugsnag.Severity.Warning);
 					}
 					catch (SerializationException ex)
 					{
 						var messageDisplayed = $"Failed to parse calender {index + 1} data:\n{ex.Message}";
 						errors?.AppendLine(messageDisplayed);
 						ex.Data.Add("Message displayed", messageDisplayed);
-						ex.Log();
+						ex.Log(severity: Bugsnag.Severity.Warning);
 					}
 					catch (Exception ex)
 					{
@@ -166,7 +166,7 @@ namespace InkyCal.Utils.Calendar
 			catch (Exception ex)
 			{
 				ex.Data.Add("RawCalendarContent", content);
-				ex.Log();
+				ex.Log(severity: Bugsnag.Severity.Warning);
 				throw;
 			}
 		}

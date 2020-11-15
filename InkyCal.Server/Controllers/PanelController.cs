@@ -1,12 +1,11 @@
-﻿using InkyCal.Models;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using InkyCal.Models;
 using InkyCal.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp.Processing;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace InkyCal.Server.Controllers
 {
@@ -14,7 +13,7 @@ namespace InkyCal.Server.Controllers
 	/// <summary>
 	/// A controller for retuning Inkycal panels
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
+	/// <seealso cref="ControllerBase" />
 	[Route("panel")]
 	[ApiController]
 	public class PanelController : ControllerBase

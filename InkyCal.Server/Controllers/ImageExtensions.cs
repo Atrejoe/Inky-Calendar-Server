@@ -1,12 +1,14 @@
-﻿using InkyCal.Models;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using InkyCal.Models;
 using InkyCal.Utils;
 using Microsoft.AspNetCore.Mvc;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Processing;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using SixLabors.Primitives;
 
 namespace InkyCal.Server.Controllers
 {
@@ -28,7 +30,7 @@ namespace InkyCal.Server.Controllers
 				throw new ArgumentNullException(nameof(controller));
 			if (image is null)
 				throw new ArgumentNullException(nameof(image));
-			
+
 
 			using var stream = new MemoryStream();
 			image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
@@ -47,7 +49,7 @@ namespace InkyCal.Server.Controllers
 		/// <param name="requestedHeight"></param>
 		/// <param name="rotateMode"></param>
 		/// <returns></returns>
-		public static async Task<ActionResult> Image(this ControllerBase controller, IPanelRenderer panel, DisplayModel model, int? requestedWidth = null, int? requestedHeight = null, 
+		public static async Task<ActionResult> Image(this ControllerBase controller, IPanelRenderer panel, DisplayModel model, int? requestedWidth = null, int? requestedHeight = null,
 			RotateMode rotateMode = RotateMode.None)
 		{
 			model.GetSpecs(out var width, out var height, out var colors);
@@ -58,41 +60,67 @@ namespace InkyCal.Server.Controllers
 			return await controller.Image(panel, requestedWidth ?? height, requestedHeight ?? width, colors, rotateMode);
 		}
 
+
 		/// <summary>
 		/// Returns a <see cref="FileContentResult"/> from <see cref="IPanelRenderer.GetImage"/> with specific dimensions and color space.
 		/// </summary>
 		/// <param name="controller"></param>
-		/// <param name="panel"></param>
+		/// <param name="panelRenderer"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="colors"></param>
 		/// <param name="rotateMode"></param>
 		/// <returns></returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
 		public static async Task<ActionResult> Image(
 			this ControllerBase controller,
-			IPanelRenderer panel,
+			IPanelRenderer panelRenderer,
 			int width,
 			int height,
 			Color[] colors,
 			RotateMode rotateMode)
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
-			
+			if (panelRenderer is null)
+				throw new ArgumentNullException(nameof(panelRenderer));
 
-			IPanelRenderer.Log conditionalLog = (Exception ex, bool handled, string explanation) =>
+
+			IPanelRenderer.Log conditionalLog = async (Exception ex, bool handled, string explanation) =>
 			{
 				if (handled)
 					Console.WriteLine($"{explanation ?? "Handled exception"}: {ex.Message}");
 				else
 				{
-					ex.Log();
+					var user = await controller.GetAuthenticatedUser();
+					ex.Log(user);
 				}
 			};
 
-			using var image = await panel.GetImage(width, height, colors, conditionalLog);
-			image.Mutate(x => x.Rotate(rotateMode));
-			return controller.Image(image);
+			try
+			{
+				using var image = await panelRenderer.GetImage(width, height, colors, conditionalLog);
+				image.Mutate(x => x.Rotate(rotateMode));
+				return controller.Image(image);
+			}
+			catch (Exception ex)
+			{
+
+				ex.Data["PanelRendererType"] = panelRenderer.GetType().Name;
+				ex.Log();
+
+				colors.ExtractMeaningFullColors(
+					 out var primaryColor
+					, out var supportColor
+					, out var errorColor
+					, out var backgroundColor
+					);
+
+				using var image = PanelRenderHelper.CreateImage(width, height, backgroundColor);
+				image.Mutate(x =>
+					{
+						x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, 0));
+					});
+				return controller.Image(image);
+			}
 		}
 	}
 }

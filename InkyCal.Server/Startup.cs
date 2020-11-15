@@ -51,7 +51,7 @@ namespace InkyCal.Server
 					configuration.ApiKey = Config.Config.BugSnagAPIKey;
 				});
 
-				Bugsnag.InternalMiddleware.AttachGlobalMetadata = PerformanceMonitor.FillReport;
+				Bugsnag.InternalMiddleware.AttachGlobalMetadata = (report)=>PerformanceMonitor.FillReport(report);
 			}
 
 			services.AddMvc()
@@ -135,7 +135,7 @@ namespace InkyCal.Server
 				throw new ApplicationException("Application has started");
 			}
 			catch(ApplicationException ex){
-				ex.Log();
+				ex.Log(severity : Bugsnag.Severity.Info);
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -27,7 +28,7 @@ namespace InkyCal.Utils
 
 		/// <inheritdoc/>
 		/// <returns>A panel with nested panels</returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-log and do something logic")]
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-log and do something logic")]
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			colors.ExtractMeaningFullColors(
@@ -83,7 +84,11 @@ namespace InkyCal.Utils
 					}
 					catch (Exception ex)
 					{
+						ex.Data["PanelType"] = panel.GetType().Name;
+						ex.Data["PanelId"] = panel.IdPanel;
+
 						ex.Log();
+
 						result.Mutate(x =>
 						{
 							x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, y));
