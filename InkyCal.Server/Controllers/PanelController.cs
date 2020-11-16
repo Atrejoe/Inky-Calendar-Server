@@ -186,6 +186,8 @@ namespace InkyCal.Server.Controllers
 
 			var renderer = panel.GetRenderer();
 
+			PerformanceMonitor.Trace($"Rendering panel {id}");
+
 			return await this.Image(
 							renderer,
 							model: model.Value,

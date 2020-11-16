@@ -69,7 +69,7 @@ namespace InkyCal.Utils
 			}
 			else
 			{
-				Console.Error.WriteLine($"Logging error to bugsnag : {ex.Message}");
+				Console.Error.WriteLine($"Logging error to Bugsnag : {ex.Message}");
 				_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
 			}
 		}
@@ -81,9 +81,9 @@ namespace InkyCal.Utils
 		{
 			//Write to console
 			if (metaData is null || !metaData.Any())
-				System.Diagnostics.Trace.WriteLine($"{message}");
+				Console.WriteLine($"{message}");
 			else
-				System.Diagnostics.Trace.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
+				Console.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
 
 			//Write as BugSnag breadcurmbs
 			if (_bugsnag == null)
