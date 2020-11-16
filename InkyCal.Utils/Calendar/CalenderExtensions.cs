@@ -125,8 +125,8 @@ namespace InkyCal.Utils.Calendar
 
 			await Task.WhenAll(tasks);
 
-			Trace.WriteLine($"Obtained calendars in {sw.Elapsed}");
-			Trace.WriteLine(errors?.ToString());
+			PerformanceMonitor.Trace($"Obtained calendars in {sw.Elapsed}");
+			PerformanceMonitor.Trace(errors?.ToString());
 
 			return calendars;
 		}

@@ -75,7 +75,16 @@ namespace InkyCal.Utils
 				if (colors is null)
 					colors = new[] { Color.White, Color.Black };
 
-				var image = Image.Load(await LoadCachedImage(imageUrl));
+				Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+				try
+				{
+					image = Image.Load(await LoadCachedImage(imageUrl));
+				}
+				catch (UnknownImageFormatException ex) {
+					ex.Data["ImageUrl"] = imageUrl;
+					throw;
+				}
+
 				image.Mutate(x => x
 					.Rotate(rotateImage)
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })

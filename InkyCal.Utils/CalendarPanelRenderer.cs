@@ -156,6 +156,15 @@ namespace InkyCal.Utils
 						{
 							//When summary is very long, cut if off
 							var line = DescribeEvent(item).Limit(500, " ...");
+
+							//Gain some metadata for logging purposes
+							var metaData = item.SerializeToDictionary();
+							metaData["DescribedEvent"] = line;
+							metaData["DescribedDay"] = day;
+							metaData["y"] = $"{y}";
+
+							PerformanceMonitor.Trace("Processing event", metaData);
+
 							try
 							{
 								var textHeight = (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;

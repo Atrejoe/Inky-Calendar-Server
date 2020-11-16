@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Bugsnag;
 using Bugsnag.Payload;
+using Newtonsoft.Json;
 
 namespace InkyCal.Utils
 {
@@ -13,6 +14,33 @@ namespace InkyCal.Utils
 	/// </summary>
 	public static class PerformanceMonitor
 	{
+		/// <summary>
+		/// Serialized any object to a <see cref="Dictionary{TKey, TValue}"/> of <see cref="string"/>, <see cref="string"/>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="obj">The object.</param>
+		/// <returns></returns>
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+		public static Dictionary<string, string> SerializeToDictionary<T>(this T obj)
+		{
+
+			return typeof(T)
+					.GetProperties()
+					.Where(x => x.CanRead)
+					.ToDictionary(
+						x => x.Name,
+						x =>
+						{
+							try
+							{
+								return x.GetValue(obj)?.ToString() ?? "null";
+							}
+							catch (System.Exception ex)
+							{
+								return $"Failed to obtaiun value: {ex.Message}";
+							}
+						});
+		}
 		private static readonly Client _bugsnag;
 
 		[SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Conditional initializatiop")]
@@ -42,8 +70,27 @@ namespace InkyCal.Utils
 			else
 			{
 				Console.Error.WriteLine($"Logging error to bugsnag : {ex.Message}");
-				_bugsnag.Notify(ex, severity, (report)=>FillReport(report, user));
+				_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
 			}
+		}
+
+		/// <summary>
+		/// Traces a message to the logger
+		/// </summary>
+		public static void Trace(string message, Dictionary<string, string> metaData = null)
+		{
+			//Write to console
+			if (metaData is null || !metaData.Any())
+				System.Diagnostics.Trace.WriteLine($"{message}");
+			else
+				System.Diagnostics.Trace.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
+
+			//Write as BugSnag breadcurmbs
+			if (_bugsnag == null)
+				return;
+
+			_bugsnag.Breadcrumbs
+			  .Leave(message, BreadcrumbType.Process, metaData); ;
 		}
 
 		/// <summary>
