@@ -6,6 +6,7 @@ using System.Linq;
 using Bugsnag;
 using Bugsnag.Payload;
 using Newtonsoft.Json;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
@@ -70,7 +71,10 @@ namespace InkyCal.Utils
 			else
 			{
 				Console.Error.WriteLine($"Logging error to Bugsnag : {ex.Message}");
-				_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
+
+				using (MiniProfiler.Current.Step("Reporting error to BugSnag"))
+					_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
+
 			}
 		}
 

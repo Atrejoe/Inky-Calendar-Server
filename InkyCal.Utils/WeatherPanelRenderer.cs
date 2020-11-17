@@ -7,6 +7,7 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
@@ -54,6 +55,7 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		/// <returns>A panel with weather information</returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
+		[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller is responsible for disposing result")]
 		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
@@ -109,42 +111,45 @@ namespace InkyCal.Utils
 			var weatherRendererOptions = textGraphicsOptions.ToRendererOptions(weatherFont);
 
 			Weather.RootObject weather;
-			try
-			{
-				using (var util = new Weather.Util(token))
-					weather = await util.GetForeCast(city);
-			}
-			catch (Weather.WeatherAPIRequestFailureException ex)
-			{
-				var explanation = "Weather service indicated API authentication failure failure";
-				log?.Invoke(ex, true, explanation);
 
-				result.Mutate(context =>
+			using (MiniProfiler.Current.Step($"Get weather for '{city}'"))
+				try
 				{
-					var y = 100;
-					context.RenderErrorMessage(
-						explanation,
-						errorColor, backgroundColor, ref y, width, rendererOptions);
-				});
-				return result;
-			}
-			catch (Exception ex)
-			{
-				log?.Invoke(ex, true, "Weather service responds with unauthorized");
+					using (var util = new Weather.Util(token))
+						weather = await util.GetForeCast(city);
+				}
+				catch (Weather.WeatherAPIRequestFailureException ex)
+				{
+					var explanation = "Weather service indicated API authentication failure failure";
+					log?.Invoke(ex, true, explanation);
 
-				result.Mutate(context =>
+					result.Mutate(context =>
+					{
+						var y = 100;
+						context.RenderErrorMessage(
+							explanation,
+							errorColor, backgroundColor, ref y, width, rendererOptions);
+					});
+					return result;
+				}
+				catch (Exception ex)
 				{
-					var y = 100;
-					context.RenderErrorMessage(
-						ex.Message.ToString(),
-						errorColor, backgroundColor, ref y, width, rendererOptions);
-				});
-				return result;
-			}
+					log?.Invoke(ex, true, "Weather service responds with unauthorized");
+
+					result.Mutate(context =>
+					{
+						var y = 100;
+						context.RenderErrorMessage(
+							ex.Message.ToString(),
+							errorColor, backgroundColor, ref y, width, rendererOptions);
+					});
+					return result;
+				}
 
 			var station = weather?.city;
 
-			result.Mutate(context =>
+			using (MiniProfiler.Current.Step("Draw weather panel"))
+				result.Mutate(context =>
 			{
 				var y = 0;
 				var locationInfo = $"{station?.name},{station?.country}";

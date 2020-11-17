@@ -12,6 +12,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
+using StackExchange.Profiling;
 using static InkyCal.Utils.FontHelper;
 
 namespace InkyCal.Utils
@@ -79,7 +80,10 @@ namespace InkyCal.Utils
 
 			var sbErrors = new StringBuilder();
 
-			var events = await GetEvents(sbErrors);
+			List<Event> events;
+			using (MiniProfiler.Current.Step("Gather events"))
+				events = await GetEvents(sbErrors);
+
 
 			var options_Date = new TextGraphicsOptions(false)
 			{
@@ -117,138 +121,142 @@ namespace InkyCal.Utils
 				var text = DescribeCalender(characterPerLine, events);
 				Trace.WriteLine(text);
 
-
 				//Group by day, then show events
-
 				var firstEntry = true;
-				events
-					.GroupBy(x => x.Date)
-					.OrderBy(x => x.Key)
-					.ToList()
-					.ForEach(x =>
-					{
-						if (y > height)
-							return;
 
-						var lineDrawn = false;
-
-						//Write the day part only once for all events within a day
-						var day = x.Key.Year == DateTime.Now.Year
-							? @$"{x.Key:ddd dd MMM} "
-							: @$"{x.Key:ddd dd MMM `yy} ";
-
-						var indentSize = day.Length;
-
-						int indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
-								   + 10; //Space of 10 pixels
-
-						var options = options_Date.Clone();
-						options.WrapTextWidth = width - indent;
-
-						var textMeasureOptions = options.ToRendererOptions(font);
-
-						//Then write each event, wrap the summary
-						x.OrderBy(x => x.Start)
-							.ThenBy(x => x.End)
-							.ThenBy(x => x.Summary)
-							.ToList()
-							.ForEach(item =>
+				using (MiniProfiler.Current.Step("Drawing events"))
+				{
+					events
+						.GroupBy(x => x.Date)
+						.OrderBy(x => x.Key)
+						.ToList()
+						.ForEach(x =>
 						{
-							//When summary is very long, cut if off
-							var line = DescribeEvent(item).Limit(500, " ...");
+							if (y > height)
+								return;
 
-							//Gain some metadata for logging purposes
-							var metaData = item.SerializeToDictionary();
-							metaData["DescribedEvent"] = line;
-							metaData["DescribedDay"] = day;
-							metaData["y"] = $"{y}";
+							var lineDrawn = false;
 
-							PerformanceMonitor.Trace("Processing event", metaData);
+							//Write the day part only once for all events within a day
+							var day = x.Key.Year == DateTime.Now.Year
+									? @$"{x.Key:ddd dd MMM} "
+									: @$"{x.Key:ddd dd MMM `yy} ";
 
-							try
+							var indentSize = day.Length;
+
+							int indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
+									   + 10; //Space of 10 pixels
+
+							var options = options_Date.Clone();
+							options.WrapTextWidth = width - indent;
+
+							var textMeasureOptions = options.ToRendererOptions(font);
+
+							using (MiniProfiler.Current.Step($"Drawing events for {x.Key:d}"))
+
+								//Then write each event, wrap the summary
+								x.OrderBy(x => x.Start)
+								.ThenBy(x => x.End)
+								.ThenBy(x => x.Summary)
+								.ToList()
+								.ForEach(item =>
 							{
-								var textHeight = (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+								//When summary is very long, cut if off
+								var line = DescribeEvent(item).Limit(500, " ...");
 
-								if (textHeight + y > height)
-									return;
+								//Gain some metadata for logging purposes
+								var metaData = item.SerializeToDictionary();
+								metaData["DescribedEvent"] = line;
+								metaData["DescribedDay"] = day;
+								metaData["y"] = $"{y}";
 
+								PerformanceMonitor.Trace("Processing event", metaData);
 
-								if (!lineDrawn)
-								{
-
-									if (firstEntry)
-										firstEntry = false;
-									else
-									{
-										//Draw a red line for each day
-										y += 4;
-
-										canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
-
-										firstEntry = false;
-									}
-
-									canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));
-
-									lineDrawn = true;
-								}
-
-								canvas.DrawText(
-										options: options,
-										text: line.Trim()
-											.Replace("é", "e", StringComparison.OrdinalIgnoreCase), //Todo: make diacritics safe
-										font: font,
-										color: primaryColor,
-										location: new PointF(indent, y)
-										);
-
-								//Hilight special segments
-								if (item.IsAllDay
-								|| (item.IsNow() && backgroundColor != supportColor) //Only highlight now when the highlight color is distinct from 'all day'
-								)
-								{
-									//Fill the boundary of the time indication
-									var period = DescribePeriod(item);
-									var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
-
-									var rectangle = new Rectangle(
-										indent - 2,
-										y + 5,
-										(int)periodBounds.Width + 4,
-										(int)periodBounds.Height + 2
-										);
-
-									canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle);
-
-									// Write the time indication again, but in the background color (this is part of line (== DescribeEvent))
-									canvas.DrawText(
-										options: options,
-										text: period,
-										font: font,
-										color: backgroundColor,
-										location: new PointF(indent, y)
-										);
-								}
-
-								y += textHeight;
-							}
-							catch (Exception ex)
-							{
-								ex.Log();
 								try
 								{
-									var error = $"Error: {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
-									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
-									canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
-									y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+									var textHeight = (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+
+									if (textHeight + y > height)
+										return;
+
+
+									if (!lineDrawn)
+									{
+
+										if (firstEntry)
+											firstEntry = false;
+										else
+										{
+											//Draw a red line for each day
+											y += 4;
+
+											canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
+
+											firstEntry = false;
+										}
+
+										canvas.DrawText(options_Date, day, font, primaryColor, new PointF(0, y));
+
+										lineDrawn = true;
+									}
+
+									canvas.DrawText(
+											options: options,
+											text: line.Trim()
+												.Replace("é", "e", StringComparison.OrdinalIgnoreCase), //Todo: make diacritics safe
+											font: font,
+											color: primaryColor,
+											location: new PointF(indent, y)
+											);
+
+									//Hilight special segments
+									if (item.IsAllDay
+										|| (item.IsNow() && backgroundColor != supportColor) //Only highlight now when the highlight color is distinct from 'all day'
+										)
+									{
+										//Fill the boundary of the time indication
+										var period = DescribePeriod(item);
+										var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
+
+										var rectangle = new Rectangle(
+											indent - 2,
+											y + 5,
+											(int)periodBounds.Width + 4,
+											(int)periodBounds.Height + 2
+											);
+
+										canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle);
+
+										// Write the time indication again, but in the background color (this is part of line (== DescribeEvent))
+										canvas.DrawText(
+												options: options,
+												text: period,
+												font: font,
+												color: backgroundColor,
+												location: new PointF(indent, y)
+												);
+									}
+
+									y += textHeight;
 								}
-								catch (Exception errorDisplayException)
+								catch (Exception ex)
 								{
-									errorDisplayException.Log();
+									ex.Log();
+									try
+									{
+										var error = $"Error: {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
+										y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+										canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
+										y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+									}
+									catch (Exception errorDisplayException)
+									{
+										errorDisplayException.Log();
+									}
 								}
-							}
+							});
 						});
-					});
+				}
 
 			});
 
@@ -264,9 +272,7 @@ namespace InkyCal.Utils
 		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors)
 		{
 			if (sbErrors is null)
-
 				throw new ArgumentNullException(nameof(sbErrors));
-
 
 			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
 		}

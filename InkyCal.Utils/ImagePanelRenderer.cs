@@ -3,6 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using SixLabors.Primitives;
+using StackExchange.Profiling;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,21 +28,26 @@ namespace InkyCal.Utils
 		private static async Task<byte[]> LoadCachedImage(Uri imageUrl)
 		{
 
-			if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
+			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
-				// Key not in cache, so get data.
-				cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
+				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
+				{
+					// Key not in cache, so get data.
+					using (MiniProfiler.Current.Step($"Image not in cache, loading from URL"))
+						cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
 
-				var cacheEntryOptions = new MemoryCacheEntryOptions()
-					.SetSize(cacheEntry.Length)
-					// Remove from cache after this time, regardless of sliding expiration
-					.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+					var cacheEntryOptions = new MemoryCacheEntryOptions()
+						.SetSize(cacheEntry.Length)
+						// Remove from cache after this time, regardless of sliding expiration
+						.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
-				// Save data in cache.
-				_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
+					// Save data in cache.
+					using (MiniProfiler.Current.Step($"Storing image in cache"))
+						_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
+				}
+
+				return cacheEntry;
 			}
-
-			return cacheEntry;
 		}
 
 		/// <summary>
@@ -85,7 +91,8 @@ namespace InkyCal.Utils
 					throw;
 				}
 
-				image.Mutate(x => x
+				using (MiniProfiler.Current.Step($"Resizing image and reducing image palette"))
+					image.Mutate(x => x
 					.Rotate(rotateImage)
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })
 					.BackgroundColor(Color.White)
