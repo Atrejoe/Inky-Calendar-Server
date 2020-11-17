@@ -1,10 +1,14 @@
 ﻿using Ical.Net;
 using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 using Microsoft.Extensions.Caching.Memory;
+using StackExchange.Profiling;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
@@ -33,44 +37,98 @@ namespace InkyCal.Utils.Calendar
 				return items;
 			}
 
-			var calendars = await urls.GetCalendars(sbErrors);
+			CalendarCollection calendars;
+			using (MiniProfiler.Current.Step($"Gather {urls.Length:n0} calendars"))
+				calendars = await urls.GetCalendars(sbErrors);
 
 			var date = DateTime.Now.Date;
 
-			while (items.Count < 60 && date < DateTime.Now.AddYears(2))
+			using (MiniProfiler.Current.Step($"Gathering at most {60} events within 2 years"))
 			{
-				items.AddRange(calendars
-								.GetOccurrences(date)
-								.Select(x => x.Source)
-								.Cast<CalendarEvent>()
-								.Take(100)
-								.ToArray()
-								.Select(x =>
-								new Event()
-								{
-									Date = date,
-									//This needs clearer thought:
-									//The calender is set to a time zone
-									//Events can be in a specific timezone and can have a location
-									//Display of events often have the perspective from a specific time zone.
-									Start = x.IsAllDay
-											? null
-											: (TimeSpan?)(x.Start.IsUtc
-												? x.Start.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-												: x.Start.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
-												)
-												.TimeOfDay,
-									End = x.IsAllDay ? null : (TimeSpan?)(x.End.IsUtc
-												? x.End.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-												: x.End.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
-												).TimeOfDay,
-									Summary = x.Summary,
-									CalendarName = (string)x.Calendar.Properties["X-WR-CALNAME"]?.Value
-								})
-								.ToArray());
+				List<Occurrence> occurrences;
+				using (MiniProfiler.Current.Step($"Gathering occurrences between now {date:d}"))
+					occurrences = calendars.SelectMany(x =>
+							x.GetOccurrences(date, DateTime.Now.AddYears(2))).ToList();
 
-				date = date.AddDays(1);
+
+				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, 60 - items.Count):n0} events"))
+					items.AddRange(occurrences
+								//.Cast<CalendarEvent>()
+								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
+								.ToArray()
+								.SelectMany(x =>
+								{
+									//For multi-day periods, list each day within the period separately
+
+									var thisDate = date;
+									var result = new List<Event>();
+
+									Console.WriteLine($"{(x.Source as CalendarEvent)?.Summary} => {x.Period.StartTime.AsSystemLocal}-{x.Period.EndTime.AsSystemLocal}");
+
+									while (result.Count < 60
+									&& thisDate < x.Period.EndTime.AsSystemLocal)
+									{
+
+										var hasOverlap = thisDate < x.Period.EndTime.AsSystemLocal
+										&& thisDate >= x.Period.StartTime.AsSystemLocal.Date;
+
+										if (!hasOverlap)
+										{
+											thisDate = thisDate.AddDays(1);
+											continue;
+										}
+
+										Console.WriteLine($"Adding {thisDate.Date:d}");
+
+										var isAllDay = (x.Source as CalendarEvent).IsAllDay
+										|| (x.Period.StartTime.AsSystemLocal <= thisDate && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1));
+
+										var start = isAllDay
+														? null
+														: x.Period.StartTime.AsSystemLocal < thisDate
+															? TimeSpan.FromHours(0)
+															: (TimeSpan?)(x.Period.StartTime.IsUtc
+																? x.Period.StartTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
+																: x.Period.StartTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+																)
+																.TimeOfDay;
+										var end = isAllDay
+														? null
+														: x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+															? TimeSpan.FromHours(24)
+															: (TimeSpan?)(x.Period.EndTime.IsUtc
+																? x.Period.EndTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
+																: x.Period.EndTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+																).TimeOfDay;
+
+
+										result.Add(new Event()
+										{
+											Date = thisDate,
+											//This needs clearer thought:
+											//The calender is set to a time zone
+											//Events can be in a specific timezone and can have a location
+											//Display of events often have the perspective from a specific time zone.
+											Start = start,
+											End = end,
+											Summary = (x.Source as CalendarEvent)?.Summary,
+											CalendarName = (string)(x.Source as CalendarEvent)?.Properties["X-WR-CALNAME"]?.Value
+										});
+
+										thisDate = thisDate.AddDays(1);
+									}
+
+									return result;
+								})
+								.OrderBy(x => x.Date)
+								.ThenBy(x => x.Start)
+								.ThenBy(x => x.End)
+								.Take(60)
+								.ToArray()); ;
+
+				//date = date.AddDays(1);
 			}
+
 
 			if (!(items?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events in {urls?.Length:n0} calendars");
@@ -92,7 +150,7 @@ namespace InkyCal.Utils.Calendar
 
 			var calendars = new CalendarCollection();
 
-			var tasks = ICalUrls.Select((iCalUrl, index) =>
+			var tasks = ICalUrls.AsParallel().Select((iCalUrl, index) =>
 				Task.Run(async () =>
 				{
 					try
@@ -144,20 +202,23 @@ namespace InkyCal.Utils.Calendar
 		private static async Task<Ical.Net.Calendar> LoadCachedCalendar(Uri iCalUrl)
 		{
 
+			string content;
 			//Cache http response, not the calendar
-			if (!_cache.TryGetValue(iCalUrl.ToString(), out string content))// Look for cache key.
-			{
-				var cacheEntryOptions = new MemoryCacheEntryOptions()
-					.SetSize(1)
-					// Remove from cache after this time, regardless of sliding expiration
-					.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+			using (MiniProfiler.Current.Step($"Getting calendar content from cache"))
+				if (!_cache.TryGetValue(iCalUrl.ToString(), out content))// Look for cache key.
+				{
+					var cacheEntryOptions = new MemoryCacheEntryOptions()
+						.SetSize(1)
+						// Remove from cache after this time, regardless of sliding expiration
+						.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
-				// Key not in cache, so get data.
-				content = await LoadCalendarContent(iCalUrl);
+					using (MiniProfiler.Current.Step($"Calendar not in cache, getting from url"))
+						// Key not in cache, so get data.
+						content = await LoadCalendarContent(iCalUrl);
 
-				// Save data in cache.
-				_cache.Set(iCalUrl.ToString(), content, cacheEntryOptions);
-			}
+					// Save data in cache.
+					_cache.Set(iCalUrl.ToString(), content, cacheEntryOptions);
+				}
 
 			try
 			{
