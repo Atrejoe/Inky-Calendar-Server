@@ -7,6 +7,7 @@ using Bugsnag.AspNet.Core;
 using InkyCal.Data;
 using InkyCal.Server.Areas.Identity;
 using InkyCal.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -133,6 +134,7 @@ namespace InkyCal.Server
 				c.IncludeXmlComments(xmlPath, true);
 			});
 
+			
 			try
 			{
 				throw new ApplicationException("Application has started");
@@ -162,10 +164,33 @@ namespace InkyCal.Server
 				// (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
 				// (default is everyone can access profilers)
 				//options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
+				options.ResultsAuthorizeAsync = async request =>
+				{
+					var context = request.HttpContext;
+
+					var authResult = await context.AuthenticateAsync();
+					if (!authResult.Succeeded)
+						return false;
+
+					var claimsPrincipal = authResult.Principal;
+					return claimsPrincipal.Identity.IsAuthenticated;
+				};
 				//options.ResultsListAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
 				// Or, there are async versions available:
 				//options.ResultsListAuthorize = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfiler;
 				//options.ResultsListAuthorizeAsync = async request => (await MyGetUserFunctionAsync(request)).CanSeeMiniProfilerLists;
+
+				options.ResultsListAuthorizeAsync = async request =>
+				{
+					var context = request.HttpContext;
+
+					var authResult = await context.AuthenticateAsync();
+					if (!authResult.Succeeded)
+						return false;
+
+					var claimsPrincipal = authResult.Principal;
+					return claimsPrincipal.Identity.IsAuthenticated;
+				};
 
 				// (Optional)  To control which requests are profiled, use the Func<HttpRequest, bool> option:
 				// (default is everything should be profiled)
