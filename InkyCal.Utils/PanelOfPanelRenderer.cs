@@ -7,6 +7,7 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
@@ -33,9 +34,9 @@ namespace InkyCal.Utils
 		{
 			colors.ExtractMeaningFullColors(
 				out var primaryColor
-				,out var supportColor
-				,out var errorColor
-				,out var backgroundColor
+				, out var supportColor
+				, out var errorColor
+				, out var backgroundColor
 				);
 
 			var result = PanelRenderHelper.CreateImage(width, height, backgroundColor);
@@ -49,53 +50,70 @@ namespace InkyCal.Utils
 			}
 			else
 			{
-				var y = 0;
 				var panels = pp.Panels;
 				var totalPanelRatio = panels.Sum(x => x.Ratio);
-				foreach (var panel in panels.OrderBy(x => x.SortIndex))
-				{
 
-					var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
-											? height / panels.Count
-											: height * ((float)panel.Ratio / totalPanelRatio));
 
-					if (subPanelHeight == 0)
-						continue;
+				var y = 0;
+				var renderParameters = panels
+										.OrderBy(x => x.SortIndex)
+										.Select(panel =>
+											{
+											//Gather render parameters
+											var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
+																					? height / panels.Count
+																					: height * ((float)panel.Ratio / totalPanelRatio));
 
-					var renderer = panel.Panel.GetRenderer();
+															if (subPanelHeight == 0)
+																return null; //Don't render
+
+											var result = new
+															{
+																y,
+																subPanelHeight,
+																panel.Panel
+															};
+
+											//Keep track of start of next panel
+											y += subPanelHeight;
+
+												return result;
+											})
+										.Where(x => x != null);
+
+
+				foreach (var parameter in renderParameters.AsParallel()){
+
+					var panel = parameter.Panel;
+					var renderer = panel.GetRenderer();
 
 					try
 					{
-						var subImage = await renderer.GetImage(width, subPanelHeight, colors, log);
+						using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})")) {
 
-						result.Mutate(
-							x => x.DrawImage(subImage, new Point(0, y), 1f));
+							var subImage = await renderer.GetImage(width, parameter.subPanelHeight, colors, log);
 
-						//result.Mutate(x =>
-						//{
-						//	x.DrawText(
-						//		new TextGraphicsOptions(true) { 
-						//			WrapTextWidth = width }, 
-						//			panel.Panel.Name ?? string.Empty,
-						//			new Font(FontHelper.NotoSans, 16),
-						//			primaryColor, 
-						//			new Point(0, y));
-						//});
+							result.Mutate(
+								operation => operation.DrawImage(subImage, new Point(0, parameter.y), 1f));
+						}
 					}
 					catch (Exception ex)
 					{
 						ex.Data["PanelType"] = panel.GetType().Name;
-						ex.Data["PanelId"] = panel.IdPanel;
+						ex.Data["PanelId"] = panel.Id;
 
 						ex.Log();
 
-						result.Mutate(x =>
+						result.Mutate(operation =>
 						{
-							x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, y));
+							operation.DrawText(
+								options: new TextGraphicsOptions(true) { WrapTextWidth = width }, 
+								text: ex.Message, 
+								font: new Font(FontHelper.NotoSans, 16), 
+								color: errorColor, 
+								location: new Point(0, parameter.y));
 						});
 					}
-
-					y += subPanelHeight;
 				}
 			}
 
