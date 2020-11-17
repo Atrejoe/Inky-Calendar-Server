@@ -43,7 +43,7 @@ namespace InkyCal.Utils.Calendar
 								.GetOccurrences(date)
 								.Select(x => x.Source)
 								.Cast<CalendarEvent>()
-								.Take(1000)
+								.Take(100)
 								.ToArray()
 								.Select(x =>
 								new Event()
