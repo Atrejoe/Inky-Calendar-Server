@@ -159,7 +159,7 @@ namespace InkyCal.Server
 				(options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
 				// (Optional) Control which SQL formatter to use, InlineFormatter is the default
-				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
+				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData:true);
 
 				// (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
 				// (default is everyone can access profilers)
