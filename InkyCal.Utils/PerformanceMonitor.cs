@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using Bugsnag;
 using Bugsnag.Payload;
@@ -10,6 +11,7 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
 	/// <summary>
 	/// A helper class for logging and tracing
 	/// </summary>
@@ -38,10 +40,11 @@ namespace InkyCal.Utils
 							}
 							catch (System.Exception ex)
 							{
-								return $"Failed to obtaiun value: {ex.Message}";
+								return $"Failed to obtaiConsole.Writen value: {ex.Message}";
 							}
 						});
 		}
+
 		private static readonly Client _bugsnag;
 
 		[SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Conditional initializatiop")]
@@ -63,14 +66,27 @@ namespace InkyCal.Utils
 			if (ex is null)
 				return;
 
+			var fgColor = severity switch
+			{
+				Severity.Info => ConsoleColor.DarkGreen,
+				Severity.Warning => ConsoleColor.Yellow,
+				Severity.Error => ConsoleColor.Red,
+				_ => ConsoleColor.Red,
+			};
+
+			var severityAsString = $"{severity}".ToLower(CultureInfo.CurrentUICulture);
+
+			using (fgColor.TempForegroundColor())
+				Console.Write(severityAsString);
+
 			if (_bugsnag is null)
 			{
-				Console.Error.WriteLine($"Bugsnag not configured (API key: {Server.Config.Config.BugSnagAPIKey})");
+				Console.Error.WriteLine($": Bugsnag not configured (API key: {Server.Config.Config.BugSnagAPIKey})");
 				Console.Error.WriteLine(ex.ToString());
 			}
 			else
 			{
-				Console.Error.WriteLine($"Logging error to Bugsnag : {ex.Message}");
+				Console.Error.WriteLine($": Logging {severityAsString} to Bugsnag : {ex.Message}");
 
 				using (MiniProfiler.Current.Step("Reporting error to BugSnag"))
 					_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));

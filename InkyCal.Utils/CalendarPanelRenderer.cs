@@ -152,7 +152,7 @@ namespace InkyCal.Utils
 
 							var textMeasureOptions = options.ToRendererOptions(font);
 
-							using (MiniProfiler.Current.Step($"Drawing events for {x.Key:d}"))
+							using (MiniProfiler.Current.Step($"Drawing {x.Count():n0} events for {x.Key:d}"))
 
 								//Then write each event, wrap the summary
 								x.OrderBy(x => x.Start)

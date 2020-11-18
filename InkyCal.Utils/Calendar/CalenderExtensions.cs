@@ -43,29 +43,30 @@ namespace InkyCal.Utils.Calendar
 
 			var date = DateTime.Now.Date;
 
-			using (MiniProfiler.Current.Step($"Gathering at most {60} events within 2 years"))
+			const int maxEvents = 60;
+
+			using (MiniProfiler.Current.Step($"Gathering at most {maxEvents} events within 2 years"))
 			{
 				List<Occurrence> occurrences;
-				using (MiniProfiler.Current.Step($"Gathering occurrences between now {date:d}"))
+				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and "))
 					occurrences = calendars.SelectMany(x =>
 							x.GetOccurrences(date, DateTime.Now.AddYears(2))).ToList();
 
-
-				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, 60 - items.Count):n0} events"))
+				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, maxEvents):n0} events"))
 					items.AddRange(occurrences
-								//.Cast<CalendarEvent>()
 								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
 								.ToArray()
 								.SelectMany(x =>
 								{
 									//For multi-day periods, list each day within the period separately
 
+									if (!(x.Source is CalendarEvent calendarEvent))
+										return null;
+
 									var thisDate = date;
 									var result = new List<Event>();
 
-									Console.WriteLine($"{(x.Source as CalendarEvent)?.Summary} => {x.Period.StartTime.AsSystemLocal}-{x.Period.EndTime.AsSystemLocal}");
-
-									while (result.Count < 60
+									while (result.Count < maxEvents
 									&& thisDate < x.Period.EndTime.AsSystemLocal)
 									{
 
@@ -77,26 +78,26 @@ namespace InkyCal.Utils.Calendar
 											thisDate = thisDate.AddDays(1);
 											continue;
 										}
-
-										Console.WriteLine($"Adding {thisDate.Date:d}");
-
-										var isAllDay = (x.Source as CalendarEvent).IsAllDay
-										|| (x.Period.StartTime.AsSystemLocal <= thisDate && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1));
+										
+										var isAllDay = calendarEvent.IsAllDay
+										|| (x.Period.StartTime.AsSystemLocal <= thisDate 
+										 && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+										 );
 
 										var start = isAllDay
-														? null
+														? (TimeSpan?)null
 														: x.Period.StartTime.AsSystemLocal < thisDate
 															? TimeSpan.FromHours(0)
-															: (TimeSpan?)(x.Period.StartTime.IsUtc
+															: (x.Period.StartTime.IsUtc
 																? x.Period.StartTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
 																: x.Period.StartTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
 																)
 																.TimeOfDay;
 										var end = isAllDay
-														? null
+														? (TimeSpan?)null
 														: x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
 															? TimeSpan.FromHours(24)
-															: (TimeSpan?)(x.Period.EndTime.IsUtc
+															: (x.Period.EndTime.IsUtc
 																? x.Period.EndTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
 																: x.Period.EndTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
 																).TimeOfDay;
@@ -111,8 +112,8 @@ namespace InkyCal.Utils.Calendar
 											//Display of events often have the perspective from a specific time zone.
 											Start = start,
 											End = end,
-											Summary = (x.Source as CalendarEvent)?.Summary,
-											CalendarName = (string)(x.Source as CalendarEvent)?.Properties["X-WR-CALNAME"]?.Value
+											Summary = calendarEvent?.Summary,
+											CalendarName = (string)calendarEvent?.Properties["X-WR-CALNAME"]?.Value
 										});
 
 										thisDate = thisDate.AddDays(1);
@@ -123,10 +124,8 @@ namespace InkyCal.Utils.Calendar
 								.OrderBy(x => x.Date)
 								.ThenBy(x => x.Start)
 								.ThenBy(x => x.End)
-								.Take(60)
-								.ToArray()); ;
-
-				//date = date.AddDays(1);
+								.Take(maxEvents)
+								.ToArray());
 			}
 
 
