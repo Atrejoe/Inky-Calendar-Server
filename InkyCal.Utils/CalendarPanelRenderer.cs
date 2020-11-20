@@ -241,11 +241,15 @@ namespace InkyCal.Utils
 								}
 								catch (Exception ex)
 								{
+									ex.Data["DescribedEvent_Length"] = line?.Length;
+									ex.Data["DescribedEvent"] = line;
+									ex.Data["DescribedDay"] = day;
+									ex.Data["y"] = y;
 									ex.Log();
+
 									try
 									{
-										var error = $"Error: {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
-										y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+										var error = $"Error: ({ex.GetType().Name}) {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
 										canvas.DrawText(options, error, font, errorColor, new PointF(indent, y));
 										y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
 									}
