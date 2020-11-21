@@ -189,7 +189,7 @@ namespace InkyCal.Utils
 			foreach (var line in errorMessage.Split(Environment.NewLine))
 				trimmedErrorMessage.AppendLine(line.Limit(width,"..."));
 
-			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString(), renderOptions.Font, backgroundColor, pError);
+			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font), renderOptions.Font, backgroundColor, pError);
 
 			y += (int)errorMessageHeight.Height;
 		}
