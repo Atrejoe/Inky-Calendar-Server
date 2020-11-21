@@ -10,9 +10,9 @@ using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
 using static InkyCal.Utils.FontHelper;
 
@@ -168,14 +168,13 @@ namespace InkyCal.Utils
 
 
 
-			var options_Date = new TextGraphicsOptions(false)
-			{
+			var options_Date = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false}, new TextOptions(){ 
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrapTextWidth = width,
 				DpiX = 96,
 				DpiY = 96
-			};
+			});
 
 			var textRendererOptions_Date = options_Date.ToRendererOptions(font);
 
@@ -237,7 +236,7 @@ namespace InkyCal.Utils
 									   + 10; //Space of 10 pixels
 
 							var options = options_Date.Clone();
-							options.WrapTextWidth = width - indent;
+						options.TextOptions.WrapTextWidth = width - indent;
 
 							var textMeasureOptions = options.ToRendererOptions(font);
 

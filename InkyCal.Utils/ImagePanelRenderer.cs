@@ -1,13 +1,12 @@
-﻿using InkyCal.Models;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using InkyCal.Models;
 using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace InkyCal.Utils
 {

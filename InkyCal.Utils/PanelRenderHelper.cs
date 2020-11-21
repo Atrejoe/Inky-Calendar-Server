@@ -4,9 +4,9 @@ using System.Text;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
@@ -166,14 +166,15 @@ namespace InkyCal.Utils
 			int width,
 			Font font)
 		{
-			var rendererOptions = new TextGraphicsOptions(false)
-			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
-			}.ToRendererOptions(font);
+			var rendererOptions = new TextGraphicsOptions(
+				new GraphicsOptions() { Antialias = false }, 
+				new TextOptions() { 
+					HorizontalAlignment = HorizontalAlignment.Left, 
+					VerticalAlignment= VerticalAlignment.Top, 
+					WrapTextWidth = width,
+					DpiX =96, 
+					DpiY = 96 }
+				).ToRendererOptions(font);
 
 			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, rendererOptions);
 		}
@@ -193,10 +194,13 @@ namespace InkyCal.Utils
 
 			var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, renderOptions);
 
-			errorMessageHeight.Width = width;
-			errorMessageHeight.Height += 4; //Pad 2 px on all sides
-
-			canvas.Fill(errorColor, errorMessageHeight);
+			canvas.Fill(errorColor, 
+				new Rectangle(
+					(int)errorMessageHeight.X, 
+					(int)errorMessageHeight.Y, 
+					(int)errorMessageHeight.Width, 
+					(int)errorMessageHeight.Height+4)//Pad 2 px on all sides
+				);
 
 			var pError = new PointF(2, 2);//Adhere to padding
 

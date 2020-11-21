@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -124,14 +124,14 @@ namespace InkyCal.Utils
 			var textFont = new Font(FontHelper.MonteCarlo, 12);
 			var weatherFont = new Font(FontHelper.WeatherIcons, 40);
 
-			var textGraphicsOptions = new TextGraphicsOptions(false)
+			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
 			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrapTextWidth = width,
 				DpiX = 96,
 				DpiY = 96
-			};
+			});
 			var rendererOptions = textGraphicsOptions.ToRendererOptions(textFont);
 			var weatherRendererOptions = textGraphicsOptions.ToRendererOptions(weatherFont);
 

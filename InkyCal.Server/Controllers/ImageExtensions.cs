@@ -6,9 +6,9 @@ using InkyCal.Utils;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace InkyCal.Server.Controllers
 {
@@ -136,9 +136,22 @@ namespace InkyCal.Server.Controllers
 				using var image = PanelRenderHelper.CreateImage(width, height, backgroundColor);
 				image.Mutate(x =>
 					{
-						var z= x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, 0));
+						var z= x.DrawText(
+							new TextGraphicsOptions(new GraphicsOptions() { Antialias = false },
+							new TextOptions(){ WrapTextWidth = width }),
+							ex.Message.ToSafeChars(FontHelper.NotoSans), 
+							FontHelper.NotoSans.CreateFont(16), 
+							errorColor, new Point(0, 0));
+
 						var start = z.GetCurrentSize().Height;
-						x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.StackTrace, new Font(FontHelper.NotoSans, 14), primaryColor, new Point(0, start));
+						
+						x.DrawText(
+							new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, 
+							new TextOptions() { WrapTextWidth = width }),
+							ex.StackTrace,
+							FontHelper.NotoSans.CreateFont(14),
+							primaryColor, 
+							new Point(0, start));
 					});
 				return controller.Image(image);
 			}

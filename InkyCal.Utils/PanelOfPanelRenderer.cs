@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -159,17 +159,18 @@ namespace InkyCal.Utils
 					{
 						ex.Data["PanelType"] = panel.GetType().Name;
 						ex.Data["PanelId"] = panel.Id;
-
 						ex.Log();
-
-						result.Mutate(operation =>
+						result.Mutate(x =>
 						{
-							operation.DrawText(
-								options: new TextGraphicsOptions(true) { WrapTextWidth = width }, 
-								text: ex.Message.ToSafeChars(FontHelper.NotoSans), 
-								font: FontHelper.NotoSans.CreateFont(16), 
-								color: errorColor, 
-								location: new Point(0, parameter.y));
+							x.DrawText(
+								new TextGraphicsOptions(new GraphicsOptions() { Antialias = false },
+								new TextOptions() { 
+									WrapTextWidth = width 
+								}), 
+								ex.Message, 
+								new Font(FontHelper.NotoSans, 16), 
+								errorColor, 
+								new Point(0, y));
 						});
 					}
 				}

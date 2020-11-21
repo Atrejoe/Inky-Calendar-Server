@@ -7,7 +7,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
-using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
@@ -77,7 +76,13 @@ namespace InkyCal.Utils
 				image.Mutate(x => x
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Min, Size = new Size(width, height) })
 					.BackgroundColor(SixLabors.ImageSharp.Color.Transparent)
-					.Quantize(new PaletteQuantizer(colorsExtended.ToArray(), dither: true))
+					.Quantize(
+						new PaletteQuantizer(colorsExtended.ToArray(),
+						new QuantizerOptions()
+						{
+							Dither = KnownDitherings.FloydSteinberg
+						}
+					))
 					);
 
 				return image;
