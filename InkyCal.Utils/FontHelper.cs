@@ -109,6 +109,15 @@ namespace InkyCal.Utils
 		public static readonly FontFamily ProFont;
 
 		/// <summary>
+		/// Font family ProFontWindowsPL - multi-size, non-anti-aliassed font
+		/// </summary>
+		/// <value>
+		/// The pro font.
+		/// </value>
+		/// <remarks>Obtained from <a href="https://tobiasjung.name/profont/">https://tobiasjung.name/profont/</a></remarks>
+		public static readonly FontFamily ProFont;
+
+		/// <summary>
 		/// Font for weather icons
 		/// </summary>
 		public static readonly FontFamily WeatherIcons;
@@ -121,6 +130,7 @@ namespace InkyCal.Utils
 			{"11d","\uf01e"},{"13d","\uf01b"},{"50d","\uf014"},{"01n","\uf02e"},{"02n","\uf013"},{"03n","\uf013"},
 			{"04n","\uf013"},{"09n","\uf037"},{"10n","\uf036"},{"11n","\uf03b"},{"13n","\uf038"},{"50n","\uf023"}
 		};
+
 
 
 		[SuppressMessage("Design", "CA1810:Initialize reference type static fields inline", Justification = "Easier to read initialization")]
