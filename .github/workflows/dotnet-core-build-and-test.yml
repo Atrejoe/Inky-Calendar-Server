@@ -24,6 +24,14 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: use this action, test solution dir
+      uses: zyborg/dotnet-tests-report
+      #@v1.0.0
+      with:
+        # project_path: InkyCal.Utils.Tests
+        report_name: testresults
+        report_title: Tests
+        # github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Docker Login
       # You may pin to the exact commit or the version.
       # uses: docker/login-action@34d5f75b0d6d0d22f06d83acf2fa1b144409ec83
