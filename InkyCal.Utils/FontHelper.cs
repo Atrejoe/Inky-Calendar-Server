@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -20,7 +20,10 @@ namespace InkyCal.Utils
 		/// <param name="font">The font.</param>
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, FontFamily)"/>
-		internal static string ToSafeChars(this string text, Font font) {
+		public static string ToSafeChars(this string text, Font font) {
+			if (font is null)
+				throw new System.ArgumentNullException(nameof(font));
+
 			return text.ToSafeChars(font.Family);
 		}
 
@@ -32,8 +35,13 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, Font)"/>
 		/// <remarks><see cref="MonteCarlo"/> cannot render some characters</remarks>
-		internal static string ToSafeChars(this string text, FontFamily fontFamily)
+		public static string ToSafeChars(this string text, FontFamily fontFamily)
 		{
+			if (string.IsNullOrWhiteSpace(text))
+				return text;
+
+			if (fontFamily is null)
+				throw new System.ArgumentNullException(nameof(fontFamily));
 			if (!fontFamily.Equals(MonteCarlo))
 				return text;
 
@@ -110,16 +118,16 @@ namespace InkyCal.Utils
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
-				NotoSans = fonts.Install(resource);
+				NotoSans = fonts.Install(resource,new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
-				MonteCarlo = fonts.Install(resource);
+				MonteCarlo = fonts.Install(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
-				WeatherIcons = fonts.Install(resource);
+				WeatherIcons = fonts.Install(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
-				ProFont = fonts.Install(resource);
+				ProFont = fonts.Install(resource, new CultureInfo("de-DE"));
 		}
 
 		/// <summary>
