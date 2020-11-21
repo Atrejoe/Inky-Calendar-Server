@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using SixLabors.Fonts;
 
@@ -42,6 +43,10 @@ namespace InkyCal.Utils
 
 			if (fontFamily is null)
 				throw new System.ArgumentNullException(nameof(fontFamily));
+
+			if (fontFamily.Equals(ProFont))
+				return replaceRingelS(text);
+
 			if (!fontFamily.Equals(MonteCarlo))
 				return text;
 
@@ -59,11 +64,7 @@ namespace InkyCal.Utils
 				}
 			}
 			var result = stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-
-			//Replace some known remaining enties
-			result = result
-				.Replace("ẞ", "sz")
-				.Replace("ß", "Sz");
+			result = replaceRingelS(result);
 
 			//Bluntly convert to ASCII, leaving questionmarks ofr unknow items
 			var tempBytes = Encoding.ASCII.GetBytes(result);
@@ -72,6 +73,16 @@ namespace InkyCal.Utils
 			Trace.WriteLine($"{text} => {result}");
 
 			return result;
+
+			static string replaceRingelS(string result)
+			{
+
+				//Replace some known remaining enties
+				result = result
+					.Replace("ẞ", "ss")
+					.Replace("ß", "SS");
+				return result;
+			}
 		}
 
 		private static readonly FontCollection fonts = new FontCollection();
