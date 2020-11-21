@@ -153,7 +153,8 @@ namespace InkyCal.Utils
 			{
 				var y = 0;
 				var locationInfo = $"{station?.name},{station?.country}";
-				context.DrawText(textGraphicsOptions, locationInfo, textFont, primaryColor, new PointF(5, y));
+				context.DrawText(
+					textGraphicsOptions, locationInfo.ToSafeChars(textFont), textFont, primaryColor, new PointF(5, y));
 				y += (int)Math.Ceiling(TextMeasurer.Measure(locationInfo, rendererOptions).Height);
 
 				try

@@ -108,8 +108,8 @@ namespace InkyCal.Utils
 						{
 							operation.DrawText(
 								options: new TextGraphicsOptions(true) { WrapTextWidth = width }, 
-								text: ex.Message, 
-								font: new Font(FontHelper.NotoSans, 16), 
+								text: ex.Message.ToSafeChars(FontHelper.NotoSans), 
+								font: FontHelper.NotoSans.CreateFont(16), 
 								color: errorColor, 
 								location: new Point(0, parameter.y));
 						});
