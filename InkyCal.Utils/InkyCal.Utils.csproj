@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="fonts\ProFont-Polish\ProFontWindowsPL.ttf" />
+    <None Remove="fonts\ProFontWindows.ttf" />
     <None Remove="fonts\weathericons-regular-webfont.ttf" />
     <None Remove="MonteCarloFixed12.ttf" />
     <None Remove="NotoSans-SemiCondensed.ttf" />
@@ -18,6 +20,8 @@
   <ItemGroup>
     <EmbeddedResource Include="fonts\MonteCarloFixed12.ttf" />
     <EmbeddedResource Include="fonts\NotoSans-SemiCondensed.ttf" />
+    <EmbeddedResource Include="fonts\ProFontWindows.ttf" />
+    <EmbeddedResource Include="fonts\ProFontWindowsPL.ttf" />
     <EmbeddedResource Include="fonts\weathericons-regular-webfont.ttf" />
   </ItemGroup>
 

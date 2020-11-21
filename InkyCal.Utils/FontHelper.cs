@@ -75,7 +75,19 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Font family MonteCarloFixed12
 		/// </summary>
+		/// <remarks>
+		/// Obtained from <a href="https://www.bok.net/MonteCarlo/">https://www.bok.net/MonteCarlo/</a>
+		/// </remarks>
 		public static readonly FontFamily MonteCarlo;
+
+		/// <summary>
+		/// Font family ProFontWindowsPL - multi-size, non-anti-aliassed font
+		/// </summary>
+		/// <value>
+		/// The pro font.
+		/// </value>
+		/// <remarks>Obtained from <a href="https://tobiasjung.name/profont/">https://tobiasjung.name/profont/</a></remarks>
+		public static readonly FontFamily ProFont;
 
 		/// <summary>
 		/// Font for weather icons
@@ -91,6 +103,7 @@ namespace InkyCal.Utils
 			{"04n","\uf013"},{"09n","\uf037"},{"10n","\uf036"},{"11n","\uf03b"},{"13n","\uf038"},{"50n","\uf023"}
 		};
 
+
 		[SuppressMessage("Design", "CA1810:Initialize reference type static fields inline", Justification = "Easier to read initialization")]
 		static FontHelper()
 		{
@@ -104,6 +117,9 @@ namespace InkyCal.Utils
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
 				WeatherIcons = fonts.Install(resource);
+
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
+				ProFont = fonts.Install(resource);
 		}
 
 		/// <summary>
