@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
+using System.Text;
 using SixLabors.Fonts;
 
 namespace InkyCal.Utils
@@ -10,6 +13,59 @@ namespace InkyCal.Utils
 	/// </summary>
 	public static class FontHelper
 	{
+		/// <summary>
+		/// This is a lame solution for argument out-of-range exception while rending text with non-existing characters
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="font">The font.</param>
+		/// <returns></returns>
+		/// <seealso cref="ToSafeChars(string, FontFamily)"/>
+		internal static string ToSafeChars(this string text, Font font) {
+			return text.ToSafeChars(font.Family);
+		}
+
+		/// <summary>
+		/// This is a lame solution for argument out-of-range exception while rending text with non-existing characters
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="fontFamily">The font.</param>
+		/// <returns></returns>
+		/// <seealso cref="ToSafeChars(string, Font)"/>
+		/// <remarks><see cref="MonteCarlo"/> cannot render some characters</remarks>
+		internal static string ToSafeChars(this string text, FontFamily fontFamily)
+		{
+			if (!fontFamily.Equals(MonteCarlo))
+				return text;
+
+			// strip diacritics
+			// from https://stackoverflow.com/a/249126
+			var normalizedString = text.Normalize(NormalizationForm.FormD);
+			var stringBuilder = new StringBuilder();
+
+			foreach (var c in normalizedString)
+			{
+				var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+				if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+				{
+					stringBuilder.Append(c);
+				}
+			}
+			var result = stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+
+			//Replace some known remaining enties
+			result = result
+				.Replace("ẞ", "sz")
+				.Replace("ß", "Sz");
+
+			//Bluntly convert to ASCII, leaving questionmarks ofr unknow items
+			var tempBytes = Encoding.ASCII.GetBytes(result);
+			result = Encoding.ASCII.GetString(tempBytes);
+
+			Trace.WriteLine($"{text} => {result}");
+
+			return result;
+		}
+
 		private static readonly FontCollection fonts = new FontCollection();
 
 		/// <summary>
