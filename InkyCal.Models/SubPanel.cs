@@ -21,7 +21,7 @@ namespace InkyCal.Models
 		[Key]
 		public byte SortIndex { get; set; }
 
-		[Range(100,byte.MaxValue), DefaultValue(100)]
-		public byte Ratio { get; set; }
+		[Range(1, short.MaxValue), DefaultValue(100)]
+		public short Ratio { get; set; } = 100;
 	}
 }
