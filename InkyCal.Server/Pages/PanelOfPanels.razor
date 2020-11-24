@@ -1,5 +1,6 @@
 ﻿@inherits AuthenticatedComponentBase
-
+@using Humanizer;
+ 
 <style type="text/css">
 	span.grippy {
 		content: '....';
@@ -63,7 +64,14 @@
 @if ((@Panel.Panels?.Any()).GetValueOrDefault())
 {
 	<div class="form-group" ondragover="event.preventDefault();">
-		Panels, drag to re-order or drag to trash <span class="oi oi-trash" aria-hidden="true" @ondrop="RemovePanel" style="cursor:not-allowed"></span>
+		@if (@Panel.Panels.Count() == 1)
+		{
+			<span>A single panel, why don't you add some more?</span>
+		}
+		else
+		{
+			<span>@("Panels".ToQuantity(@Panel.Panels.Count())), drag to re-order.</span>
+		}
 
 		<ul class="list-group" style="padding-left: 0;">
 			@foreach (var panel in @Panel.Panels.OrderBy(x => x.SortIndex))
@@ -72,6 +80,8 @@
 				<span class="grippy"></span>
 
 				@panel.Panel.Name
+
+				<span class="oi oi-trash" aria-hidden="true" @onclick="RemovePanel" style="cursor:not-allowed;float:right;margin-left:10px;" title="Click to remove this panel."></span>
 
 				<small style="float:right" title="The panel height is a ratio, dividing the height amongst all panels.">
 					Heigth <sup class="oi oi-info badge badge-primary"></sup>:

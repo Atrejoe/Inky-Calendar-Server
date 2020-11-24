@@ -1,5 +1,8 @@
 ﻿@page "/panel"
 @page "/panel/{PanelId:guid}/edit"
+@using System.Linq
+@using Humanizer
+@using System.Collections.Generic;
 @inherits InkyCal.Server.Pages.AuthenticatedComponentBase
 
 <h1>Add panel</h1>
@@ -57,9 +60,9 @@
 							<div class="form-group">
 								<label>Model</label>
 								<InputSelect class="form-control" id="@nameof(_Panel.Model)" @bind-Value="@_Panel.Model">
-									@foreach (var displayModel in Enum.GetValues(typeof(DisplayModel)))
+									@foreach (var displayModel in Enum.GetValues(typeof(DisplayModel)).Cast<DisplayModel>())
 										{
-										<option>@displayModel</option>
+										<option value="@displayModel">@displayModel.Humanize()</option>
 										}
 								</InputSelect>
 							</div>
@@ -78,9 +81,9 @@
 							<div class="form-group">
 								<label>Orientation</label>
 								<InputSelect class="form-control" id="@nameof(_Panel.Rotation)" @bind-Value="@_Panel.Rotation">
-									@foreach (var rotation in Enum.GetValues(typeof(Rotation)))
+									@foreach (var rotation in Enum.GetValues(typeof(Rotation)).Cast<Rotation>().ToHashSet())
 										{
-										<option>@rotation</option>
+										<option value="@rotation">@rotation.Humanize()</option>
 										}
 								</InputSelect>
 							</div>

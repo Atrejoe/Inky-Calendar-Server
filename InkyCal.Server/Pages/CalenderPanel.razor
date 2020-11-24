@@ -1,4 +1,4 @@
-﻿<span>
+<span>
 	<EditForm Model="@Panel">
 		<DataAnnotationsValidator />
 		<ValidationSummary />
@@ -29,20 +29,21 @@
 
 	@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
 	{
-		<span>
-			Urls:
-			<ol>
-				@foreach (var url in @Panel.CalenderUrls)
-				{
-					<li>
-						@url.Url
-						<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
-							<span class="oi oi-trash" aria-hidden="true"></span>
-						</NavLink>
-					</li>
-				}
-			</ol>
-		</span>
+<span>
+
+	@(Panel.CalenderUrls.Count()==1?"Url":"Urls")
+	<ol>
+		@foreach (var url in @Panel.CalenderUrls)
+		{
+			<li>
+				@url.Url
+				<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
+					<span class="oi oi-trash" aria-hidden="true"></span>
+				</NavLink>
+			</li>
+		}
+	</ol>
+</span>
 	}
 </span>
 

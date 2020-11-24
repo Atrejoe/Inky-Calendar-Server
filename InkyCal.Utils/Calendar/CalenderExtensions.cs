@@ -1,19 +1,17 @@
-﻿using Ical.Net;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Microsoft.Extensions.Caching.Memory;
-using StackExchange.Profiling;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Microsoft.Extensions.Caching.Memory;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
 {

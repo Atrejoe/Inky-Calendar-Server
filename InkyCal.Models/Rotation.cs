@@ -8,10 +8,12 @@ namespace InkyCal.Models
 	{
 		[Description("None")]
 		None = 0,
+		[Description("None")]
 		Zero = None,
 
 		[Description("Clockwise")]
 		Clockwise = 90,
+		[Description("Clockwise")]
 		CW = Clockwise,
 
 		[Description("Upside down")]
@@ -19,6 +21,7 @@ namespace InkyCal.Models
 
 		[Description("Counter-clockwise")]
 		CounterClockwise = 270,
+		[Description("Counter-clockwise")]
 		CCW = CounterClockwise
 	}
 }

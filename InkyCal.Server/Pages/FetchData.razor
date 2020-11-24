@@ -1,5 +1,6 @@
 @page "/fetchdata"
 @inherits AuthenticatedComponentBase
+@using Humanizer;
 
 <h1>Panels</h1>
 
@@ -70,7 +71,7 @@
 									@switch (panel)
 									{
 										case Models.CalendarPanel cp:
-											<span>@cp.CalenderUrls?.Count calendars</span>
+											<span>@("calendar".ToQuantity(cp.CalenderUrls?.Count??0))</span>
 											break;
 										case Models.ImagePanel ip:
 											<a href="@ip.Path" target="_blank" title="Link to original image">
@@ -78,7 +79,7 @@
 											</a>
 											break;
 										case Models.PanelOfPanels pp:
-											<span>@pp.Panels?.Count panels</span>
+											<span>@("panel".ToQuantity(@pp.Panels?.Count??0))</span>
 											break;
 										case Models.WeatherPanel wp:
 											<span>@wp.Location</span>
