@@ -1,0 +1,19 @@
+﻿@inherits AuthenticatedComponentBase
+
+<style type="text/css">
+	.star {
+		font-size: 1.5em;
+		color: white !important;
+		position: relative;
+		text-shadow: -1px 1px 0 silver, 1px 1px 0 silver, 1px -1px 0 silver, -1px -1px 0 silver;
+		-webkit-text-stroke: 1px silver;
+		cursor: pointer
+	}
+
+		.star.selected {
+			color: yellow !important;
+			text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+			-webkit-text-stroke: 1px #000;
+		}
+</style>
+<a class="star @(Panel.Starred?"selected":string.Empty)" @onclick="Toggle">★</a>

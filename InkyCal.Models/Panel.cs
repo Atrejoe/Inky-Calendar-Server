@@ -34,5 +34,13 @@ namespace InkyCal.Models
 		/// Height as seen in landscape
 		/// </summary>
 		public int? Height { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Panel"/> is starred.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if starred; otherwise, <c>false</c>.
+		/// </value>
+		public bool Starred { get; set; }
 	}
 }

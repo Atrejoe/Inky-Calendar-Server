@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -10,6 +9,22 @@ namespace InkyCal.Data
 {
 	public static class PanelRepository
 	{
+		public static async Task<bool> ToggleStar(this Panel panel)
+		{
+			using (var c = new ApplicationDbContext())
+			{
+				var p = c.Set<Panel>().Single(x => x.Id == panel.Id);
+
+				p.Starred = !p.Starred;
+
+				c.Update(p);
+
+				await c.SaveChangesAsync();
+
+				return p.Starred;
+			}
+		}
+
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
 			if (panel is null)

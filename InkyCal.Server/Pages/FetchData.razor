@@ -38,10 +38,13 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var panel in _panels)
+						@foreach (var panel in _panels.OrderByDescending(x=>x.Starred).ThenBy(x=>x.Name).ThenBy(x=>x.GetType().Name))
 						{
 							<tr @onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
-								<td>@panel.Name</td>
+								<td>
+									<PanelStar Panel="@panel" />
+									@panel.Name
+								</td>
 								<td>
 									<span class="badge badge-primary">@panel.Model</span>
 									<span class="badge badge-primary">
