@@ -1,18 +1,19 @@
-# Changelog 
+# Inky-Calender server Changelog 
 ## Features and fixes (November 2020) #
 
 ### Feature
-- Implemented starring of panels. Starred panels are listed first too. ([16cda669](https://github.com/Atrejoe/Inky-Calendar-Server/commit/16cda669a918f1f96e8d9264a00cb638b8abb7fa))
+- Included [Changelog](/changelog) in the server UI.
+- Implemented starring of panels ⭐. Starred panels are listed first too. ([16cda669](https://github.com/Atrejoe/Inky-Calendar-Server/commit/16cda669a918f1f96e8d9264a00cb638b8abb7fa))
 
 ### UI
 - Some text is more humanly pluralized ([3ae45516](https://github.com/Atrejoe/Inky-Calendar-Server/commit/3ae45516ebbf07199ba9b42e82fa6de37addac99))
-- Added simpler way of removing a panel. Instead of dragging,you can just click the trash can. ([3ae45516](https://github.com/Atrejoe/Inky-Calendar-Server/commit/3ae45516ebbf07199ba9b42e82fa6de37addac99))
-- Switched font in calender panel. This font can show more accented characters and does not cause issues for unown characters. Still does not support languages like Chinese, Arabic or Hebrew. 
+- Added simpler way of removing a panel. Instead of dragging,you can just click the trash can ♻ . ([3ae45516](https://github.com/Atrejoe/Inky-Calendar-Server/commit/3ae45516ebbf07199ba9b42e82fa6de37addac99))
+- Switched font in calendar panel. This font can show more accented characters and does not cause issues for unknown characters. Still does not support languages like 中文, عربى or اللغة العبرية. 
 - Added explanation of relative panels heights. Allows more granular panel height configuration.
 
 ### Bugfixes
-- Prevented errors in some calender events with special characters.
-- Recurring events are now properly calculated and displayed. Peformance has been improved too.
+- Prevented errors in some calendar events with special characters.
+- Recurring events are now properly calculated and displayed. Performance has been improved too.
 ## Code quality release (September 2020)
 
 ### Features
@@ -23,7 +24,7 @@
   - Improved display
   - Showed unique events only
   - Calendar deletion
-  - Corrected timezones for UTC
+  - Corrected time zones for UTC
 
 ## Winter is coming (May 2020)
 
