@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils;
@@ -73,8 +75,11 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60)]
-		public async Task<ActionResult> GetImage(DisplayModel model, Uri imageUrl, int? width = null, int? height = null)
+		public async Task<ActionResult> GetImage(DisplayModel model, [NotNull, Required]Uri imageUrl, int? width = null, int? height = null)
 		{
+			if (!imageUrl.IsAbsoluteUri || (imageUrl.Scheme != "http" && imageUrl.Scheme != "https"))
+				return BadRequest("Image urls must be absolute urls");
+
 			return await this.Image(new ImagePanelRenderer(imageUrl), model, width, height);
 		}
 
@@ -94,8 +99,11 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetCalendar(DisplayModel model, Uri calendar, int? width = null, int? height = null)
+		public async Task<ActionResult> GetCalendar(DisplayModel model, [NotNull,Required(AllowEmptyStrings = false)]Uri calendar, int? width = null, int? height = null)
 		{
+			if (!calendar.IsAbsoluteUri || (calendar.Scheme != "http" && calendar.Scheme != "https"))
+				return BadRequest("Calender urls must be absolute urls");
+
 			return await this.Image(new CalendarPanelRenderer(calendar), model, width, height);
 		}
 
@@ -133,12 +141,16 @@ namespace InkyCal.Server.Controllers
 		/// The hash may be cached.
 		/// </remarks>
 		/// <response code="200">Returns the panel as a PNG image</response>
+		/// <response code="400">Upon invalid input</response>
 		[HttpPost("calendar/{model}")]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetCalendar(DisplayModel model, Uri[] calendars, int? width = null, int? height = null)
+		public async Task<ActionResult> GetCalendar(DisplayModel model, [Required(AllowEmptyStrings = false)]Uri[] calendars, int? width = null, int? height = null)
 		{
+			if (calendars.Any(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
+				return BadRequest("Calender urls must be absolute urls");
+
 			return await this.Image(new CalendarPanelRenderer(calendars), model, width, height);
 		}
 
