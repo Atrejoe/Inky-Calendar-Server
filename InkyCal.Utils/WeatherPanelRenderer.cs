@@ -13,6 +13,68 @@ namespace InkyCal.Utils
 {
 
 	/// <summary>
+	/// /
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <seealso cref="InkyCal.Utils.PanelRenderer{T}" />
+	public abstract class PdfRenderer<T> : PanelRenderer<T> where T : Panel { }
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Models.Panel" />
+	public class CurrentDatePanel : Panel {
+		/// <summary>
+		/// Gets the date.
+		/// </summary>
+		/// <value>
+		/// The date.
+		/// </value>
+		[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+		public DateTime Date { get { return DateTime.Now; } set { } } 
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Utils.CurrentDatePanel" />
+	public class NewYorkTimesPanel:CurrentDatePanel{
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Utils.PdfRenderer{NewYorkTimesPanel}" />
+	public class NewYorkTimesRenderer : PdfRenderer<NewYorkTimesPanel>
+	{
+		/// <summary>
+		/// Gets the date.
+		/// </summary>
+		/// <value>
+		/// The date.
+		/// </value>
+		public DateTime Date { get; private set; }
+
+		//
+		public override Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
+		{
+			var url = new Uri($"https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf");
+		}
+
+		/// <summary>
+		/// Reads the configuration.
+		/// </summary>
+		/// <param name="panel">The panel.</param>
+		protected override void ReadConfig(NewYorkTimesPanel panel)
+		{
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+
+			Date = panel.Date;
+		}
+	}
+
+	/// <summary>
 	/// A renderer for weather
 	/// </summary>
 	public class WeatherPanelRenderer : PanelRenderer<WeatherPanel>
