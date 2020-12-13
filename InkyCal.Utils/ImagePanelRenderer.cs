@@ -95,7 +95,7 @@ namespace InkyCal.Utils
 					image.Mutate(x => x
 					.Rotate(rotateImage)
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })
-					.BackgroundColor(Color.White)
+					.BackgroundColor(Color.Transparent)
 					.Quantize(new PaletteQuantizer(colors))
 					);
 

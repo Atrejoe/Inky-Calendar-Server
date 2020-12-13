@@ -61,6 +61,15 @@ namespace InkyCal.Utils.Tests
 			//assert
 			Assert.NotNull(image);
 
+
+			using var fileStream = File.Create(filename);
+			image.Save(fileStream, new PngEncoder());
+
+			var fi = new FileInfo(filename);
+			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");
+
+			Trace.WriteLine(fi.FullName);
+
 			var pixels = Enumerable.Range(0, bitmap.Width - 1)
 				.SelectMany(x =>
 				{
@@ -70,13 +79,6 @@ namespace InkyCal.Utils.Tests
 			Trace.WriteLine($"{pixels.Count:n0} distinct colors in the image, a palette of {colors.Length:n0} colors was specified.");
 			Assert.False(pixels.Count > colors.Length, $"{pixels.Count:n0} distinct colors in the image, while a palette of {colors.Length:n0} was specified.");
 
-			using var fileStream = File.Create(filename);
-			image.Save(fileStream, new PngEncoder());
-
-			var fi = new FileInfo(filename);
-			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");
-
-			Trace.WriteLine(fi.FullName);
 
 		}
 	}

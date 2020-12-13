@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+//using ceTe.DynamicPDF.PageElements;
+//using ceTe.DynamicPDF.Rasterizer;
+using ImageMagick;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using SixLabors.Primitives;
 using StackExchange.Profiling;
 
@@ -23,7 +32,8 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="InkyCal.Models.Panel" />
-	public class CurrentDatePanel : Panel {
+	public class CurrentDatePanel : Panel
+	{
 		/// <summary>
 		/// Gets the date.
 		/// </summary>
@@ -31,14 +41,15 @@ namespace InkyCal.Utils
 		/// The date.
 		/// </value>
 		[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
-		public DateTime Date { get { return DateTime.Now; } set { } } 
+		public DateTime Date { get { return DateTime.Now; } set { } }
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <seealso cref="InkyCal.Utils.CurrentDatePanel" />
-	public class NewYorkTimesPanel:CurrentDatePanel{
+	public class NewYorkTimesPanel : CurrentDatePanel
+	{
 	}
 
 	/// <summary>
@@ -53,12 +64,107 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The date.
 		/// </value>
-		public DateTime Date { get; private set; }
+		public DateTime Date { get; private set; } = DateTime.Now.AddDays(0);
 
-		//
-		public override Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
+
+		private static readonly HttpClient client = new HttpClient();
+
+		/// <summary>
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="colors"></param>
+		/// <param name="log"></param>
+		/// <returns></returns>
+		/// <inheritdoc />
+		public override async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
 		{
 			var url = new Uri($"https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf");
+			Trace.WriteLine(url.ToString());
+			var pdf = await client.GetByteArrayAsync(url.ToString());
+
+			var settings = new MagickReadSettings();
+			// Settings the density to 300 dpi will create an image with a better quality
+			settings.Density = new Density(72);
+			settings.Format = MagickFormat.Pdf;
+
+
+
+
+			using (var images = new MagickImageCollection())
+			{
+				// Add all the pages of the pdf file to the collection
+				images.Read(pdf, settings);
+
+				using var ms = new MemoryStream();
+				// Create new image that appends all the pages horizontally
+				using (var horizontal = images.AppendHorizontally())
+				{
+					// Save result as a png
+					horizontal.Write(ms, MagickFormat.Png);
+				}
+				ms.Position = 0;
+
+				//Load PNG
+				var image = Image.Load(ms, new PngDecoder());
+				var colorsExtended = new List<SixLabors.ImageSharp.Color>(colors);
+				foreach(float i in Enumerable.Range(0,10))
+					colorsExtended.Add(Color.Black.WithAlpha(i/10));
+
+				//colorsExtended.Add(Color.Gray);
+				//colorsExtended.Add(Color.DarkGray);
+				//colorsExtended.Add(Color.DarkSlateGray);
+				//colorsExtended.Add(Color.DimGray);
+				//colorsExtended.Add(Color.LightGray);
+				//colorsExtended.Add(Color.LightSlateGray);
+				//colorsExtended.Add(Color.SlateGray,);
+
+
+				image.Mutate(x => x
+					.Resize(new ResizeOptions() { Mode = ResizeMode.Max, Size = new Size(width, height) })
+					.BackgroundColor(SixLabors.ImageSharp.Color.Transparent)
+					.Quantize(new PaletteQuantizer(colorsExtended.ToArray(),false)));
+				return image;
+			}
+
+
+			//using (var msPdf = new MemoryStream(pdf))
+			//using (var document = new Aspose.Pdf.Document(msPdf))
+			//using (var input = new InputPdf(pdf))
+			//using (var rasterizer = new PdfRasterizer(input))
+			{
+				//using var ms = new MemoryStream();
+				//document.Save(ms, (Aspose.Pdf.SaveFormat.j)13);
+				//using (var tmpFile = File.Create("temp.png"))
+				//{
+				//	rasterizer.Draw(tmpFile.Name, ImageFormat.Png, ImageSize.Dpi72);
+
+				//	//using (var reader = new PdfReader(await (await client.GetAsync(url)).Content.ReadAsStreamAsync()))
+				//	//using (PdfDocument origPdf = new PdfDocument(reader))
+				//	//{
+				//	//	PdfPage origPage = origPdf.GetPage(1);
+				//	//	origPage.conv
+
+				//	//	using (var msTemp = new MemoryStream())
+				//	//	{
+				//	//		using(var writer = new PdfWriter(msTemp))
+				//	//		using (var doc = new PdfDocument(writer))
+				//	//		{
+				//	//			var pageCopy = origPage.CopyAsFormXObject(doc);
+
+				//	//			var img = new iText.Layout.Element.Image(pageCopy);
+				//	//		}
+				//	//	}
+
+				//	//	PdfToImageRenderer
+
+
+				//	//}
+
+					////Load PNG
+					//return Image.Load(ms);
+				//}
+			}
 		}
 
 		/// <summary>
@@ -118,7 +224,7 @@ namespace InkyCal.Utils
 		/// <returns>A panel with weather information</returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
 		[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller is responsible for disposing result")]
-		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
+		override public async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
 			//Station station;
