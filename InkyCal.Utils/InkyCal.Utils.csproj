@@ -22,14 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-		<PackageReference Include="Aspose.PDF" Version="17.12.0" />
 		<PackageReference Include="Bugsnag" Version="2.2.2" />
-		<PackageReference Include="ceTe.DynamicPDF.Converter.NET" Version="3.4.0" />
-		<PackageReference Include="ceTe.DynamicPDF.CoreSuite.NET" Version="11.2.0" />
-		<PackageReference Include="ceTe.DynamicPDF.Rasterizer.NET" Version="3.11.0" />
-		<PackageReference Include="Cube.Native.Ghostscript" Version="9.53.3" />
-		<PackageReference Include="EvoPDF" Version="8.0.0" />
-		<PackageReference Include="EvoPdf.PdfToImage" Version="8.0.0" />
 		<PackageReference Include="Ical.Net" Version="4.2.0" />
 		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.2.2" />
 		<PackageReference Include="Magick.NET.Core" Version="5.2.2" />
