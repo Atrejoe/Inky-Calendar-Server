@@ -135,7 +135,9 @@ namespace InkyCal.Utils
 			var backgroundColor = colors.Skip(1).First();
 
 
-			var font = MonteCarlo.CreateFont(12); //Font that works well anti-aliassed
+			//var font = MonteCarlo.CreateFont(12); //Font that works well anti-aliassed
+			//var font = ProFont.CreateFont(15);
+			var font = Cascadia.CreateFont(10);
 
 			//var font = NotoSans.CreateFont(12); //Font that works well anti-aliassed
 

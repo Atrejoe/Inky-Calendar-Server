@@ -78,6 +78,25 @@ namespace InkyCal.Utils
 		public static readonly FontFamily MonteCarlo;
 
 		/// <summary>
+		/// Font family ProFontWindowsPL - multi-size, non-anti-aliassed font
+		/// </summary>
+		/// <value>
+		/// The pro font.
+		/// </value>
+		/// <remarks>Obtained from <a href="https://tobiasjung.name/profont/">https://tobiasjung.name/profont/</a></remarks>
+		public static readonly FontFamily ProFont;
+
+
+		/// <summary>
+		/// An anti-aliassing from
+		/// </summary>
+		/// <value>
+		/// Cascadia code
+		/// </value>
+		/// <remarks>Obtained from <a href="https://github.com/microsoft/cascadia-code">https://github.com/microsoft/cascadia-code</a></remarks>
+		public static readonly FontFamily Cascadia;
+
+		/// <summary>
 		/// Font for weather icons
 		/// </summary>
 		public static readonly FontFamily WeatherIcons;
@@ -103,7 +122,13 @@ namespace InkyCal.Utils
 				MonteCarlo = fonts.Install(resource);
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
-				WeatherIcons = fonts.Install(resource);
+				WeatherIcons = fonts.Install(resource, new CultureInfo("de-DE"));
+
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
+				ProFont = fonts.Install(resource, new CultureInfo("de-DE"));
+
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.CascadiaCode.ttf"))
+				Cascadia = fonts.Install(resource, new CultureInfo("de-DE"));
 		}
 
 		/// <summary>
