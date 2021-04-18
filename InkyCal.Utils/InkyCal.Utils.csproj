@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="fonts\CascadiaCode.ttf" />
+    <EmbeddedResource Include="fonts\CascadiaCodePL.ttf" />
+    <EmbeddedResource Include="fonts\CascadiaMono.ttf" />
+    <EmbeddedResource Include="fonts\CascadiaMonoPL.ttf" />
     <EmbeddedResource Include="fonts\MonteCarloFixed12.ttf" />
     <EmbeddedResource Include="fonts\NotoSans-SemiCondensed.ttf" />
     <EmbeddedResource Include="fonts\ProFontWindows.ttf" />

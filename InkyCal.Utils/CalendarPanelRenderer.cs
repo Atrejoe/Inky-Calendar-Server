@@ -163,7 +163,8 @@ namespace InkyCal.Utils
 
 
 			//var font = MonteCarlo.CreateFont(12); //Font that works well anti-aliassed
-			var font = ProFont.CreateFont(15);
+			//var font = ProFont.CreateFont(15);
+			var font = Cascadia.CreateFont(10);
 
 			var characterWidth = font.GetCharacterWidth(); //Works only for some known fixed-width fonts
 
