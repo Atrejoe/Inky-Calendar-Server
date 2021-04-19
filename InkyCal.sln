@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Data", "InkyCal.Dat
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "inkycal.server.docs", "documentation\inkycal.server.docs.shfbproj", "{17249AE0-6CC9-47D2-A17E-FDB3B9EC0BEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InkyCal.Data.Tests", "InkyCal.Data.Tests\InkyCal.Data.Tests.csproj", "{718273C0-5DE9-4179-9DA5-7433C4E1CE93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{BBC58E27-F128-4E1F-B8A8-0D0A8539133B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17249AE0-6CC9-47D2-A17E-FDB3B9EC0BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17249AE0-6CC9-47D2-A17E-FDB3B9EC0BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{718273C0-5DE9-4179-9DA5-7433C4E1CE93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{718273C0-5DE9-4179-9DA5-7433C4E1CE93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{718273C0-5DE9-4179-9DA5-7433C4E1CE93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{718273C0-5DE9-4179-9DA5-7433C4E1CE93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

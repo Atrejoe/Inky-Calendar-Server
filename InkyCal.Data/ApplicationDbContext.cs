@@ -35,7 +35,10 @@ namespace InkyCal.Data
 
 			base.OnModelCreating(builder);
 
-			builder.Entity<Panel>();
+			builder.Entity<Panel>()
+				.HasOne(x=>x.Owner)
+				.WithMany(x=>x.Panels);
+
 			builder.Entity<CalendarPanel>();
 
 			builder.Entity<CalendarPanelUrl>()

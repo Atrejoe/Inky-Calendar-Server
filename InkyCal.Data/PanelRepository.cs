@@ -13,7 +13,7 @@ namespace InkyCal.Data
 		{
 			using (var c = new ApplicationDbContext())
 			{
-				var p = c.Set<Panel>().Single(x => x.Id == panel.Id);
+				var p = await c.Set<Panel>().SingleAsync(x => x.Id == panel.Id);
 
 				p.Starred = !p.Starred;
 
@@ -153,7 +153,20 @@ namespace InkyCal.Data
 
 			//var panel = await Get<Panel>(id, user);
 			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id));
-			await c.SaveChangesAsync();
+			if((await c.SaveChangesAsync()) != 1)
+				throw new Exception("Not deleted");
+		}
+
+		public static async Task<Panel[]> All()
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<Panel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.ToArrayAsync();
+
+			return result;
 		}
 
 		public static async Task<TPanel> Get<TPanel>(Guid id) where TPanel : Panel

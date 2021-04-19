@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +32,12 @@ namespace InkyCal.Data
 			}
 
 			return result;
+		}
+
+		public static async Task<IEnumerable<User>> GetAll()
+		{
+			using var c = new ApplicationDbContext();
+			return await c.Set<User>().Include(x=>x.Panels).ToArrayAsync();
 		}
 	}
 }
