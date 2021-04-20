@@ -56,7 +56,7 @@ namespace InkyCal.Utils
 						{
 							var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
 
-							if(rendererTypes is null)
+							if (rendererTypes is null)
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
 							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
@@ -66,10 +66,20 @@ namespace InkyCal.Utils
 
 							var paneltype = rendererType.BaseType.GetGenericArguments().First();
 							var c = rendererType.GetConstructor(new[] { paneltype });
-							renderer = (IPanelRenderer)c.Invoke(new[] { panel });
+							if (c is null)
+							{
+								c = rendererType.GetConstructor(Type.EmptyTypes);
+								if (c is null)
+									throw new NotImplementedException($"Renderer of {rendererType.Name} does not have a parameterless constructor, nor one that takes a {panel.GetType().Name} are argument");
+								else
+									renderer = (IPanelRenderer)c.Invoke(Type.EmptyTypes);
+							}
+							else
+								renderer = (IPanelRenderer)c.Invoke(new[] { panel });
 							//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 						}
-						catch (Exception ex) {
+						catch (Exception ex)
+						{
 							throw new Exception($"Could not determine panel renderer for {panel.GetType().Name}, see inner exception for details: {ex.Message}", ex);
 						}
 					}
@@ -122,7 +132,7 @@ namespace InkyCal.Utils
 		{
 			if (colors is null)
 				throw new ArgumentNullException(nameof(colors));
-			
+
 
 			primaryColor = colors.FirstOrDefault();
 			supportColor = (colors.Length > 2) ? colors[2] : primaryColor;
@@ -187,7 +197,7 @@ namespace InkyCal.Utils
 
 			var trimmedErrorMessage = new StringBuilder();
 			foreach (var line in errorMessage.Split(Environment.NewLine))
-				trimmedErrorMessage.AppendLine(line.Limit(width,"..."));
+				trimmedErrorMessage.AppendLine(line.Limit(width, "..."));
 
 			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font), renderOptions.Font, backgroundColor, pError);
 

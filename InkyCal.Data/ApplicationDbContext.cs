@@ -40,6 +40,7 @@ namespace InkyCal.Data
 				.WithMany(x=>x.Panels);
 
 			builder.Entity<CalendarPanel>();
+			builder.Entity<NewYorkTimesPanel>();
 
 			builder.Entity<CalendarPanelUrl>()
 				.HasOne(x => x.Panel)

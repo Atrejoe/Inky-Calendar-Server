@@ -32,7 +32,8 @@
 											 typeof(Models.CalendarPanel),
 											 typeof(Models.ImagePanel),
 											 typeof(Models.PanelOfPanels),
-											 typeof(Models.WeatherPanel) })
+											 typeof(Models.WeatherPanel),
+											 typeof(Models.NewYorkTimesPanel) })
 										{
 											@if (type.IsAssignableFrom(_Panel?.GetType()))
 											{
@@ -130,7 +131,7 @@
 									<WeatherPanel Panel="wp"></WeatherPanel>
 									break;
 								default:
-									<em>Unknown panel type @(_Panel.GetType().Name).</em>
+									<em>Unknown or generic panel type @(_Panel.GetType().Name).</em>
 									break;
 							}
 

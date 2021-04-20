@@ -60,13 +60,13 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
-		/// Returns an image panel with a user-specified url
+		/// Returns an image panel with a an image from the user-specified url
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="imageUrl"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		/// <returns>A badge containing the calculated SHA1 hash.</returns>
+		/// <returns>An image panel with a an image from the user-specified url</returns>
 		/// <remarks>
 		/// The hash may be cached.
 		/// </remarks>
@@ -81,6 +81,23 @@ namespace InkyCal.Server.Controllers
 				return BadRequest("Image urls must be absolute urls");
 
 			return await this.Image(new ImagePanelRenderer(imageUrl), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a rasterized version of today's New York times
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>Returns a rasterized version of today's New York times</returns>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("nyt/{model}")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60)]
+		public async Task<ActionResult> GetNewYorkTime(DisplayModel model, int? width = null, int? height = null)
+		{
+			return await this.Image(new NewYorkTimesRenderer(), model, width, height);
 		}
 
 		/// <summary>
