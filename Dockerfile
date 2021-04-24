@@ -25,22 +25,13 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+# Required for Pdf renderer
+RUN apk add ghostscript
+
 # Addresses some globalization issue in the database
 # Don't have a clue about the repercussions
 # https://github.com/dotnet/SqlClient/issues/220#issue-498595465
-
-# Required for .Net on alpine
 RUN apk add icu-libs
-
-RUN apk add ghostscript
-#RUN apk add musl-dev
-#RUN apk add glibc 
-
-# Required for .Net on alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
-ENV LD_DEBUG=all
 
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
-
-#RUN apt-get install --yes musl-dev
-#RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
