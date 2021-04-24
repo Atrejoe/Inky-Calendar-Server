@@ -37,7 +37,8 @@ namespace InkyCal.Utils
 			{
 				// Settings the density to 300 dpi will create an image with a better quality
 				Density = new Density(300),
-				Format = MagickFormat.Pdf
+				Format = MagickFormat.Pdf,
+				Verbose = true
 			};
 
 
