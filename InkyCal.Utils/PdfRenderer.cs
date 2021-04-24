@@ -17,7 +17,8 @@ namespace InkyCal.Utils
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <seealso cref="InkyCal.Utils.PanelRenderer{T}" />
-	public abstract class PdfRenderer<T> : PanelRenderer<T> where T : Panel {
+	public abstract class PdfRenderer<T> : PanelRenderer<T> where T : Panel
+	{
 
 		/// <summary>
 		/// </summary>
@@ -29,6 +30,7 @@ namespace InkyCal.Utils
 		/// <inheritdoc />
 		public override async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
 		{
+			//Get pdf as byte array
 			var pdf = await GetPdf();
 
 			var settings = new MagickReadSettings
@@ -43,6 +45,9 @@ namespace InkyCal.Utils
 			{
 				// Add all the pages of the pdf file to the collection
 				images.Read(pdf, settings);
+
+				if (images.Count == 0)
+					throw new System.Exception($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
 
 				using var ms = new MemoryStream();
 				// Create new image that appends all the pages horizontally

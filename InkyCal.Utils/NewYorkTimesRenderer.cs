@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -29,9 +30,29 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		protected override async Task<byte[]> GetPdf()
 		{
-			var url = new Uri($"https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf");
-			Trace.WriteLine(url.ToString());
-			var pdf = await client.GetByteArrayAsync(url.ToString());
+			var d = Date;
+			byte[] pdf = null;
+
+			var tries = 0;
+			const int maxTries = 5;
+
+			while (tries <= maxTries 
+				&& !(pdf?.Any()).GetValueOrDefault())
+				try
+				{
+					tries += 1;
+					var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
+					Console.WriteLine(url.ToString());
+					pdf = await client.GetByteArrayAsync(url.ToString());
+				}
+				catch (HttpRequestException ex) when (tries <= maxTries && ex.Message.Contains("404"))
+				{
+					d = d.AddDays(-1);
+				}
+
+			if (!(pdf?.Any()).GetValueOrDefault())
+				throw new Exception("Failed to download NYT homepage");
+
 			return pdf;
 		}
 
