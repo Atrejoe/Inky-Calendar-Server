@@ -21,7 +21,6 @@ namespace InkyCal.Utils
 		/// </value>
 		public DateTime Date { get; private set; } = DateTime.Now.AddDays(0);
 
-
 		private static readonly HttpClient client = new HttpClient();
 
 		/// <summary>
@@ -31,6 +30,11 @@ namespace InkyCal.Utils
 		protected override async Task<byte[]> GetPdf()
 		{
 			var d = Date;
+
+			//No news, just ads on sunday?
+			if (d.DayOfWeek == DayOfWeek.Sunday)
+				d = d.AddDays(-1);
+
 			byte[] pdf = null;
 
 			var tries = 0;
