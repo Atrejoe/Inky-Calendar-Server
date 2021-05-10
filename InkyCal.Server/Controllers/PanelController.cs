@@ -34,7 +34,7 @@ namespace InkyCal.Server.Controllers
 		[HttpGet("test/{model}/image")]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult> Test(DisplayModel model, [Range(0, 1200)]int? width = null, [Range(0, 1200)]int? height = null)
+		public async Task<ActionResult> Test(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 			return await this.Image(new TestImagePanelRenderer(), model, width, height);
 		}
@@ -54,7 +54,7 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> TestCalendar(DisplayModel model, [Range(0, 1200)]int? width = null, [Range(0, 1200)]int? height = null)
+		public async Task<ActionResult> TestCalendar(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 			return await this.Image(new TestCalendarPanelRenderer(), model, width, height);
 		}
@@ -75,7 +75,7 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60)]
-		public async Task<ActionResult> GetImage(DisplayModel model, [NotNull, Required]Uri imageUrl, int? width = null, int? height = null)
+		public async Task<ActionResult> GetImage(DisplayModel model, [NotNull, Required] Uri imageUrl, int? width = null, int? height = null)
 		{
 			if (!imageUrl.IsAbsoluteUri || (imageUrl.Scheme != "http" && imageUrl.Scheme != "https"))
 				return BadRequest("Image urls must be absolute urls");
@@ -116,7 +116,7 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetCalendar(DisplayModel model, [NotNull,Required(AllowEmptyStrings = false)]Uri calendar, int? width = null, int? height = null)
+		public async Task<ActionResult> GetCalendar(DisplayModel model, [NotNull, Required(AllowEmptyStrings = false)] Uri calendar, int? width = null, int? height = null)
 		{
 			if (!calendar.IsAbsoluteUri || (calendar.Scheme != "http" && calendar.Scheme != "https"))
 				return BadRequest("Calender urls must be absolute urls");
@@ -163,7 +163,7 @@ namespace InkyCal.Server.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetCalendar(DisplayModel model, [Required(AllowEmptyStrings = false)]Uri[] calendars, int? width = null, int? height = null)
+		public async Task<ActionResult> GetCalendar(DisplayModel model, [Required(AllowEmptyStrings = false)] Uri[] calendars, int? width = null, int? height = null)
 		{
 			if (calendars.Any(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
 				return BadRequest("Calender urls must be absolute urls");
@@ -198,21 +198,6 @@ namespace InkyCal.Server.Controllers
 				?? (DisplayModel?)(int?)panel.Model
 				?? DisplayModel.epd_7_in_5_v2_colour;
 
-			int? requestedHeight;
-			int? requestedWidth;
-			switch (panel.Rotation)
-			{
-				case Rotation.Clockwise:
-				case Rotation.CounterClockwise:
-					requestedHeight = width ?? panel.Width;
-					requestedWidth = height ?? panel.Height;
-					break;
-				default:
-					requestedWidth = width ?? panel.Width;
-					requestedHeight = height ?? panel.Height;
-					break;
-			}
-
 			var renderer = panel.GetRenderer();
 
 			PerformanceMonitor.Trace($"Rendering panel {id}");
@@ -220,20 +205,18 @@ namespace InkyCal.Server.Controllers
 			return await this.Image(
 							renderer,
 							model: model.Value,
-							requestedWidth: requestedWidth,
-							requestedHeight: requestedHeight,
+							requestedWidth: width ?? panel.Width,
+							requestedHeight: height ?? panel.Height,
 							(RotateMode)panel.Rotation);
 
 		}
-
-
 
 		/// <summary>
 		/// Returns the nuber of items in the cahce
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("Cache")]
-		[ProducesResponseType(StatusCodes.Status200OK,Type = typeof(int))]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
 		[ResponseCache(NoStore = true)]
 		public ActionResult Cache() => StatusCode((int)System.Net.HttpStatusCode.OK, IPanelRendererExtensions.CacheEntries());
 	}
