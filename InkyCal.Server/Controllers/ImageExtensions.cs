@@ -70,12 +70,38 @@ namespace InkyCal.Server.Controllers
 		public static async Task<ActionResult> Image(this ControllerBase controller, IPanelRenderer renderer, DisplayModel model, int? requestedWidth = null, int? requestedHeight = null,
 			RotateMode rotateMode = RotateMode.None)
 		{
-			model.GetSpecs(out var width, out var height, out var colors);
+			model.GetSpecs(out var defaultWidth, out var defaultHeight, out var colors);
+
+			var flip = false;
+
+			int width, height;
+
+
+			switch (rotateMode)
+			{
+				case RotateMode.Rotate270:
+				case RotateMode.Rotate90:
+					height = requestedWidth ?? defaultWidth;
+					width = requestedHeight ?? defaultHeight;
+					break;
+				default:
+					width = requestedWidth ?? defaultWidth;
+					height = requestedHeight ?? defaultHeight;
+					break;
+			}
+
+			switch (rotateMode)
+			{
+				case RotateMode.Rotate270:
+				case RotateMode.Rotate180:
+					flip = true;
+					break;
+			}
 
 			//NB: Web-based requests will specify portrait oriented dimensions.
 			//    GetSpecs get landscape-oriented dimensions
 			//    Therefore flip-em!
-			return await controller.Image(renderer, requestedWidth ?? height, requestedHeight ?? width, colors, rotateMode);
+			return await controller.Image(renderer, width, height, colors, flip);
 		}
 
 
@@ -87,7 +113,7 @@ namespace InkyCal.Server.Controllers
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="colors"></param>
-		/// <param name="rotateMode"></param>
+		/// <param name="flip"></param>
 		/// <returns></returns>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
 		public static async Task<ActionResult> Image(
@@ -96,7 +122,7 @@ namespace InkyCal.Server.Controllers
 			int width,
 			int height,
 			Color[] colors,
-			RotateMode rotateMode)
+			bool flip)
 		{
 			if (panelRenderer is null)
 				throw new ArgumentNullException(nameof(panelRenderer));
@@ -116,9 +142,15 @@ namespace InkyCal.Server.Controllers
 			try
 			{
 				var bytes = await panelRenderer.GetCachedImage(width, height, colors, conditionalLog);
-				using var image = SixLabors.ImageSharp.Image.Load(bytes);
-				image.Mutate(x => x.Rotate(rotateMode));
-				return controller.Image(image);
+
+				if (flip)
+				{
+					using var image = SixLabors.ImageSharp.Image.Load(bytes);
+					image.Mutate(x => x.Rotate(RotateMode.Rotate180));
+					return controller.Image(image);
+				}
+				else
+					return controller.Gif(bytes);
 			}
 			catch (Exception ex)
 			{
