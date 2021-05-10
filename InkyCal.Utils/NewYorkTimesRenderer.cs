@@ -11,13 +11,14 @@ namespace InkyCal.Utils
 	/// </summary>
 	/// <typeparam name="TPanel">The type of the panel.</typeparam>
 	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
-	public class PanelCacheKey<TPanel> : PanelCacheKey where TPanel: IPanelRenderer
+	public class PanelCacheKey<TPanel> : PanelCacheKey where TPanel : IPanelRenderer
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PanelCacheKey{TPanel}"/> class.
 		/// </summary>
 		/// <param name="expiration">The expiration.</param>
-		public PanelCacheKey(TimeSpan expiration) : base(expiration) { 
+		public PanelCacheKey(TimeSpan expiration) : base(expiration)
+		{
 		}
 	}
 
@@ -43,8 +44,6 @@ namespace InkyCal.Utils
 		/// </value>
 		public override PanelCacheKey CacheKey => new PanelCacheKey<NewYorkTimesRenderer>(TimeSpan.FromMinutes(20));
 
-		private static readonly HttpClient client = new HttpClient();
-
 		/// <summary>
 		/// Gets the Pdf file from <c>https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf</c>
 		/// </summary>
@@ -53,7 +52,6 @@ namespace InkyCal.Utils
 		{
 			var d = Date;
 
-			//No news, just ads on sunday?
 
 			byte[] pdf = null;
 
@@ -64,14 +62,17 @@ namespace InkyCal.Utils
 				&& !(pdf?.Any()).GetValueOrDefault())
 
 			{
+
+				//No news, just ads on sunday?
 				if (d.DayOfWeek == DayOfWeek.Sunday)
 					d = d.AddDays(-1);
+
 				try
 				{
 					tries += 1;
 					var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
 					Console.WriteLine(url.ToString());
-					pdf = await client.GetByteArrayAsync(url.ToString());
+					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
 				catch (HttpRequestException ex) when (tries <= maxTries && ex.Message.Contains("404"))
 				{
