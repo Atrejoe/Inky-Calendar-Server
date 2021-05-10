@@ -4,6 +4,7 @@ using InkyCal.Models;
 using InkyCal.Data;
 using InkyCal.Utils;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace InkyCal.Server.Pages
 {
@@ -24,8 +25,11 @@ namespace InkyCal.Server.Pages
 
 		private Guid CacheBreaker = Guid.NewGuid();
 
+		private string LoadingCSS = "loading";
+
 		[Inject]
 		private NavigationManager navigationManager { get; set; }
+
 
 		private Models.Panel _Panel;
 
@@ -47,7 +51,9 @@ namespace InkyCal.Server.Pages
 			else
 				InitPanel<CalendarPanel>();
 
+			SetAsLoading();
 		}
+
 		private void InitPanelByType(Type type)
 		{
 			var method = GetType().GetMethod(nameof(InitPanel));
@@ -87,6 +93,8 @@ namespace InkyCal.Server.Pages
 			CacheBreaker = Guid.NewGuid();
 
 			navigationManager.NavigateTo($"/panel/{_Panel.Id}/edit");
+
+			SetAsLoading();
 		}
 
 		private async Task Delete(bool confirm)
@@ -99,5 +107,18 @@ namespace InkyCal.Server.Pages
 
 			navigationManager.NavigateTo($"/fetchdata");
 		}
+
+		private void SetAsLoading()
+		{
+			Console.WriteLine("Setting image as \"Loading\"");
+			LoadingCSS = "loading";
+		}
+
+		private void HandleOnLoad()
+		{
+			LoadingCSS = string.Empty;
+			Console.WriteLine("Image loading complete");
+		}
+
 	}
 }

@@ -145,9 +145,14 @@
 					</div>
 					@if (PanelId.HasValue)
 					{
-						<div class="col-sm">
-							<img src="/panel/@_Panel.Id?@CacheBreaker" title="Image is loading" alt="Panel image is loading" style="min-height:20px; min-width:50px;border: 1px solid silver; background-color:silver;" />
-						</div>
+				<div class="col-sm">
+					<span class="panel @LoadingCSS">
+						<img src="/panel/@_Panel.Id?@CacheBreaker" @onload="HandleOnLoad" />
+						<span class="overlay">
+							<i class="oi oi-reload" title="Loading image" alt="Loading image"></i>
+						</span>
+					</span>
+				</div>
 					}
 				</div>
 			</div>
