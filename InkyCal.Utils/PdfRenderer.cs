@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using ImageMagick;
 using InkyCal.Models;
@@ -51,13 +50,15 @@ namespace InkyCal.Utils
 					throw new System.Exception($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
 
 				using var ms = new MemoryStream();
-				// Create new image that appends all the pages horizontally
-				using (var horizontal = images.AppendHorizontally())
 				{
-					// Save result as a png
-					horizontal.Write(ms, MagickFormat.Png);
+					// Create new image that appends all the pages horizontally
+					using (var horizontal = images.AppendHorizontally())
+					{
+						// Save result as a png
+						horizontal.Write(ms, MagickFormat.Png);
+					}
+					ms.Position = 0;
 				}
-				ms.Position = 0;
 
 				//Load PNG
 				var image = Image.Load(ms, new PngDecoder());
@@ -74,11 +75,11 @@ namespace InkyCal.Utils
 				//colorsExtended.Add(Color.SlateGray);
 
 				image.Mutate(x => x
-					.Resize(new ResizeOptions() { Mode = ResizeMode.Max, Size = new Size(width, height) })
+					.Resize(new ResizeOptions() { Mode = ResizeMode.Min, Size = new Size(width, height) })
 					.BackgroundColor(SixLabors.ImageSharp.Color.Transparent)
 					.Quantize(new PaletteQuantizer(colorsExtended.ToArray(), dither: true))
-					)
-					;
+					);
+
 				return image;
 			}
 		}
