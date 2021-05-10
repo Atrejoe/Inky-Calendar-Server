@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -54,16 +54,18 @@ namespace InkyCal.Utils
 			var d = Date;
 
 			//No news, just ads on sunday?
-			if (d.DayOfWeek == DayOfWeek.Sunday)
-				d = d.AddDays(-1);
 
 			byte[] pdf = null;
 
 			var tries = 0;
 			const int maxTries = 5;
 
-			while (tries <= maxTries 
+			while (tries <= maxTries
 				&& !(pdf?.Any()).GetValueOrDefault())
+
+			{
+				if (d.DayOfWeek == DayOfWeek.Sunday)
+					d = d.AddDays(-1);
 				try
 				{
 					tries += 1;
@@ -75,6 +77,7 @@ namespace InkyCal.Utils
 				{
 					d = d.AddDays(-1);
 				}
+			}
 
 			if (!(pdf?.Any()).GetValueOrDefault())
 				throw new Exception("Failed to download NYT homepage");
