@@ -26,7 +26,7 @@ namespace InkyCal.Utils
 		/// <param name="log"></param>
 		/// <returns></returns>
 		/// <inheritdoc />
-		public override async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
+		public override async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Get pdf as byte array
 			var pdf = await GetPdf();
@@ -36,57 +36,46 @@ namespace InkyCal.Utils
 				// Settings the density to 300 dpi will create an image with a better quality
 				Density = new Density(300),
 				Format = MagickFormat.Pdf,
-				Verbose = true
+				Verbose = true,
 			};
 
+			using var images = new MagickImageCollection();
+			// Add all the pages of the pdf file to the collection
+			images.Read(pdf, settings);
 
-			using (var images = new MagickImageCollection())
-			{
-				// Add all the pages of the pdf file to the collection
-				images.Read(pdf, settings);
+			if (images.Count == 0)
+				throw new System.Exception($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
 
-				if (images.Count == 0)
-					throw new System.Exception($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
+			using var ms = new MemoryStream();
 
-				using var ms = new MemoryStream();
-				{
-					// Create new image that appends all the pages horizontally
-					using (var horizontal = images.AppendHorizontally())
+			// Create new image that appends all the pages horizontally
+			using var vertical = images.AppendVertically();
+
+			// Save result as a png
+			vertical.Write(ms, MagickFormat.Png);
+
+			ms.Position = 0;
+
+
+			//Load PNG
+			var image = Image.Load(ms, new PngDecoder());
+			
+			var colorsExtended = new List<Color>(colors);
+
+			image.Mutate(x => x
+				.EntropyCrop()
+				.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
+				.BackgroundColor(Color.Transparent)
+				.Quantize(
+					new PaletteQuantizer(colorsExtended.ToArray(),
+					new QuantizerOptions()
 					{
-						// Save result as a png
-						horizontal.Write(ms, MagickFormat.Png);
+						Dither = KnownDitherings.FloydSteinberg
 					}
-					ms.Position = 0;
-				}
+				))
+				);
 
-				//Load PNG
-				var image = Image.Load(ms, new PngDecoder());
-				var colorsExtended = new List<SixLabors.ImageSharp.Color>(colors);
-				//foreach (float i in Enumerable.Range(0, 10))
-				//	colorsExtended.Add(Color.Black.WithAlpha(i / 10));
-
-				//colorsExtended.Add(Color.Gray);
-				//colorsExtended.Add(Color.DarkGray);
-				//colorsExtended.Add(Color.DarkSlateGray);
-				//colorsExtended.Add(Color.DimGray);
-				//colorsExtended.Add(Color.LightGray);
-				//colorsExtended.Add(Color.LightSlateGray);
-				//colorsExtended.Add(Color.SlateGray);
-
-				image.Mutate(x => x
-					.Resize(new ResizeOptions() { Mode = ResizeMode.Min, Size = new Size(width, height) })
-					.BackgroundColor(SixLabors.ImageSharp.Color.Transparent)
-					.Quantize(
-						new PaletteQuantizer(colorsExtended.ToArray(),
-						new QuantizerOptions()
-						{
-							Dither = KnownDitherings.FloydSteinberg
-						}
-					))
-					);
-
-				return image;
-			}
+			return image;
 		}
 
 		/// <summary>
