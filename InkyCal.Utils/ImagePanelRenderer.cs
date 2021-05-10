@@ -67,20 +67,32 @@ namespace InkyCal.Utils
 	}
 
 	/// <summary>
-	/// An image panel, assumes a landscape image, resizes and flips it to portait.
+	/// 
 	/// </summary>
-	public class ImagePanelRenderer : IPanelRenderer
+	public static class DownloadCache
 	{
+
+		private static readonly HttpClient client = new HttpClient();
+
 		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
 		{
-			SizeLimit = 1024*1024,
+			SizeLimit = 1024 * 1024 * 500,
 		});
+
 
 		/// <summary>
 		/// Returns a cached image
 		/// </summary>
 		/// <returns></returns>
-		private static async Task<byte[]> LoadCachedImage(Uri imageUrl)
+		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl) 
+			=> await LoadCachedContent(imageUrl, TimeSpan.FromMinutes(10));
+
+		/// <summary>
+		/// Returns a cached image
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="HttpRequestException">When download failed (non-200 response was returned))</exception>
+		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration)
 		{
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
@@ -88,13 +100,13 @@ namespace InkyCal.Utils
 				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
 				{
 					// Key not in cache, so get data.
-					using (MiniProfiler.Current.Step($"Image not in cache, loading from URL"))
+					using (MiniProfiler.Current.Step($"File not in cache, loading from URL"))
 						cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
 
 					var cacheEntryOptions = new MemoryCacheEntryOptions()
 						.SetSize(cacheEntry.Length)
 						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+						.SetAbsoluteExpiration(expiration);
 
 					// Save data in cache.
 					using (MiniProfiler.Current.Step($"Storing image in cache"))
@@ -104,7 +116,13 @@ namespace InkyCal.Utils
 				return cacheEntry;
 			}
 		}
+	}
 
+	/// <summary>
+	/// An image panel, assumes a landscape image, resizes and flips it to portait.
+	/// </summary>
+	public class ImagePanelRenderer : IPanelRenderer
+	{
 		/// <summary>
 		/// 
 		/// </summary>
@@ -119,7 +137,6 @@ namespace InkyCal.Utils
 			cacheKey = new ImagePanelCacheKey(expiration: TimeSpan.FromMinutes(1), imageUrl, rotateImage);
 		}
 
-		private static readonly HttpClient client = new HttpClient();
 		private readonly Uri imageUrl;
 		private readonly RotateMode rotateImage;
 		private readonly ImagePanelCacheKey cacheKey;
@@ -142,9 +159,10 @@ namespace InkyCal.Utils
 				Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
 				try
 				{
-					image = Image.Load(await LoadCachedImage(imageUrl));
+					image = Image.Load(await imageUrl.LoadCachedContent(TimeSpan.FromMinutes(10)));
 				}
-				catch (UnknownImageFormatException ex) {
+				catch (UnknownImageFormatException ex)
+				{
 					ex.Data["ImageUrl"] = imageUrl;
 					throw;
 				}
