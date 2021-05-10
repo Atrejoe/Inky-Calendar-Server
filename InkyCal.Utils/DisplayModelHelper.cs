@@ -68,6 +68,11 @@ namespace InkyCal.Utils
 					width = 400;
 					height = 300;
 					break;
+				case DisplayModel.epd_12_in_48_colour:
+				case DisplayModel.epd_12_in_48_colour_with_grayscale:
+					width = 1304;
+					height = 984;
+					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(model), model, $"Model `{model}` is not supported, dimensions unknown.");
 			}
@@ -77,7 +82,12 @@ namespace InkyCal.Utils
 				case DisplayModel.epd_7_in_5_v3_colour:
 				case DisplayModel.epd_7_in_5_v2_colour:
 				case DisplayModel.epd_7_in_5_colour:
+				case DisplayModel.epd_12_in_48_colour:
 					colors = new[] { Color.Black, Color.White, Color.Red }; //Could be yellow too, maybe introduce a new panel type
+					break;
+
+				case DisplayModel.epd_12_in_48_colour_with_grayscale:
+					colors = new[] { Color.Black, Color.White, Color.Red, Color.Gray }; //Could be yellow too, maybe introduce a new panel type
 					break;
 				case DisplayModel.epd_7_in_5_v3:
 				case DisplayModel.epd_7_in_5_v2:
