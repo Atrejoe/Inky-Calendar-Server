@@ -13,12 +13,39 @@ namespace InkyCal.Utils
 {
 
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	public class WeatherPanelCacheKey: PanelCacheKey{
+		internal readonly string Token;
+		internal readonly string City;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration"></param>
+		/// <param name="token">The token.</param>
+		/// <param name="city">The city.</param>
+		public WeatherPanelCacheKey(TimeSpan expiration, string token, string city):base(expiration) {
+			this.Token = token;
+			this.City = city;
+		}
+
+		/// <summary>
+		/// Included <see cref="Token"/> and <see cref="City"/>in hashcode
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Token, City.ToUpperInvariant());
+	}
+
+	/// <summary>
 	/// A renderer for weather
 	/// </summary>
 	public class WeatherPanelRenderer : PanelRenderer<WeatherPanel>
 	{
-		private string token;
-		private string city;
+		private WeatherPanelCacheKey cacheKey;
 
 		/// <summary>
 		/// 
@@ -27,8 +54,7 @@ namespace InkyCal.Utils
 		/// <param name="city"></param>
 		public WeatherPanelRenderer(string token, string city)
 		{
-			this.token = token;
-			this.city = city;
+			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), token, city);
 		}
 
 		/// <summary>
@@ -47,8 +73,7 @@ namespace InkyCal.Utils
 				throw new ArgumentNullException(nameof(panel));
 
 
-			this.token = panel.Token;
-			this.city = panel.Location;
+			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), panel.Token, panel.Location);
 		}
 
 
@@ -112,11 +137,11 @@ namespace InkyCal.Utils
 
 			Weather.RootObject weather;
 
-			using (MiniProfiler.Current.Step($"Get weather for '{city}'"))
+			using (MiniProfiler.Current.Step($"Get weather for '{cacheKey.City}'"))
 				try
 				{
-					using (var util = new Weather.Util(token))
-						weather = await util.GetForeCast(city);
+					using (var util = new Weather.Util(cacheKey.Token))
+						weather = await util.GetForeCast(cacheKey.City);
 				}
 				catch (Weather.WeatherAPIRequestFailureException ex)
 				{
@@ -221,5 +246,15 @@ namespace InkyCal.Utils
 
 			return result;
 		}
+
+		/// <summary>
+		/// Gets the cache key. (<see cref="WeatherPanelCacheKey"/>)
+		/// </summary>
+		/// <value>
+		/// The cache key.
+		/// </value>
+		public override PanelCacheKey CacheKey
+			=> cacheKey;
+		
 	}
 }

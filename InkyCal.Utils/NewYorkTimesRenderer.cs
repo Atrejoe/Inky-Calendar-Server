@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,6 +6,21 @@ using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="TPanel">The type of the panel.</typeparam>
+	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	public class PanelCacheKey<TPanel> : PanelCacheKey where TPanel: IPanelRenderer
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PanelCacheKey{TPanel}"/> class.
+		/// </summary>
+		/// <param name="expiration">The expiration.</param>
+		public PanelCacheKey(TimeSpan expiration) : base(expiration) { 
+		}
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -19,7 +33,15 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The date.
 		/// </value>
-		public DateTime Date { get; private set; } = DateTime.Now.AddDays(0);
+		public DateTime Date { get; private set; } = DateTime.Now.Date.AddDays(0);
+
+		/// <summary>
+		/// Gets the cache key.
+		/// </summary>
+		/// <value>
+		/// The cache key.
+		/// </value>
+		public override PanelCacheKey CacheKey => new PanelCacheKey<NewYorkTimesRenderer>(TimeSpan.FromMinutes(20));
 
 		private static readonly HttpClient client = new HttpClient();
 

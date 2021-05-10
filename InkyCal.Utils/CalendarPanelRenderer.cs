@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
+using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -19,6 +20,43 @@ using static InkyCal.Utils.FontHelper;
 
 namespace InkyCal.Utils
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	public class CalendarPanelCacheKey : PanelCacheKey
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CalendarPanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration">The expiration.</param>
+		/// <param name="iCalUrls">The i cal urls.</param>
+		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls) : base(expiration)
+		{
+			ICalUrls = iCalUrls.OrderBy(x=>x.ToString()).ToList().AsReadOnly();
+		}
+
+		/// <summary>
+		/// Gets the iCal urls.
+		/// </summary>
+		/// <value>
+		/// The i cal urls.
+		/// </value>
+		public ReadOnlyCollection<Uri> ICalUrls { get; }
+
+		/// <summary>
+		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+		/// </returns>
+		protected override bool Equals(PanelCacheKey other)
+		{
+			return other is CalendarPanelCacheKey cpc
+				&& ICalUrls.SequenceEqual(cpc.ICalUrls);
+		}
+	}
 
 	/// <summary>
 	/// A panel that shows one or more calendars
@@ -43,12 +81,18 @@ namespace InkyCal.Utils
 		public CalendarPanelRenderer(Uri[] iCalUrls)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
+			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls);
 		}
 
 		/// <summary>
 		/// The calendars to render
 		/// </summary>
 		public ReadOnlyCollection<Uri> ICalUrls { get; }
+
+		/// <summary>
+		/// Gets the cache key.
+		/// </summary>
+		public PanelCacheKey CacheKey { get; }
 
 
 		/// <summary>
@@ -75,11 +119,11 @@ namespace InkyCal.Utils
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		internal static Image<Rgba32> DrawImage(
-			int width, 
-			int height, 
-			Color[] colors, 
-			List<Event> events, 
-			string calenderParseErrors, 
+			int width,
+			int height,
+			Color[] colors,
+			List<Event> events,
+			string calenderParseErrors,
 			IPanelRenderer.Log log)
 		{
 			if (colors is null)
@@ -223,8 +267,8 @@ namespace InkyCal.Utils
 											canvas.DrawText(
 												options_Date,
 												day.ToSafeChars(font),
-												font, 
-												primaryColor, 
+												font,
+												primaryColor,
 												new PointF(0, y));
 
 											lineDrawn = true;
@@ -307,7 +351,6 @@ namespace InkyCal.Utils
 
 			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
 		}
-
 
 		private static string DescribeCalender(int characterPerLine, IEnumerable<Event> items)
 		{

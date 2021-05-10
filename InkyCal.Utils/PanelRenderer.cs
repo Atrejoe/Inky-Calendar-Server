@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.ImageSharp;
 
@@ -48,6 +46,7 @@ namespace InkyCal.Utils
 
 		/// <inheritdoc/>
 		public abstract Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log);
-
+		/// <inheritdoc/>
+		public abstract PanelCacheKey CacheKey { get; }
 	}
 }

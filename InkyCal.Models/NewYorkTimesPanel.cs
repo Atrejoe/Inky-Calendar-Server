@@ -8,6 +8,6 @@ namespace InkyCal.Models
 	public class NewYorkTimesPanel : CurrentDatePanel
 	{
 		public NewYorkTimesPanel() { }
-		
+
 	}
 }

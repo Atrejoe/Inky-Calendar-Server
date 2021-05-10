@@ -225,5 +225,16 @@ namespace InkyCal.Server.Controllers
 							(RotateMode)panel.Rotation);
 
 		}
+
+
+
+		/// <summary>
+		/// Returns the nuber of items in the cahce
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("Cache")]
+		[ProducesResponseType(StatusCodes.Status200OK,Type = typeof(int))]
+		[ResponseCache(NoStore = true)]
+		public ActionResult Cache() => StatusCode((int)System.Net.HttpStatusCode.OK, IPanelRendererExtensions.CacheEntries());
 	}
 }

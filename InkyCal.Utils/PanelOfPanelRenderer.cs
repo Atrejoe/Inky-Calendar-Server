@@ -11,12 +11,68 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
+	/// <summary>
+	/// A simpel cache entry per stored panel, regardless of parameters
+	/// </summary>
+	/// <seealso cref="PanelCacheKey" />
+	public class PerPanelCacheKey : PanelCacheKey
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PerPanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration">The expiration.</param>
+		/// <param name="id">The identifier.</param>
+		public PerPanelCacheKey(TimeSpan expiration, Guid id) : base(expiration)
+		{
+			Id = id;
+		}
+
+		/// <summary>
+		/// Gets the identifier of the <see cref="Panel"/> (<see cref="Panel.Id"/>)
+		/// </summary>
+		/// <value>
+		/// The identifier.
+		/// </value>
+		public Guid Id { get; }
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(base.GetHashCode(),Id);
+		}
+
+		/// <summary>
+		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+		/// </returns>
+		protected override bool Equals(PanelCacheKey other)
+		{
+			return other is PerPanelCacheKey ppc
+				&& ppc.Id == Id;
+		}
+	}
+
 	/// <summary>
 	/// An image panel, assumes a landscape image, resizes and flips it to portait.
 	/// </summary>
 	public class PanelOfPanelRenderer : IPanelRenderer
 	{
 		private PanelOfPanels pp;
+
+		/// <summary>
+		/// Gets the cache key. By default returns <see cref="PanelInstanceCacheKey" />, with default <see cref="PanelCacheKey.Expiration" /> (<see cref="PanelInstanceCacheKey.DefaultExpirationInSeconds" /> seconds)
+		/// </summary>
+		public PanelCacheKey CacheKey { get; }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -24,6 +80,7 @@ namespace InkyCal.Utils
 		public PanelOfPanelRenderer(PanelOfPanels pp)
 		{
 			this.pp = pp;
+			CacheKey = new PerPanelCacheKey(TimeSpan.FromSeconds(30), pp.Id);
 		}
 
 
@@ -91,7 +148,8 @@ namespace InkyCal.Utils
 					{
 						using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})")) {
 
-							var subImage = await renderer.GetImage(width, parameter.subPanelHeight, colors, log);
+							var bytes = await renderer.GetCachedImage(width, parameter.subPanelHeight, colors, log);
+							var subImage = Image.Load(bytes);
 
 							result.Mutate(
 								operation => operation.DrawImage(subImage, new Point(0, parameter.y), 1f));

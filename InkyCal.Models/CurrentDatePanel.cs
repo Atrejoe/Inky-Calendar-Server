@@ -17,7 +17,6 @@ namespace InkyCal.Models
 		/// The date.
 		/// </value>
 		[NotMapped]
-		[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
 		public virtual DateTime Date { get { return DateTime.Now; } set { } }
 	}
 }
