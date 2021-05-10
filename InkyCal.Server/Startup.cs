@@ -127,14 +127,13 @@ namespace InkyCal.Server
 
 				//c.DescribeAllEnumsAsStrings();
 
-				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList().ForEach(
+					xmlFile =>
+					c.IncludeXmlComments(xmlFile, includeControllerXmlComments: true)
+				);
 
-				//... and tell Swagger to use those XML comments.
-				c.IncludeXmlComments(xmlPath, true);
 			});
 
-			
 			try
 			{
 				throw new ApplicationException("Application has started");
@@ -159,7 +158,7 @@ namespace InkyCal.Server
 				(options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
 				// (Optional) Control which SQL formatter to use, InlineFormatter is the default
-				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData:true);
+				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData: true);
 
 				// (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
 				// (default is everyone can access profilers)
