@@ -7,6 +7,7 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -139,6 +140,8 @@ namespace InkyCal.Utils
 										.Where(x => x != null);
 
 
+				var quantizer = new PaletteQuantizer(colors);
+
 				foreach (var parameter in renderParameters.AsParallel()){
 
 					var panel = parameter.Panel;
@@ -152,7 +155,11 @@ namespace InkyCal.Utils
 							var subImage = Image.Load(bytes);
 
 							result.Mutate(
-								operation => operation.DrawImage(subImage, new Point(0, parameter.y), 1f));
+								operation => 
+									operation
+										.DrawImage(subImage, new Point(0, parameter.y), opacity: 1)
+										.Quantize(quantizer) //when overlaying there is a slight color degradation even when opacity = 1, quantizing corrects it.
+										);
 						}
 					}
 					catch (Exception ex)

@@ -90,22 +90,12 @@ namespace InkyCal.Utils
 				}
 
 			using (MiniProfiler.Current.Step($"Converting hi-res image to correct resultion and color palette"))
-			{
-				var colorsExtended = new List<Color>(colors);
-
 				image.Mutate(x => x
 					.EntropyCrop()
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
 					.BackgroundColor(Color.Transparent)
-					.Quantize(
-						new PaletteQuantizer(
-							colorsExtended.ToArray(),
-							new QuantizerOptions()
-							{
-								Dither = KnownDitherings.FloydSteinberg
-							})
-					));
-			}
+					.Quantize(new PaletteQuantizer(colors)));
+
 
 			return image;
 		}
