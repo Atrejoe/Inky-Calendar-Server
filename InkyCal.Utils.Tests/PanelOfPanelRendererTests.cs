@@ -13,19 +13,22 @@ namespace InkyCal.Utils.Tests
 			var pp = new PanelOfPanels()
 			{
 				Panels = new HashSet<SubPanel>(
-					 new[] { new SubPanel() {
-						Panel = new CalendarPanel() { 
+					 new[] {
+						 new SubPanel() {
+						Panel = new CalendarPanel() {
 										CalenderUrls = new HashSet<CalendarPanelUrl>(
 														new []{
-															new CalendarPanelUrl(){ 
-																Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl 
+															new CalendarPanelUrl(){
+																Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl
 															}
 														})
 													}
-					 },
-					 new SubPanel() {
-						Panel = new ImagePanel() { Path = TestImagePanelRenderer.demoImageUrl}
-					 }})
+						}
+						,
+						new SubPanel() {
+							Panel = new ImagePanel() { Path = TestImagePanelRenderer.demoImageUrl}
+						}
+					 })
 			};
 
 			return new PanelOfPanelRenderer(pp);
