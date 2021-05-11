@@ -76,8 +76,11 @@ namespace InkyCal.Utils.Tests
 					return Enumerable.Range(0, bitmap.Height - 1).Select(y => bitmap[x, y]);
 				}).ToHashSet();
 
-			Trace.WriteLine($"{pixels.Count:n0} distinct colors in the image, a palette of {colors.Length:n0} colors was specified.");
-			Assert.False(pixels.Count > colors.Length, $"{pixels.Count:n0} distinct colors in the image, while a palette of {colors.Length:n0} was specified.");
+			var extraColors = pixels.Select(x => x.ToHex()).Where(x => !colors.Select(x => x.ToHex()).Contains(x));
+
+			var message = $"{pixels.Count:n0} distinct colors in the image ({string.Join(",", pixels.Select(x => x.ToHex().ToString()))}), a palette of {colors.Length:n0} colors ({string.Join(",", colors.Select(x => x.ToString()))}) was specified.Extra colors : {string.Join(",", extraColors)}";
+			Trace.WriteLine(message);
+			Assert.False(pixels.Count > colors.Length, message);
 
 
 		}

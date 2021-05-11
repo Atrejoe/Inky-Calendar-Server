@@ -95,12 +95,12 @@ namespace InkyCal.Utils
 		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration)
 		{
 
-			using (MiniProfiler.Current.Step($"Loading image from cache"))
+			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
 				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
 				{
 					// Key not in cache, so get data.
-					using (MiniProfiler.Current.Step($"File not in cache, loading from URL"))
+					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))
 						cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
 
 					var cacheEntryOptions = new MemoryCacheEntryOptions()
@@ -109,7 +109,7 @@ namespace InkyCal.Utils
 						.SetAbsoluteExpiration(expiration);
 
 					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing image in cache"))
+					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
 						_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
 				}
 

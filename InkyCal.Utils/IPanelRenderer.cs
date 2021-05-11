@@ -188,7 +188,7 @@ namespace InkyCal.Utils
 						.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
 
 					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing image in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
+					using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
 						_cache.Set(cachekey, result, cacheEntryOptions);
 
 				}
