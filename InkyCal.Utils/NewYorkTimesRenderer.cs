@@ -42,7 +42,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The cache key.
 		/// </value>
-		public override PanelCacheKey CacheKey => new PanelCacheKey<NewYorkTimesRenderer>(TimeSpan.FromMinutes(20));
+		public override PanelCacheKey CacheKey => new PanelCacheKey<NewYorkTimesRenderer>(TimeSpan.FromMinutes(60));
 
 		/// <summary>
 		/// Gets the Pdf file from <c>https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf</c>
