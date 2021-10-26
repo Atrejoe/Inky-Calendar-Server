@@ -40,7 +40,8 @@
 					<tbody>
 						@foreach (var panel in _panels.OrderByDescending(x=>x.Starred).ThenBy(x=>x.Name).ThenBy(x=>x.GetType().Name))
 						{
-							<tr @onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
+							<tr @ondblclick="@(()=>navigationManager.NavigateTo($"/panel/{panel.Id}/edit"))" 
+								@onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
 								<td>
 									<PanelStar Panel="@panel" />
 									@panel.Name
@@ -74,7 +75,7 @@
 									@switch (panel)
 									{
 										case Models.CalendarPanel cp:
-											<span>@("calendar".ToQuantity(cp.CalenderUrls?.Count??0))</span>
+											<span>@("calendar".ToQuantity((cp.CalenderUrls?.Count??0)+(cp.SubscribedGoogleCalenders?.Count??0)))</span>
 											break;
 										case Models.ImagePanel ip:
 											<a href="@ip.Path" target="_blank" title="Link to original image">

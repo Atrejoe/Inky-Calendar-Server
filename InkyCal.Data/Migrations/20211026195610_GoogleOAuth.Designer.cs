@@ -4,14 +4,16 @@ using InkyCal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InkyCal.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211026195610_GoogleOAuth")]
+    partial class GoogleOAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,27 +133,6 @@ namespace InkyCal.Data.Migrations
                     b.HasIndex("IdPanel");
 
                     b.ToTable("SubPanel","InkyCal");
-                });
-
-            modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
-                {
-                    b.Property<string>("Calender")
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
-
-                    b.Property<int>("AccessToken")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("Panel")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Calender", "AccessToken", "Panel");
-
-                    b.HasIndex("AccessToken");
-
-                    b.HasIndex("Panel");
-
-                    b.ToTable("CalendarPanel_GoogleCalender","InkyCal");
                 });
 
             modelBuilder.Entity("InkyCal.Models.User", b =>
@@ -446,7 +427,7 @@ namespace InkyCal.Data.Migrations
             modelBuilder.Entity("InkyCal.Models.GoogleOAuthAccess", b =>
                 {
                     b.HasOne("InkyCal.Models.User", "User")
-                        .WithMany("GoogleOAuthTokens")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -470,21 +451,6 @@ namespace InkyCal.Data.Migrations
                     b.HasOne("InkyCal.Models.PanelOfPanels", null)
                         .WithMany("Panels")
                         .HasForeignKey("IdParent")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
-                {
-                    b.HasOne("InkyCal.Models.GoogleOAuthAccess", null)
-                        .WithMany()
-                        .HasForeignKey("AccessToken")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InkyCal.Models.CalendarPanel", null)
-                        .WithMany()
-                        .HasForeignKey("Panel")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

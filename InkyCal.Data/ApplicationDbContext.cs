@@ -78,6 +78,29 @@ namespace InkyCal.Data
 
 			builder.Entity<User>()
 				.HasOne(typeof(IdentityUser));
+
+			builder.Entity<GoogleOAuthAccess>();
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne(typeof(GoogleOAuthAccess))
+				.WithMany()
+				.HasForeignKey(nameof(SubscribedGoogleCalender.AccessToken));
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne(typeof(CalendarPanel))
+				.WithMany()
+				.HasForeignKey(nameof(SubscribedGoogleCalender.Panel));
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasKey(x => new { x.Calender, x.AccessToken, x.Panel });
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasAlternateKey(x => new { x.Calender, x.AccessToken, x.Panel });
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne<CalendarPanel>()
+				.WithMany(x=>x.SubscribedGoogleCalenders)
+				.HasForeignKey(x=>x.Panel);
 		}
 	}
 }

@@ -123,6 +123,7 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 			var queryable = c.Set<TPanel>()
 							.Include(x => (x as CalendarPanel).CalenderUrls)
+							.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
 							.Include(x => (x as PanelOfPanels).Panels)
 							.Where(x => x.Owner.Id.Equals(user.Id))
 							.AsNoTracking();
@@ -184,10 +185,16 @@ namespace InkyCal.Data
 		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
 		{
 			return set
+					.Include(x => (x as Panel).Owner)
+					.Include(x => (x as Panel).Owner.GoogleOAuthTokens)
 					.Include(x => (x as CalendarPanel).CalenderUrls)
+					.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
 					.Include(x => (x as PanelOfPanels).Panels)
 						.ThenInclude(x => x.Panel)
-						.ThenInclude(x => (x as CalendarPanel).CalenderUrls);
+						.ThenInclude(x => x.Owner)
+							.ThenInclude(x => x.GoogleOAuthTokens)
+						.Include(x => (x as CalendarPanel).CalenderUrls)
+						.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders);
 
 		}
 	}

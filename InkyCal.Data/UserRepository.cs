@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InkyCal.Data
 {
+
 	public static class UserRepository
 	{
 
@@ -37,7 +38,29 @@ namespace InkyCal.Data
 		public static async Task<IEnumerable<User>> GetAll()
 		{
 			using var c = new ApplicationDbContext();
-			return await c.Set<User>().Include(x=>x.Panels).ToArrayAsync();
+			return await c.Set<User>().Include(x => x.Panels).ToArrayAsync();
+		}
+
+		public static async Task StoreToken(GoogleOAuthAccess token)
+		{
+			using var c = new ApplicationDbContext();
+			token.User = new User() { Id = token.User.Id };
+			c.Entry(token.User).State = EntityState.Unchanged;
+			c.Add(token);
+			await c.SaveChangesAsync();
+		}
+		public static async Task DeleteToken(int idToken)
+		{
+			using var c = new ApplicationDbContext();
+			var token = new GoogleOAuthAccess() { Id = idToken };
+			c.Entry(token).State = EntityState.Deleted;
+			await c.SaveChangesAsync();
+		}
+
+		public static async Task<GoogleOAuthAccess[]> GetTokens(int idUser)
+		{
+			using var c = new ApplicationDbContext();
+			return await c.Set<GoogleOAuthAccess>().Where(x => x.User.Id == idUser).ToArrayAsync();
 		}
 	}
 }

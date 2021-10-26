@@ -33,7 +33,12 @@ namespace InkyCal.Utils
 				case CalendarPanel cp:
 
 					var urls = cp.CalenderUrls.Select(x => new Uri(x.Url));
-					renderer = new CalendarPanelRenderer(iCalUrls: urls.ToArray());
+					
+					renderer = new CalendarPanelRenderer(
+									iCalUrls: urls.ToArray(), 
+									cp.Owner.GoogleOAuthTokens?.ToArray(),
+									cp.SubscribedGoogleCalenders?.ToArray()
+									);
 
 					break;
 				case ImagePanel ip:

@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\GoogleController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\changelog.md" Link="changelog.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -22,6 +26,7 @@
     <PackageReference Include="Bugsnag.AspNet.Core" Version="2.2.1" />
     <PackageReference Include="ceTe.DynamicPDF.Rasterizer.NET.x64" Version="3.2.0.38353" />
     <PackageReference Include="ceTe.DynamicPDF.Rasterizer.NET.x86" Version="3.2.0.38353" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.55.0.1869" />
     <PackageReference Include="Humanizer" Version="2.8.26" />
     <PackageReference Include="Markdig.Signed" Version="0.24.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.14" />
@@ -42,6 +47,7 @@
     <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.2.22" />
     <PackageReference Include="MiniProfiler.Shared" Version="4.2.22" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
+    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

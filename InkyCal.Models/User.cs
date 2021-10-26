@@ -17,6 +17,6 @@ namespace InkyCal.Models
 		[Required, MaxLength(5), MinLength(0)]
 		public HashSet<Panel> Panels { get; set; } = new HashSet<Panel>();
 
-		//public IdentityUser IdentityUser { get; set; }
+		public HashSet<GoogleOAuthAccess> GoogleOAuthTokens { get; set; } = new HashSet<GoogleOAuthAccess>();
 	}
 }

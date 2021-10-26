@@ -1,0 +1,62 @@
+﻿@page "/google/authorize"
+@inherits AuthenticatedComponentBase;
+<h3>Google OAuth access</h3>
+
+<div class="alert alert-success" role="alert">
+  <h4 class="alert-heading"></h4>
+  <p>This page enables you to allow Inky Calender to read your calendar information, including all events.</p>
+  <hr>
+  <p class="mb-0">These will be used in order to render e-ink panels for your eyes only and can be revoked by you at any time.</p>
+</div>
+
+<AuthorizeView>
+	<Authorized>
+
+@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+{
+
+	var anyLinks = (Tokens?.Any()).GetValueOrDefault();
+
+
+	@if (PermissionAlreadyGranted)
+	{
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			<strong>Already registered</strong> The Google account possibly was already registered.
+			@if (anyLinks)
+			{
+				<span>To re-register, simple delete the link below.</span>
+			}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="((x)=>PermissionAlreadyGranted=false)">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	}
+
+
+	@if (anyLinks)
+	{
+		<h3>Linked Google accounts:</h3>
+		<ol>
+			@foreach (var token in Tokens)
+			{
+				<li>
+					<img src="@token.Profile?.Picture" />
+					@token.Profile?.Name &lt;@(token.Profile?.Email)&gt; (@token.Token.AccessTokenExpiry)
+					<PopContainer ConfirmedChanged="@(async x=>{if(x){await DeleteToken(@token.Token.Id);}})" Message="Are you sure you wish to delete this token? This will remove any usage of its calendars.<br/>" Class="btn btn-danger oi oi-trash" Title="" />
+				</li>
+			}
+		</ol>
+	}
+
+	<button @onclick="GetConsent" class="btn btn-default">
+		<span class="oi oi-plus" aria-hidden="true"></span>
+		Link @(anyLinks?"another":"a") Google account (this will open a Google consert flow, which wll then return to this page).
+	</button>
+
+}
+
+	</Authorized>
+	<NotAuthorized>
+		<a href="Identity/Account/Register">Register</a> or <a href="Identity/Account/Login">Log in</a> in order to link your Google calendars.
+	</NotAuthorized>
+</AuthorizeView>

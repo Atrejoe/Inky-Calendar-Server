@@ -5,4 +5,4 @@ docker-compose pull
 docker-compose up -d db
 
 ::starts web application, restarts upon changes
-dotnet watch --project InkyCal.Server run
+::dotnet watch --project InkyCal.Server run

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using SixLabors.Fonts;
@@ -31,9 +29,11 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="expiration">The expiration.</param>
 		/// <param name="iCalUrls">The i cal urls.</param>
-		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls) : base(expiration)
+		/// <param name="subscribedCalenders"></param>
+		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders) : base(expiration)
 		{
-			ICalUrls = iCalUrls.OrderBy(x=>x.ToString()).ToList().AsReadOnly();
+			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
+			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.AccessToken)?.ThenBy(x => x.Calender)?.ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
 		}
 
 		/// <summary>
@@ -45,6 +45,11 @@ namespace InkyCal.Utils
 		public ReadOnlyCollection<Uri> ICalUrls { get; }
 
 		/// <summary>
+		/// Get the subscribed Google calenders
+		/// </summary>
+		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; }
+
+		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
 		/// </summary>
 		/// <param name="other">An object to compare with this object.</param>
@@ -54,7 +59,8 @@ namespace InkyCal.Utils
 		protected override bool Equals(PanelCacheKey other)
 		{
 			return other is CalendarPanelCacheKey cpc
-				&& ICalUrls.SequenceEqual(cpc.ICalUrls);
+				&& ICalUrls.SequenceEqual(cpc.ICalUrls)
+				&& SubscribedGoogleCalenders.SequenceEqual(cpc.SubscribedGoogleCalenders);
 		}
 	}
 
@@ -63,6 +69,8 @@ namespace InkyCal.Utils
 	/// </summary>
 	public class CalendarPanelRenderer : IPanelRenderer
 	{
+		private readonly GoogleOAuthAccess[] Tokens;
+		private readonly SubscribedGoogleCalender[] Calendars;
 
 		/// <summary>
 		/// Shows a single calendar
@@ -78,10 +86,19 @@ namespace InkyCal.Utils
 		/// Show one or more calendars
 		/// </summary>
 		/// <param name="iCalUrls"></param>
-		public CalendarPanelRenderer(Uri[] iCalUrls)
+		/// <param name="tokens"></param>
+		/// <param name="calendars"></param>
+		public CalendarPanelRenderer(Uri[] iCalUrls, GoogleOAuthAccess[] tokens = null, SubscribedGoogleCalender[] calendars = null)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
-			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls);
+			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
+
+			//Sanitize : only use token for subscribed calender, only use calenders for which token have been provided
+			if (tokens != null & calendars != null)
+			{
+				Tokens = tokens?.Where(x => calendars.Any(y => y.AccessToken == x.Id)).ToArray();
+				Calendars = calendars?.Where(x => Tokens.Any(y => y.Id == x.AccessToken)).ToArray();
+			}
 		}
 
 		/// <summary>
@@ -111,6 +128,9 @@ namespace InkyCal.Utils
 			List<Event> events;
 			using (MiniProfiler.Current.Step("Gather events"))
 				events = await GetEvents(sbErrors);
+
+			if (!(events?.Any()).GetValueOrDefault())
+				sbErrors.AppendLine($"No events listed");
 
 			var result = DrawImage(width, height, colors, events, sbErrors.ToString(), log);
 
@@ -195,7 +215,7 @@ namespace InkyCal.Utils
 
 				using (MiniProfiler.Current.Step("Drawing events"))
 				{
-					events
+					events.ToHashSet()
 						.GroupBy(x => x.Date)
 						.OrderBy(x => x.Key)
 						.ToList()
@@ -349,7 +369,21 @@ namespace InkyCal.Utils
 			if (sbErrors is null)
 				throw new ArgumentNullException(nameof(sbErrors));
 
-			return await CalenderExtensions.GetEvents(sbErrors, ICalUrls);
+			var result = new List<Event>();
+
+
+			if ((ICalUrls?.Any()).GetValueOrDefault())
+				result.AddRange(await CalenderExtensions.GetEvents(sbErrors, ICalUrls));
+
+			if ((Calendars?.Any()).GetValueOrDefault())
+				result.AddRange(await CalenderExtensions.GetEvents(sbErrors, Tokens, Calendars));
+
+			if (!(ICalUrls?.Any()).GetValueOrDefault()
+				&& !(Calendars?.Any()).GetValueOrDefault())
+				sbErrors.AppendLine($"No iCal urls nor Google oAuth calenders were linked.");
+
+
+			return result;
 		}
 
 		private static string DescribeCalender(int characterPerLine, IEnumerable<Event> items)

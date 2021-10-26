@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29721.120
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31808.319
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Server", "InkyCal.Server\InkyCal.Server.csproj", "{21A41636-A851-432F-BAC3-514C626BC2BB}"
 EndProject
@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Data", "InkyCal.Dat
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "inkycal.server.docs", "documentation\inkycal.server.docs.shfbproj", "{17249AE0-6CC9-47D2-A17E-FDB3B9EC0BEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InkyCal.Data.Tests", "InkyCal.Data.Tests\InkyCal.Data.Tests.csproj", "{718273C0-5DE9-4179-9DA5-7433C4E1CE93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Data.Tests", "InkyCal.Data.Tests\InkyCal.Data.Tests.csproj", "{718273C0-5DE9-4179-9DA5-7433C4E1CE93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
