@@ -90,7 +90,7 @@ namespace InkyCal.Server.Pages
 							}
 							catch (GoogleApiException ex)
 							{
-								Console.Error.WriteLine(ex.ToString());
+								ex.Log(user, Bugsnag.Severity.Warning);
 							}
 
 							return (p, x);

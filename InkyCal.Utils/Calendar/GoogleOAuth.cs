@@ -11,6 +11,7 @@ using Google.Apis.Oauth2.v2;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
 {
@@ -49,6 +50,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex) when (ex.Error.Error == "invalid_grant")
 			{
+				ex.Log(severity:Bugsnag.Severity.Warning);
 				return default;
 			}
 		}
@@ -70,7 +72,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex)
 			{
-				ex.Log();
+				ex.Log(severity: Bugsnag.Severity.Warning);
 				return false;
 			}
 		}
@@ -86,7 +88,9 @@ namespace InkyCal.Utils.Calendar
 
 			try
 			{
-				var tokenResponse = await flow.ExchangeCodeForTokenAsync("", authorizationCode, $"{new Uri(Server.Config.GoogleOAuth.Website, Server.Config.GoogleOAuth.InkyCalRoot)}/google/authorize", CancellationToken.None);
+				TokenResponse tokenResponse;
+				using (MiniProfiler.Current.Step($"Exchanging authorization code"))
+					tokenResponse = await flow.ExchangeCodeForTokenAsync("", authorizationCode, $"{new Uri(Server.Config.GoogleOAuth.Website, Server.Config.GoogleOAuth.InkyCalRoot)}google/authorize", CancellationToken.None);
 
 				return (
 					tokenResponse.RefreshToken,
@@ -95,8 +99,10 @@ namespace InkyCal.Utils.Calendar
 						? (DateTime?)DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresInSeconds.Value)
 						: null);
 			}
-			catch (TokenResponseException)
+			catch (TokenResponseException ex)
 			{
+				ex.Log(severity: Bugsnag.Severity.Warning);
+
 				return default;
 			}
 		}
@@ -119,7 +125,7 @@ namespace InkyCal.Utils.Calendar
 		/// <returns></returns>
 		public static async Task<Userinfo> GetProfile(string token)
 		{
-			if (token == null)
+			if (string.IsNullOrEmpty(token))
 				return null;
 
 			var request = Oauth2Service.Value.Userinfo.Get();
@@ -134,7 +140,7 @@ namespace InkyCal.Utils.Calendar
 
 		private static GoogleAuthorizationCodeFlow GetFlow()
 		{
-			string[] Scopes = { 
+			string[] Scopes = {
 				CalendarService.Scope.CalendarReadonly,					  //Reading calendar
 				Google.Apis.Oauth2.v2.Oauth2Service.Scope.UserinfoEmail,  //Displaying email address
 				Google.Apis.Oauth2.v2.Oauth2Service.Scope.UserinfoProfile //Displaying profile information
