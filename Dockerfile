@@ -28,6 +28,10 @@ COPY --from=publish /app/publish .
 # Required for Pdf renderer
 RUN apk add ghostscript
 
+# Required for Time zone information
+# https://github.com/dotnet/dotnet-docker/issues/1366#issuecomment-601888662
+RUN apk add tzdata
+
 # Addresses some globalization issue in the database
 # Don't have a clue about the repercussions
 # https://github.com/dotnet/SqlClient/issues/220#issue-498595465

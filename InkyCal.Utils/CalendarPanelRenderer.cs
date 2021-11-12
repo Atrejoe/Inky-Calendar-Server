@@ -376,7 +376,7 @@ namespace InkyCal.Utils
 				result.AddRange(await CalenderExtensions.GetEvents(sbErrors, ICalUrls));
 
 			if ((Calendars?.Any()).GetValueOrDefault())
-				result.AddRange(await CalenderExtensions.GetEvents(sbErrors, Tokens, Calendars));
+				result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Tokens, Calendars));
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
 				&& !(Calendars?.Any()).GetValueOrDefault())

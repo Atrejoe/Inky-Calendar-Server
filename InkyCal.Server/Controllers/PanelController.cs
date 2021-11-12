@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace InkyCal.Server.Controllers
 {
 
 	/// <summary>
-	/// A controller for retuning Inkycal panels
+	/// A controller for returning Inkycal panels
 	/// </summary>
 	/// <seealso cref="ControllerBase" />
 	[Route("panel")]
