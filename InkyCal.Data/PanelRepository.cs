@@ -191,10 +191,12 @@ namespace InkyCal.Data
 					.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
 					.Include(x => (x as PanelOfPanels).Panels)
 						.ThenInclude(x => x.Panel)
-						.ThenInclude(x => x.Owner)
-							.ThenInclude(x => x.GoogleOAuthTokens)
-						.Include(x => (x as CalendarPanel).CalenderUrls)
-						.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders);
+							.ThenInclude(x => x.Owner)
+								.ThenInclude(x => x.GoogleOAuthTokens)
+					.Include(x => (x as PanelOfPanels).Panels)
+						.ThenInclude(x => (x.Panel as CalendarPanel).CalenderUrls)
+					.Include(x => (x as PanelOfPanels).Panels)
+						.ThenInclude(x => (x.Panel as CalendarPanel).SubscribedGoogleCalenders);
 
 		}
 	}
