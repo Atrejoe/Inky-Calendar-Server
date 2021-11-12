@@ -136,7 +136,9 @@ namespace InkyCal.Server.Controllers
 				using var image = PanelRenderHelper.CreateImage(width, height, backgroundColor);
 				image.Mutate(x =>
 					{
-						x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, 0));
+						var z= x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.Message, new Font(FontHelper.NotoSans, 16), errorColor, new Point(0, 0));
+						var start = z.GetCurrentSize().Height;
+						x.DrawText(new TextGraphicsOptions(true) { WrapTextWidth = width }, ex.StackTrace, new Font(FontHelper.NotoSans, 14), primaryColor, new Point(0, start));
 					});
 				return controller.Image(image);
 			}
