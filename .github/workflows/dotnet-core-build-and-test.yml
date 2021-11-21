@@ -19,11 +19,11 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore .\InkyCal.sln
+      run: dotnet restore InkyCal.sln
     - name: Build
-      run: dotnet build .\InkyCal.sln --configuration Release --no-restore
+      run: dotnet build InkyCal.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test .\InkyCal.sln --no-restore --verbosity normal
+      run: dotnet test InkyCal.sln --no-restore --verbosity normal
     - name: Docker Login
       # You may pin to the exact commit or the version.
       # uses: docker/login-action@34d5f75b0d6d0d22f06d83acf2fa1b144409ec83
