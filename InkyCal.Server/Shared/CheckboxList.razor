@@ -23,7 +23,7 @@
 				<input id="@(myId)_@(Value)" type="checkbox"
 						checked=@Checked  
 						style="padding:0x; margin:0px;"
-					   @onchange="eventArgs => { CheckboxClicked(Value, eventArgs.Value); }" />&nbsp;<label for="@(myId)_@(Value)" style="padding:0x; margin:0px;">@Text</label> 
+					   @onchange="eventArgs => { CheckboxClicked(Value, eventArgs.Value); }" />&nbsp;<label for="@(myId)_@(Value)" style="padding:0px; margin:0px;">@Text</label> 
 
 				@if(!string.IsNullOrEmpty(icon)){ 
 					<span style="margin-left:3px" class="oi oi-@icon" aria-hidden="true" title="@iconTooltip"></span>
