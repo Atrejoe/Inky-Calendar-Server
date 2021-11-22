@@ -1,4 +1,4 @@
-﻿@page "/google/authorize"
+@page "/google/authorize"
 @inherits AuthenticatedComponentBase;
 <h3>Google OAuth access</h3>
 
@@ -33,28 +33,33 @@
 	}
 
 
-	@if (anyLinks)
-	{
-		<h3>Linked Google accounts:</h3>
-		<ol>
-			@foreach (var token in Tokens)
+			@if (anyLinks)
 			{
-				<li>
-					<img src="@token.Profile?.Picture" />
-					@token.Profile?.Name &lt;@(token.Profile?.Email)&gt; (@token.Token.AccessTokenExpiry)
-					<PopContainer ConfirmedChanged="@(async x=>{if(x){await DeleteToken(@token.Token.Id);}})" Message="Are you sure you wish to delete this token? This will remove any usage of its calendars.<br/>" Class="btn btn-danger oi oi-trash" Title="" />
-				</li>
+				<h3>Your linked Google accounts:</h3>
+				<ul>
+					@foreach (var token in Tokens)
+					{
+						<li title="Access token expires @token.Token.AccessTokenExpiry">
+							<img src="@token.Profile?.Picture" />
+							@token.Profile?.Name <pre style="display:inline">&lt;@(token.Profile?.Email)&gt;</pre>
+							@if (@token.Token.AccessTokenExpiry <= DateTime.Now)
+							{
+								<span class="oi oi-warning" title="Token has expired"></span>
+							}
+							<PopContainer ConfirmedChanged="@(async x=>{if(x){await DeleteToken(@token.Token.Id);}})"
+							  Message="Are you sure you wish to delete this token? This will remove any usage of its calendars.<br/>"
+							  Class="btn btn-danger oi oi-trash" Title="" />
+						</li>
+					}
+				</ul>
 			}
-		</ol>
-	}
 
-	<button @onclick="GetConsent" class="btn btn-default">
+			<button @onclick="GetConsent" class="btn btn-default">
 		<span class="oi oi-plus" aria-hidden="true"></span>
 		Link @(anyLinks?"another":"a") Google account (this will open a Google consert flow, which wll then return to this page).
 	</button>
 
 }
-
 	</Authorized>
 	<NotAuthorized>
 		<a href="Identity/Account/Register">Register</a> or <a href="Identity/Account/Login">Log in</a> in order to link your Google calendars.

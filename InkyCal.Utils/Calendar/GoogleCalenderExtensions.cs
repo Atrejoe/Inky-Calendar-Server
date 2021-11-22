@@ -69,22 +69,24 @@ namespace InkyCal.Utils.Calendar
 		/// </summary>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task<(int Id, string AccessToken)> GetAccessToken(this GoogleOAuthAccess token)
+		public static async Task<(int Id, string AccessToken, bool Refreshed)> GetAccessToken(this GoogleOAuthAccess token)
 		{
+			var refreshed = false;
 			if (token.AccessTokenExpiry <= DateTime.UtcNow.AddSeconds(-100))
 			{
-				var refreshed = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
+				var refreshedToken = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
 
-				if (refreshed == default)
+				if (refreshedToken == default)
 					return default;
 
-				token.AccessToken = refreshed.AccessToken;
-				token.AccessTokenExpiry = refreshed.AccessTokenExpiry.GetValueOrDefault(DateTime.UtcNow);
+				token.AccessToken = refreshedToken.AccessToken;
+				token.AccessTokenExpiry = refreshedToken.AccessTokenExpiry.GetValueOrDefault(DateTime.UtcNow);
+				refreshed = true;
 
 				//todo: store updated access token & expiry
 				//todo: handle revoked access
 			}
-			return (token.Id, token.AccessToken); ;
+			return (token.Id, token.AccessToken, refreshed); ;
 		}
 
 		/// <summary>

@@ -83,17 +83,20 @@ namespace InkyCal.Server.Pages
 			var nizzle = await Task.WhenAll((await InkyCal.Data.UserRepository.GetTokens(user.Id))
 						.Select(async x =>
 						{
-							Userinfo p = null;
+							(Userinfo User, bool Refreshed) p = default;
 							try
 							{
 								p = await GoogleOAuth.GetProfile(x);
+
+								if (p.Refreshed)
+									await InkyCal.Data.UserRepository.UpdateAccessToken(x);
 							}
 							catch (GoogleApiException ex)
 							{
 								ex.Log(user, Bugsnag.Severity.Warning);
 							}
 
-							return (p, x);
+							return (p.User, x);
 						}
 						));
 			Tokens = nizzle.ToList();

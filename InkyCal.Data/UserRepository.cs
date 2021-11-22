@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -61,6 +62,20 @@ namespace InkyCal.Data
 		{
 			using var c = new ApplicationDbContext();
 			return await c.Set<GoogleOAuthAccess>().Where(x => x.User.Id == idUser).ToArrayAsync();
+		}
+
+		/// <summary>
+		/// Updates the tokens access token
+		/// </summary>
+		/// <param name="refreshedToken"></param>
+		/// <returns></returns>
+		public static async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken)
+		{
+			using var c = new ApplicationDbContext();
+			var token = await c.Set<GoogleOAuthAccess>().SingleAsync(x => x.Id == refreshedToken.Id);
+			token.AccessToken = refreshedToken.AccessToken;
+			token.AccessTokenExpiry = refreshedToken.AccessTokenExpiry;
+			await c.SaveChangesAsync();
 		}
 	}
 }

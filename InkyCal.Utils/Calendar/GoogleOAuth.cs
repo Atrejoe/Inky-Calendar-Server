@@ -111,12 +111,12 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async Task<Userinfo> GetProfile(this GoogleOAuthAccess token)
+		public static async Task<(Userinfo, bool Refreshed)> GetProfile(this GoogleOAuthAccess token)
 		{
 			var accessToken = await token.GetAccessToken();
 			return (accessToken == default)
-					? null
-					: await GetProfile(accessToken.AccessToken);
+					? default
+					: (await GetProfile(accessToken.AccessToken), accessToken.Refreshed);
 		}
 
 		/// <summary>
