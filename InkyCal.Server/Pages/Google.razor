@@ -1,36 +1,28 @@
-@page "/google/authorize"
+﻿@page "/google/authorize"
 @inherits AuthenticatedComponentBase;
-<h3>Google OAuth access</h3>
-
-<div class="alert alert-success" role="alert">
-  <h4 class="alert-heading"></h4>
-  <p>This page enables you to allow Inky Calender to read your calendar information, including all events.</p>
-  <hr>
-  <p class="mb-0">These will be used in order to render e-ink panels for your eyes only and can be revoked by you at any time.</p>
-</div>
 
 <AuthorizeView>
 	<Authorized>
 
-@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
-{
+		@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+		{
 
-	var anyLinks = (Tokens?.Any()).GetValueOrDefault();
+			var anyLinks = (Tokens?.Any()).GetValueOrDefault();
 
 
-	@if (PermissionAlreadyGranted)
-	{
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			<strong>Already registered</strong> The Google account possibly was already registered.
-			@if (anyLinks)
+			@if (PermissionAlreadyGranted)
 			{
-				<span>To re-register, simple delete the link below.</span>
+				<div class="alert alert-warning alert-dismissible fade show" role="alert">
+					<strong>Already registered</strong> The Google account possibly was already registered.
+					@if (anyLinks)
+					{
+						<span>To re-register, simple delete the link below.</span>
+					}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="((x)=>PermissionAlreadyGranted=false)">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 			}
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="((x)=>PermissionAlreadyGranted=false)">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-	}
 
 
 			@if (anyLinks)
@@ -55,13 +47,21 @@
 			}
 
 			<button @onclick="GetConsent" class="btn btn-default">
-		<span class="oi oi-plus" aria-hidden="true"></span>
-		Link @(anyLinks?"another":"a") Google account (this will open a Google consert flow, which wll then return to this page).
-	</button>
+				<span class="oi oi-plus" aria-hidden="true"></span>
+				Link @(anyLinks?"another":"a") Google account (this will open a Google consert flow, which wll then return to this page).
+			</button>
 
-}
+		}
 	</Authorized>
 	<NotAuthorized>
 		<a href="Identity/Account/Register">Register</a> or <a href="Identity/Account/Login">Log in</a> in order to link your Google calendars.
 	</NotAuthorized>
 </AuthorizeView>
+
+<div class="alert alert-primary" role="alert">
+	<h4 class="alert-heading">Google OAuth access</h4>
+	<p>This page enables you to allow Inky Calender to read your calendar information, including all events.</p>
+	<p class="mb-0-sm">These will be used in order to render e-ink panels <em>for your eyes only</em> and can be revoked by you at any time.</p>
+	<p class="mb-0-sm">Account information is also requested: you can merge calenders from multiple of your Google accounts (for instance work and private calenders). Reading your account information allows you to distinguish your accounts.</p>
+	<p class="mb-0-sm">The Google Project id is: <pre style="display:inline">@Config.GoogleOAuth.ProjectId</pre></p>
+</div>
