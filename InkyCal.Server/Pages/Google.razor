@@ -28,7 +28,7 @@
 			@if (anyLinks)
 			{
 				<h3>Your linked Google accounts:</h3>
-				<ul>
+				<ul style="list-style-type:none">
 					@foreach (var token in Tokens)
 					{
 						<li title="Access token expires @token.Token.AccessTokenExpiry">
@@ -58,10 +58,11 @@
 	</NotAuthorized>
 </AuthorizeView>
 
+<div/>
 <div class="alert alert-primary" role="alert">
-	<h4 class="alert-heading">Google OAuth access</h4>
-	<p>This page enables you to allow Inky Calender to read your calendar information, including all events.</p>
-	<p class="mb-0-sm">These will be used in order to render e-ink panels <em>for your eyes only</em> and can be revoked by you at any time.</p>
-	<p class="mb-0-sm">Account information is also requested: you can merge calenders from multiple of your Google accounts (for instance work and private calenders). Reading your account information allows you to distinguish your accounts.</p>
-	<p class="mb-0-sm">The Google Project id is: <pre style="display:inline">@Config.GoogleOAuth.ProjectId</pre></p>
+	<h4 class="alert-heading">Privacy policy - Google</h4>
+	<p>This page enables you to allow Inky Calender to read your calendar information, including all events.
+	<br/>These will be used in order to render e-ink panels <em>for your eyes only</em> and can be revoked by you at any time.
+	<br/>Account information is also requested: you can merge calenders from multiple of your Google accounts (for instance work and private calenders). Reading your account information allows you to distinguish your accounts.
+	<br/>Also see our full <NavLink href="/privacy">Privacy policy</NavLink></p>
 </div>
