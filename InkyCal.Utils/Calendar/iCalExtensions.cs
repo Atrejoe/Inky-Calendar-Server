@@ -7,8 +7,6 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Google.Apis.Oauth2.v2;
-using Google.Apis.Requests;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -17,10 +15,11 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
 {
+
 	/// <summary>
 	/// A helper class for obtaining calender info
 	/// </summary>
-	public static partial class CalenderExtensions
+	public static partial class iCalExtensions
 	{
 		private static readonly HttpClient client = new HttpClient();
 
@@ -236,40 +235,6 @@ namespace InkyCal.Utils.Calendar
 			request.EnsureSuccessStatusCode();
 
 			return await request.Content.ReadAsStringAsync();
-		}
-	}
-	/// <summary>
-	/// 
-	/// </summary>
-	public static class DateTimeHelper	
-	{
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="timeZone"></param>
-		/// <returns></returns>
-		public static DateTime? ToSpecificTimeZone(this DateTime? source, TimeZoneInfo timeZone)
-		{
-			if (!source.HasValue)
-				return null;
-
-			return source.Value.ToSpecificTimeZone(timeZone);
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="timeZone"></param>
-		/// <returns></returns>
-		public static DateTime ToSpecificTimeZone(this DateTime source, TimeZoneInfo timeZone)
-		{
-
-			var offset = timeZone.GetUtcOffset(source);
-			var newDt = source.Add(offset);
-			return newDt;
 		}
 	}
 }

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="InkyCal.Utils.Calendar.iCalExtensions">
+    <Position X="1.75" Y="4.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Public" Collapsed="true" />
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAgAAAAAAAAAAAAQAAAAAAABABAEACAA=</HashCode>
+      <FileName>Calendar\iCalExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InkyCal.Utils.Calendar.Event">
+    <Position X="1.75" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ABKAAAAAACAAAAAAgAAAAAAAAAAAAIABAAEBAAAAAiA=</HashCode>
+      <FileName>Calendar\Event.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="InkyCal.Utils.Calendar.GoogleCalenderExtensions">
+    <Position X="4.75" Y="4.5" Width="3" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+      <Compartment Name="Public" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAgEAAAAAAhAAgAAAAAAAAAAAABAAAACAA=</HashCode>
+      <FileName>Calendar\GoogleCalenderExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InkyCal.Utils.Calendar.GoogleOAuth">
+    <Position X="4.75" Y="7.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAQAAAAAAAAAAAAAgAIgBAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Calendar\GoogleOAuth.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
