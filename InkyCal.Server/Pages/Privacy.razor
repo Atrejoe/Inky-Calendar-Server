@@ -69,8 +69,11 @@
 	</li>
 	<li>
 		<p>
-			<strong>Website</strong> refers to InkyCal server, accessible from <a href="https://inkcal.robertsirre.nl" rel="external nofollow noopener"
-																		 target="_blank">@(new Uri(MyNavigationManager.Uri).Host)</a>
+			<strong>Website</strong> refers to InkyCal server, accessible from
+				<a 
+					href="@(new Uri(MyNavigationManager.Uri).Scheme)://@(new Uri(MyNavigationManager.Uri).Authority)"
+					rel="external nofollow noopener"
+					target="_blank">@(new Uri(MyNavigationManager.Uri).Authority)</a>
 		</p>
 	</li>
 	<li>
