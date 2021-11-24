@@ -1,4 +1,5 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('google.css');
 
 html, body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -204,7 +205,6 @@ span.panel {
 	span.panel .overlay {
 		visibility: hidden;
 		transition: .5s ease;
-
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -226,15 +226,16 @@ span.panel {
 	span.panel.loading {
 	}
 
-	span.panel.loading img {
-		opacity: 0.2;
-	}
-
-
-	span.panel.loading .overlay {
-		visibility: visible;
-	}
-
-		span.panel.loading .overlay i {
-			animation: anim-rotate 2s infinite linear;
+		span.panel.loading img {
+			opacity: 0.2;
 		}
+
+
+		span.panel.loading .overlay {
+			visibility: visible;
+		}
+
+			span.panel.loading .overlay i {
+				animation: anim-rotate 2s infinite linear;
+			}
+

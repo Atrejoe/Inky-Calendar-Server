@@ -33,24 +33,22 @@
 					{
 						<li title="Access token expires @token.Token.AccessTokenExpiry">
 							<img src="@token.Profile?.Picture" />
-							@token.Profile?.Name <pre style="display:inline">&lt;@(token.Profile?.Email)&gt;</pre>
+							@token.Profile?.Name
+							<pre style="display:inline">&lt;@(token.Profile?.Email)&gt;</pre>
 							@if (@token.Token.AccessTokenExpiry <= DateTime.Now)
 							{
 								<span class="oi oi-warning" title="Token has expired"></span>
 							}
 							<PopContainer ConfirmedChanged="@(async x=>{if(x){await DeleteToken(@token.Token.Id);}})"
-							  Message="Are you sure you wish to delete this token? This will remove any usage of its calendars.<br/>"
-							  Class="btn btn-danger oi oi-trash" Title="" />
+							  Message="Are you sure you wish to delete this token? This will remove any usage of its calendars."
+							  Class="btn btn-danger btn-sm oi oi-trash" Title="" />
 						</li>
 					}
 				</ul>
 			}
 
-			<button @onclick="GetConsent" class="btn btn-default">
-				<span class="oi oi-plus" aria-hidden="true"></span>
-				Link @(anyLinks?"another":"a") Google account (this will open a Google consert flow, which wll then return to this page).
-			</button>
-
+			<span>To link @(anyLinks?"another":"a") Google account:</span>
+			<button class="google login" @onclick="GetConsent"></button>
 		}
 	</Authorized>
 	<NotAuthorized>
@@ -58,7 +56,7 @@
 	</NotAuthorized>
 </AuthorizeView>
 
-
+<hr/>
 <div class="alert alert-primary" role="alert">
 	<h4 class="alert-heading">Privacy policy - Google</h4>
 	<p>This page enables you to allow Inky Calender to read your calendar information, including all events.
