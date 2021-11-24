@@ -31,7 +31,6 @@ namespace InkyCal.Server.Pages
 		public List<(Userinfo Profile, GoogleOAuthAccess Token)> Tokens { get; private set; }
 
 		private bool PermissionAlreadyGranted { get; set; }
-		private bool FlowCompleted { get; set; }
 
 		[Inject]
 		private NavigationManager NavigationManager { get; set; }
@@ -55,7 +54,7 @@ namespace InkyCal.Server.Pages
 			if (user is null)
 				return;
 
-			if (!FlowCompleted && QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query).TryGetValue("code", out var values))
+			if (QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query).TryGetValue("code", out var values))
 			{
 				var code = values.First();
 
@@ -75,7 +74,9 @@ namespace InkyCal.Server.Pages
 							AccessTokenExpiry = token.AccessTokenExpiry.GetValueOrDefault(DateTime.UtcNow),
 							User = user
 						});
-						FlowCompleted = true;
+
+						NavigationManager.NavigateTo("/google/authorize");
+						return;
 					}
 				}
 			}
