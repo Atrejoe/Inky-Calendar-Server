@@ -17,17 +17,15 @@ namespace InkyCal.Utils.Calendar
 	/// </summary>
 	public static class GoogleCalenderExtensions
 	{
-		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, GoogleOAuthAccess[] tokens, SubscribedGoogleCalender[] calendars)
+		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars)
 		{
 			var result = new List<Event>();
 
-			if (tokens != null)
-			{
-				await foreach (var token in GetAccessTokens(tokens))
-					if (token != default)
-						foreach (var calenderId in calendars.Where(x => x.AccessToken == token.Id).Select(x => x.Calender))
-							result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId));
-			}
+			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct()))
+				if (token != default)
+					foreach (var calenderId in calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender))
+						result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId));
+
 
 			return result;
 		}
@@ -279,7 +277,7 @@ namespace InkyCal.Utils.Calendar
 				ex.Log();
 
 				var timezones = TimeZoneInfo.GetSystemTimeZones();
-				result = timezones.FirstOrDefault(tz=>tz.Id.Equals("Europe/Amsterdam"))
+				result = timezones.FirstOrDefault(tz => tz.Id.Equals("Europe/Amsterdam"))
 					?? timezones.FirstOrDefault(tz => tz.BaseUtcOffset == TimeSpan.FromHours(-1))
 					?? TimeZoneInfo.GetSystemTimeZones().FirstOrDefault();
 			}

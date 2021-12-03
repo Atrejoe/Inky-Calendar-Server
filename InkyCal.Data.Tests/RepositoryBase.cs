@@ -22,7 +22,6 @@ namespace InkyCal.Data.Tests
 
 			MiniProfiler.StartNew("My Profiler Name");
 
-
 			new DbContextOptionsBuilder().EnableDetailedErrors();
 
 			_t = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);

@@ -8,7 +8,6 @@ namespace InkyCal.Models
 	[Table("User", Schema = "InkyCal")]
 	public class User
 	{
-
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
 
@@ -16,7 +15,5 @@ namespace InkyCal.Models
 
 		[Required, MaxLength(5), MinLength(0)]
 		public HashSet<Panel> Panels { get; set; } = new HashSet<Panel>();
-
-		public HashSet<GoogleOAuthAccess> GoogleOAuthTokens { get; set; } = new HashSet<GoogleOAuthAccess>();
 	}
 }

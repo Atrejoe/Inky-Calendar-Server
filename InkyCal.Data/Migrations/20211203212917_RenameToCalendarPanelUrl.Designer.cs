@@ -4,31 +4,29 @@ using InkyCal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-#nullable disable
 
 namespace InkyCal.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211203212917_RenameToCalendarPanelUrl")]
+    partial class RenameToCalendarPanelUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("ProductVersion", "3.1.14")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("InkyCal.Models.CalendarPanelUrl", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<Guid>("IdPanel")
                         .HasColumnType("uniqueidentifier");
@@ -41,29 +39,28 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("IdPanel");
 
-                    b.ToTable("CalendarPanelUrl");
+                    b.ToTable("CalendarPanelUrl","InkyCal");
                 });
 
             modelBuilder.Entity("InkyCal.Models.GoogleOAuthAccess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.Property<DateTimeOffset>("AccessTokenExpiry")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -72,26 +69,14 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User_GoogleOAuthAccess", "InkyCal");
+                    b.ToTable("User_GoogleOAuthAccess","InkyCal");
                 });
 
             modelBuilder.Entity("InkyCal.Models.Panel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(0);
-
-                    b.Property<long>("AccessCount")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Accessed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -103,15 +88,10 @@ namespace InkyCal.Data.Migrations
                     b.Property<int>("Model")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Modified")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(1);
+                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");
@@ -129,7 +109,7 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("Panel","InkyCal");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Panel");
                 });
@@ -152,18 +132,18 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("IdPanel");
 
-                    b.ToTable("SubPanel", "InkyCal");
+                    b.ToTable("SubPanel","InkyCal");
                 });
 
             modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
                 {
                     b.Property<string>("Calender")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<int>("IdAccessToken")
-                        .HasColumnType("int")
-                        .HasColumnName("AccessToken");
+                        .HasColumnName("AccessToken")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Panel")
                         .HasColumnType("uniqueidentifier");
@@ -174,16 +154,15 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("Panel");
 
-                    b.ToTable("CalendarPanel_GoogleCalender", "InkyCal");
+                    b.ToTable("CalendarPanel_GoogleCalender","InkyCal");
                 });
 
             modelBuilder.Entity("InkyCal.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(450)");
@@ -194,7 +173,7 @@ namespace InkyCal.Data.Migrations
                         .IsUnique()
                         .HasFilter("[IdentityUserId] IS NOT NULL");
 
-                    b.ToTable("User", "InkyCal");
+                    b.ToTable("User","InkyCal");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -207,30 +186,29 @@ namespace InkyCal.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
+                        .HasName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AspNetRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -246,7 +224,7 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -262,8 +240,8 @@ namespace InkyCal.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -275,12 +253,12 @@ namespace InkyCal.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -298,29 +276,28 @@ namespace InkyCal.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                        .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
+                        .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -336,18 +313,16 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -360,7 +335,7 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -375,7 +350,7 @@ namespace InkyCal.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -384,26 +359,24 @@ namespace InkyCal.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("InkyCal.Models.CalendarPanel", b =>
                 {
                     b.HasBaseType("InkyCal.Models.Panel");
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("CalendarPanel","InkyCal");
 
                     b.HasDiscriminator().HasValue("CalendarPanel");
                 });
@@ -422,7 +395,7 @@ namespace InkyCal.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("ImagePanel","InkyCal");
 
                     b.HasDiscriminator().HasValue("ImagePanel");
                 });
@@ -431,7 +404,7 @@ namespace InkyCal.Data.Migrations
                 {
                     b.HasBaseType("InkyCal.Models.Panel");
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("Panel","InkyCal");
 
                     b.HasDiscriminator().HasValue("NewYorkTimesPanel");
                 });
@@ -440,7 +413,7 @@ namespace InkyCal.Data.Migrations
                 {
                     b.HasBaseType("InkyCal.Models.Panel");
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("PanelOfPanels","InkyCal");
 
                     b.HasDiscriminator().HasValue("PanelOfPanels");
                 });
@@ -451,15 +424,15 @@ namespace InkyCal.Data.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
-                    b.ToTable("Panel", "InkyCal");
+                    b.ToTable("WeatherPanel","InkyCal");
 
                     b.HasDiscriminator().HasValue("WeatherPanel");
                 });
@@ -471,8 +444,6 @@ namespace InkyCal.Data.Migrations
                         .HasForeignKey("IdPanel")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Panel");
                 });
 
             modelBuilder.Entity("InkyCal.Models.GoogleOAuthAccess", b =>
@@ -482,8 +453,6 @@ namespace InkyCal.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InkyCal.Models.Panel", b =>
@@ -491,8 +460,6 @@ namespace InkyCal.Data.Migrations
                     b.HasOne("InkyCal.Models.User", "Owner")
                         .WithMany("Panels")
                         .HasForeignKey("OwnerId");
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("InkyCal.Models.SubPanel", b =>
@@ -508,8 +475,6 @@ namespace InkyCal.Data.Migrations
                         .HasForeignKey("IdParent")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Panel");
                 });
 
             modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
@@ -525,8 +490,6 @@ namespace InkyCal.Data.Migrations
                         .HasForeignKey("Panel")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AccessToken");
                 });
 
             modelBuilder.Entity("InkyCal.Models.User", b =>
@@ -585,23 +548,6 @@ namespace InkyCal.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("InkyCal.Models.User", b =>
-                {
-                    b.Navigation("Panels");
-                });
-
-            modelBuilder.Entity("InkyCal.Models.CalendarPanel", b =>
-                {
-                    b.Navigation("CalenderUrls");
-
-                    b.Navigation("SubscribedGoogleCalenders");
-                });
-
-            modelBuilder.Entity("InkyCal.Models.PanelOfPanels", b =>
-                {
-                    b.Navigation("Panels");
                 });
 #pragma warning restore 612, 618
         }
