@@ -1,4 +1,11 @@
 # Inky-Calender server Changelog 
+
+## Feature summary (December 2021) ##
+
+## Feature ##
+- True Google calendar integration🎉 Adding Google calenders is now a matter of a few clicks.
+- New York Times front-page panel, a real looker!
+
 ## Features and fixes (November 2020) #
 
 ### Feature
