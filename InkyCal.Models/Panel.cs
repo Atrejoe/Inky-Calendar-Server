@@ -42,6 +42,28 @@ namespace InkyCal.Models
 		///   <c>true</c> if starred; otherwise, <c>false</c>.
 		/// </value>
 		public bool Starred { get; set; }
+
+		/// <summary>
+		/// The date and time at which the panel was created
+		/// </summary>
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public DateTime Created { get; set; }
+
+		/// <summary>
+		/// The date and time at which the panel was last modified
+		/// </summary>
+		public DateTime Modified { get; set; }
+
+		/// <summary>
+		/// The number of times the panel has been read
+		/// </summary>
+		public uint AccessCount{ get; set; }
+
+		/// <summary>
+		/// The date and time at which the calendar was last accessed
+		/// </summary>
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public DateTime Accessed { get; set; }
 	}
 
 

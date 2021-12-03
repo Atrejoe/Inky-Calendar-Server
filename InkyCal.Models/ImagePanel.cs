@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InkyCal.Models
 {
-	[Table("ImagePanel", Schema = "InkyCal")]
 
 	public class ImagePanel : Panel
 	{

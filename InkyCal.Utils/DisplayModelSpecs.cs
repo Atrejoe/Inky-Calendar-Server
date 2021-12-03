@@ -88,8 +88,7 @@ namespace InkyCal.Utils
 		/// </returns>
 		public bool Equals(DisplayModelSpecs other)
 		{
-			return other != null
-				&& Width == other.Width
+			return Width == other.Width
 				&& Height == other.Height
 				&& (
 					((Colors is null) && (other.Colors is null))

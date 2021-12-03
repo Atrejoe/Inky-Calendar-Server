@@ -108,6 +108,8 @@ namespace InkyCal.Data
 
 						c.RemoveRange(entities);
 					}
+
+					panel.Modified = DateTime.UtcNow;
 				}
 
 				c.Update(panel);
@@ -154,7 +156,7 @@ namespace InkyCal.Data
 
 			//var panel = await Get<Panel>(id, user);
 			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id));
-			if((await c.SaveChangesAsync()) != 1)
+			if ((await c.SaveChangesAsync()) != 1)
 				throw new Exception("Not deleted");
 		}
 
@@ -170,7 +172,7 @@ namespace InkyCal.Data
 			return result;
 		}
 
-		public static async Task<TPanel> Get<TPanel>(Guid id) where TPanel : Panel
+		public static async Task<TPanel> Get<TPanel>(Guid id, bool markAsAccessed = false) where TPanel : Panel
 		{
 			using var c = new ApplicationDbContext();
 
@@ -178,6 +180,18 @@ namespace InkyCal.Data
 								.EagerLoad()
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x => x.Id == id);
+
+			if (result != null && markAsAccessed)
+			{
+				c.Entry(result).Property(x => x.Accessed).CurrentValue = DateTime.UtcNow;
+				c.Entry(result).Property(x => x.AccessCount).CurrentValue += 1;
+
+				c.Entry(result).Property(x => x.Accessed).IsModified = true;
+				c.Entry(result).Property(x => x.AccessCount).IsModified = true;
+
+				await c.SaveChangesAsync();
+			}
+
 
 			return result;
 		}

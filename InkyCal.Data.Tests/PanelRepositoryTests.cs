@@ -47,6 +47,41 @@ namespace InkyCal.Data.Tests
 
 		}
 
+		[Fact()]
+		public async void PanelAccessTest()
+		{
+			//Arrange
+			Panel panel;
+			using (MiniProfiler.Current.Step("Get panel"))
+				panel = (await UserRepository.GetAll()).First(x => x.Panels.Any()).Panels.First();
+
+			var accessCount = panel.AccessCount;
+			var accessed = panel.Accessed;
+
+			//Act
+			using (MiniProfiler.Current.Step("Get panel again, marking as accessed"))
+				panel = await PanelRepository.Get<Panel>(panel.Id, markAsAccessed:true);
+
+			//Assert
+			Assert.NotNull(panel);
+			Assert.NotEqual(accessCount ,panel.AccessCount);
+			Assert.True(accessCount < panel.AccessCount);
+			Assert.NotEqual(accessed, panel.Accessed);
+			Assert.True(accessed < panel.Accessed);
+
+			//Act again
+			var panel2 = await PanelRepository.Get<Panel>(panel.Id, markAsAccessed: false);
+
+			Assert.NotEqual(accessCount, panel2.AccessCount);
+			Assert.True(accessCount < panel2.AccessCount);
+			Assert.NotEqual(accessed, panel2.Accessed);
+			Assert.True(accessed < panel2.Accessed);
+
+			Assert.Equal(panel.AccessCount, panel2.AccessCount);
+			Assert.Equal(panel.Accessed, panel2.Accessed);
+
+		}
+
 		//[Fact()]
 		//public void UpdateTest()
 		//{
@@ -60,7 +95,7 @@ namespace InkyCal.Data.Tests
 		public async void ListTest()
 		{
 			//Arrange
-			var user = (await UserRepository.GetAll()).Last(x=>x.Panels.Any());
+			var user = (await UserRepository.GetAll()).Last(x => x.Panels.Any());
 
 			//Act
 			var actual = await PanelRepository.List<Panel>(user);
@@ -70,13 +105,15 @@ namespace InkyCal.Data.Tests
 			Assert.Equal(user.Panels.Count, actual.Length);
 		}
 
-		[Fact()]
+		[SkippableFact()]
 		public async void DeleteTest()
 		{
 			//Arrange
-			var panel = (await PanelRepository.All()).Last(x=>x is PanelOfPanels);
+			var panel = (await PanelRepository.All()).LastOrDefault(x => x is PanelOfPanels);
+			Skip.If(panel == null);
 
 			//Act
+
 			await PanelRepository.Delete(panel.Id);
 
 			//Assert
