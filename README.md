@@ -52,7 +52,7 @@ dotnet watch --project InkyCal.Server run
 
 ##### Database
 
-Some operations require a database, SQL server. You can install one on your machine, run one in a docker-container or it a network and then adjust the connection string in `appsettings.json` > `ConnectionStrings` > `DefaultConnection`
+Some operations (like storing preferences) require a database, SQL server. You can install one on your machine, run one in a docker-container or it a network and then adjust the connection string in `appsettings.json` > `ConnectionStrings` > `DefaultConnection`
 
 ##### Pdf processing : install Ghostscript
 
