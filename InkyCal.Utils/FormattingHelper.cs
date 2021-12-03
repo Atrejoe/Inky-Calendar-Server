@@ -1,6 +1,7 @@
 ﻿using System;
 using SixLabors.Fonts;
-using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 
 namespace InkyCal.Utils
 {
@@ -43,14 +44,14 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static TextGraphicsOptions Clone(this TextGraphicsOptions options)
 		{
-			var result = new TextGraphicsOptions(options.Antialias)
-			{
-				HorizontalAlignment = options.HorizontalAlignment,
-				VerticalAlignment = options.VerticalAlignment,
-				WrapTextWidth = options.WrapTextWidth,
-				DpiX = options.DpiX,
-				DpiY = options.DpiY
-			};
+			if (options is null)
+				throw new ArgumentNullException(nameof(options));
+			
+
+			var result = new TextGraphicsOptions(
+				options.GraphicsOptions.DeepClone(),
+				options.TextOptions.DeepClone()
+			);
 
 			return result;
 		}
@@ -89,14 +90,16 @@ namespace InkyCal.Utils
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));			
 
-			var result = new TextGraphicsOptions(enableAntialiasing)
-			{
-				HorizontalAlignment = options.HorizontalAlignment,
-				VerticalAlignment = options.VerticalAlignment,
-				WrapTextWidth = options.WrappingWidth,
-				DpiX = options.DpiX,
-				DpiY = options.DpiY,
-			};
+			var result = new TextGraphicsOptions(
+				new GraphicsOptions() { Antialias = enableAntialiasing },
+				new TextOptions()
+				{
+					HorizontalAlignment = options.HorizontalAlignment,
+					VerticalAlignment = options.VerticalAlignment,
+					WrapTextWidth = options.WrappingWidth,
+					DpiX = options.DpiX,
+					DpiY = options.DpiY,
+				});
 
 			return result;
 		}
@@ -109,13 +112,16 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static RendererOptions ToRendererOptions(this TextGraphicsOptions options, Font font)
 		{
+			if (options is null)
+				throw new ArgumentNullException(nameof(options));
+
 			var result = new RendererOptions(font)
 			{
-				HorizontalAlignment = options.HorizontalAlignment,
-				VerticalAlignment = options.VerticalAlignment,
-				WrappingWidth = options.WrapTextWidth,
-				DpiX = options.DpiX,
-				DpiY = options.DpiY,
+				HorizontalAlignment = options.TextOptions.HorizontalAlignment,
+				VerticalAlignment = options.TextOptions.VerticalAlignment,
+				WrappingWidth = options.TextOptions.WrapTextWidth,
+				DpiX = options.TextOptions.DpiX,
+				DpiY = options.TextOptions.DpiY,
 			};
 
 			return result;

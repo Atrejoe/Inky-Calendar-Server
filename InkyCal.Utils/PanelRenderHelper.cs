@@ -4,9 +4,9 @@ using System.Text;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace InkyCal.Utils
 {
@@ -33,7 +33,12 @@ namespace InkyCal.Utils
 				case CalendarPanel cp:
 
 					var urls = cp.CalenderUrls.Select(x => new Uri(x.Url));
-					renderer = new CalendarPanelRenderer(iCalUrls: urls.ToArray());
+					
+					renderer = new CalendarPanelRenderer(
+									iCalUrls: urls.ToArray(), 
+									cp.Owner.GoogleOAuthTokens?.ToArray(),
+									cp.SubscribedGoogleCalenders?.ToArray()
+									);
 
 					break;
 				case ImagePanel ip:
@@ -56,7 +61,7 @@ namespace InkyCal.Utils
 						{
 							var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
 
-							if(rendererTypes is null)
+							if (rendererTypes is null)
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
 							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
@@ -66,10 +71,20 @@ namespace InkyCal.Utils
 
 							var paneltype = rendererType.BaseType.GetGenericArguments().First();
 							var c = rendererType.GetConstructor(new[] { paneltype });
-							renderer = (IPanelRenderer)c.Invoke(new[] { panel });
+							if (c is null)
+							{
+								c = rendererType.GetConstructor(Type.EmptyTypes);
+								if (c is null)
+									throw new NotImplementedException($"Renderer of {rendererType.Name} does not have a parameterless constructor, nor one that takes a {panel.GetType().Name} are argument");
+								else
+									renderer = (IPanelRenderer)c.Invoke(Type.EmptyTypes);
+							}
+							else
+								renderer = (IPanelRenderer)c.Invoke(new[] { panel });
 							//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 						}
-						catch (Exception ex) {
+						catch (Exception ex)
+						{
 							throw new Exception($"Could not determine panel renderer for {panel.GetType().Name}, see inner exception for details: {ex.Message}", ex);
 						}
 					}
@@ -122,7 +137,7 @@ namespace InkyCal.Utils
 		{
 			if (colors is null)
 				throw new ArgumentNullException(nameof(colors));
-			
+
 
 			primaryColor = colors.FirstOrDefault();
 			supportColor = (colors.Length > 2) ? colors[2] : primaryColor;
@@ -151,14 +166,15 @@ namespace InkyCal.Utils
 			int width,
 			Font font)
 		{
-			var rendererOptions = new TextGraphicsOptions(false)
-			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
-			}.ToRendererOptions(font);
+			var rendererOptions = new TextGraphicsOptions(
+				new GraphicsOptions() { Antialias = false }, 
+				new TextOptions() { 
+					HorizontalAlignment = HorizontalAlignment.Left, 
+					VerticalAlignment= VerticalAlignment.Top, 
+					WrapTextWidth = width,
+					DpiX =96, 
+					DpiY = 96 }
+				).ToRendererOptions(font);
 
 			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, rendererOptions);
 		}
@@ -178,16 +194,19 @@ namespace InkyCal.Utils
 
 			var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, renderOptions);
 
-			errorMessageHeight.Width = width;
-			errorMessageHeight.Height += 4; //Pad 2 px on all sides
-
-			canvas.Fill(errorColor, errorMessageHeight);
+			canvas.Fill(errorColor, 
+				new Rectangle(
+					(int)errorMessageHeight.X, 
+					(int)errorMessageHeight.Y, 
+					(int)errorMessageHeight.Width, 
+					(int)errorMessageHeight.Height+4)//Pad 2 px on all sides
+				);
 
 			var pError = new PointF(2, 2);//Adhere to padding
 
 			var trimmedErrorMessage = new StringBuilder();
 			foreach (var line in errorMessage.Split(Environment.NewLine))
-				trimmedErrorMessage.AppendLine(line.Limit(width,"..."));
+				trimmedErrorMessage.AppendLine(line.Limit(width, "..."));
 
 			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font), renderOptions.Font, backgroundColor, pError);
 

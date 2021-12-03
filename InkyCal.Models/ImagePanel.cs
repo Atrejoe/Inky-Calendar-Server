@@ -7,7 +7,7 @@ namespace InkyCal.Models
 
 	public class ImagePanel : Panel
 	{
-		[Url, Required]
+		[Url, Validation.Url(System.UriKind.Absolute), Required]
 		public string Path { get; set; }
 		public string Body { get; set; }
 

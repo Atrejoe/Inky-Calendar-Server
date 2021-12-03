@@ -1,26 +1,25 @@
-﻿using Ical.Net;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Microsoft.Extensions.Caching.Memory;
-using StackExchange.Profiling;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Microsoft.Extensions.Caching.Memory;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
 {
+
 	/// <summary>
 	/// A helper class for obtaining calender info
 	/// </summary>
-	public static class CalenderExtensions
+	public static partial class iCalExtensions
 	{
 		private static readonly HttpClient client = new HttpClient();
 
@@ -32,10 +31,7 @@ namespace InkyCal.Utils.Calendar
 			var items = new List<Event>();
 
 			if (!(urls?.Any()).GetValueOrDefault())
-			{
-				sbErrors.AppendLine($"No calenders loaded");
 				return items;
-			}
 
 			CalendarCollection calendars;
 			using (MiniProfiler.Current.Step($"Gather {urls.Length:n0} calendars"))
@@ -78,9 +74,9 @@ namespace InkyCal.Utils.Calendar
 											thisDate = thisDate.AddDays(1);
 											continue;
 										}
-										
+
 										var isAllDay = calendarEvent.IsAllDay
-										|| (x.Period.StartTime.AsSystemLocal <= thisDate 
+										|| (x.Period.StartTime.AsSystemLocal <= thisDate
 										 && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
 										 );
 
@@ -134,7 +130,6 @@ namespace InkyCal.Utils.Calendar
 
 			return items.Distinct().ToList();
 		}
-
 
 		/// <summary>
 		/// Get 
@@ -242,5 +237,4 @@ namespace InkyCal.Utils.Calendar
 			return await request.Content.ReadAsStringAsync();
 		}
 	}
-
 }

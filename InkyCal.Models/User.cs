@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 //using Microsoft.AspNetCore.Identity;
 
@@ -13,6 +14,9 @@ namespace InkyCal.Models
 
 		public string IdentityUserId { get; set; }
 
-		//public IdentityUser IdentityUser { get; set; }
+		[Required, MaxLength(5), MinLength(0)]
+		public HashSet<Panel> Panels { get; set; } = new HashSet<Panel>();
+
+		public HashSet<GoogleOAuthAccess> GoogleOAuthTokens { get; set; } = new HashSet<GoogleOAuthAccess>();
 	}
 }

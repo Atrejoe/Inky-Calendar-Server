@@ -1,0 +1,66 @@
+﻿@page "/google/authorize"
+@inherits AuthenticatedComponentBase;
+
+<AuthorizeView>
+	<Authorized>
+
+		@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+		{
+
+			var anyLinks = (Tokens?.Any()).GetValueOrDefault();
+
+
+			@if (PermissionAlreadyGranted)
+			{
+				<div class="alert alert-warning alert-dismissible fade show" role="alert">
+					<strong>Already registered</strong> The Google account possibly was already registered.
+					@if (anyLinks)
+					{
+						<span>To re-register, simple delete the link below.</span>
+					}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="((x)=>PermissionAlreadyGranted=false)">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			}
+
+
+			@if (anyLinks)
+			{
+				<h3>Your linked Google accounts:</h3>
+				<ul style="list-style-type:none">
+					@foreach (var token in Tokens)
+					{
+						<li title="Access token expires @token.Token.AccessTokenExpiry">
+							<img src="@token.Profile?.Picture" />
+							@token.Profile?.Name
+							<pre style="display:inline">&lt;@(token.Profile?.Email)&gt;</pre>
+							@if (@token.Token.AccessTokenExpiry <= DateTime.Now)
+							{
+								<span class="oi oi-warning" title="Token has expired"></span>
+							}
+							<PopContainer ConfirmedChanged="@(async x=>{if(x){await DeleteToken(@token.Token.Id);}})"
+							  Message="Are you sure you wish to delete this token? This will remove any usage of its calendars."
+							  Class="btn btn-danger btn-sm oi oi-trash" Title="" />
+						</li>
+					}
+				</ul>
+			}
+
+			<span>To link @(anyLinks?"another":"a") Google account:</span>
+			<button class="google login" @onclick="GetConsent"></button>
+		}
+	</Authorized>
+	<NotAuthorized>
+		<a href="Identity/Account/Register">Register</a> or <a href="Identity/Account/Login">Log in</a> in order to link your Google calendars.
+	</NotAuthorized>
+</AuthorizeView>
+
+<hr/>
+<div class="alert alert-primary" role="alert">
+	<h4 class="alert-heading">Privacy policy - Google</h4>
+	<p>This page enables you to allow Inky Calender to read your calendar information, including all events.
+	<br/>These will be used in order to render e-ink panels <em>for your eyes only</em> and can be revoked by you at any time.
+	<br/>Account information is also requested: you can merge calenders from multiple of your Google accounts (for instance work and private calenders). Reading your account information allows you to distinguish your accounts.
+	<br/>Also see our full <NavLink href="/privacy">Privacy policy</NavLink></p>
+</div>

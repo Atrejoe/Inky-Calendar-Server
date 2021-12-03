@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace InkyCal.Models
 {
+
 	[Table("ImagePanelUrl", Schema = "InkyCal")]
 	public class CalendarPanelUrl
 	{
@@ -15,7 +16,7 @@ namespace InkyCal.Models
 		[ForeignKey(nameof(CalendarPanel))]
 		public Guid IdPanel { get; set; }
 
-		[Url, Required]
+		[Url, Validation.Url(UriKind.Absolute), Required]
 		[SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Using string for databinding")]
 		public string Url { get; set; }
 

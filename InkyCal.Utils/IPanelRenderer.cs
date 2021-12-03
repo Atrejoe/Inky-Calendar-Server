@@ -1,10 +1,105 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
+using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Gif;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public sealed class ImageSettings : IEquatable<ImageSettings>
+	{
+		/// <summary>
+		/// Gets the width of an image
+		/// </summary>
+		/// <value>
+		/// The width.
+		/// </value>
+		public int Width { get; }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ImageSettings"/> class.
+		/// </summary>
+		/// <param name="width">The width.</param>
+		/// <param name="height">The height.</param>
+		/// <param name="colors">The colors.</param>
+		/// <exception cref="ArgumentNullException">colors</exception>
+		public ImageSettings(int width, int height, Color[] colors)
+		{
+			Width = width;
+			Height = height;
+			Colors = colors ?? throw new ArgumentNullException(nameof(colors));
+		}
+
+		/// <summary>
+		/// Gets the height of an image
+		/// </summary>
+		/// <value>
+		/// The height.
+		/// </value>
+		public int Height { get; }
+
+		/// <summary>
+		/// Gets the color palette of an image
+		/// </summary>
+		/// <value>
+		/// The colors.
+		/// </value>
+		public Color[] Colors { get; }
+
+		/// <summary>
+		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+		/// </summary>
+		/// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+		/// <returns>
+		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			return obj is ImageSettings other
+				&& Equals(other);
+		}
+
+		/// <summary>
+		/// Indicates whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+		/// </returns>
+		public bool Equals(ImageSettings other)
+		{
+			return other != null
+				&& Width.Equals(other.Width)
+				&& Height.Equals(other.Height)
+				&& Colors.SequenceEqual(other.Colors)
+				;
+		}
+
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode() => HashCode.Combine(
+												Width.GetHashCode(), 
+												Height.GetHashCode(),
+												// Array itself cannot be used in HashCoodde.Combin,nor can it return a sensible hashcode
+												// Use reproducible attributes
+												Colors.Length,
+												Colors.Average(x => x.GetHashCode())
+											);
+	}
+
 	/// <summary>
 	/// Signature for a helper class for rendering a panel.
 	/// </summary>
@@ -28,12 +123,84 @@ namespace InkyCal.Utils
 		/// <param name="handled">if set to <c>true</c> if the exception it deemed to be handled (and will not be reported as exception).</param>
 		/// <param name="explanation">Explanation o the exception, or why it was deemed to be handled, optional.</param>
 		public delegate void Log(Exception ex, bool handled = false, string explanation = null);
+
+
+		/// <summary>
+		/// Gets the cache key. By default returns <see cref="PanelInstanceCacheKey"/>, with default <see cref="PanelCacheKey.Expiration"/> (<see cref="PanelInstanceCacheKey.DefaultExpirationInSeconds"/> seconds)
+		/// </summary>
+		/// <returns></returns>
+		public abstract PanelCacheKey CacheKey { get; }
+	}
+
+	/// <summary>
+	/// Helper methods for <see cref="IPanelRenderer"/>
+	/// </summary>
+	public static class IPanelRendererExtensions
+	{
+		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
+		{
+			SizeLimit = 1024 * 1024 * 500,
+		});
+
+		/// <summary>
+		/// Returns the number of cached images
+		/// </summary>
+		/// <returns></returns>
+		public static int CacheEntries() {
+			return _cache.Count;
+		}
+
+
+		/// <summary>
+		/// Gets the cached image.
+		/// </summary>
+		/// <param name="renderer">The renderer.</param>
+		/// <param name="width">The width.</param>
+		/// <param name="height">The height.</param>
+		/// <param name="colors">The colors.</param>
+		/// <param name="log">The log.</param>
+		/// <returns></returns>
+		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
+		{
+
+			var cachekey = new ImageCacheKey(
+									panelCacheKey: renderer.CacheKey,
+									imageSettings: new ImageSettings(width, height, colors));
+
+			using (MiniProfiler.Current.Step($"Loading image from cache"))
+			{
+				if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
+				{
+					// Key not in cache, so get data.
+					using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+					{
+
+						var image = await renderer.GetImage(width, height, colors, log);
+						using var stream = new MemoryStream();
+						image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
+						result = stream.ToArray();
+
+					}
+
+					var cacheEntryOptions = new MemoryCacheEntryOptions()
+						.SetSize(result.Length)
+						// Remove from cache after this time, regardless of sliding expiration
+						.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
+
+					// Save data in cache.
+					using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
+						_cache.Set(cachekey, result, cacheEntryOptions);
+
+				}
+				return result;
+			}
+		}
 	}
 
 	/// <summary>
 	/// Signature for a helper class for rendering a specific type of <see cref="Panel"/>
 	/// </summary>
-	public interface IPanelRenderer<TPanel> : IPanelRenderer where TPanel:Panel
+	public interface IPanelRenderer<TPanel> : IPanelRenderer where TPanel : Panel
 	{
 		/// <summary>
 		/// Configures the specified panel.

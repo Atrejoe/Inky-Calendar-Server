@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using SixLabors.Fonts;
 
@@ -20,7 +21,10 @@ namespace InkyCal.Utils
 		/// <param name="font">The font.</param>
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, FontFamily)"/>
-		internal static string ToSafeChars(this string text, Font font) {
+		public static string ToSafeChars(this string text, Font font) {
+			if (font is null)
+				throw new System.ArgumentNullException(nameof(font));
+
 			return text.ToSafeChars(font.Family);
 		}
 
@@ -32,8 +36,17 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, Font)"/>
 		/// <remarks><see cref="MonteCarlo"/> cannot render some characters</remarks>
-		internal static string ToSafeChars(this string text, FontFamily fontFamily)
+		public static string ToSafeChars(this string text, FontFamily fontFamily)
 		{
+			if (string.IsNullOrWhiteSpace(text))
+				return text;
+
+			if (fontFamily is null)
+				throw new System.ArgumentNullException(nameof(fontFamily));
+
+			if (fontFamily.Equals(ProFont))
+				return replaceRingelS(text);
+
 			if (!fontFamily.Equals(MonteCarlo))
 				return text;
 
@@ -51,11 +64,7 @@ namespace InkyCal.Utils
 				}
 			}
 			var result = stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-
-			//Replace some known remaining enties
-			result = result
-				.Replace("ẞ", "sz")
-				.Replace("ß", "Sz");
+			result = replaceRingelS(result);
 
 			//Bluntly convert to ASCII, leaving questionmarks ofr unknow items
 			var tempBytes = Encoding.ASCII.GetBytes(result);
@@ -64,6 +73,16 @@ namespace InkyCal.Utils
 			Trace.WriteLine($"{text} => {result}");
 
 			return result;
+
+			static string replaceRingelS(string result)
+			{
+
+				//Replace some known remaining enties
+				result = result
+					.Replace("ẞ", "ss")
+					.Replace("ß", "SS");
+				return result;
+			}
 		}
 
 		private static readonly FontCollection fonts = new FontCollection();
@@ -75,7 +94,19 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Font family MonteCarloFixed12
 		/// </summary>
+		/// <remarks>
+		/// Obtained from <a href="https://www.bok.net/MonteCarlo/">https://www.bok.net/MonteCarlo/</a>
+		/// </remarks>
 		public static readonly FontFamily MonteCarlo;
+
+		/// <summary>
+		/// Font family ProFontWindowsPL - multi-size, non-anti-aliassed font
+		/// </summary>
+		/// <value>
+		/// The pro font.
+		/// </value>
+		/// <remarks>Obtained from <a href="https://tobiasjung.name/profont/">https://tobiasjung.name/profont/</a></remarks>
+		public static readonly FontFamily ProFont;
 
 		/// <summary>
 		/// Font for weather icons
@@ -91,19 +122,23 @@ namespace InkyCal.Utils
 			{"04n","\uf013"},{"09n","\uf037"},{"10n","\uf036"},{"11n","\uf03b"},{"13n","\uf038"},{"50n","\uf023"}
 		};
 
+
 		[SuppressMessage("Design", "CA1810:Initialize reference type static fields inline", Justification = "Easier to read initialization")]
 		static FontHelper()
 		{
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
-				NotoSans = fonts.Install(resource);
+				NotoSans = fonts.Install(resource,new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
-				MonteCarlo = fonts.Install(resource);
+				MonteCarlo = fonts.Install(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
-				WeatherIcons = fonts.Install(resource);
+				WeatherIcons = fonts.Install(resource, new CultureInfo("de-DE"));
+
+			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
+				ProFont = fonts.Install(resource, new CultureInfo("de-DE"));
 		}
 
 		/// <summary>

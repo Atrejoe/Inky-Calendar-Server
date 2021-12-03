@@ -33,7 +33,7 @@ namespace InkyCal.Server
 
 		//public IConfiguration Configuration { get; }
 
-		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
+		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"" target=""github"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
@@ -114,27 +114,26 @@ namespace InkyCal.Server
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo
 				{
-					Title = $"InkyCal",
+					Title = $"InkyCal Server",
 					Version = "v1",
 					Description = Intro,
 					Contact = new OpenApiContact
 					{
 						Name = "Atrejoe",
 						//Email = "devlog@cs.nl",
-						Url = new Uri("https://github.com/Atrejoe"),
+						Url = new Uri("https://github.com/Atrejoe")
 					}
 				});
 
 				//c.DescribeAllEnumsAsStrings();
 
-				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList().ForEach(
+					xmlFile =>
+					c.IncludeXmlComments(xmlFile, includeControllerXmlComments: true)
+				);
 
-				//... and tell Swagger to use those XML comments.
-				c.IncludeXmlComments(xmlPath, true);
 			});
 
-			
 			try
 			{
 				throw new ApplicationException("Application has started");
@@ -159,7 +158,7 @@ namespace InkyCal.Server
 				(options.Storage as MemoryCacheStorage).CacheDuration = TimeSpan.FromMinutes(60);
 
 				// (Optional) Control which SQL formatter to use, InlineFormatter is the default
-				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData:true);
+				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData: true);
 
 				// (Optional) To control authorization, you can use the Func<HttpRequest, bool> options:
 				// (default is everyone can access profilers)
@@ -260,6 +259,7 @@ namespace InkyCal.Server
 
 			app.UseAuthorization();
 			app.UseAuthentication();
+
 			//app.UseEndpoints(endpoints =>
 			//{
 			//	endpoints.MapControllers();

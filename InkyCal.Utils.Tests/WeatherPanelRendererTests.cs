@@ -1,4 +1,4 @@
-namespace InkyCal.Utils.Tests
+﻿namespace InkyCal.Utils.Tests
 {
 	/// <summary>
 	/// Tests <see creaf="TestCalendarPanel"/>
@@ -10,6 +10,17 @@ namespace InkyCal.Utils.Tests
 			return new WeatherPanelRenderer(
 				"token", 
 				"Rotterdam,NL");
+		}
+	}
+
+	/// <summary>
+	/// Tests <see creaf="NewYorkTimesRenderer"/>
+	/// </summary>
+	public sealed class NewYorkTimesRendererTest : IPanelTests<NewYorkTimesRenderer>
+	{
+		protected override NewYorkTimesRenderer GetRenderer()
+		{
+			return new NewYorkTimesRenderer();
 		}
 	}
 }

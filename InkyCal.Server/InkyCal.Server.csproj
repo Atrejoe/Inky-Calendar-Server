@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Features>flow-analysis</Features>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -12,27 +12,42 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bugsnag" Version="2.2.1" />
-    <PackageReference Include="Bugsnag.AspNet.Core" Version="2.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
+    <Compile Remove="Controllers\GoogleController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\changelog.md" Link="changelog.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bugsnag" Version="2.2.3" />
+    <PackageReference Include="Bugsnag.AspNet.Core" Version="2.2.3" />
+    <PackageReference Include="ceTe.DynamicPDF.Rasterizer.NET.x64" Version="3.2.0.38353" />
+    <PackageReference Include="ceTe.DynamicPDF.Rasterizer.NET.x86" Version="3.2.0.38353" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.55.0.1869" />
+    <PackageReference Include="Humanizer" Version="2.13.14" />
+    <PackageReference Include="Markdig.Signed" Version="0.26.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.14" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.1" />
-    <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.2.1" />
-    <PackageReference Include="MiniProfiler.Shared" Version="4.2.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
+    <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.2.22" />
+    <PackageReference Include="MiniProfiler.Shared" Version="4.2.22" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

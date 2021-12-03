@@ -1,55 +1,128 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using InkyCal.Models;
+using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace InkyCal.Utils
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	public class ImagePanelCacheKey : PanelCacheKey
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ImagePanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration">The expiration.</param>
+		/// <param name="imageUrl">The image URL.</param>
+		/// <param name="rotateImage">The rotate image.</param>
+		public ImagePanelCacheKey(TimeSpan expiration, Uri imageUrl, RotateMode rotateImage) : base(expiration)
+		{
+			ImageUrl = imageUrl;
+			RotateImage = rotateImage;
+		}
+
+		/// <summary>
+		/// Gets the image URL.
+		/// </summary>
+		/// <value>
+		/// The image URL.
+		/// </value>
+		public Uri ImageUrl { get; }
+		/// <summary>
+		/// Gets the rotate image.
+		/// </summary>
+		/// <value>
+		/// The rotate image.
+		/// </value>
+		public RotateMode RotateImage { get; }
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ImageUrl, RotateImage);
+
+		/// <summary>
+		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+		/// </returns>
+		protected override bool Equals(PanelCacheKey other)
+		{
+			return other is ImagePanelCacheKey ipc
+				&& ipc.ImageUrl.Equals(ImageUrl)
+				&& ipc.RotateImage.Equals(RotateImage);
+		}
+	}
 
 	/// <summary>
-	/// An image panel, assumes a landscape image, resizes and flips it to portait.
+	/// 
 	/// </summary>
-	public class ImagePanelRenderer : IPanelRenderer
+	public static class DownloadCache
 	{
+
+		private static readonly HttpClient client = new HttpClient();
+
 		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
 		{
-			SizeLimit = 1024*1024,
+			SizeLimit = 1024 * 1024 * 500,
 		});
+
 
 		/// <summary>
 		/// Returns a cached image
 		/// </summary>
 		/// <returns></returns>
-		private static async Task<byte[]> LoadCachedImage(Uri imageUrl)
+		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl) 
+			=> await LoadCachedContent(imageUrl, TimeSpan.FromMinutes(10));
+
+		/// <summary>
+		/// Returns a cached image
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="HttpRequestException">When download failed (non-200 response was returned))</exception>
+		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration)
 		{
 
-			using (MiniProfiler.Current.Step($"Loading image from cache"))
+			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
 				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
 				{
 					// Key not in cache, so get data.
-					using (MiniProfiler.Current.Step($"Image not in cache, loading from URL"))
+					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))
 						cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
 
 					var cacheEntryOptions = new MemoryCacheEntryOptions()
 						.SetSize(cacheEntry.Length)
 						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+						.SetAbsoluteExpiration(expiration);
 
 					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing image in cache"))
+					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
 						_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
 				}
 
 				return cacheEntry;
 			}
 		}
+	}
 
+	/// <summary>
+	/// An image panel, assumes a landscape image, resizes and flips it to portait.
+	/// </summary>
+	public class ImagePanelRenderer : IPanelRenderer
+	{
 		/// <summary>
 		/// 
 		/// </summary>
@@ -60,13 +133,15 @@ namespace InkyCal.Utils
 			this.imageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
 			this.rotateImage = rotateImage;
 			//cachedImage = new Lazy<byte[]>(GetTestImage);
+
+			cacheKey = new ImagePanelCacheKey(expiration: TimeSpan.FromMinutes(1), imageUrl, rotateImage);
 		}
 
-		//private readonly Lazy<byte[]> cachedImage;
-
-		private static readonly HttpClient client = new HttpClient();
 		private readonly Uri imageUrl;
 		private readonly RotateMode rotateImage;
+		private readonly ImagePanelCacheKey cacheKey;
+
+		PanelCacheKey IPanelRenderer.CacheKey => cacheKey;
 
 		//private byte[] GetTestImage()
 		//{
@@ -84,9 +159,10 @@ namespace InkyCal.Utils
 				Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
 				try
 				{
-					image = Image.Load(await LoadCachedImage(imageUrl));
+					image = Image.Load(await imageUrl.LoadCachedContent(TimeSpan.FromMinutes(10)));
 				}
-				catch (UnknownImageFormatException ex) {
+				catch (UnknownImageFormatException ex)
+				{
 					ex.Data["ImageUrl"] = imageUrl;
 					throw;
 				}
@@ -95,12 +171,13 @@ namespace InkyCal.Utils
 					image.Mutate(x => x
 					.Rotate(rotateImage)
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })
-					.BackgroundColor(Color.White)
+					.BackgroundColor(Color.Transparent)
 					.Quantize(new PaletteQuantizer(colors))
 					);
 
 				return image;
 			});
 		}
+
 	}
 }

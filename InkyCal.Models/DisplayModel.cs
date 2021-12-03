@@ -48,5 +48,15 @@ namespace InkyCal.Models
 		/// 4.2" black-white
 		/// </summary>
 		epd_4_in_2,// # 
+
+		/// <summary>
+		/// The 12.48" color
+		/// </summary>
+		epd_12_in_48_colour,
+
+		/// <summary>
+		/// The 12.48" color (with grayscale)
+		/// </summary>
+		epd_12_in_48_colour_with_grayscale
 	}
 }

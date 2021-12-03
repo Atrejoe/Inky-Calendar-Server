@@ -35,8 +35,12 @@ namespace InkyCal.Data
 
 			base.OnModelCreating(builder);
 
-			builder.Entity<Panel>();
+			builder.Entity<Panel>()
+				.HasOne(x=>x.Owner)
+				.WithMany(x=>x.Panels);
+
 			builder.Entity<CalendarPanel>();
+			builder.Entity<NewYorkTimesPanel>();
 
 			builder.Entity<CalendarPanelUrl>()
 				.HasOne(x => x.Panel)
@@ -74,6 +78,29 @@ namespace InkyCal.Data
 
 			builder.Entity<User>()
 				.HasOne(typeof(IdentityUser));
+
+			builder.Entity<GoogleOAuthAccess>();
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne(typeof(GoogleOAuthAccess))
+				.WithMany()
+				.HasForeignKey(nameof(SubscribedGoogleCalender.AccessToken));
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne(typeof(CalendarPanel))
+				.WithMany()
+				.HasForeignKey(nameof(SubscribedGoogleCalender.Panel));
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasKey(x => new { x.Calender, x.AccessToken, x.Panel });
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasAlternateKey(x => new { x.Calender, x.AccessToken, x.Panel });
+
+			builder.Entity<SubscribedGoogleCalender>()
+				.HasOne<CalendarPanel>()
+				.WithMany(x=>x.SubscribedGoogleCalenders)
+				.HasForeignKey(x=>x.Panel);
 		}
 	}
 }

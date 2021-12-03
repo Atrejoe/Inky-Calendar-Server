@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace InkyCal.Utils.Tests
 
 		protected abstract T GetRenderer();
 
+		[SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Method for delivery test data")]
 		public static IEnumerable<object[]> DisplayModels() {
 			return Enum.GetValues(typeof(DisplayModel))
 				.Cast<DisplayModel>()
@@ -59,14 +61,6 @@ namespace InkyCal.Utils.Tests
 			//assert
 			Assert.NotNull(image);
 
-			var pixels = Enumerable.Range(0, bitmap.Width - 1)
-				.SelectMany(x =>
-				{
-					return Enumerable.Range(0, bitmap.Height - 1).Select(y => bitmap[x, y]);
-				}).ToHashSet();
-
-			Trace.WriteLine($"{pixels.Count:n0} distinct colors in the image, a palette of {colors.Length:n0} colors was specified.");
-			Assert.False(pixels.Count > colors.Length, $"{pixels.Count:n0} distinct colors in the image, while a palette of {colors.Length:n0} was specified.");
 
 			using var fileStream = File.Create(filename);
 			image.Save(fileStream, new PngEncoder());
@@ -75,6 +69,19 @@ namespace InkyCal.Utils.Tests
 			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");
 
 			Trace.WriteLine(fi.FullName);
+
+			var pixels = Enumerable.Range(0, bitmap.Width - 1)
+				.SelectMany(x =>
+				{
+					return Enumerable.Range(0, bitmap.Height - 1).Select(y => bitmap[x, y]);
+				}).ToHashSet();
+
+			var extraColors = pixels.Select(x => x.ToHex()).Where(x => !colors.Select(x => x.ToHex()).Contains(x));
+
+			var message = $"{pixels.Count:n0} distinct colors in the image ({string.Join(",", pixels.Select(x => x.ToHex().ToString()))}), a palette of {colors.Length:n0} colors ({string.Join(",", colors.Select(x => x.ToString()))}) was specified.Extra colors : {string.Join(",", extraColors)}";
+			Trace.WriteLine(message);
+			Assert.False(pixels.Count > colors.Length, message);
+
 
 		}
 	}

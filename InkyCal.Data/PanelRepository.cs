@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -10,6 +9,22 @@ namespace InkyCal.Data
 {
 	public static class PanelRepository
 	{
+		public static async Task<bool> ToggleStar(this Panel panel)
+		{
+			using (var c = new ApplicationDbContext())
+			{
+				var p = await c.Set<Panel>().SingleAsync(x => x.Id == panel.Id);
+
+				p.Starred = !p.Starred;
+
+				c.Update(p);
+
+				await c.SaveChangesAsync();
+
+				return p.Starred;
+			}
+		}
+
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
 			if (panel is null)
@@ -108,6 +123,7 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 			var queryable = c.Set<TPanel>()
 							.Include(x => (x as CalendarPanel).CalenderUrls)
+							.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
 							.Include(x => (x as PanelOfPanels).Panels)
 							.Where(x => x.Owner.Id.Equals(user.Id))
 							.AsNoTracking();
@@ -138,7 +154,20 @@ namespace InkyCal.Data
 
 			//var panel = await Get<Panel>(id, user);
 			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id));
-			await c.SaveChangesAsync();
+			if((await c.SaveChangesAsync()) != 1)
+				throw new Exception("Not deleted");
+		}
+
+		public static async Task<Panel[]> All()
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<Panel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.ToArrayAsync();
+
+			return result;
 		}
 
 		public static async Task<TPanel> Get<TPanel>(Guid id) where TPanel : Panel
@@ -156,10 +185,18 @@ namespace InkyCal.Data
 		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
 		{
 			return set
+					.Include(x => (x as Panel).Owner)
+					.Include(x => (x as Panel).Owner.GoogleOAuthTokens)
 					.Include(x => (x as CalendarPanel).CalenderUrls)
+					.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
 					.Include(x => (x as PanelOfPanels).Panels)
 						.ThenInclude(x => x.Panel)
-						.ThenInclude(x => (x as CalendarPanel).CalenderUrls);
+							.ThenInclude(x => x.Owner)
+								.ThenInclude(x => x.GoogleOAuthTokens)
+					.Include(x => (x as PanelOfPanels).Panels)
+						.ThenInclude(x => (x.Panel as CalendarPanel).CalenderUrls)
+					.Include(x => (x as PanelOfPanels).Panels)
+						.ThenInclude(x => (x.Panel as CalendarPanel).SubscribedGoogleCalenders);
 
 		}
 	}

@@ -5,20 +5,47 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
 
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	public class WeatherPanelCacheKey: PanelCacheKey{
+		internal readonly string Token;
+		internal readonly string City;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration"></param>
+		/// <param name="token">The token.</param>
+		/// <param name="city">The city.</param>
+		public WeatherPanelCacheKey(TimeSpan expiration, string token, string city):base(expiration) {
+			this.Token = token;
+			this.City = city;
+		}
+
+		/// <summary>
+		/// Included <see cref="Token"/> and <see cref="City"/>in hashcode
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Token, City.ToUpperInvariant());
+	}
+
+	/// <summary>
 	/// A renderer for weather
 	/// </summary>
 	public class WeatherPanelRenderer : PanelRenderer<WeatherPanel>
 	{
-		private string token;
-		private string city;
+		private WeatherPanelCacheKey cacheKey;
 
 		/// <summary>
 		/// 
@@ -27,8 +54,7 @@ namespace InkyCal.Utils
 		/// <param name="city"></param>
 		public WeatherPanelRenderer(string token, string city)
 		{
-			this.token = token;
-			this.city = city;
+			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), token, city);
 		}
 
 		/// <summary>
@@ -47,8 +73,7 @@ namespace InkyCal.Utils
 				throw new ArgumentNullException(nameof(panel));
 
 
-			this.token = panel.Token;
-			this.city = panel.Location;
+			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), panel.Token, panel.Location);
 		}
 
 
@@ -56,7 +81,7 @@ namespace InkyCal.Utils
 		/// <returns>A panel with weather information</returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
 		[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller is responsible for disposing result")]
-		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
+		override public async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
 			//Station station;
@@ -99,24 +124,24 @@ namespace InkyCal.Utils
 			var textFont = new Font(FontHelper.MonteCarlo, 12);
 			var weatherFont = new Font(FontHelper.WeatherIcons, 40);
 
-			var textGraphicsOptions = new TextGraphicsOptions(false)
+			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
 			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrapTextWidth = width,
 				DpiX = 96,
 				DpiY = 96
-			};
+			});
 			var rendererOptions = textGraphicsOptions.ToRendererOptions(textFont);
 			var weatherRendererOptions = textGraphicsOptions.ToRendererOptions(weatherFont);
 
 			Weather.RootObject weather;
 
-			using (MiniProfiler.Current.Step($"Get weather for '{city}'"))
+			using (MiniProfiler.Current.Step($"Get weather for '{cacheKey.City}'"))
 				try
 				{
-					using (var util = new Weather.Util(token))
-						weather = await util.GetForeCast(city);
+					using (var util = new Weather.Util(cacheKey.Token))
+						weather = await util.GetForeCast(cacheKey.City);
 				}
 				catch (Weather.WeatherAPIRequestFailureException ex)
 				{
@@ -221,5 +246,15 @@ namespace InkyCal.Utils
 
 			return result;
 		}
+
+		/// <summary>
+		/// Gets the cache key. (<see cref="WeatherPanelCacheKey"/>)
+		/// </summary>
+		/// <value>
+		/// The cache key.
+		/// </value>
+		public override PanelCacheKey CacheKey
+			=> cacheKey;
+		
 	}
 }

@@ -8,458 +8,545 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InkyCal.Data.Migrations
 {
-	[DbContext(typeof(ApplicationDbContext))]
-	partial class ApplicationDbContextModelSnapshot : ModelSnapshot
-	{
-		protected override void BuildModel(ModelBuilder modelBuilder)
-		{
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-			modelBuilder
-				.HasAnnotation("ProductVersion", "3.1.3")
-				.HasAnnotation("Relational:MaxIdentifierLength", 128)
-				.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+            modelBuilder
+                .HasAnnotation("ProductVersion", "3.1.14")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-			modelBuilder.Entity("InkyCal.Models.CalendarPanelUrl", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int")
-						.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+            modelBuilder.Entity("InkyCal.Models.CalendarPanelUrl", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.Property<Guid>("IdPanel")
-						.HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("IdPanel")
+                        .HasColumnType("uniqueidentifier");
 
-					b.Property<string>("Url")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("IdPanel");
+                    b.HasIndex("IdPanel");
 
-					b.ToTable("ImagePanelUrl", "InkyCal");
-				});
+                    b.ToTable("ImagePanelUrl","InkyCal");
+                });
 
-			modelBuilder.Entity("InkyCal.Models.Panel", b =>
-				{
-					b.Property<Guid>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("uniqueidentifier");
+            modelBuilder.Entity("InkyCal.Models.GoogleOAuthAccess", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.Property<string>("Discriminator")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
-					b.Property<int?>("Height")
-						.HasColumnType("int");
+                    b.Property<DateTimeOffset>("AccessTokenExpiry")
+                        .HasColumnType("datetimeoffset");
 
-					b.Property<int>("Model")
-						.HasColumnType("int");
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
-					b.Property<string>("Name")
-						.IsRequired()
-						.HasColumnType("nvarchar(255)")
-						.HasMaxLength(255);
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-					b.Property<int?>("OwnerId")
-						.HasColumnType("int");
+                    b.HasKey("Id");
 
-					b.Property<short>("Rotation")
-						.HasColumnType("smallint");
+                    b.HasIndex("UserId");
 
-					b.Property<int?>("Width")
-						.HasColumnType("int");
+                    b.ToTable("User_GoogleOAuthAccess","InkyCal");
+                });
 
-					b.HasKey("Id");
+            modelBuilder.Entity("InkyCal.Models.Panel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-					b.HasIndex("OwnerId");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.ToTable("Panel", "InkyCal");
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
 
-					b.HasDiscriminator<string>("Discriminator").HasValue("Panel");
-				});
+                    b.Property<int>("Model")
+                        .HasColumnType("int");
 
-			modelBuilder.Entity("InkyCal.Models.SubPanel", b =>
-				{
-					b.Property<Guid>("IdParent")
-						.HasColumnType("uniqueidentifier");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
-					b.Property<Guid>("IdPanel")
-						.HasColumnType("uniqueidentifier");
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
 
-					b.Property<byte>("SortIndex")
-						.HasColumnType("tinyint");
+                    b.Property<short>("Rotation")
+                        .HasColumnType("smallint");
 
-					b.Property<byte>("Ratio")
-						.HasColumnType("tinyint");
+                    b.Property<bool>("Starred")
+                        .HasColumnType("bit");
 
-					b.HasKey("IdParent", "IdPanel", "SortIndex");
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
 
-					b.HasIndex("IdPanel");
+                    b.HasKey("Id");
 
-					b.ToTable("SubPanel", "InkyCal");
-				});
+                    b.HasIndex("OwnerId");
 
-			modelBuilder.Entity("InkyCal.Models.User", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int")
-						.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.ToTable("Panel","InkyCal");
 
-					b.Property<string>("IdentityUserId")
-						.HasColumnType("nvarchar(450)");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Panel");
+                });
 
-					b.HasKey("Id");
+            modelBuilder.Entity("InkyCal.Models.SubPanel", b =>
+                {
+                    b.Property<Guid>("IdParent")
+                        .HasColumnType("uniqueidentifier");
 
-					b.HasIndex("IdentityUserId")
-						.IsUnique()
-						.HasFilter("[IdentityUserId] IS NOT NULL");
+                    b.Property<Guid>("IdPanel")
+                        .HasColumnType("uniqueidentifier");
 
-					b.ToTable("User", "InkyCal");
-				});
+                    b.Property<byte>("SortIndex")
+                        .HasColumnType("tinyint");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-				{
-					b.Property<string>("Id")
-						.HasColumnType("nvarchar(450)");
+                    b.Property<short>("Ratio")
+                        .HasColumnType("smallint");
 
-					b.Property<string>("ConcurrencyStamp")
-						.IsConcurrencyToken()
-						.HasColumnType("nvarchar(max)");
+                    b.HasKey("IdParent", "IdPanel", "SortIndex");
 
-					b.Property<string>("Name")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.HasIndex("IdPanel");
 
-					b.Property<string>("NormalizedName")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.ToTable("SubPanel","InkyCal");
+                });
 
-					b.HasKey("Id");
+            modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
+                {
+                    b.Property<string>("Calender")
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
-					b.HasIndex("NormalizedName")
-						.IsUnique()
-						.HasName("RoleNameIndex")
-						.HasFilter("[NormalizedName] IS NOT NULL");
+                    b.Property<int>("AccessToken")
+                        .HasColumnType("int");
 
-					b.ToTable("AspNetRoles");
-				});
+                    b.Property<Guid>("Panel")
+                        .HasColumnType("uniqueidentifier");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int")
-						.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.HasKey("Calender", "AccessToken", "Panel");
 
-					b.Property<string>("ClaimType")
-						.HasColumnType("nvarchar(max)");
+                    b.HasIndex("AccessToken");
 
-					b.Property<string>("ClaimValue")
-						.HasColumnType("nvarchar(max)");
+                    b.HasIndex("Panel");
 
-					b.Property<string>("RoleId")
-						.IsRequired()
-						.HasColumnType("nvarchar(450)");
+                    b.ToTable("CalendarPanel_GoogleCalender","InkyCal");
+                });
 
-					b.HasKey("Id");
+            modelBuilder.Entity("InkyCal.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.HasIndex("RoleId");
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("nvarchar(450)");
 
-					b.ToTable("AspNetRoleClaims");
-				});
+                    b.HasKey("Id");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-				{
-					b.Property<string>("Id")
-						.HasColumnType("nvarchar(450)");
+                    b.HasIndex("IdentityUserId")
+                        .IsUnique()
+                        .HasFilter("[IdentityUserId] IS NOT NULL");
 
-					b.Property<int>("AccessFailedCount")
-						.HasColumnType("int");
+                    b.ToTable("User","InkyCal");
+                });
 
-					b.Property<string>("ConcurrencyStamp")
-						.IsConcurrencyToken()
-						.HasColumnType("nvarchar(max)");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<string>("Email")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<bool>("EmailConfirmed")
-						.HasColumnType("bit");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.Property<bool>("LockoutEnabled")
-						.HasColumnType("bit");
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.Property<DateTimeOffset?>("LockoutEnd")
-						.HasColumnType("datetimeoffset");
+                    b.HasKey("Id");
 
-					b.Property<string>("NormalizedEmail")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-					b.Property<string>("NormalizedUserName")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.ToTable("AspNetRoles");
+                });
 
-					b.Property<string>("PasswordHash")
-						.HasColumnType("nvarchar(max)");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.Property<string>("PhoneNumber")
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<bool>("PhoneNumberConfirmed")
-						.HasColumnType("bit");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<string>("SecurityStamp")
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<bool>("TwoFactorEnabled")
-						.HasColumnType("bit");
+                    b.HasKey("Id");
 
-					b.Property<string>("UserName")
-						.HasColumnType("nvarchar(256)")
-						.HasMaxLength(256);
+                    b.HasIndex("RoleId");
 
-					b.HasKey("Id");
+                    b.ToTable("AspNetRoleClaims");
+                });
 
-					b.HasIndex("NormalizedEmail")
-						.HasName("EmailIndex");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-					b.HasIndex("NormalizedUserName")
-						.IsUnique()
-						.HasName("UserNameIndex")
-						.HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
-					b.ToTable("AspNetUsers");
-				});
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int")
-						.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.Property<string>("ClaimType")
-						.HasColumnType("nvarchar(max)");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
-					b.Property<string>("ClaimValue")
-						.HasColumnType("nvarchar(max)");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
 
-					b.Property<string>("UserId")
-						.IsRequired()
-						.HasColumnType("nvarchar(450)");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
-					b.HasKey("Id");
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.HasIndex("UserId");
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.ToTable("AspNetUserClaims");
-				});
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-				{
-					b.Property<string>("LoginProvider")
-						.HasColumnType("nvarchar(450)");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<string>("ProviderKey")
-						.HasColumnType("nvarchar(450)");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-					b.Property<string>("ProviderDisplayName")
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<string>("UserId")
-						.IsRequired()
-						.HasColumnType("nvarchar(450)");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
-					b.HasKey("LoginProvider", "ProviderKey");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
 
-					b.HasIndex("UserId");
+                    b.HasKey("Id");
 
-					b.ToTable("AspNetUserLogins");
-				});
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-				{
-					b.Property<string>("UserId")
-						.HasColumnType("nvarchar(450)");
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-					b.Property<string>("RoleId")
-						.HasColumnType("nvarchar(450)");
+                    b.ToTable("AspNetUsers");
+                });
 
-					b.HasKey("UserId", "RoleId");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.HasIndex("RoleId");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-					b.ToTable("AspNetUserRoles");
-				});
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-				{
-					b.Property<string>("UserId")
-						.HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<string>("LoginProvider")
-						.HasColumnType("nvarchar(450)");
+                    b.HasKey("Id");
 
-					b.Property<string>("Name")
-						.HasColumnType("nvarchar(450)");
+                    b.HasIndex("UserId");
 
-					b.Property<string>("Value")
-						.HasColumnType("nvarchar(max)");
+                    b.ToTable("AspNetUserClaims");
+                });
 
-					b.HasKey("UserId", "LoginProvider", "Name");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
 
-					b.ToTable("AspNetUserTokens");
-				});
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
 
-			modelBuilder.Entity("InkyCal.Models.CalendarPanel", b =>
-				{
-					b.HasBaseType("InkyCal.Models.Panel");
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
 
-					b.ToTable("CalendarPanel", "InkyCal");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-					b.HasDiscriminator().HasValue("CalendarPanel");
-				});
+                    b.HasKey("LoginProvider", "ProviderKey");
 
-			modelBuilder.Entity("InkyCal.Models.ImagePanel", b =>
-				{
-					b.HasBaseType("InkyCal.Models.Panel");
+                    b.HasIndex("UserId");
 
-					b.Property<string>("Body")
-						.HasColumnType("nvarchar(max)");
+                    b.ToTable("AspNetUserLogins");
+                });
 
-					b.Property<short>("ImageRotation")
-						.HasColumnType("smallint");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<string>("Path")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
-					b.ToTable("ImagePanel", "InkyCal");
+                    b.HasKey("UserId", "RoleId");
 
-					b.HasDiscriminator().HasValue("ImagePanel");
-				});
+                    b.HasIndex("RoleId");
 
-			modelBuilder.Entity("InkyCal.Models.PanelOfPanels", b =>
-				{
-					b.HasBaseType("InkyCal.Models.Panel");
+                    b.ToTable("AspNetUserRoles");
+                });
 
-					b.ToTable("PanelOfPanels", "InkyCal");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-					b.HasDiscriminator().HasValue("PanelOfPanels");
-				});
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
 
-			modelBuilder.Entity("InkyCal.Models.WeatherPanel", b =>
-				{
-					b.HasBaseType("InkyCal.Models.Panel");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<string>("Location")
-						.IsRequired()
-						.HasColumnType("nvarchar(255)")
-						.HasMaxLength(255);
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<string>("Token")
-						.IsRequired()
-						.HasColumnType("nvarchar(255)")
-						.HasMaxLength(255);
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
-					b.ToTable("WeatherPanel", "InkyCal");
+                    b.ToTable("AspNetUserTokens");
+                });
 
-					b.HasDiscriminator().HasValue("WeatherPanel");
-				});
+            modelBuilder.Entity("InkyCal.Models.CalendarPanel", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
 
-			modelBuilder.Entity("InkyCal.Models.CalendarPanelUrl", b =>
-				{
-					b.HasOne("InkyCal.Models.CalendarPanel", "Panel")
-						.WithMany("CalenderUrls")
-						.HasForeignKey("IdPanel")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.ToTable("CalendarPanel","InkyCal");
 
-			modelBuilder.Entity("InkyCal.Models.Panel", b =>
-				{
-					b.HasOne("InkyCal.Models.User", "Owner")
-						.WithMany()
-						.HasForeignKey("OwnerId");
-				});
+                    b.HasDiscriminator().HasValue("CalendarPanel");
+                });
 
-			modelBuilder.Entity("InkyCal.Models.SubPanel", b =>
-				{
-					b.HasOne("InkyCal.Models.Panel", "Panel")
-						.WithMany()
-						.HasForeignKey("IdPanel")
-						.OnDelete(DeleteBehavior.NoAction)
-						.IsRequired();
+            modelBuilder.Entity("InkyCal.Models.ImagePanel", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
 
-					b.HasOne("InkyCal.Models.PanelOfPanels", null)
-						.WithMany("Panels")
-						.HasForeignKey("IdParent")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
 
-			modelBuilder.Entity("InkyCal.Models.User", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-						.WithMany()
-						.HasForeignKey("IdentityUserId");
-				});
+                    b.Property<short>("ImageRotation")
+                        .HasColumnType("smallint");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-						.WithMany()
-						.HasForeignKey("RoleId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-						.WithMany()
-						.HasForeignKey("UserId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.ToTable("ImagePanel","InkyCal");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-						.WithMany()
-						.HasForeignKey("UserId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.HasDiscriminator().HasValue("ImagePanel");
+                });
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-						.WithMany()
-						.HasForeignKey("RoleId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("InkyCal.Models.NewYorkTimesPanel", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
 
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-						.WithMany()
-						.HasForeignKey("UserId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.ToTable("Panel","InkyCal");
 
-			modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-				{
-					b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
-						.WithMany()
-						.HasForeignKey("UserId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.HasDiscriminator().HasValue("NewYorkTimesPanel");
+                });
+
+            modelBuilder.Entity("InkyCal.Models.PanelOfPanels", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
+
+                    b.ToTable("PanelOfPanels","InkyCal");
+
+                    b.HasDiscriminator().HasValue("PanelOfPanels");
+                });
+
+            modelBuilder.Entity("InkyCal.Models.WeatherPanel", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.ToTable("WeatherPanel","InkyCal");
+
+                    b.HasDiscriminator().HasValue("WeatherPanel");
+                });
+
+            modelBuilder.Entity("InkyCal.Models.CalendarPanelUrl", b =>
+                {
+                    b.HasOne("InkyCal.Models.CalendarPanel", "Panel")
+                        .WithMany("CalenderUrls")
+                        .HasForeignKey("IdPanel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InkyCal.Models.GoogleOAuthAccess", b =>
+                {
+                    b.HasOne("InkyCal.Models.User", "User")
+                        .WithMany("GoogleOAuthTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InkyCal.Models.Panel", b =>
+                {
+                    b.HasOne("InkyCal.Models.User", "Owner")
+                        .WithMany("Panels")
+                        .HasForeignKey("OwnerId");
+                });
+
+            modelBuilder.Entity("InkyCal.Models.SubPanel", b =>
+                {
+                    b.HasOne("InkyCal.Models.Panel", "Panel")
+                        .WithMany()
+                        .HasForeignKey("IdPanel")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("InkyCal.Models.PanelOfPanels", null)
+                        .WithMany("Panels")
+                        .HasForeignKey("IdParent")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InkyCal.Models.SubscribedGoogleCalender", b =>
+                {
+                    b.HasOne("InkyCal.Models.GoogleOAuthAccess", null)
+                        .WithMany()
+                        .HasForeignKey("AccessToken")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InkyCal.Models.CalendarPanel", null)
+                        .WithMany()
+                        .HasForeignKey("Panel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InkyCal.Models.User", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("IdentityUserId");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
-		}
-	}
+        }
+    }
 }

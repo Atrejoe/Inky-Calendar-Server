@@ -1,5 +1,6 @@
 @page "/fetchdata"
 @inherits AuthenticatedComponentBase
+@using Humanizer;
 
 <h1>Panels</h1>
 
@@ -37,10 +38,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var panel in _panels)
+						@foreach (var panel in _panels.OrderByDescending(x => x.Starred).ThenBy(x => x.Name).ThenBy(x => x.GetType().Name))
 						{
-							<tr @onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
-								<td>@panel.Name</td>
+							<tr @ondblclick="@(()=>navigationManager.NavigateTo($"/panel/{panel.Id}/edit"))" 
+								@onclick="@(() => SelectPanel(panel.Id))" style="cursor:pointer" class="@((_selectedPanel?.Id == panel.Id)?"table-active":null)}">
+								<td>
+									<PanelStar Panel="@panel" />
+									@panel.Name
+								</td>
 								<td>
 									<span class="badge badge-primary">@panel.Model</span>
 									<span class="badge badge-primary">
@@ -70,7 +75,7 @@
 									@switch (panel)
 									{
 										case Models.CalendarPanel cp:
-											<span>@cp.CalenderUrls?.Count calendars</span>
+											<span>@("calendar".ToQuantity((cp.CalenderUrls?.Count??0)+(cp.SubscribedGoogleCalenders?.Count??0)))</span>
 											break;
 										case Models.ImagePanel ip:
 											<a href="@ip.Path" target="_blank" title="Link to original image">
@@ -78,7 +83,7 @@
 											</a>
 											break;
 										case Models.PanelOfPanels pp:
-											<span>@pp.Panels?.Count panels</span>
+											<span>@("panel".ToQuantity(@pp.Panels?.Count??0))</span>
 											break;
 										case Models.WeatherPanel wp:
 											<span>@wp.Location</span>
@@ -99,8 +104,8 @@
 									</NavLink>
 								</td>
 								@*<td>
-										<PopContainer Class="btn btn-danger" ConfirmedChanged="@(async (bool confirm)=> { if (confirm) { await Delete(panel.Id); } })"></PopContainer>
-									</td>*@
+									<PopContainer Class="btn btn-danger" ConfirmedChanged="@(async (bool confirm)=> { if (confirm) { await Delete(panel.Id); } })"></PopContainer>
+								</td>*@
 							</tr>
 						}
 					</tbody>
@@ -120,7 +125,13 @@ inkycal_image_path = '@(navigationManager.BaseUri)panel/@_selectedPanel.Id' #Thi
 ...
 </code></pre>
 				</span>
-				<img src="/panel/@_selectedPanel.Id" title="Image is loading" alt="Panel image is loading" style="min-height:20px; min-width:50px;border: 1px solid silver; background-color:silver;" />
+
+				<span class="panel @LoadingCSS">
+					<img src="/panel/@_selectedPanel.Id?@CacheBreaker" @onload="HandleOnLoad" />
+					<span class="overlay">
+						<i class="oi oi-reload" title="Loading" alt="Loading panel image"></i>
+					</span>
+				</span>
 
 			}
 			else if (_selectedPanelLoading)

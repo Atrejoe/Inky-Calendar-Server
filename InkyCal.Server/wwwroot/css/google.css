@@ -1,0 +1,17 @@
+﻿
+button.google.login {
+	height: 46px;
+	width:	192px;
+	border:none;
+	background-image: url(../resources/Google/signin/btn_google_signin_dark_normal_web@2x.png);
+	background-size:100%;
+	vertical-align:middle;
+}
+
+	button.google.login:hover {
+		background-image: url(../resources/Google/signin/btn_google_signin_light_focus_web@2x.png)
+	}
+
+	button.google.login:active {
+		background-image: url(../resources/Google/signin/btn_google_signin_light_pressed_web@2x.png)
+	}

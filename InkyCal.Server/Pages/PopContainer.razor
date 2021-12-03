@@ -14,6 +14,7 @@
 		top: -50px;
 		padding: 10px;
 		border-radius: 8px;
+		z-index:42;
 	}
 </style>
 <div class="pop-container">
@@ -21,6 +22,7 @@
 	{
 		<div class="popconfirm">
 			@Message
+			<br/>
 			<button type="button" class="btn btn-warning" @onclick="() => Confirmation(false)">No</button>
 			<button type="button" class="btn btn-primary" @onclick="() => Confirmation(true)">Yes</button>
 		</div>

@@ -1,0 +1,35 @@
+﻿@typeparam TItem
+
+<div style=@Style>  
+    @if (Data != null)  
+    {  
+		//Allows a unique id for each checkbox
+		Guid myId = Guid.NewGuid();	
+
+        foreach (var item in Data)  
+        {  
+            var Text = TextField?.Invoke(item);  
+            var Value = ValueField?.Invoke(item);  
+			var style = ItemStyle?.Invoke(item);
+			var icon = IconField?.Invoke(item);
+			var iconTooltip = IconTooltipField?.Invoke(item);
+
+            bool Checked = false;  
+            if (SelectedValues.Contains(Value))  
+            {  
+                Checked = true;  
+            }  
+			<span style="@style">
+				<input id="@(myId)_@(Value)" type="checkbox"
+						checked=@Checked  
+						style="padding:0x; margin:0px;"
+					   @onchange="eventArgs => { CheckboxClicked(Value, eventArgs.Value); }" />&nbsp;<label for="@(myId)_@(Value)" style="padding:0px; margin:0px;">@Text</label> 
+
+				@if(!string.IsNullOrEmpty(icon)){ 
+					<span style="margin-left:3px" class="oi oi-@icon" aria-hidden="true" title="@iconTooltip"></span>
+				}
+			</span>
+        }  
+    }  
+    @ChildContent  
+</div>

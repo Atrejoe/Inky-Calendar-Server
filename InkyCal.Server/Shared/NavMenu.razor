@@ -1,8 +1,8 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">InkyCal Server</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+	<a class="navbar-brand" href="">InkyCal Server</a>
+	<button class="navbar-toggler" @onclick="ToggleNavMenu">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -17,26 +17,33 @@
 				<span class="oi oi-list-rich" aria-hidden="true"></span> Panels
 			</NavLink>
 		</li>
+		@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+		{
+			<li class="nav-item px-3">
+				<NavLink class="nav-link" href="google/authorize">
+					<span class="oi oi-key" aria-hidden="true"></span> Google access
+				</NavLink>
+			</li>
+		}
 		<li class="nav-item px-3">
 			<NavLink class="nav-link" href="panel">
 				<span class="oi oi-plus" aria-hidden="true"></span> Add Panel
 			</NavLink>
 		</li>
-		<li class="nav-item px-3">
-			<NavLink class="nav-link" href="swagger_frame">
-				<span class="oi oi-code" aria-hidden="true"></span> Swagger
-			</NavLink>
-		</li>
 	</ul>
+
+
+	<NavLink class="nav-link sm" href="/privacy" style="color: lightgray;position:absolute;bottom:10px;">Privacy policy</NavLink>
 </div>
 
+
 @code {
-    private bool collapseNavMenu = true;
+	private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
 }

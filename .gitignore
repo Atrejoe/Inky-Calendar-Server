@@ -8,3 +8,7 @@ _NCrunch_*
 sqlserver/
 
 tools/
+
+documentation/Help/
+
+nCrunchTemp_*.csproj

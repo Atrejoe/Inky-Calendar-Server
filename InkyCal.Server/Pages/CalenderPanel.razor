@@ -1,73 +1,84 @@
-﻿<span>
-	<EditForm Model="@Panel">
-		<DataAnnotationsValidator />
-		<ValidationSummary />
-	</EditForm>
+@inherits AuthenticatedComponentBase
 
-	<EditForm Model="@newUrl" OnValidSubmit="AddUrl">
-		<DataAnnotationsValidator />
-		<div class="form-group">
-			<label>
-				@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
-				{
-					<span>Add another calender url:</span>
-				}
-				else
-				{
-					<span>Add at least one calender url:</span>
-				}
-			</label>
-			<div class="input-group">
-				<InputText class="form-control" id="newurl" @bind-Value="newUrl.Url" />
-				<span class="input-group-btn">
-					<button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
-				</span>
-			</div>
-			<ValidationMessage For="@(() => newUrl.Url)" />
+<EditForm Model="@Panel">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+</EditForm>
+
+<EditForm Model="@newUrl" OnValidSubmit="AddUrl">
+	<DataAnnotationsValidator />
+	<div class="form-group">
+		<label>
+			@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+			{
+				<span>Add another calender url:</span>
+			}
+			else
+			{
+				<span>Add an iCal calender url:</span>
+			}
+		</label>
+		<div class="input-group">
+			<InputText class="form-control" id="newurl" @bind-Value="newUrl.Url" />
+			<span class="input-group-btn">
+				<button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+			</span>
 		</div>
-	</EditForm>
+		<ValidationMessage For="@(() => newUrl.Url)" />
+	</div>
+</EditForm>
 
-	@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+{
+	@(Panel.CalenderUrls.Count()==1?"Url":"Urls")
+	<ol>
+		@foreach (var url in @Panel.CalenderUrls)
+		{
+			<li>
+				@url.Url
+				<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
+					<span class="oi oi-trash" aria-hidden="true"></span>
+				</NavLink>
+			</li>
+		}
+	</ol>
+}
+
+@if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+{
+	<h3>Google calenders</h3>
+
+	@if ((AvailableCalendars?.Any()).GetValueOrDefault())
 	{
-		<span>
-			Urls:
-			<ol>
-				@foreach (var url in @Panel.CalenderUrls)
-				{
-					<li>
-						@url.Url
-						<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
-							<span class="oi oi-trash" aria-hidden="true"></span>
-						</NavLink>
-					</li>
-				}
-			</ol>
-		</span>
+		<label>Select calenders to display</label>
+		<br />
 	}
-</span>
-
-@code {
-
-	private CalendarPanelUrl newUrl { get; set; } = new CalendarPanelUrl() { };
-
-	[Parameter]
-	public Models.CalendarPanel Panel { get; set; }
-
-	private void AddUrl()
+	@foreach (var token in @AvailableCalendars)
 	{
-		if (Panel.CalenderUrls.Any(x => x.Url.Equals(newUrl.Url, StringComparison.InvariantCulture)))
-			return;
 
-		Panel.CalenderUrls.Add(newUrl);
-		newUrl = new CalendarPanelUrl() { Url = newUrl.Url };
+		<div class="input-group">
+			<code>@token.Key.profile.Name&lt;@(@token.Key.profile.Email)&gt;</code><br />
+			<CheckboxList Data="@token.Value"
+				  TextField="@((cal)=>cal.SummaryOverride ?? cal.Summary)"
+				  ValueField="@((cal)=>(token.Key.IdToken+"_"+cal.Id))"
+				  ItemStyle="@((cal)=>$"background-color: {@cal.BackgroundColor}; display:inline-block; border-radius:3px; border:1px solid {@cal.BackgroundColor}; padding:0px 3px 0px 3px; margin:1px;")"
+				  SelectedValues="@SubscribedCalenders"
+				  IconField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"warning":""))"
+				  IconTooltipField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"This calender is hidden in the Google Calender UI":""))"
+				  OnSelectionChanged="@SaveSelection" />
+
+		</div>
 	}
 
-
-	private void RemoveUrl(string url)
+	@if ((AvailableCalendars?.Any()).GetValueOrDefault())
 	{
-		Console.WriteLine($"Removing url {url}");
-
-		//Urls are case-sensitive
-		Panel.CalenderUrls.RemoveWhere(x => x.Url.Equals(url, StringComparison.InvariantCulture));
+		<NavLink href="/google/authorize">Link another Google account</NavLink>
+	}
+	else
+	{
+		<NavLink href="/google/authorize">Link your Google account</NavLink>
 	}
 }
+
+<br />
+

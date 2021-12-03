@@ -13,4 +13,5 @@ tools\changelog\changelog.exe ^
  --filename "changelog" ^
  --branch_master main ^
  --outputformat Markdown ^
- --releasename "%name%"
+ --releasename "%name%" ^
+ --startTag main
