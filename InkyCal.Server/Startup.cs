@@ -61,6 +61,7 @@ namespace InkyCal.Server
 					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
 				);
 
+
 			//Migrate on startup
 			using (var db = new ApplicationDbContext())
 			{
@@ -87,6 +88,7 @@ namespace InkyCal.Server
 					Console.WriteLine(@"No migrations required");
 			}
 
+			services.AddDatabaseDeveloperPageExceptionFilter();
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Config.Config.ConnectionString,
@@ -243,7 +245,6 @@ namespace InkyCal.Server
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
 			}
 
 			app.UseMiniProfiler();

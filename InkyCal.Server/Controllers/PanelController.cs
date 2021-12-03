@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -189,7 +189,7 @@ namespace InkyCal.Server.Controllers
 		[ResponseCache(NoStore = true)]
 		public async Task<ActionResult> GetPanel(Guid id, DisplayModel? model = null, int? width = null, int? height = null)
 		{
-			var panel = await Data.PanelRepository.Get<Panel>(id: id);
+			var panel = await Data.PanelRepository.Get<Panel>(id: id, markAsAccessed: true);
 
 			if (panel is null)
 				return NotFound($"Panel with id {id} not found");
