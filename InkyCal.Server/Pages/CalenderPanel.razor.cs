@@ -82,7 +82,7 @@ namespace InkyCal.Server.Pages
 										x => x.Key, x => x.Select(y => y.Calender).ToList());
 
 			SubscribedCalenders = Panel.SubscribedGoogleCalenders
-				.Select(x => $"{x.AccessToken}_{x.Calender}")
+				.Select(x => $"{x.IdAccessToken}_{x.Calender}")
 				.ToList();
 		}
 

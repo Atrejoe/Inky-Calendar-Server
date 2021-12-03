@@ -15,15 +15,15 @@ namespace InkyCal.Data
 
 			using var c = new ApplicationDbContext();
 			//Remove items from DB not present in selection
-			foreach (var item in set.Where(x => !calenders.Contains((x.AccessToken, x.Calender))))
+			foreach (var item in set.Where(x => !calenders.Contains((x.IdAccessToken, x.Calender))))
 				c.Remove(item);
 
 			//Add new items to DB
-			foreach (var item in calenders.Where(x => !set.Any(y => y.Calender == x.Calender && y.Panel == panel.Id && y.AccessToken == x.IdAccessToken)))
+			foreach (var item in calenders.Where(x => !set.Any(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
 				c.Add(new SubscribedGoogleCalender()
 				{
 					Panel = panel.Id,
-					AccessToken = item.IdAccessToken,
+					IdAccessToken = item.IdAccessToken,
 					Calender = item.Calender
 				});
 

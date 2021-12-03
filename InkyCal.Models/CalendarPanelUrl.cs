@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace InkyCal.Models
 {
 
-	[Table("ImagePanelUrl", Schema = "InkyCal")]
+	[Table("CalendarPanelUrl", Schema = "InkyCal")]
 	public class CalendarPanelUrl
 	{
 

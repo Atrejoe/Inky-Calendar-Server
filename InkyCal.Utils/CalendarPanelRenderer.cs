@@ -33,7 +33,7 @@ namespace InkyCal.Utils
 		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders) : base(expiration)
 		{
 			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
-			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.AccessToken)?.ThenBy(x => x.Calender)?.ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
+			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken)?.ThenBy(x => x.Calender)?.ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
 		}
 
 		/// <summary>
@@ -69,7 +69,6 @@ namespace InkyCal.Utils
 	/// </summary>
 	public class CalendarPanelRenderer : IPanelRenderer
 	{
-		private readonly GoogleOAuthAccess[] Tokens;
 		private readonly SubscribedGoogleCalender[] Calendars;
 
 		/// <summary>
@@ -86,19 +85,12 @@ namespace InkyCal.Utils
 		/// Show one or more calendars
 		/// </summary>
 		/// <param name="iCalUrls"></param>
-		/// <param name="tokens"></param>
 		/// <param name="calendars"></param>
-		public CalendarPanelRenderer(Uri[] iCalUrls, GoogleOAuthAccess[] tokens = null, SubscribedGoogleCalender[] calendars = null)
+		public CalendarPanelRenderer(Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
 			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
-
-			//Sanitize : only use token for subscribed calender, only use calenders for which token have been provided
-			if (tokens != null & calendars != null)
-			{
-				Tokens = tokens?.Where(x => calendars.Any(y => y.AccessToken == x.Id)).ToArray();
-				Calendars = calendars?.Where(x => Tokens.Any(y => y.Id == x.AccessToken)).ToArray();
-			}
+			Calendars = calendars?.ToArray();
 		}
 
 		/// <summary>
@@ -167,7 +159,8 @@ namespace InkyCal.Utils
 
 
 
-			var options_Date = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false}, new TextOptions(){ 
+			var options_Date = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
+			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrapTextWidth = width,
@@ -235,7 +228,7 @@ namespace InkyCal.Utils
 									   + 10; //Space of 10 pixels
 
 							var options = options_Date.Clone();
-						options.TextOptions.WrapTextWidth = width - indent;
+							options.TextOptions.WrapTextWidth = width - indent;
 
 							var textMeasureOptions = options.ToRendererOptions(font);
 
@@ -374,7 +367,7 @@ namespace InkyCal.Utils
 				result.AddRange(await iCalExtensions.GetEvents(sbErrors, ICalUrls));
 
 			if ((Calendars?.Any()).GetValueOrDefault())
-				result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Tokens, Calendars));
+				result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars));
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
 				&& !(Calendars?.Any()).GetValueOrDefault())

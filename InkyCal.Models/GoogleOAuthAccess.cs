@@ -34,8 +34,9 @@ namespace InkyCal.Models
 		public string Calender { get; set; }
 		[Key]
 		public Guid Panel { get; set; }
-		[Key]
-		public int AccessToken { get; set; }
+		[Key, Column("AccessToken")]
+		public int IdAccessToken { get; set; }
+		public GoogleOAuthAccess AccessToken { get; set; }
 
 		public override bool Equals(object obj)
 		{
@@ -50,7 +51,7 @@ namespace InkyCal.Models
 		bool IEquatable<SubscribedGoogleCalender>.Equals(SubscribedGoogleCalender other)
 		{
 			return other!= null
-				&& AccessToken.Equals(other.AccessToken)
+				&& IdAccessToken.Equals(other.IdAccessToken)
 				&& Calender.Equals(other.Calender);
 		}
 		/// <summary>
@@ -59,7 +60,7 @@ namespace InkyCal.Models
 		/// <returns></returns>
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Calender, AccessToken);
+			return HashCode.Combine(Calender, IdAccessToken);
 		}
 	}
 }
