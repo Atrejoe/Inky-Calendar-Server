@@ -10,9 +10,9 @@ To enjoy this as a service, see: [inkycal.robertsirre.nl](https://inkycal.robert
 
 [toc]
 
-## Why use InkyCal *server* at all?
+## Why use Inky-Calender *server* at all?
 
-As an owner of an InkyCal panel you want to set up your panel once, and then forget about it. New features and bugfixes should come easy and for all  panels at once.
+As an owner of an Inky-Calendar powered e-ink panel you want to set up your panel once, and then forget about it. New features and bugfixes should come easy and for all  panels at once.
 
 ![On the left: "traditional" InkyCal, on the right: InkyCal using InkyCal Server](Concept.png)
 
@@ -53,6 +53,11 @@ dotnet watch --project InkyCal.Server run
 ##### Database
 
 Some operations require a database, SQL server. You can install one on your machine, run one in a docker-container or it a network and then adjust the connection string in `appsettings.json` > `ConnectionStrings` > `DefaultConnection`
+
+##### Pdf processing : install Ghostscript
+
+In order to convert Pdfs to images you need to have [Ghostscript](https://www.ghostscript.com/) installed.
+In the prebuilt Docker images this is already taken care of. When running it yourself (like during development), you need to install it.
 
 ### Option 2: With Docker
 
