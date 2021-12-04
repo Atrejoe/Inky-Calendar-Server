@@ -2,9 +2,10 @@
 
 ## Feature summary (December 2021) ##
 
-## Feature ##
+### Features ###
 - True Google calendar integration🎉 Adding Google calenders is now a matter of a few clicks.
 - New York Times front-page panel, a real looker!
+- Added some activity logging for panels (Date of creatiom, last modification, last access and the number of times displayed) ([e883c2f9](https://github.com/Atrejoe/Inky-Calendar-Server/commit/e883c2f9de7019ac1490251cedf70be1e9e70bc0))
 
 ## Features and fixes (November 2020) #
 
