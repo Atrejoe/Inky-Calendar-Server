@@ -168,21 +168,29 @@ namespace InkyCal.Server.Controllers
 				using var image = PanelRenderHelper.CreateImage(width, height, backgroundColor);
 				image.Mutate(x =>
 					{
-						var z= x.DrawText(
-							new TextGraphicsOptions(new GraphicsOptions() { Antialias = false },
-							new TextOptions(){ WrapTextWidth = width }),
-							ex.Message.ToSafeChars(FontHelper.NotoSans), 
-							FontHelper.NotoSans.CreateFont(16), 
+						var messageFont = FontHelper.NotoSans.CreateFont(16);
+						var errorTextOptions =
+						new TextGraphicsOptions(
+							new GraphicsOptions() { Antialias = false },
+							new TextOptions() { WrapTextWidth = width }
+							);
+						var errorMessageRenderOptions = errorTextOptions.ToRendererOptions(messageFont);
+						var errorMessage = ex.Message.ToSafeChars(FontHelper.NotoSans).Trim();
+
+						var z = x.DrawText(
+							errorTextOptions,
+							errorMessage,
+							messageFont,
 							errorColor, new Point(0, 0));
 
-						var start = z.GetCurrentSize().Height;
-						
+						var start = (int)TextMeasurer.MeasureBounds(errorMessage, errorMessageRenderOptions).Height
+						+ messageFont.LineHeight;
+
 						x.DrawText(
-							new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, 
-							new TextOptions() { WrapTextWidth = width }),
+							errorTextOptions,
 							ex.StackTrace,
 							FontHelper.NotoSans.CreateFont(14),
-							primaryColor, 
+							primaryColor,
 							new Point(0, start));
 					});
 				return controller.Image(image);
