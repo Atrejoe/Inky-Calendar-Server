@@ -245,12 +245,12 @@ namespace InkyCal.Utils
 									var line = DescribeEvent(item).Limit(500, " ...");
 
 									//Gain some metadata for logging purposes
-									var metaData = item.SerializeToDictionary();
-									metaData["DescribedEvent"] = line;
-									metaData["DescribedDay"] = day;
-									metaData["y"] = $"{y}";
+									//var metaData = item.SerializeToDictionary();
+									//metaData["DescribedEvent"] = line;
+									//metaData["DescribedDay"] = day;
+									//metaData["y"] = $"{y}";
 
-									PerformanceMonitor.Trace("Processing event", metaData);
+									//PerformanceMonitor.Trace("Processing event", metaData);
 
 									try
 									{
