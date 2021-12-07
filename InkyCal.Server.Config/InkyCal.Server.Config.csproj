@@ -2,6 +2,8 @@
 
   <PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<!-- This project is used to determine user secrets -->
+		<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
