@@ -8,6 +8,7 @@ namespace InkyCal.Data
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public class ApplicationDbContext : IdentityDbContext
 	{
+
 		public ApplicationDbContext() : base()
 		{
 		}
@@ -15,6 +16,8 @@ namespace InkyCal.Data
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{
 		}
+
+		//private static StreamWriter writer = File.AppendText("QueryLog.txt");
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -24,8 +27,19 @@ namespace InkyCal.Data
 				options =>
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
+			if (InkyCal.Server.Config.Config.TraceQueries)
+
+				optionsBuilder.LogTo(msg =>
+					{
+						System.Console.WriteLine(msg);
+						//System.Console.Error.WriteLine(msg);
+						System.Diagnostics.Debug.WriteLine(msg);
+						//await writer.WriteLineAsync(msg);
+					});
+
 			base.OnConfiguring(optionsBuilder);
 		}
+		private static readonly object writelock = new object();
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -36,13 +50,13 @@ namespace InkyCal.Data
 			base.OnModelCreating(builder);
 
 			builder.Entity<Panel>()
-				.HasOne(x=>x.Owner)
-				.WithMany(x=>x.Panels);
+				.HasOne(x => x.Owner)
+				.WithMany(x => x.Panels);
 
 			builder.Entity<Panel>()
 				.HasDiscriminator();
 
-			builder.Entity<CalendarPanel>(); 
+			builder.Entity<CalendarPanel>();
 			builder.Entity<NewYorkTimesPanel>();
 
 			builder.Entity<CalendarPanelUrl>()
@@ -85,7 +99,7 @@ namespace InkyCal.Data
 			builder.Entity<GoogleOAuthAccess>();
 
 			builder.Entity<SubscribedGoogleCalender>()
-				.HasOne(x=>x.AccessToken)
+				.HasOne(x => x.AccessToken)
 				.WithMany()
 				.HasForeignKey(nameof(SubscribedGoogleCalender.IdAccessToken));
 
@@ -102,8 +116,8 @@ namespace InkyCal.Data
 
 			builder.Entity<SubscribedGoogleCalender>()
 				.HasOne<CalendarPanel>()
-				.WithMany(x=>x.SubscribedGoogleCalenders)
-				.HasForeignKey(x=>x.Panel);
+				.WithMany(x => x.SubscribedGoogleCalenders)
+				.HasForeignKey(x => x.Panel);
 		}
 	}
 }
