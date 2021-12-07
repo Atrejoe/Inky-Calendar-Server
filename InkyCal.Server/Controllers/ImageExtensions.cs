@@ -184,7 +184,7 @@ namespace InkyCal.Server.Controllers
 							errorColor, new Point(0, 0));
 
 						var start = (int)TextMeasurer.MeasureBounds(errorMessage, errorMessageRenderOptions).Height
-						+ messageFont.LineHeight;
+						+ 10;
 
 						x.DrawText(
 							errorTextOptions,
