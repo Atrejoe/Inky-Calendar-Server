@@ -202,6 +202,7 @@ namespace InkyCal.Data
 					.Include(x => (x as Panel).Owner)
 					.Include(x => (x as CalendarPanel).CalenderUrls)
 					.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
+						.ThenInclude(x => x.AccessToken)
 					.Include(x => (x as PanelOfPanels).Panels)
 						.ThenInclude(x => x.Panel)
 							.ThenInclude(x => x.Owner)
