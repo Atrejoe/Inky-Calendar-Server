@@ -11,6 +11,7 @@ namespace InkyCal.Models
 		[Required, MaxLength(255), Column(Order = 1)]
 		public string Name { get; set; }
 
+		[Required]
 		public User Owner { get; set; }
 
 		[Key, Column(Order = 0)]
@@ -52,6 +53,7 @@ namespace InkyCal.Models
 		/// <summary>
 		/// The date and time at which the panel was last modified
 		/// </summary>
+		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 		public DateTime Modified { get; set; }
 
 		/// <summary>

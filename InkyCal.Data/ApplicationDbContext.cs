@@ -51,7 +51,9 @@ namespace InkyCal.Data
 
 			builder.Entity<Panel>()
 				.HasOne(x => x.Owner)
-				.WithMany(x => x.Panels);
+				.WithMany(x => x.Panels)
+				.HasForeignKey("OwnerId")
+				.OnDelete(DeleteBehavior.NoAction);
 
 			builder.Entity<Panel>()
 				.HasDiscriminator();
@@ -62,7 +64,8 @@ namespace InkyCal.Data
 			builder.Entity<CalendarPanelUrl>()
 				.HasOne(x => x.Panel)
 				.WithMany(x => x.CalenderUrls)
-				.HasForeignKey(x => x.IdPanel);
+				.HasForeignKey(x => x.IdPanel)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.Entity<PanelOfPanels>()
 				   .HasMany(x => x.Panels)
@@ -101,12 +104,8 @@ namespace InkyCal.Data
 			builder.Entity<SubscribedGoogleCalender>()
 				.HasOne(x => x.AccessToken)
 				.WithMany()
-				.HasForeignKey(nameof(SubscribedGoogleCalender.IdAccessToken));
-
-			builder.Entity<SubscribedGoogleCalender>()
-				.HasOne(typeof(CalendarPanel))
-				.WithMany()
-				.HasForeignKey(nameof(SubscribedGoogleCalender.Panel));
+				.HasForeignKey(nameof(SubscribedGoogleCalender.IdAccessToken))
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.Entity<SubscribedGoogleCalender>()
 				.HasKey(x => new { x.Calender, x.IdAccessToken, x.Panel });
@@ -117,7 +116,8 @@ namespace InkyCal.Data
 			builder.Entity<SubscribedGoogleCalender>()
 				.HasOne<CalendarPanel>()
 				.WithMany(x => x.SubscribedGoogleCalenders)
-				.HasForeignKey(x => x.Panel);
+				.HasForeignKey(x => x.Panel)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }
