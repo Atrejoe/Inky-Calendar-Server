@@ -68,6 +68,7 @@ namespace InkyCal.Utils
 	public class PanelOfPanelRenderer : IPanelRenderer
 	{
 		private PanelOfPanels pp;
+		private readonly PanelRenderHelper panelRenderHelper;
 
 		/// <summary>
 		/// Gets the cache key. By default returns <see cref="PanelInstanceCacheKey" />, with default <see cref="PanelCacheKey.Expiration" /> (<see cref="PanelInstanceCacheKey.DefaultExpirationInSeconds" /> seconds)
@@ -78,9 +79,12 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		/// <param name="pp"></param>
-		public PanelOfPanelRenderer(PanelOfPanels pp)
+		/// <param name="panelRenderHelper"></param>
+		public PanelOfPanelRenderer(PanelOfPanels pp, PanelRenderHelper panelRenderHelper)
 		{
-			this.pp = pp;
+			this.pp = pp ?? throw new ArgumentNullException(nameof(pp));
+			this.panelRenderHelper = panelRenderHelper ?? throw new ArgumentNullException(nameof(panelRenderHelper));
+
 			CacheKey = new PerPanelCacheKey(TimeSpan.FromSeconds(30), pp.Id);
 		}
 
@@ -97,7 +101,7 @@ namespace InkyCal.Utils
 				, out var backgroundColor
 				);
 
-			var result = PanelRenderHelper.CreateImage(width, height, backgroundColor);
+			var result = PanelRenderingHelper.CreateImage(width, height, backgroundColor);
 
 			if (!(pp.Panels?.Any()).GetValueOrDefault())
 			{
@@ -145,7 +149,7 @@ namespace InkyCal.Utils
 				foreach (var parameter in renderParameters.AsParallel()){
 
 					var panel = parameter.Panel;
-					var renderer = panel.GetRenderer();
+					var renderer = panelRenderHelper.GetRenderer(panel);
 
 					try
 					{

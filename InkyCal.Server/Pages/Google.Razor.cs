@@ -67,7 +67,7 @@ namespace InkyCal.Server.Pages
 						PermissionAlreadyGranted = true;
 					else
 					{
-						await UserRepository.StoreToken(new Models.GoogleOAuthAccess()
+						await new GoogleOAuthRepository().StoreToken(new Models.GoogleOAuthAccess()
 						{
 							RefreshToken = token.RefreshToken,
 							AccessToken = token.AccessToken,
@@ -81,7 +81,7 @@ namespace InkyCal.Server.Pages
 				}
 			}
 
-			var nizzle = await Task.WhenAll((await InkyCal.Data.UserRepository.GetTokens(user.Id))
+			var nizzle = await Task.WhenAll((await new GoogleOAuthRepository().GetTokens(user.Id))
 						.Select(async x =>
 						{
 							(Userinfo User, bool Refreshed) p = default;
@@ -90,7 +90,7 @@ namespace InkyCal.Server.Pages
 								p = await GoogleOAuth.GetProfile(x);
 
 								if (p.Refreshed)
-									await InkyCal.Data.UserRepository.UpdateAccessToken(x);
+									await new GoogleOAuthRepository().UpdateAccessToken(x);
 							}
 							catch (GoogleApiException ex)
 							{
@@ -111,7 +111,7 @@ namespace InkyCal.Server.Pages
 			var token = (Tokens.SingleOrDefault(x => x.Token.Id == idToken));
 			await GoogleOAuth.RevokeAccessToken(token.Token?.RefreshToken);
 
-			await UserRepository.DeleteToken(idToken);
+			await new GoogleOAuthRepository().DeleteToken(idToken);
 			Tokens.Remove(token);
 
 

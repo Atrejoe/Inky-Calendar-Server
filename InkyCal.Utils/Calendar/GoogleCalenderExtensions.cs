@@ -9,6 +9,7 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
+using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
 {
@@ -17,11 +18,11 @@ namespace InkyCal.Utils.Calendar
 	/// </summary>
 	public static class GoogleCalenderExtensions
 	{
-		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars)
+		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars, Func<GoogleOAuthAccess, Task> saveToken)
 		{
 			var result = new List<Event>();
 
-			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct()))
+			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken))
 				if (token != default)
 					foreach (var calenderId in calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender))
 						result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId));
@@ -34,15 +35,22 @@ namespace InkyCal.Utils.Calendar
 		/// Converts refresh tokens into usable access tokens
 		/// </summary>
 		/// <param name="tokens"></param>
+		/// <param name="saveToken"></param>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens(IEnumerable<GoogleOAuthAccess> tokens)
+		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens(IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
 		{
+			if (saveToken is null)
+				throw new ArgumentNullException(nameof(saveToken));
+
 			foreach (var token in tokens)
 			{
 
 				if (token.AccessTokenExpiry <= DateTime.UtcNow.AddSeconds(-100))
 				{
-					var refreshed = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
+					(string AccessToken, DateTimeOffset? AccessTokenExpiry) refreshed;
+
+					using (MiniProfiler.Current.Step($"Refreshing access token"))
+						refreshed = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
 
 					if (refreshed == default)
 					{
@@ -53,8 +61,8 @@ namespace InkyCal.Utils.Calendar
 					token.AccessToken = refreshed.AccessToken;
 					token.AccessTokenExpiry = refreshed.AccessTokenExpiry.GetValueOrDefault(DateTime.UtcNow);
 
-					//todo: store updated access token & expiry
-					//todo: handle revoked access
+					using (MiniProfiler.Current.Step($"Saving updated access token"))
+						await saveToken(token);
 				}
 				var result = (token.Id, token.AccessToken);
 
@@ -100,9 +108,12 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars(IEnumerable<GoogleOAuthAccess> tokens)
+		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars(IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
 		{
-			await foreach (var token in GetAccessTokens(tokens))
+			if (saveToken is null)
+				throw new ArgumentNullException(nameof(saveToken));
+
+			await foreach (var token in GetAccessTokens(tokens, saveToken))
 				if (token != default)
 				{
 					var profile = await GoogleOAuth.GetProfile(token.AccessToken);
@@ -160,73 +171,81 @@ namespace InkyCal.Utils.Calendar
 		private static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, string accessToken, string calendarId)
 		{
 			var result = new List<Event>();
-
-			try
-			{
-				var calendar = await GetGoogleCalendar(accessToken, calendarId);
-
-				if (calendar == null)
-					return result;
-
-				switch (calendar.AccessRole)
+			using (MiniProfiler.Current.Step($"Gather events for calendar {calendarId}"))
+				try
 				{
-					case "freeBusyReader":
-					case "reader":
+					CalendarListEntry calendar;
+					using (MiniProfiler.Current.Step($"Gathering calendar details"))
+						calendar = await GetGoogleCalendar(accessToken, calendarId);
+
+					if (calendar == null)
+						return result;
+
+					switch (calendar.AccessRole)
+					{
+						case "freeBusyReader":
+						case "reader":
+							{
+								//Console.WriteLine($"Skipping non-owned calender: {calendar.Id} {calendar.Summary} ({calendar.Description})");
+								//return result;
+							}
+							break;
+						default:
+							break;
+					}
+					//Console.WriteLine($"{calendar.Id} {calendar.Summary} ({calendar.Description})");
+					var itemRequest = CalendarService.Value.Events.List(calendar.Id);
+
+					itemRequest.OauthToken = accessToken;
+					itemRequest.TimeMin = DateTime.UtcNow.Date;
+					itemRequest.TimeMax = DateTime.UtcNow.AddDays(31);
+
+					// List events.
+					Events events;
+					using (MiniProfiler.Current.Step($"Gathering events"))
+						events = await itemRequest.ExecuteAsync();
+
+					foreach (var item in events.Items
+						.Where(x => x.Status != "cancelled"
+						&& x.Start != null
+						//&& x.Start.DateTime.HasValue
+						)
+						.Take(50))
+					{
+						if (item.Recurrence == null)
+
+							ConvertEvent(result, item, calendar);
+
+						else
 						{
-							//Console.WriteLine($"Skipping non-owned calender: {calendar.Id} {calendar.Summary} ({calendar.Description})");
-							//return result;
+
+							var instancesRequest = CalendarService.Value.Events.Instances(calendar.Id, item.Id);
+							instancesRequest.OauthToken = accessToken;
+							instancesRequest.TimeMin = itemRequest.TimeMin;
+							instancesRequest.TimeMax = itemRequest.TimeMax;
+
+							Events instances;
+							using (MiniProfiler.Current.Step($"Gathering instances of recurring event"))
+								instances = await instancesRequest.ExecuteAsync();
+
+							foreach (var instance in instances.Items
+										.Where(x => x.Status != "cancelled"
+												 && x.Start != null
+											)
+										.Take(50))
+							{
+								ConvertEvent(result, instance, calendar);
+							}
 						}
-						break;
-					default:
-						break;
+
+					}
 				}
-				Console.WriteLine($"{calendar.Id} {calendar.Summary} ({calendar.Description})");
-				var itemRequest = CalendarService.Value.Events.List(calendar.Id);
-
-				itemRequest.OauthToken = accessToken;
-				itemRequest.TimeMin = DateTime.UtcNow.Date;
-				itemRequest.TimeMax = DateTime.UtcNow.AddDays(31);
-
-				// List events.
-				var events = await itemRequest.ExecuteAsync();
-				foreach (var item in events.Items
-					.Where(x => x.Status != "cancelled"
-					&& x.Start != null
-					//&& x.Start.DateTime.HasValue
-					)
-					.Take(50))
+				catch (Exception ex)
 				{
-					if (item.Recurrence == null)
-					{
-						ConvertEvent(result, item, calendar);
-					}
-					else
-					{
-						var instancesRequest = CalendarService.Value.Events.Instances(calendar.Id, item.Id);
-						instancesRequest.OauthToken = accessToken;
-						instancesRequest.TimeMin = itemRequest.TimeMin;
-						instancesRequest.TimeMax = itemRequest.TimeMax;
-
-						var instances = await instancesRequest.ExecuteAsync();
-
-						foreach (var instance in instances.Items
-					.Where(x => x.Status != "cancelled"
-					&& x.Start != null
-					)
-					.Take(50))
-						{
-							ConvertEvent(result, instance, calendar);
-						}
-					}
-
+					Console.Error.WriteLine(ex.ToString());
+					sbErrors.AppendLine(ex.ToString());
+					throw;
 				}
-			}
-			catch (Exception ex)
-			{
-				Console.Error.WriteLine(ex.ToString());
-				sbErrors.AppendLine(ex.ToString());
-				throw;
-			}
 
 			return result;
 		}

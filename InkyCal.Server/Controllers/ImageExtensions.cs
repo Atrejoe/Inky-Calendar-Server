@@ -127,21 +127,9 @@ namespace InkyCal.Server.Controllers
 			if (panelRenderer is null)
 				throw new ArgumentNullException(nameof(panelRenderer));
 
-
-			IPanelRenderer.Log conditionalLog = async (Exception ex, bool handled, string explanation) =>
-			{
-				if (handled)
-					Console.WriteLine($"{explanation ?? "Handled exception"}: {ex.Message}");
-				else
-				{
-					var user = await controller.GetAuthenticatedUser();
-					ex.Log(user);
-				}
-			};
-
 			try
 			{
-				var bytes = await panelRenderer.GetCachedImage(width, height, colors, conditionalLog);
+				var bytes = await panelRenderer.GetCachedImage(width, height, colors, log: controller.ConditionalLog);
 
 				if (flip)
 				{
@@ -165,7 +153,7 @@ namespace InkyCal.Server.Controllers
 					, out var backgroundColor
 					);
 
-				using var image = PanelRenderHelper.CreateImage(width, height, backgroundColor);
+				using var image = PanelRenderingHelper.CreateImage(width, height, backgroundColor);
 				image.Mutate(x =>
 					{
 						var messageFont = FontHelper.NotoSans.CreateFont(16);
@@ -194,6 +182,17 @@ namespace InkyCal.Server.Controllers
 							new Point(0, start));
 					});
 				return controller.Image(image);
+			}
+		}
+
+		private static async void ConditionalLog(this ControllerBase controller, Exception ex, bool handled = false, string explanation = null)
+		{
+			if (handled)
+				Console.WriteLine($"{explanation ?? "Handled exception"}: {ex.Message}");
+			else
+			{
+				var user = await controller.GetAuthenticatedUser();
+				ex.Log(user);
 			}
 		}
 	}

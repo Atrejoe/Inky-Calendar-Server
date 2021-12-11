@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -13,15 +14,22 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// A helper class for mapping a <see cref="Panel"/> to a <see cref="IPanelRenderer"/>.
 	/// </summary>
-	public static class PanelRenderHelper
+	public class PanelRenderHelper
 	{
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken) {
+			this.saveToken = saveToken;
+		}
 
 		/// <summary>
 		/// Gets a <see cref="IPanelRenderer"/> for the spcified <paramref name="panel"/>.
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <returns></returns>
-		public static IPanelRenderer GetRenderer(this Models.Panel panel)
+		public IPanelRenderer GetRenderer(Panel panel)
 		{
 			if (panel is null)
 				throw new ArgumentNullException(nameof(panel));
@@ -35,6 +43,7 @@ namespace InkyCal.Utils
 					var urls = cp.CalenderUrls.Select(x => new Uri(x.Url));
 
 					renderer = new CalendarPanelRenderer(
+									saveToken,
 									iCalUrls: urls.ToArray(),
 									cp.SubscribedGoogleCalenders?.ToArray()
 									);
@@ -47,7 +56,7 @@ namespace InkyCal.Utils
 					break;
 
 				case PanelOfPanels pp:
-					renderer = new PanelOfPanelRenderer(pp);
+					renderer = new PanelOfPanelRenderer(pp, this);
 					break;
 
 				case WeatherPanel wp:
@@ -58,7 +67,7 @@ namespace InkyCal.Utils
 					{
 						try
 						{
-							var rendererTypes = Renderers.Value.Where(x => IsSubclassOfRawGeneric(typeof(PanelRenderer<>), x));
+							var rendererTypes = Renderers.Value.Where(x => typeof(PanelRenderer<>).IsSubclassOfRawGeneric(x));
 
 							if (rendererTypes is null)
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
@@ -94,6 +103,7 @@ namespace InkyCal.Utils
 		}
 
 		private static readonly Lazy<Type[]> Renderers = new Lazy<Type[]>(GetRenderers);
+		private readonly Func<GoogleOAuthAccess, Task> saveToken;
 
 		private static Type[] GetRenderers()
 		{
@@ -104,20 +114,12 @@ namespace InkyCal.Utils
 																	&& !x.IsAbstract)
 														.ToArray();
 		}
+	}
 
-		static bool IsSubclassOfRawGeneric(this Type generic, Type toCheck)
-		{
-			while (toCheck != null && toCheck != typeof(object))
-			{
-				var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-				if (generic == cur)
-				{
-					return true;
-				}
-				toCheck = toCheck.BaseType;
-			}
-			return false;
-		}
+	/// <summary>
+	/// 
+	/// </summary>
+	public static class PanelRenderingHelper { 
 
 		/// <summary>
 		/// Returns meaningful colors for drawing purposes

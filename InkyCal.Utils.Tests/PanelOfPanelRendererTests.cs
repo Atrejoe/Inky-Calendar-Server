@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using InkyCal.Models;
 
 namespace InkyCal.Utils.Tests
@@ -31,7 +32,7 @@ namespace InkyCal.Utils.Tests
 					 })
 			};
 
-			return new PanelOfPanelRenderer(pp);
+			return new PanelOfPanelRenderer(pp, new PanelRenderHelper(async (token) => await Task.CompletedTask));
 		}
 	}
 }

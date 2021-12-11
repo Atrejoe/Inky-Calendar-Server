@@ -120,7 +120,7 @@ namespace InkyCal.Utils
 				, out var backgroundColor
 				);
 
-			var result = PanelRenderHelper.CreateImage(width, height, backgroundColor);
+			var result = PanelRenderingHelper.CreateImage(width, height, backgroundColor);
 			var textFont = new Font(FontHelper.MonteCarlo, 12);
 			var weatherFont = new Font(FontHelper.WeatherIcons, 40);
 

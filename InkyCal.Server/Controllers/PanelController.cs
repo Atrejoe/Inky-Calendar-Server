@@ -121,7 +121,7 @@ namespace InkyCal.Server.Controllers
 			if (!calendar.IsAbsoluteUri || (calendar.Scheme != "http" && calendar.Scheme != "https"))
 				return BadRequest("Calender urls must be absolute urls");
 
-			return await this.Image(new CalendarPanelRenderer(calendar), model, width, height);
+			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendar), model, width, height);
 		}
 
 		/// <summary>
@@ -168,7 +168,7 @@ namespace InkyCal.Server.Controllers
 			if (calendars.Any(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
 				return BadRequest("Calender urls must be absolute urls");
 
-			return await this.Image(new CalendarPanelRenderer(calendars), model, width, height);
+			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendars), model, width, height);
 		}
 
 		/// <summary>
@@ -198,7 +198,8 @@ namespace InkyCal.Server.Controllers
 				?? (DisplayModel?)(int?)panel.Model
 				?? DisplayModel.epd_7_in_5_v2_colour;
 
-			var renderer = panel.GetRenderer();
+			var helper = new PanelRenderHelper((new InkyCal.Data.GoogleOAuthRepository()).UpdateAccessToken);
+			var renderer = helper.GetRenderer(panel);
 
 			PerformanceMonitor.Trace($"Rendering panel {id}");
 

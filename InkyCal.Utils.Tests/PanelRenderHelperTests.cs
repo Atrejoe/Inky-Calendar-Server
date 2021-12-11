@@ -13,6 +13,7 @@ namespace InkyCal.Utils.Tests
 		{
 			//Arrange
 			//Get instance of all types inheriting from panel
+			var helper = new PanelRenderHelper(async (token) => await System.Threading.Tasks.Task.CompletedTask);
 			var panels = AppDomain.CurrentDomain.GetAssemblies()
 											.SelectMany(x => x.GetTypes())
 											.Where(x => typeof(Panel).IsAssignableFrom(x)
@@ -23,7 +24,7 @@ namespace InkyCal.Utils.Tests
 			Assert.All(panels, x => {
 				try
 				{
-					var renderer = x.GetRenderer();
+					var renderer = helper.GetRenderer(x);
 					Assert.NotNull(renderer);
 				}
 				catch (ArgumentNullException ex) {

@@ -72,10 +72,20 @@ namespace InkyCal.Utils
 		private readonly SubscribedGoogleCalender[] Calendars;
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="saveToken"></param>
+		private CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken)
+		{
+			SaveToken = saveToken;
+		}
+
+		/// <summary>
 		/// Shows a single calendar
 		/// </summary>
+		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
-		public CalendarPanelRenderer(Uri iCalUrl) : this(new[] { iCalUrl })
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken,Uri iCalUrl) : this(saveToken, new[] { iCalUrl })
 		{
 			if (iCalUrl is null)
 				throw new ArgumentNullException(nameof(iCalUrl));
@@ -84,9 +94,10 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Show one or more calendars
 		/// </summary>
+		/// <param name="saveToken"></param>
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
-		public CalendarPanelRenderer(Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null)
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken,Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) :this(saveToken)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
 			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
@@ -119,7 +130,7 @@ namespace InkyCal.Utils
 
 			List<Event> events;
 			using (MiniProfiler.Current.Step("Gather events"))
-				events = await GetEvents(sbErrors);
+				events = await GetEvents(sbErrors, SaveToken);
 
 			if (!(events?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events listed");
@@ -128,6 +139,10 @@ namespace InkyCal.Utils
 
 			return result;
 		}
+
+		private readonly Func<GoogleOAuthAccess, Task> SaveToken;
+
+
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		internal static Image<Rgba32> DrawImage(
@@ -354,8 +369,9 @@ namespace InkyCal.Utils
 		/// Gets the events
 		/// </summary>
 		/// <param name="sbErrors">The sb errors.</param>
+		/// <param name="saveToken"></param>
 		/// <returns></returns>
-		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors)
+		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, Task> saveToken)
 		{
 			if (sbErrors is null)
 				throw new ArgumentNullException(nameof(sbErrors));
@@ -363,14 +379,22 @@ namespace InkyCal.Utils
 			var result = new List<Event>();
 
 
-			if ((ICalUrls?.Any()).GetValueOrDefault())
-				result.AddRange(await iCalExtensions.GetEvents(sbErrors, ICalUrls));
 
-			if ((Calendars?.Any()).GetValueOrDefault())
-				result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars));
+			if ((ICalUrls?.Any()).GetValueOrDefault())
+			{
+				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} iCal based calendars"))
+					result.AddRange(await iCalExtensions.GetEvents(sbErrors, ICalUrls));
+			}
+
+			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+				if ((Calendars?.Any()).GetValueOrDefault())
+					using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
+						result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken));
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
-				&& !(Calendars?.Any()).GetValueOrDefault())
+				&& (!InkyCal.Server.Config.GoogleOAuth.Enabled 
+					|| (Calendars?.Any()).GetValueOrDefault())
+				)
 				sbErrors.AppendLine($"No iCal urls nor Google oAuth calenders were linked.");
 
 

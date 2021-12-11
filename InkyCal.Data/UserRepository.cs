@@ -41,8 +41,14 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 			return await c.Set<User>().Include(x => x.Panels).ToArrayAsync();
 		}
+	}
 
-		public static async Task StoreToken(GoogleOAuthAccess token)
+	/// <summary>
+	/// 
+	/// </summary>
+	public class GoogleOAuthRepository
+	{
+		public async Task StoreToken(GoogleOAuthAccess token)
 		{
 			using var c = new ApplicationDbContext();
 			token.User = new User() { Id = token.User.Id };
@@ -50,7 +56,7 @@ namespace InkyCal.Data
 			c.Add(token);
 			await c.SaveChangesAsync();
 		}
-		public static async Task DeleteToken(int idToken)
+		public async Task DeleteToken(int idToken)
 		{
 			using var c = new ApplicationDbContext();
 			var token = new GoogleOAuthAccess() { Id = idToken };
@@ -58,7 +64,7 @@ namespace InkyCal.Data
 			await c.SaveChangesAsync();
 		}
 
-		public static async Task<GoogleOAuthAccess[]> GetTokens(int idUser)
+		public async Task<GoogleOAuthAccess[]> GetTokens(int idUser)
 		{
 			using var c = new ApplicationDbContext();
 			return await c.Set<GoogleOAuthAccess>().Where(x => x.User.Id == idUser).ToArrayAsync();
@@ -69,7 +75,7 @@ namespace InkyCal.Data
 		/// </summary>
 		/// <param name="refreshedToken"></param>
 		/// <returns></returns>
-		public static async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken)
+		public async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken)
 		{
 			using var c = new ApplicationDbContext();
 			var token = await c.Set<GoogleOAuthAccess>().SingleAsync(x => x.Id == refreshedToken.Id);

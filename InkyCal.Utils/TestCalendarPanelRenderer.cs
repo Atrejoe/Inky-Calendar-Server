@@ -21,6 +21,9 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		public TestCalendarPanelRenderer() : base(
+			async (token) => {
+				await System.Threading.Tasks.Task.CompletedTask;
+			},
 			iCalUrls: new[] { 
 				new Uri(PublicHolidayCalenderUrl), 
 				new Uri(DebugCalenderUrl) 
