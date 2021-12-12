@@ -85,7 +85,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken,Uri iCalUrl) : this(saveToken, new[] { iCalUrl })
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl) : this(saveToken, new[] { iCalUrl })
 		{
 			if (iCalUrl is null)
 				throw new ArgumentNullException(nameof(iCalUrl));
@@ -97,7 +97,7 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken,Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) :this(saveToken)
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) : this(saveToken)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
 			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
@@ -378,22 +378,20 @@ namespace InkyCal.Utils
 
 			var result = new List<Event>();
 
-
-
+			//Get iCal-based events
 			if ((ICalUrls?.Any()).GetValueOrDefault())
-			{
 				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} iCal based calendars"))
 					result.AddRange(await iCalExtensions.GetEvents(sbErrors, ICalUrls));
-			}
 
+			//Get Google Calender-based events
 			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
 				if ((Calendars?.Any()).GetValueOrDefault())
 					using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
 						result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken));
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
-				&& (!InkyCal.Server.Config.GoogleOAuth.Enabled 
-					|| (Calendars?.Any()).GetValueOrDefault())
+				&& (!InkyCal.Server.Config.GoogleOAuth.Enabled
+					|| (!Calendars?.Any()).GetValueOrDefault())
 				)
 				sbErrors.AppendLine($"No iCal urls nor Google oAuth calenders were linked.");
 
