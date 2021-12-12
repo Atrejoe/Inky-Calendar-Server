@@ -55,6 +55,9 @@ namespace InkyCal.Server.Pages
 		/// <param name="id">The identifier.</param>
 		protected async Task SelectPanel(Guid id)
 		{
+			if ((_selectedPanel?.Id).Equals(id))
+				return;
+
 			try
 			{
 				_selectedPanelLoading = true;
