@@ -24,15 +24,18 @@ namespace InkyCal.Utils.Calendar
 
 			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken))
 				if (token != default)
-					foreach (var calenderId in calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender))
-						result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId));
-
+					Parallel.ForEach(
+						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender), 
+						async calenderId =>
+							result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId))
+						);
 
 			return result;
 		}
 
 		/// <summary>
-		/// Converts refresh tokens into usable access tokens
+		/// Checks if <see cref="GoogleOAuthAccess.AccessToken"/> needs to be refreshed.
+		/// If so, does so using <see cref="GoogleOAuthAccess.RefreshToken"/>. When this fails, <c>default</c> is returned.
 		/// </summary>
 		/// <param name="tokens"></param>
 		/// <param name="saveToken"></param>
@@ -205,12 +208,12 @@ namespace InkyCal.Utils.Calendar
 					using (MiniProfiler.Current.Step($"Gathering events"))
 						events = await itemRequest.ExecuteAsync();
 
-					foreach (var item in events.Items
+					Parallel.ForEach(events.Items
 						.Where(x => x.Status != "cancelled"
 						&& x.Start != null
 						//&& x.Start.DateTime.HasValue
 						)
-						.Take(50))
+						.Take(50), async item =>
 					{
 						if (item.Recurrence == null)
 
@@ -225,7 +228,7 @@ namespace InkyCal.Utils.Calendar
 							instancesRequest.TimeMax = itemRequest.TimeMax;
 
 							Events instances;
-							using (MiniProfiler.Current.Step($"Gathering instances of recurring event"))
+							using (MiniProfiler.Current.Step($"Gathering instances of recurring event '{item.Summary}'"))
 								instances = await instancesRequest.ExecuteAsync();
 
 							foreach (var instance in instances.Items
@@ -238,7 +241,7 @@ namespace InkyCal.Utils.Calendar
 							}
 						}
 
-					}
+					});
 				}
 				catch (Exception ex)
 				{
