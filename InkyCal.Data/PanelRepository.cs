@@ -107,6 +107,13 @@ namespace InkyCal.Data
 						var entities = existingLinks.Where(x => !cp.CalenderUrls.ToList().Any(y => y.Url == x.Url));
 
 						c.RemoveRange(entities);
+
+						foreach (var cal in cp.SubscribedGoogleCalenders)
+						{
+							c.Entry(cal).State = EntityState.Detached;
+							c.Entry(cal.AccessToken).State = EntityState.Detached;
+						}
+
 					}
 
 					panel.Modified = DateTime.UtcNow;

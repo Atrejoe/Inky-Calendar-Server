@@ -22,13 +22,19 @@ namespace InkyCal.Utils.Calendar
 		{
 			var result = new List<Event>();
 
+			var tasks = new List<Task>();
+
 			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken))
 				if (token != default)
-					Parallel.ForEach(
-						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender), 
+				{
+					tasks.AddRange(
+						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender).Select(
 						async calenderId =>
 							result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId))
-						);
+						));
+				}
+
+			await Task.WhenAll(tasks);
 
 			return result;
 		}
@@ -208,40 +214,42 @@ namespace InkyCal.Utils.Calendar
 					using (MiniProfiler.Current.Step($"Gathering events"))
 						events = await itemRequest.ExecuteAsync();
 
-					Parallel.ForEach(events.Items
+					var tasks = (events.Items
 						.Where(x => x.Status != "cancelled"
 						&& x.Start != null
 						//&& x.Start.DateTime.HasValue
 						)
-						.Take(50), async item =>
-					{
-						if (item.Recurrence == null)
-
-							ConvertEvent(result, item, calendar);
-
-						else
-						{
-
-							var instancesRequest = CalendarService.Value.Events.Instances(calendar.Id, item.Id);
-							instancesRequest.OauthToken = accessToken;
-							instancesRequest.TimeMin = itemRequest.TimeMin;
-							instancesRequest.TimeMax = itemRequest.TimeMax;
-
-							Events instances;
-							using (MiniProfiler.Current.Step($"Gathering instances of recurring event '{item.Summary}'"))
-								instances = await instancesRequest.ExecuteAsync();
-
-							foreach (var instance in instances.Items
-										.Where(x => x.Status != "cancelled"
-												 && x.Start != null
-											)
-										.Take(50))
+						.Take(50))
+						.Select(async item =>
 							{
-								ConvertEvent(result, instance, calendar);
-							}
-						}
+								if (item.Recurrence == null)
 
-					});
+									ConvertEvent(result, item, calendar);
+
+								else
+								{
+
+									var instancesRequest = CalendarService.Value.Events.Instances(calendar.Id, item.Id);
+									instancesRequest.OauthToken = accessToken;
+									instancesRequest.TimeMin = itemRequest.TimeMin;
+									instancesRequest.TimeMax = itemRequest.TimeMax;
+
+									Events instances;
+									using (MiniProfiler.Current.Step($"Gathering instances of recurring event '{item.Summary}'"))
+										instances = await instancesRequest.ExecuteAsync();
+
+									foreach (var instance in instances.Items
+												.Where(x => x.Status != "cancelled"
+														 && x.Start != null
+													)
+												.Take(50))
+									{
+										ConvertEvent(result, instance, calendar);
+									}
+								}
+							});
+
+					await Task.WhenAll(tasks);
 				}
 				catch (Exception ex)
 				{
@@ -255,12 +263,21 @@ namespace InkyCal.Utils.Calendar
 
 		private static void ConvertEvent(List<Event> result, Google.Apis.Calendar.v3.Data.Event item, CalendarListEntry calendar)
 		{
-			DateTime date;
+			DateTime start;
 			if (item.Start.DateTime.HasValue)
 			{
-				date = item.Start.DateTime.Value.Date;
+				start = item.Start.DateTime.Value.Date;
 			}
-			else if (!DateTime.TryParse(item.Start.Date, out date))
+			else if (!DateTime.TryParse(item.Start.Date, out start))
+				return;
+
+
+			DateTime end;
+			if (item.End.DateTime.HasValue)
+			{
+				end = item.End.DateTime.Value.Date;
+			}
+			else if (!DateTime.TryParse(item.End.Date, out end))
 				return;
 
 			//date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
@@ -270,14 +287,51 @@ namespace InkyCal.Utils.Calendar
 			//	start = DateTime.SpecifyKind(item.Start.TimeZone, DateTimeKind.Utc)
 			//}
 
-			result.Add(new Event()
+			var multiDay = start.AddDays(1) < end;
+
+			if (multiDay)
 			{
-				CalendarName = calendar.Summary,
-				Date = date.ToSpecificTimeZone(DutchTZ),
-				Start = item.Start?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
-				End = item.End?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
-				Summary = item.Summary
-			});
+				for(var i = 0; i <= 31; i++) {
+					if (DateTime.UtcNow.Date > start.AddDays(i))
+						continue;
+
+					if (start.AddDays(i) > end)
+						break;
+
+					var firstDay = i == 0;
+					var lastDay = start.AddDays(i).Date.Equals(end.Date);
+
+					var startTime = firstDay
+										? item.Start?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay
+										: null;
+
+					var endTime = lastDay
+										? item.End?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay
+										: null;
+
+					result.Add(new Event()
+					{
+						CalendarName = calendar.Summary,
+						Date = start.AddDays(i).ToSpecificTimeZone(DutchTZ),
+						Start = startTime,
+						End = endTime,
+						Summary = firstDay
+										? $"{item.Summary} >"
+										: lastDay
+											? $"< {item.Summary}"
+											: $"< {item.Summary} >"
+					});
+				}
+			}
+			else
+				result.Add(new Event()
+				{
+					CalendarName = calendar.Summary,
+					Date = start.ToSpecificTimeZone(DutchTZ),
+					Start = item.Start?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
+					End = item.End?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
+					Summary = item.Summary
+				});
 
 			Console.WriteLine($"	{item.Id} [{item.Start?.DateTime} - {item.End?.DateTime}]{item.Summary}");
 		}

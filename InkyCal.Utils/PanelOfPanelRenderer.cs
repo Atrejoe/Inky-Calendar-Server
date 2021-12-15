@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,8 +14,66 @@ using StackExchange.Profiling;
 namespace InkyCal.Utils
 {
 
+
 	/// <summary>
 	/// A simpel cache entry per stored panel, regardless of parameters
+	/// </summary>
+	/// <seealso cref="PanelCacheKey" />
+	public class PanelOfPanelCacheKey : PanelCacheKey {
+
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PerPanelCacheKey"/> class.
+		/// </summary>
+		/// <param name="expiration">The expiration.</param>
+		/// <param name="subPanels"></param>
+		public PanelOfPanelCacheKey(TimeSpan expiration, IEnumerable<SubPanel> subPanels) : base(expiration)
+		{
+			this.subPanels = subPanels
+								.OrderBy(x => x.SortIndex)
+								.Select(x => new SubPanelReference(x.IdPanel, x.Ratio))
+								.ToArray();
+		}
+
+		private SubPanelReference[] subPanels { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		protected override bool Equals(PanelCacheKey other)
+		{
+			return other is PanelOfPanelCacheKey ppc
+				&& ppc.subPanels.SequenceEqual(this.subPanels);
+		}
+
+		private class SubPanelReference : IEquatable<SubPanelReference>
+		{
+			private readonly Guid idPanel;
+			private readonly short ratio;
+
+			public SubPanelReference(Guid idPanel, short ratio)
+			{
+				this.idPanel = idPanel;
+				this.ratio = ratio;
+			}
+
+			public override int GetHashCode() => HashCode.Combine(idPanel, ratio);
+
+			bool IEquatable<SubPanelReference>.Equals(SubPanelReference other)
+				=> other != null
+					&& other.idPanel.Equals(idPanel)
+					&& other.ratio.Equals(ratio);
+
+			public override bool Equals(object obj)
+				=> obj is SubPanelReference r
+					&& Equals(r);
+		}
+	}
+
+	/// <summary>
+	/// A simple cache entry per stored panel, regardless of parameters
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
 	public class PerPanelCacheKey : PanelCacheKey
@@ -85,7 +144,7 @@ namespace InkyCal.Utils
 			this.pp = pp ?? throw new ArgumentNullException(nameof(pp));
 			this.panelRenderHelper = panelRenderHelper ?? throw new ArgumentNullException(nameof(panelRenderHelper));
 
-			CacheKey = new PerPanelCacheKey(TimeSpan.FromSeconds(30), pp.Id);
+			CacheKey = new PanelOfPanelCacheKey(TimeSpan.FromSeconds(30), pp.Panels);
 		}
 
 

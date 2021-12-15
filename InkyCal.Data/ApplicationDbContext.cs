@@ -27,6 +27,9 @@ namespace InkyCal.Data
 				options =>
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
+			optionsBuilder.EnableDetailedErrors();
+			optionsBuilder.EnableSensitiveDataLogging();
+
 			if (InkyCal.Server.Config.Config.TraceQueries)
 
 				optionsBuilder.LogTo(msg =>
