@@ -270,12 +270,14 @@ namespace InkyCal.Utils.Calendar
 			//	start = DateTime.SpecifyKind(item.Start.TimeZone, DateTimeKind.Utc)
 			//}
 
+			var fromTimeZone = TimeZoneByName(calendar.TimeZone);
+
 			result.Add(new Event()
 			{
 				CalendarName = calendar.Summary,
-				Date = date.ToSpecificTimeZone(DutchTZ),
-				Start = item.Start?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
-				End = item.End?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
+				Date = date.ToSpecificTimeZone(fromTimeZone,DutchTZ),
+				Start = item.Start?.DateTime.ToSpecificTimeZone(fromTimeZone,DutchTZ)?.TimeOfDay,
+				End = item.End?.DateTime.ToSpecificTimeZone(fromTimeZone, DutchTZ)?.TimeOfDay,
 				Summary = item.Summary
 			});
 
@@ -305,6 +307,10 @@ namespace InkyCal.Utils.Calendar
 			}
 
 			return result;
+		}
+
+		private static TimeZoneInfo TimeZoneByName(string name) {
+			return TimeZoneInfo.GetSystemTimeZones().FirstOrDefault(tz => tz.Id.Equals(name,StringComparison.OrdinalIgnoreCase));
 		}
 	}
 }
