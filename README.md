@@ -127,3 +127,16 @@ docker-compose up -d
 The server will be available at: [http://localhost:5100](http://localhost:5100).
 
 >  When hosting yourself, you may not want to expose this directly to the internet, but use a reverse proxy, like NGinx and configure ssl.
+
+# Host prerequisites
+
+## Pdf rendering
+Some components (New York Time panel) use a Pdf converter. This requires Ghostscript to be installed on the host.
+
+### Windows
+Download & install [Ghostscript](https://ghostscript.com/)
+
+### Linux
+```
+RUN apk add ghostscript
+```
