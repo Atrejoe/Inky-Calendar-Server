@@ -49,7 +49,7 @@ namespace InkyCal.Server.Pages
 			if (PanelId.HasValue)
 				_Panel = await PanelRepository.Get<Models.Panel>(PanelId.Value, user);
 			else
-				InitPanel<CalendarPanel>();
+				await InitPanel<CalendarPanel>();
 
 			SetAsLoading();
 		}
@@ -65,10 +65,11 @@ namespace InkyCal.Server.Pages
 		/// 
 		/// </summary>
 		/// <typeparam name="TPanel"></typeparam>
-		public void InitPanel<TPanel>() where TPanel : Models.Panel, new()
+		public async Task InitPanel<TPanel>() where TPanel : Models.Panel, new()
 		{
 			_Panel = new TPanel()
 			{
+				Owner = await GetAuthenticatedUser(),
 				Model = (_Panel?.Model).GetValueOrDefault(),
 				Height = _Panel?.Height,
 				Width = _Panel?.Width,
