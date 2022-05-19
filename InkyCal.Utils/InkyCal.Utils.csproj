@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-		<PackageReference Include="Bugsnag" Version="2.2.3" />
+		<PackageReference Include="Bugsnag" Version="3.0.1" />
 		<PackageReference Include="Google.Apis.Calendar.v3" Version="1.57.0.2675" />
 		<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.57.0.1869" />
 		<PackageReference Include="Google.Apis.ServiceUser.v1" Version="1.36.0.1373" />
