@@ -202,11 +202,12 @@ namespace InkyCal.Utils.Calendar
 					itemRequest.OauthToken = accessToken;
 					itemRequest.TimeMin = DateTime.UtcNow.Date;
 					itemRequest.TimeMax = DateTime.UtcNow.AddDays(31);
+					
 
 					// List events.
 					Events events;
 					using (MiniProfiler.Current.Step($"Gathering events"))
-						events = await itemRequest.ExecuteAsync();
+						events = await itemRequest.ExecuteAsync();					
 
 					Parallel.ForEach(events.Items
 						.Where(x => x.Status != "cancelled"
