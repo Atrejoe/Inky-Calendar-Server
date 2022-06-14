@@ -15,7 +15,14 @@ namespace InkyCal.Models
 		[Required]
 		public User User { get; set; }
 
-		[Required, MaxLength(200), MinLength(1)]
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks>
+		/// GoogleOAuth access token can be 2048 bytes <a href="https://developers.google.com/identity/protocols/oauth2">link</a>.
+		/// But Google also permits itself to change the token length. Removing the limit, making the field nvarchar(max)
+		/// </remarks>
+		[Required, MinLength(1)]
 		public string AccessToken { get; set; }
 
 		[Required]
