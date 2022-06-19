@@ -169,6 +169,7 @@ namespace InkyCal.Utils
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
+
 				if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
 				{
 					// Key not in cache, so get data.

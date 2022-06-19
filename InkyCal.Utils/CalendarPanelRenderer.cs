@@ -387,7 +387,10 @@ namespace InkyCal.Utils
 			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
 				if ((Calendars?.Any()).GetValueOrDefault())
 					using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
-						result.AddRange(await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken));
+					{
+						var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken)).ToList();
+						result.AddRange(events);
+					}
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
 				&& (!InkyCal.Server.Config.GoogleOAuth.Enabled
@@ -404,6 +407,7 @@ namespace InkyCal.Utils
 			return string.Join(
 							Environment.NewLine,
 							items
+								.Where(x => x != null)
 								.GroupBy(x => x.Date)
 								.OrderBy(x => x.Key)
 								.Select(x =>

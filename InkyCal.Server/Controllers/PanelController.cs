@@ -121,7 +121,13 @@ namespace InkyCal.Server.Controllers
 			if (!calendar.IsAbsoluteUri || (calendar.Scheme != "http" && calendar.Scheme != "https"))
 				return BadRequest("Calender urls must be absolute urls");
 
-			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendar), model, width, height);
+			return await this.Image(
+							renderer: new CalendarPanelRenderer(
+								saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken, 
+								iCalUrl: calendar), 
+							model: model, 
+							requestedWidth: width, 
+							requestedHeight: height);
 		}
 
 		/// <summary>

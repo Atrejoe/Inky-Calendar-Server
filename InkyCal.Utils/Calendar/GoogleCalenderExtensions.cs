@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,13 +22,27 @@ namespace InkyCal.Utils.Calendar
 		{
 			var result = new List<Event>();
 
-			await foreach (var token in GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken))
+			var tokens = GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken);
+
+			await foreach (var token in tokens)
 				if (token != default)
+				{
+					//foreach (var calenderId in calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender))
+					//{
+					//	var events = await GetEvents(sbErrors, token.AccessToken, calenderId);
+					//	result.AddRange(events);
+					//}
+
+					// When using parallel foreach stuff broke, method appeared to exit beforre results were complete ... or so
+
 					Parallel.ForEach(
-						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender), 
-						async calenderId =>
-							result.AddRange(await GetEvents(sbErrors, token.AccessToken, calenderId))
+						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender),
+						calenderId =>
+							result.AddRange(GetEvents(sbErrors, token.AccessToken, calenderId).Result)
 						);
+				}
+				else
+					sbErrors.Append("No access token");
 
 			return result;
 		}
@@ -201,20 +215,21 @@ namespace InkyCal.Utils.Calendar
 
 					itemRequest.OauthToken = accessToken;
 					itemRequest.TimeMin = DateTime.UtcNow.Date;
-					itemRequest.TimeMax = DateTime.UtcNow.AddDays(31);
-					
+					itemRequest.TimeMax = DateTime.UtcNow.AddDays(7);
+					itemRequest.ETagAction = Google.Apis.ETagAction.IfNoneMatch;
+
 
 					// List events.
 					Events events;
 					using (MiniProfiler.Current.Step($"Gathering events"))
-						events = await itemRequest.ExecuteAsync();					
+						events = await itemRequest.ExecuteAsync();
 
-					Parallel.ForEach(events.Items
+					foreach (var item in events.Items
 						.Where(x => x.Status != "cancelled"
 						&& x.Start != null
 						//&& x.Start.DateTime.HasValue
 						)
-						.Take(50), async item =>
+						.Take(50))
 					{
 						if (item.Recurrence == null)
 
@@ -242,7 +257,8 @@ namespace InkyCal.Utils.Calendar
 							}
 						}
 
-					});
+					};
+
 				}
 				catch (Exception ex)
 				{
