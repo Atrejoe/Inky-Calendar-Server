@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace InkyCal.Server
@@ -16,7 +17,20 @@ namespace InkyCal.Server
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+					if (!string.IsNullOrWhiteSpace(Config.Config.SentryDSN))
+					{
+						webBuilder.UseSentry(o =>
+						{
+							o.Dsn = Config.Config.SentryDSN;
+							// When configuring for the first time, to see what the SDK is doing:
+							//o.Debug = true;
+							// Set TracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+							// We recommend adjusting this value in production.
+							o.TracesSampleRate = 1.0;
+						});
+					}
+
+					webBuilder.UseStartup<Startup>();
+				});
     }
 }

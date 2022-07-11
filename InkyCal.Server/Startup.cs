@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Sentry;
 using StackExchange.Profiling.Storage;
 
 namespace InkyCal.Server
@@ -252,6 +253,14 @@ namespace InkyCal.Server
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 			app.UseRouting();
+
+			if (!string.IsNullOrEmpty(Config.Config.SentryDSN))
+			{
+				// Enable automatic tracing integration.
+				// If running with .NET 5 or below, make sure to put this middleware
+				// right after `UseRouting()`.
+				app.UseSentryTracing();
+			}
 
 			app.UseForwardedHeaders(new ForwardedHeadersOptions
 			{

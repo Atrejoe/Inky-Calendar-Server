@@ -7,6 +7,7 @@ using System.Linq;
 using Bugsnag;
 using Bugsnag.Payload;
 using Newtonsoft.Json;
+using Sentry;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -79,12 +80,13 @@ namespace InkyCal.Utils
 			using (fgColor.TempForegroundColor())
 				Console.Write(severityAsString);
 
-			if (_bugsnag is null)
+			if (_bugsnag is null && !SentrySdk.IsEnabled)
 			{
-				Console.Error.WriteLine($": Bugsnag not configured (API key: {Server.Config.Config.BugSnagAPIKey})");
+				Console.Error.WriteLine($"Bugsnag nor Sentry have been configured.");
 				Console.Error.WriteLine(ex.ToString());
 			}
-			else
+
+			if (_bugsnag != null)
 			{
 				Console.Error.WriteLine($": Logging {severityAsString} to Bugsnag : {ex.Message}");
 
@@ -92,6 +94,9 @@ namespace InkyCal.Utils
 					_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
 
 			}
+
+			if (SentrySdk.IsEnabled)
+				SentrySdk.CaptureException(ex);
 		}
 
 		/// <summary>
@@ -106,11 +111,15 @@ namespace InkyCal.Utils
 				Console.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
 
 			//Write as BugSnag breadcurmbs
-			if (_bugsnag == null)
-				return;
+			if (_bugsnag != null)
+			{
+				_bugsnag.Breadcrumbs
+					.Leave(message, BreadcrumbType.Process, metaData);
+			}
 
-			_bugsnag.Breadcrumbs
-			  .Leave(message, BreadcrumbType.Process, metaData); ;
+			//Write as Sentry message (without metaData)
+			if (SentrySdk.IsEnabled)
+				SentrySdk.CaptureMessage(message);
 		}
 
 		/// <summary>
@@ -177,7 +186,7 @@ namespace InkyCal.Utils
 				var identity = System.Threading.Thread.CurrentPrincipal?.Identity;
 				if (identity != null)
 				{
-					report.Event.User = new User
+					report.Event.User = new Bugsnag.Payload.User
 					{
 						Name = identity.Name
 					};
