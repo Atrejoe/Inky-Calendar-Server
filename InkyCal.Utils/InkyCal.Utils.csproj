@@ -40,7 +40,7 @@
     <PackageReference Include="MiniProfiler.Shared" Version="4.2.22" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-    <PackageReference Include="Sentry" Version="3.19.0" />
+    <PackageReference Include="Sentry" Version="3.20.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
