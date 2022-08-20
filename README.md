@@ -134,7 +134,11 @@ The server will be available at: [http://localhost:5100](http://localhost:5100).
 Some components (New York Time panel) use a Pdf converter. This requires Ghostscript to be installed on the host.
 
 ### Windows
-Download & install [Ghostscript](https://ghostscript.com/)
+Download & install [Ghostscript](https://ghostscript.com/), or install using Chocolatey:
+
+```
+choco install ghostscript
+```
 
 ### Linux
 ```
