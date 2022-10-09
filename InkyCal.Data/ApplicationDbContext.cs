@@ -1,4 +1,5 @@
-﻿using InkyCal.Models;
+﻿using System;
+using InkyCal.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ namespace InkyCal.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
+			if (optionsBuilder is null)
+				throw new ArgumentNullException(nameof(optionsBuilder));
 
 			optionsBuilder.UseSqlServer(
 				InkyCal.Server.Config.Config.ConnectionString,
@@ -39,13 +42,11 @@ namespace InkyCal.Data
 
 			base.OnConfiguring(optionsBuilder);
 		}
-		private static readonly object writelock = new object();
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			if (builder is null)
-				throw new System.ArgumentNullException(nameof(builder));
-
+				throw new ArgumentNullException(nameof(builder));
 
 			base.OnModelCreating(builder);
 

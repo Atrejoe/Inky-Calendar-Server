@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -10,7 +11,9 @@ namespace InkyCal.Data
 	{
 		public static async Task<int> SaveSubscribedCalenders(this CalendarPanel panel, HashSet<(int IdAccessToken, string Calender)> calenders)
 		{
-			
+			if (panel is null)
+				throw new ArgumentNullException(nameof(panel));
+
 			var set = await panel.SubscribedCalenders();
 
 			using var c = new ApplicationDbContext();

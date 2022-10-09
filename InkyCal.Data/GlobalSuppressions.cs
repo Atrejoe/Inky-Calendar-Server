@@ -8,3 +8,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "I don't know what to do yet", Scope = "module")]
 
 [assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Migrations pass in builders.", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Preparing for injectable repository pattern.", Scope = "type", Target = "~T:InkyCal.Data.GoogleOAuthRepository")]

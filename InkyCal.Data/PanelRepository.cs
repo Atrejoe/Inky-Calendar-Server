@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InkyCal.Data
 {
+
 	public static class PanelRepository
 	{
 		public static async Task<bool> ToggleStar(this Panel panel)
@@ -157,7 +158,7 @@ namespace InkyCal.Data
 			//var panel = await Get<Panel>(id, user);
 			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id));
 			if ((await c.SaveChangesAsync()) != 1)
-				throw new Exception("Not deleted");
+				throw new DalException("Not deleted");
 		}
 
 		public static async Task<Panel[]> All()

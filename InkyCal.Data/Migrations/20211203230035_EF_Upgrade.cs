@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class EF_Upgrade : Migration
+	[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Historical name, renaming would cause re-execution.")]
+	public partial class EF_Upgrade : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
