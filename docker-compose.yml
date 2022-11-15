@@ -9,7 +9,7 @@ services:
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:5000/
-      - ConnectionStrings__DefaultConnection=Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true;Encrypt=False;
     depends_on:
       - db
     restart: always

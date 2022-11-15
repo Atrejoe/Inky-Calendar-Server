@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-    <Features>flow-analysis</Features>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-    <NoWarn />
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Features>flow-analysis</Features>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+		<NoWarn />
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="fonts\ProFont-Polish\ProFontWindowsPL.ttf" />
-    <None Remove="fonts\ProFontWindows.ttf" />
-    <None Remove="fonts\weathericons-regular-webfont.ttf" />
-    <None Remove="MonteCarloFixed12.ttf" />
-    <None Remove="NotoSans-SemiCondensed.ttf" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="fonts\ProFont-Polish\ProFontWindowsPL.ttf" />
+		<None Remove="fonts\ProFontWindows.ttf" />
+		<None Remove="fonts\weathericons-regular-webfont.ttf" />
+		<None Remove="MonteCarloFixed12.ttf" />
+		<None Remove="NotoSans-SemiCondensed.ttf" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="fonts\MonteCarloFixed12.ttf" />
-    <EmbeddedResource Include="fonts\NotoSans-SemiCondensed.ttf" />
-    <EmbeddedResource Include="fonts\ProFontWindows.ttf" />
-    <EmbeddedResource Include="fonts\ProFontWindowsPL.ttf" />
-    <EmbeddedResource Include="fonts\weathericons-regular-webfont.ttf" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="fonts\MonteCarloFixed12.ttf" />
+		<EmbeddedResource Include="fonts\NotoSans-SemiCondensed.ttf" />
+		<EmbeddedResource Include="fonts\ProFontWindows.ttf" />
+		<EmbeddedResource Include="fonts\ProFontWindowsPL.ttf" />
+		<EmbeddedResource Include="fonts\weathericons-regular-webfont.ttf" />
+	</ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Bugsnag" Version="3.1.0" />
 		<PackageReference Include="Google.Apis.Calendar.v3" Version="1.57.0.2759" />
 		<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.57.0.1869" />
@@ -34,33 +34,33 @@
 		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.0" />
 		<PackageReference Include="Magick.NET.Core" Version="12.2.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-    <PackageReference Include="MiniProfiler.Shared" Version="4.2.22" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-    <PackageReference Include="Sentry" Version="3.23.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-  </ItemGroup>
+		<PackageReference Include="MiniProfiler.Shared" Version="4.2.22" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
+		<PackageReference Include="Sentry" Version="3.23.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\InkyCal.Models\InkyCal.Models.csproj" />
-    <ProjectReference Include="..\InkyCal.Server.Config\InkyCal.Server.Config.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\InkyCal.Models\InkyCal.Models.csproj" />
+		<ProjectReference Include="..\InkyCal.Server.Config\InkyCal.Server.Config.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="C:\Users\Robert\.nuget\packages\cete.dynamicpdf.rasterizer.net\3.11.0\build\netstandard20\..\netcoreapp20\DPDFRenderNative_x86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="C:\Users\Robert\.nuget\packages\cete.dynamicpdf.rasterizer.net\3.11.0\build\netstandard20\..\netcoreapp20\DPDFRenderNative_x86.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Update="C:\Users\Robert\.nuget\packages\cete.dynamicpdf.rasterizer.net\3.11.0\build\netstandard20\..\netcoreapp20\DPDFRenderNative_x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Update="C:\Users\Robert\.nuget\packages\cete.dynamicpdf.rasterizer.net\3.11.0\build\netstandard20\..\netcoreapp20\DPDFRenderNative_x64.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 </Project>
