@@ -8,8 +8,18 @@ using Microsoft.EntityFrameworkCore;
 namespace InkyCal.Data
 {
 
+
+	/// <summary>
+	/// A repo for <see cref="User"/>s
+	/// </summary>
 	public static class UserRepository
 	{
+
+		/// <summary>
+		/// Gets the user by <paramref name="identityUser"/>.
+		/// </summary>
+		/// <param name="identityUser">The identity user.</param>
+		/// <returns></returns>
 		public static async Task<User> GetUser(this IdentityUser identityUser)
 		{
 			if (identityUser is null)
@@ -18,6 +28,12 @@ namespace InkyCal.Data
 			return await GetUser(identityUser.Id);
 		}
 
+
+		/// <summary>
+		/// Gets the user by <paramref name="identityUserId"/>
+		/// </summary>
+		/// <param name="identityUserId">The identity user identifier.</param>
+		/// <returns></returns>
 		public static async Task<User> GetUser(this string identityUserId)
 		{
 			using var c = new ApplicationDbContext();
@@ -34,6 +50,11 @@ namespace InkyCal.Data
 			return result;
 		}
 
+
+		/// <summary>
+		/// Gets all <see cref="User"/>s.
+		/// </summary>
+		/// <returns></returns>
 		public static async Task<IEnumerable<User>> GetAll()
 		{
 			using var c = new ApplicationDbContext();

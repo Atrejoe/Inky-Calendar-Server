@@ -13,7 +13,8 @@ namespace InkyCal.Data.Migrations
     [Migration("20200410194345_Scalable_Sub_Panels")]
     partial class Scalable_Sub_Panels
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

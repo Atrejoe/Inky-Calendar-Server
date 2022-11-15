@@ -9,11 +9,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InkyCal.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+
+	[DbContext(typeof(ApplicationDbContext))]
     [Migration("20200225201708_Refactor")]
     partial class Refactor
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

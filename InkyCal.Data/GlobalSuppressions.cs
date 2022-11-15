@@ -9,3 +9,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Migrations pass in builders.", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Preparing for injectable repository pattern.", Scope = "type", Target = "~T:InkyCal.Data.GoogleOAuthRepository")]
+[assembly: SuppressMessage("Compiler", "CS1591:Missing XML comment for publicly visible type or member", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]

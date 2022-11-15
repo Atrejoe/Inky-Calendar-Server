@@ -13,7 +13,8 @@ namespace InkyCal.Data.Migrations
     [Migration("20201124215410_EnlargeSubPanelRatio")]
     partial class EnlargeSubPanelRatio
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

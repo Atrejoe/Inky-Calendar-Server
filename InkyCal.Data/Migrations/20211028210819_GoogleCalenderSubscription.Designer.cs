@@ -13,7 +13,8 @@ namespace InkyCal.Data.Migrations
     [Migration("20211028210819_GoogleCalenderSubscription")]
     partial class GoogleCalenderSubscription
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

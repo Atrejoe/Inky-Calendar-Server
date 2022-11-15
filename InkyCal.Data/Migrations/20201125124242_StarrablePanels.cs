@@ -2,24 +2,32 @@
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class StarrablePanels : Migration
-    {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<bool>(
-                name: "Starred",
-                schema: "InkyCal",
-                table: "Panel",
-                nullable: false,
-                defaultValue: false);
-        }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "Starred",
-                schema: "InkyCal",
-                table: "Panel");
-        }
-    }
+
+	/// <summary>
+	/// Introduction of <see cref="Models.Panel.Starred"/>.
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	public partial class StarrablePanels : Migration
+	{
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.AddColumn<bool>(
+				name: "Starred",
+				schema: "InkyCal",
+				table: "Panel",
+				nullable: false,
+				defaultValue: false);
+		}
+
+		/// <inheritdoc/>
+		protected override void Down(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.DropColumn(
+				name: "Starred",
+				schema: "InkyCal",
+				table: "Panel");
+		}
+	}
 }

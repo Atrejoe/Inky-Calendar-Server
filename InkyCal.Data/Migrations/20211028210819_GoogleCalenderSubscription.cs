@@ -3,9 +3,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class GoogleCalenderSubscription : Migration
+
+	/// <summary>
+	/// Introduces <see cref="Models.CalendarPanel.SubscribedGoogleCalenders"/>
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	public partial class GoogleCalenderSubscription : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "CalendarPanel_GoogleCalender",
@@ -48,7 +54,8 @@ namespace InkyCal.Data.Migrations
                 column: "Panel");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "CalendarPanel_GoogleCalender",

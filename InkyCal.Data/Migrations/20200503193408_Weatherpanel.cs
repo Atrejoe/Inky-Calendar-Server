@@ -2,8 +2,14 @@
 
 namespace InkyCal.Data.Migrations
 {
+
+	/// <summary>
+	/// Introduces weather panels (<see cref="Weatherpanel"/>).
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
 	public partial class Weatherpanel : Migration
 	{
+		/// <inheritdoc/>
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.AddColumn<string>(
@@ -53,6 +59,7 @@ namespace InkyCal.Data.Migrations
 				oldMaxLength: 128);
 		}
 
+		/// <inheritdoc/>
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropColumn(

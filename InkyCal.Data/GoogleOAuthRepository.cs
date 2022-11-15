@@ -11,6 +11,12 @@ namespace InkyCal.Data
 	/// </summary>
 	public class GoogleOAuthRepository
 	{
+
+		/// <summary>
+		/// Stores the token.
+		/// </summary>
+		/// <param name="token">The token.</param>
+		/// <exception cref="System.ArgumentNullException">token</exception>
 		public async Task StoreToken(GoogleOAuthAccess token)
 		{
 			if (token is null)
@@ -22,6 +28,11 @@ namespace InkyCal.Data
 			c.Add(token);
 			await c.SaveChangesAsync();
 		}
+
+		/// <summary>
+		/// Deletes the token.
+		/// </summary>
+		/// <param name="idToken">The identifier token.</param>
 		public async Task DeleteToken(int idToken)
 		{
 			using var c = new ApplicationDbContext();
@@ -30,6 +41,13 @@ namespace InkyCal.Data
 			await c.SaveChangesAsync();
 		}
 
+
+
+		/// <summary>
+		/// Gets the tokens for the specified <paramref name="idUser"/>.
+		/// </summary>
+		/// <param name="idUser">The identifier user.</param>
+		/// <returns></returns>
 		public async Task<GoogleOAuthAccess[]> GetTokens(int idUser)
 		{
 			using var c = new ApplicationDbContext();

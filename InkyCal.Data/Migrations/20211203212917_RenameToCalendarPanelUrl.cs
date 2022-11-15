@@ -2,9 +2,15 @@
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class RenameToCalendarPanelUrl : Migration
+
+	/// <summary>
+	/// Maintenance: renames index
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	public partial class RenameToCalendarPanelUrl : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ImagePanelUrl_Panel_IdPanel",
@@ -45,7 +51,8 @@ namespace InkyCal.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_CalendarPanelUrl_Panel_IdPanel",

@@ -7,8 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InkyCal.Data
 {
+
+	/// <summary>
+	/// Storage for calendar configuration
+	/// </summary>
 	public static class CalenderRepository
 	{
+
+		/// <summary>
+		/// Saves the subscribed calenders.
+		/// </summary>
+		/// <param name="panel">The panel.</param>
+		/// <param name="calenders">The calenders.</param>
+		/// <returns></returns>
+		/// <exception cref="System.ArgumentNullException">panel</exception>
 		public static async Task<int> SaveSubscribedCalenders(this CalendarPanel panel, HashSet<(int IdAccessToken, string Calender)> calenders)
 		{
 			if (panel is null)
@@ -33,6 +45,12 @@ namespace InkyCal.Data
 			return await c.SaveChangesAsync();
 		}
 
+
+		/// <summary>
+		/// Gets subscribed calendars
+		/// </summary>
+		/// <param name="panel">The panel.</param>
+		/// <returns></returns>
 		public static async Task<SubscribedGoogleCalender[]> SubscribedCalenders(this CalendarPanel panel)
 		{
 			using var c = new ApplicationDbContext();

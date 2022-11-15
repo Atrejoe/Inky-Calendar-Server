@@ -8,8 +8,18 @@ using Microsoft.EntityFrameworkCore;
 namespace InkyCal.Data
 {
 
+
+	/// <summary>
+	/// A repo for pane configuration
+	/// </summary>
 	public static class PanelRepository
 	{
+
+		/// <summary>
+		/// Toggles the star for a panel
+		/// </summary>
+		/// <param name="panel">The panel.</param>
+		/// <returns></returns>
 		public static async Task<bool> ToggleStar(this Panel panel)
 		{
 			using (var c = new ApplicationDbContext())
@@ -26,6 +36,14 @@ namespace InkyCal.Data
 			}
 		}
 
+
+		/// <summary>
+		/// Updates the specified panel.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <param name="panel">The panel.</param>
+		/// <returns></returns>
+		/// <exception cref="System.ArgumentNullException">panel</exception>
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
 			if (panel is null)
@@ -121,6 +139,13 @@ namespace InkyCal.Data
 			return panel;
 		}
 
+
+		/// <summary>
+		/// Gets the panels <paramref name="user"/> owns.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <param name="user">The user.</param>
+		/// <returns></returns>
 		public static async Task<TPanel[]> List<TPanel>(User user) where TPanel : Panel
 		{
 			using var c = new ApplicationDbContext();
@@ -137,6 +162,14 @@ namespace InkyCal.Data
 			return await queryable.ToArrayAsync();
 		}
 
+
+		/// <summary>
+		/// Gets the specified <see cref="Models.Panel"/> by <see cref="Panel.Id"/> and <see cref="Panel.Owner"/>.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <param name="id">The identifier.</param>
+		/// <param name="user">The user.</param>
+		/// <returns></returns>
 		public static async Task<TPanel> Get<TPanel>(Guid id, User user) where TPanel : Panel
 		{
 			using var c = new ApplicationDbContext();
@@ -151,6 +184,12 @@ namespace InkyCal.Data
 			return result;
 		}
 
+
+		/// <summary>
+		/// Deletes the specified <see cref="Panel"/> by <see cref="Panel.Id"/> (<paramref name="id"/>).
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <exception cref="InkyCal.Data.DalException">Not deleted</exception>
 		public static async Task Delete(Guid id)
 		{
 			using var c = new ApplicationDbContext();
@@ -161,6 +200,10 @@ namespace InkyCal.Data
 				throw new DalException("Not deleted");
 		}
 
+		/// <summary>
+		/// Returns ALL panels (regardless of <see cref="Panel.Owner"/>).
+		/// </summary>
+		/// <returns></returns>
 		public static async Task<Panel[]> All()
 		{
 			using var c = new ApplicationDbContext();
@@ -173,6 +216,14 @@ namespace InkyCal.Data
 			return result;
 		}
 
+
+		/// <summary>
+		/// Gets the specified identifier.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <param name="id">The identifier.</param>
+		/// <param name="markAsAccessed">if set to <c>true</c> mark as accessed (<see cref="Panel.AccessCount"/> and <see cref="Panel.Accessed"/>).</param>
+		/// <returns></returns>
 		public static async Task<TPanel> Get<TPanel>(Guid id, bool markAsAccessed = false) where TPanel : Panel
 		{
 			using var c = new ApplicationDbContext();
@@ -197,7 +248,8 @@ namespace InkyCal.Data
 			return result;
 		}
 
-		public static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
+
+		internal static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
 		{
 			return set
 					.Include(x => (x as Panel).Owner)

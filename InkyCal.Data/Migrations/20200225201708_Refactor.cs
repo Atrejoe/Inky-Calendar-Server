@@ -2,8 +2,13 @@
 
 namespace InkyCal.Data.Migrations
 {
+	/// <summary>
+	/// Some model refactoring
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
 	public partial class Refactor : Migration
 	{
+		/// <inheritdoc/>
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropForeignKey(
@@ -40,6 +45,7 @@ namespace InkyCal.Data.Migrations
 				onDelete: ReferentialAction.Restrict);
 		}
 
+		/// <inheritdoc/>
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropForeignKey(

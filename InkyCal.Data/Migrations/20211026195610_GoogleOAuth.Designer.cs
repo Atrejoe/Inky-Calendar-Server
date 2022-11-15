@@ -13,7 +13,8 @@ namespace InkyCal.Data.Migrations
     [Migration("20211026195610_GoogleOAuth")]
     partial class GoogleOAuth
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

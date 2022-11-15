@@ -3,8 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InkyCal.Data.Migrations
 {
+
+	/// <summary>
+	/// Initial creation script
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
 	public partial class InitialCreate : Migration
 	{
+		/// <inheritdoc/>
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.EnsureSchema(
@@ -283,6 +289,7 @@ namespace InkyCal.Data.Migrations
 				filter: "[IdIdentityUser] IS NOT NULL");
 		}
 
+		/// <inheritdoc/>
 		protected override void Down(MigrationBuilder migrationBuilder)
 		{
 			migrationBuilder.DropTable(

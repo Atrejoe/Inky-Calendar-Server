@@ -1,12 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.CodeDom.Compiler;
+using InkyCal.Models;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class OAuthAccessTokenLengthCorrection : Migration
+
+	/// <summary>
+	/// Corrects length of access tokens (<see cref="GoogleOAuthAccess.AccessToken"/>).
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	public partial class OAuthAccessTokenLengthCorrection : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
                 name: "AccessToken",
@@ -55,7 +63,8 @@ namespace InkyCal.Data.Migrations
                 oldMaxLength: 128);
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
                 name: "AccessToken",

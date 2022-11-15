@@ -2,9 +2,15 @@
 
 namespace InkyCal.Data.Migrations
 {
-    public partial class EnlargeSubPanelRatio : Migration
+
+	/// <summary>
+	/// Increases sub-panel ratios (<see cref="Models.SubPanel.Ratio"/>)
+	/// </summary>
+	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	public partial class EnlargeSubPanelRatio : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+		/// <inheritdoc/>
+		protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<short>(
                 name: "Ratio",
@@ -15,6 +21,7 @@ namespace InkyCal.Data.Migrations
                 oldType: "tinyint");
         }
 
+		/// <inheritdoc/>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<byte>(

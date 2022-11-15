@@ -13,6 +13,7 @@ namespace InkyCal.Data.Migrations
     [Migration("20210420203506_NewYorkTimes")]
     partial class NewYorkTimes
     {
+		/// <inheritdoc/>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

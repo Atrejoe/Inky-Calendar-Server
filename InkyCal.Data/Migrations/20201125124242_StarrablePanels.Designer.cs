@@ -13,7 +13,8 @@ namespace InkyCal.Data.Migrations
     [Migration("20201125124242_StarrablePanels")]
     partial class StarrablePanels
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+		/// <inheritdoc/>
+		protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
