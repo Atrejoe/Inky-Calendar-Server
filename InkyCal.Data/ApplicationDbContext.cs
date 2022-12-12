@@ -25,12 +25,16 @@ namespace InkyCal.Data
 			if (optionsBuilder is null)
 				throw new ArgumentNullException(nameof(optionsBuilder));
 
+			optionsBuilder
+				.EnableSensitiveDataLogging()
+				.EnableDetailedErrors();
+
 			optionsBuilder.UseSqlServer(
-				InkyCal.Server.Config.Config.ConnectionString,
+				Server.Config.Config.ConnectionString,
 				options =>
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
-			if (InkyCal.Server.Config.Config.TraceQueries)
+			if (Server.Config.Config.TraceQueries)
 
 				optionsBuilder.LogTo(msg =>
 					{

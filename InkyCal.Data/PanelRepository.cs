@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -181,6 +182,62 @@ namespace InkyCal.Data
 								   x.Id == id
 								&& x.Owner.Id.Equals(user.Id));
 
+			await result.AddMissingUntrackedEntities();
+
+			return result;
+		}
+
+		private static async Task AddMissingUntrackedEntities<TPanel>(this TPanel result) where TPanel : Panel
+		{
+			if (result != null
+				 && result is CalendarPanel cp
+				 && cp.SubscribedGoogleCalenders.Any(x => x.AccessToken is null))
+			{
+
+				var tokens = await new GoogleOAuthRepository().GetTokens(result.Owner.Id);
+
+				foreach (var gcal in cp.SubscribedGoogleCalenders)
+					gcal.AccessToken ??= tokens.SingleOrDefault(x => x.Id == gcal.IdAccessToken);
+			}
+		}
+
+		/// <summary>
+		/// Gets a random <see cref="Models.Panel"/>.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <returns></returns>
+		internal static async Task<TPanel> GetRandom<TPanel>() where TPanel : Panel
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<TPanel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.OrderBy(x => Guid.NewGuid())
+								.FirstOrDefaultAsync();
+
+			await result.AddMissingUntrackedEntities();
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a random <see cref="CalendarPanel"/>.
+		/// </summary>
+		/// <returns></returns>
+		internal static async Task<CalendarPanel> GetRandomGoogleCalendarPanel()
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<CalendarPanel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.Where(x => x.SubscribedGoogleCalenders.Any())
+								.OrderByDescending(x => x.SubscribedGoogleCalenders.Count())
+								.FirstOrDefaultAsync();
+
+			await result.AddMissingUntrackedEntities();
+
 			return result;
 		}
 
@@ -233,6 +290,8 @@ namespace InkyCal.Data
 								.AsNoTracking()
 								.SingleOrDefaultAsync(x => x.Id == id);
 
+			await result.AddMissingUntrackedEntities();
+
 			if (result != null && markAsAccessed)
 			{
 				c.Entry(result).Property(x => x.Accessed).CurrentValue = DateTime.UtcNow;
@@ -244,6 +303,7 @@ namespace InkyCal.Data
 				await c.SaveChangesAsync();
 			}
 
+			
 
 			return result;
 		}
@@ -251,20 +311,35 @@ namespace InkyCal.Data
 
 		internal static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
 		{
-			return set
-					.Include(x => (x as Panel).Owner)
-					.Include(x => (x as CalendarPanel).CalenderUrls)
-					.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
-						.ThenInclude(x => x.AccessToken)
-					.Include(x => (x as PanelOfPanels).Panels)
-						.ThenInclude(x => x.Panel)
-							.ThenInclude(x => x.Owner)
-					.Include(x => (x as PanelOfPanels).Panels)
-						.ThenInclude(x => (x.Panel as CalendarPanel).CalenderUrls)
-					.Include(x => (x as PanelOfPanels).Panels)
-						.ThenInclude(x => (x.Panel as CalendarPanel).SubscribedGoogleCalenders)
-							.ThenInclude(x => x.AccessToken);
+			IQueryable<TPanel> x = set
+					.Include(x => (x as Panel).Owner);
 
+			if (typeof(TPanel).IsAssignableFrom(typeof(CalendarPanel)))
+			{
+				x = x.Include(x => (x as CalendarPanel).CalenderUrls)
+						.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders).AsNoTracking();
+
+				// Eager loading of access tokens causes issues...working around
+				//x = x.Include(x => (x as CalendarPanel).CalenderUrls)
+				//		.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
+				//		.ThenInclude(x=>x.AccessToken).AsNoTracking();
+			}
+
+			if (typeof(TPanel).IsAssignableFrom(typeof(PanelOfPanels)))
+			{
+				x = x.Include(x => (x as PanelOfPanels).Panels)
+					.ThenInclude(x => x.Panel)
+						.ThenInclude(x => x.Owner).AsNoTracking();
+
+				x = x
+						.Include(x => (x as PanelOfPanels).Panels)
+							.ThenInclude(x => (x.Panel as CalendarPanel).CalenderUrls).AsNoTracking()
+						.Include(x => (x as PanelOfPanels).Panels)
+							.ThenInclude(x => (x.Panel as CalendarPanel).SubscribedGoogleCalenders)
+								.ThenInclude(x => x.AccessToken).AsNoTracking();
+			}
+
+			return x;
 		}
 	}
 }

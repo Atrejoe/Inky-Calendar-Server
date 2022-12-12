@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using InkyCal.Models;
 using StackExchange.Profiling;
 using Xunit;
@@ -25,8 +26,6 @@ namespace InkyCal.Data.Tests
 			}
 
 			var starred = panel.Starred;
-
-
 
 			bool actual;
 			using (MiniProfiler.Current.Step("Toggle star"))
@@ -82,14 +81,58 @@ namespace InkyCal.Data.Tests
 
 		}
 
-		//[Fact()]
-		//public void UpdateTest()
-		//{
-		//	//Arrange
-		//	//Act
-		//	//Assert
-		//	Assert.True(false, "This test needs an implementation");
-		//}
+		[SkippableFact()]
+		public async Task TaskUpdateCalendarPanelTest()
+		{
+			//Arrange
+			var panel = await PanelRepository.GetRandom<CalendarPanel>();
+			Skip.If(panel is null);
+
+			//Act
+			await PanelRepository.Update(panel);
+
+			//Assert
+		}
+
+		[SkippableFact()]
+		public async Task TaskUpdateGoogleCalendarPanelTest()
+		{
+			//Arrange
+			var panel = await PanelRepository.GetRandomGoogleCalendarPanel();
+			Skip.If(panel is null);
+			Assert.DoesNotContain(panel.SubscribedGoogleCalenders, x => x.AccessToken is null);
+
+			//Act
+			await PanelRepository.Update(panel);
+
+			//Assert
+		}
+
+		[SkippableFact()]
+		public async Task TaskUpdatePanelOfPanelsTest()
+		{
+			//Arrange
+			var panel = await PanelRepository.GetRandom<PanelOfPanels>();
+			Skip.If(panel is null);
+
+			//Act
+			await PanelRepository.Update(panel);
+
+			//Assert
+		}
+
+		[SkippableFact()]
+		public async Task TaskUpdateImagePanelTest()
+		{
+			//Arrange
+			var panel = await PanelRepository.GetRandom<ImagePanel>();
+			Skip.If(panel is null);
+
+			//Act
+			await PanelRepository.Update(panel);
+
+			//Assert
+		}
 
 		[Fact()]
 		public async void ListTest()

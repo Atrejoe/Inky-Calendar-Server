@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Profiling;
@@ -22,7 +20,9 @@ namespace InkyCal.Data.Tests
 
 			MiniProfiler.StartNew("My Profiler Name");
 
-			new DbContextOptionsBuilder().EnableDetailedErrors();
+			new DbContextOptionsBuilder()
+				.EnableDetailedErrors()
+				.EnableSensitiveDataLogging();
 
 			_t = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 			this.output = output;

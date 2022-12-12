@@ -51,7 +51,9 @@ namespace InkyCal.Data
 		public async Task<GoogleOAuthAccess[]> GetTokens(int idUser)
 		{
 			using var c = new ApplicationDbContext();
-			return await c.Set<GoogleOAuthAccess>().Where(x => x.User.Id == idUser).ToArrayAsync();
+			return await c.Set<GoogleOAuthAccess>().Where(x => x.User.Id == idUser)
+							.AsNoTracking()
+							.ToArrayAsync();
 		}
 
 		/// <summary>
