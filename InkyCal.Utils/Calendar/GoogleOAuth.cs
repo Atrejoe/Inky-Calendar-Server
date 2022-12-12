@@ -167,22 +167,30 @@ namespace InkyCal.Utils.Calendar
 		{
 			ClientSecrets secret;
 
+			var redirectUrl = new Uri(Server.Config.GoogleOAuth.Website, Server.Config.GoogleOAuth.InkyCalRoot);
+
+			var clientId = Server.Config.GoogleOAuth.ClientId;
+			var projectId = Server.Config.GoogleOAuth.ProjectId;
+
+			var clientSecret = Server.Config.GoogleOAuth.ClientSecret;
+			var website = Server.Config.GoogleOAuth.Website;
+
 			byte[] byteArray = Encoding.ASCII.GetBytes($@"
 {{
 	""web"": {{
-		""client_id"": ""{Server.Config.GoogleOAuth.ClientId}"",
-		""project_id"": ""{Server.Config.GoogleOAuth.ProjectId}"",
+		""client_id"": ""{clientId}"",
+		""project_id"": ""{projectId}"",
 		""auth_uri"": ""https://accounts.google.com/o/oauth2/auth"",
 		""token_uri"": ""https://oauth2.googleapis.com/token"",
 		""auth_provider_x509_cert_url"": ""https://www.googleapis.com/oauth2/v1/certs"",
-		""client_secret"": ""{Server.Config.GoogleOAuth.ClientSecret}"",
+		""client_secret"": ""{clientSecret}"",
 		""redirect_uris"": [
-			""{new Uri(Server.Config.GoogleOAuth.Website, Server.Config.GoogleOAuth.InkyCalRoot)}/google/authorize"",
+			""{redirectUrl}/google/authorize"",
 			""https://localhost:5001/google/authorize"",
 			""http://localhost:5000/google/authorize""
 		],
 		""javascript_origins"": [
-			""{Server.Config.GoogleOAuth.Website}"",
+			""{website}"",
 			""https://localhost:5001"",
 			""http://localhost:5000""
 		]
