@@ -15,14 +15,14 @@ namespace InkyCal.Data.Tests
 		{
 		}
 
-		[Fact()]
+		[SkippableFact()]
 		public async void ToggleStarTest()
 		{
 			//Arrange
 			Panel panel;
 			using (MiniProfiler.Current.Step("Get panel"))
 			{
-				panel = (await UserRepository.GetAll()).First(x => x.Panels.Any()).Panels.First();
+				panel = (await UserRepository.GetAll().SkipConnectionException()).First(x => x.Panels.Any()).Panels.First();
 			}
 
 			var starred = panel.Starred;
@@ -46,13 +46,13 @@ namespace InkyCal.Data.Tests
 
 		}
 
-		[Fact()]
+		[SkippableFact()]
 		public async void PanelAccessTest()
 		{
 			//Arrange
 			Panel panel;
 			using (MiniProfiler.Current.Step("Get panel"))
-				panel = (await UserRepository.GetAll()).First(x => x.Panels.Any()).Panels.First();
+				panel = (await UserRepository.GetAll().SkipConnectionException()).First(x => x.Panels.Any()).Panels.First();
 
 			var accessCount = panel.AccessCount;
 			var accessed = panel.Accessed;
@@ -85,7 +85,7 @@ namespace InkyCal.Data.Tests
 		public async Task TaskUpdateCalendarPanelTest()
 		{
 			//Arrange
-			var panel = await PanelRepository.GetRandom<CalendarPanel>();
+			var panel = await PanelRepository.GetRandom<CalendarPanel>().SkipConnectionException();
 			Skip.If(panel is null);
 
 			//Act
@@ -98,7 +98,7 @@ namespace InkyCal.Data.Tests
 		public async Task TaskUpdateGoogleCalendarPanelTest()
 		{
 			//Arrange
-			var panel = await PanelRepository.GetRandomGoogleCalendarPanel();
+			var panel = await PanelRepository.GetRandomGoogleCalendarPanel().SkipConnectionException();
 			Skip.If(panel is null);
 			Assert.DoesNotContain(panel.SubscribedGoogleCalenders, x => x.AccessToken is null);
 
@@ -112,7 +112,7 @@ namespace InkyCal.Data.Tests
 		public async Task TaskUpdatePanelOfPanelsTest()
 		{
 			//Arrange
-			var panel = await PanelRepository.GetRandom<PanelOfPanels>();
+			var panel = await PanelRepository.GetRandom<PanelOfPanels>().SkipConnectionException();
 			Skip.If(panel is null);
 
 			//Act
@@ -125,7 +125,7 @@ namespace InkyCal.Data.Tests
 		public async Task TaskUpdateImagePanelTest()
 		{
 			//Arrange
-			var panel = await PanelRepository.GetRandom<ImagePanel>();
+			var panel = await PanelRepository.GetRandom<ImagePanel>().SkipConnectionException();
 			Skip.If(panel is null);
 
 			//Act
@@ -134,11 +134,11 @@ namespace InkyCal.Data.Tests
 			//Assert
 		}
 
-		[Fact()]
+		[SkippableFact()]
 		public async void ListTest()
 		{
 			//Arrange
-			var user = (await UserRepository.GetAll()).Last(x => x.Panels.Any());
+			var user = (await UserRepository.GetAll().SkipConnectionException()).Last(x => x.Panels.Any());
 
 			//Act
 			var actual = await PanelRepository.List<Panel>(user);
@@ -152,7 +152,7 @@ namespace InkyCal.Data.Tests
 		public async void DeleteTest()
 		{
 			//Arrange
-			var panel = (await PanelRepository.All()).LastOrDefault(x => x is PanelOfPanels);
+			var panel = (await PanelRepository.All().SkipConnectionException()).LastOrDefault(x => x is PanelOfPanels);
 			Skip.If(panel == null);
 
 			//Act
@@ -163,14 +163,14 @@ namespace InkyCal.Data.Tests
 			Assert.NotNull(panel);
 		}
 
-		[Fact()]
+		[SkippableFact()]
 		public async void DeleteInvalidTest()
 		{
 			await Assert.ThrowsAsync<DalException>(async () =>
 			{
 				//Arrange
 				//Act
-				await PanelRepository.Delete(Guid.Empty);
+				await PanelRepository.Delete(Guid.Empty).SkipConnectionException();
 
 				//Assert
 			});
