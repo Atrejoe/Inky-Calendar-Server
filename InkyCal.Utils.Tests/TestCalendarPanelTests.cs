@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using SixLabors.ImageSharp.Formats.Png;
@@ -14,12 +12,12 @@ using Xunit.Abstractions;
 namespace InkyCal.Utils.Tests
 {
 	[Serializable]
-	public class EventWrapper: Event, IXunitSerializable
+	public class EventWrapper : Event, IXunitSerializable
 	{
 
 		public override string ToString()
 		{
-			return $"[{CalendarName}] {Start??(object)"No start"}-{End??(object)"No end"} \"{Summary}\"";
+			return $"[{CalendarName}] {Start ?? (object)"No start"}-{End ?? (object)"No end"} \"{Summary}\"";
 		}
 
 		void IXunitSerializable.Deserialize(IXunitSerializationInfo info)
@@ -68,10 +66,10 @@ namespace InkyCal.Utils.Tests
 
 			models.ToList().ForEach(m =>
 				{
-				events.ToList().ForEach(e =>
-					{
-					  result.Add(new object[] { m, e });
-					});
+					events.ToList().ForEach(e =>
+						{
+							result.Add(new object[] { m, e });
+						});
 				});
 
 			return result;
@@ -90,7 +88,7 @@ namespace InkyCal.Utils.Tests
 			{
 				if (handled)
 				{
-					var errorMessage = $"{explanation ?? "Handled exception" }: {ex.Message}";
+					var errorMessage = $"{explanation ?? "Handled exception"}: {ex.Message}";
 					Console.WriteLine(errorMessage);
 					throw ex;
 				}
@@ -107,7 +105,7 @@ namespace InkyCal.Utils.Tests
 								width: height,
 								height: width,
 								colors: colors,
-								new List<Event> { calenderEvent},
+								new List<Event> { calenderEvent },
 								string.Empty,
 								assertNoError
 								);
@@ -137,4 +135,6 @@ namespace InkyCal.Utils.Tests
 
 		}
 	}
+
+
 }

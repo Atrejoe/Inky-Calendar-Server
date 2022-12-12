@@ -43,31 +43,27 @@ namespace InkyCal.Models
 		public Guid Panel { get; set; }
 		[Key, Column("AccessToken")]
 		public int IdAccessToken { get; set; }
+
 		public GoogleOAuthAccess AccessToken { get; set; }
 
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj  as SubscribedGoogleCalender);
-		}
+		public override bool Equals(object obj) 
+			=> base.Equals(obj as SubscribedGoogleCalender);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		bool IEquatable<SubscribedGoogleCalender>.Equals(SubscribedGoogleCalender other)
-		{
-			return other!= null
+		bool IEquatable<SubscribedGoogleCalender>.Equals(SubscribedGoogleCalender other) 
+			=> other != null
 				&& IdAccessToken.Equals(other.IdAccessToken)
 				&& Calender.Equals(other.Calender);
-		}
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(Calender, IdAccessToken);
-		}
+		public override int GetHashCode() 
+			=> HashCode.Combine(Calender, IdAccessToken);
 	}
 }
