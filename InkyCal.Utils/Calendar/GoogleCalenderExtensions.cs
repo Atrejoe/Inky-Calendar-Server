@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -217,6 +217,8 @@ namespace InkyCal.Utils.Calendar
 					itemRequest.TimeMin = DateTime.UtcNow.Date;
 					itemRequest.TimeMax = DateTime.UtcNow.AddDays(7);
 					itemRequest.ETagAction = Google.Apis.ETagAction.IfNoneMatch;
+
+					itemRequest.SingleEvents = true;
 
 
 					// List events.
