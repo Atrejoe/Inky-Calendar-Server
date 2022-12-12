@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using InkyCal.Models;
 using StackExchange.Profiling;
@@ -123,7 +123,7 @@ namespace InkyCal.Data.Tests
 		[Fact()]
 		public async void DeleteInvalidTest()
 		{
-			await Assert.ThrowsAsync<Exception>(async () =>
+			await Assert.ThrowsAsync<DalException>(async () =>
 			{
 				//Arrange
 				//Act
