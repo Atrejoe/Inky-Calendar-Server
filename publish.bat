@@ -1,3 +1,6 @@
+:: Scan for known vulnerabilities
+dotnet list package --vulnerable
+
 :: Publish Docker image, requires write access atreyu/inkycal.server
 docker-compose build --pull
 
