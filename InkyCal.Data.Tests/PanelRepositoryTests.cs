@@ -56,6 +56,7 @@ namespace InkyCal.Data.Tests
 
 			var accessCount = panel.AccessCount;
 			var accessed = panel.Accessed;
+			var modified = panel.Modified;
 
 			//Act
 			using (MiniProfiler.Current.Step("Get panel again, marking as accessed"))
@@ -78,6 +79,9 @@ namespace InkyCal.Data.Tests
 
 			Assert.Equal(panel.AccessCount, panel2.AccessCount);
 			Assert.Equal(panel.Accessed, panel2.Accessed);
+
+			// Panel should not have been marked as modified
+			Assert.Equal(modified, panel2.Modified);
 
 		}
 
@@ -121,9 +125,12 @@ namespace InkyCal.Data.Tests
 
 			//Act
 			var actual = await PanelRepository.Update(panel);
+			var savedPanel = await PanelRepository.Get<PanelOfPanels>(panel.Id).SkipConnectionException();
 
 			//Assert
+			Assert.NotNull(savedPanel);
 			Assert.NotNull(actual);
+			Assert.NotEqual(previousDateModified, savedPanel.Modified);
 			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 

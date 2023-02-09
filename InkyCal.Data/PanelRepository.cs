@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -120,8 +119,6 @@ namespace InkyCal.Data
 
 						c.RemoveRange(entities);
 					}
-
-					panel.Modified = DateTime.UtcNow;
 				}
 
 				c.Update(panel);
@@ -202,7 +199,11 @@ namespace InkyCal.Data
 				c.Entry(result).Property(x => x.Accessed).IsModified = true;
 				c.Entry(result).Property(x => x.AccessCount).IsModified = true;
 
+				result.SkipModificationTimestamp = true;
+
 				await c.SaveChangesAsync();
+
+				result.SkipModificationTimestamp = false;
 			}
 
 			return result;

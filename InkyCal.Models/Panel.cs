@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,7 +6,7 @@ namespace InkyCal.Models
 {
 
 	[Table("Panel", Schema = "InkyCal")]
-	public class Panel
+	public class Panel : ITimeStampable
 	{
 		[Required, MaxLength(255), Column(Order = 1)]
 		public string Name { get; set; }
@@ -53,7 +53,7 @@ namespace InkyCal.Models
 		/// <summary>
 		/// The date and time at which the panel was last modified
 		/// </summary>
-		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime Modified { get; set; }
 
 		/// <summary>
@@ -66,6 +66,12 @@ namespace InkyCal.Models
 		/// </summary>
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime Accessed { get; set; }
+
+		/// <summary>
+		/// Indicates modification timestamp should not be set. Not persisted in the database.
+		/// </summary>
+		[NotMapped]
+		public bool SkipModificationTimestamp { get; set; }
 	}
 
 

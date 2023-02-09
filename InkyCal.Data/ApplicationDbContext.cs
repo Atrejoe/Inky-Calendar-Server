@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -120,6 +122,36 @@ namespace InkyCal.Data
 				.WithMany(x => x.SubscribedGoogleCalenders)
 				.HasForeignKey(x => x.Panel)
 				.OnDelete(DeleteBehavior.Cascade);
+		}
+
+		public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+		{
+
+			var now = DateTime.UtcNow;
+
+			foreach (var changedEntity in ChangeTracker.Entries())
+			{
+				if (changedEntity.Entity is ITimeStampable entity)
+				{
+					switch (changedEntity.State)
+					{
+						case EntityState.Added:
+							entity.Created = now;
+							entity.Modified = now;
+							break;
+
+						case EntityState.Modified:
+							Entry(entity).Property(x => x.Created).IsModified = false;
+
+							if (!entity.SkipModificationTimestamp)
+								entity.Modified = now;
+
+							break;
+					}
+				}
+			}
+
+			return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 		}
 	}
 }
