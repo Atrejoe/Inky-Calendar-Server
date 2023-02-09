@@ -434,30 +434,48 @@ namespace InkyCal.Utils
 
 			var remainingSize = characterPerLine - (period.Length + indentSize + 1);
 
-			string summary;
-
-			if (characterPerLine.GetValueOrDefault() <= 0)
-				summary = string.Empty;
-			else if (remainingSize > 3)
-				summary = item.Summary.Limit(remainingSize.Value, " ...");
-			else
-				summary = string.Empty;
-
+			var summary = ReduceSummary(item.Summary, remainingSize);
 			return $"{period}{summary}".Trim();
 		}
 
-		[SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Reads just fine")]
+		/// <summary>
+		/// Reduces a summary
+		/// </summary>
+		/// <param name="originalSummary"></param>
+		/// <param name="remainingSize"></param>
+		/// <returns></returns>
+		public static string ReduceSummary(string originalSummary, int? remainingSize)
+		{
+			if (!remainingSize.HasValue)
+				return originalSummary;
+			else if (remainingSize > 3)
+				return originalSummary.Limit(remainingSize.Value, " ...");
+			else
+				return string.Empty;
+		}
+
 		private static string DescribePeriod(Event item)
 		{
 			if (item is null)
 				return "No event?";
 
-			return $@"{(item.Start.HasValue
-							?
-							 item.End.HasValue
-								? @$"{item.Start.Value:hh\:mm} - {item.End.Value:hh\:mm}"
-								: @$"{item.Start.Value:hh\:mm}"
-							: $"All day")}";
+			return DescribePeriod(item.Start, item.End);
+		}
+
+		/// <summary>
+		/// Describes a period (in english for now)
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		/// <returns></returns>
+		[SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Reads just fine")]
+		public static string DescribePeriod(TimeSpan? start, TimeSpan? end)
+		{
+			return start.HasValue
+					? end.HasValue
+						? @$"{start.Value:hh\:mm} - {end.Value:hh\:mm}"
+						: @$"{start.Value:hh\:mm}"
+					: $"All day";
 		}
 	}
 }
