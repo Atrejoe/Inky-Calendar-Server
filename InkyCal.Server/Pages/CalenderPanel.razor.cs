@@ -25,7 +25,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// Displays a calendar panel
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public partial class CalenderPanel : AuthenticatedComponentBase
 	{
 		private CalendarPanelUrl newUrl { get; set; } = new CalendarPanelUrl() { };
@@ -37,7 +37,7 @@ namespace InkyCal.Server.Pages
 		/// The panel.
 		/// </value>
 		[Parameter]
-		public Models.CalendarPanel Panel { get; set; }
+		public CalendarPanel Panel { get; set; }
 
 		/// <summary>
 		/// Gets or sets the navigation manager.
@@ -85,7 +85,7 @@ namespace InkyCal.Server.Pages
 				.ToList();
 		}
 
-		private async void SaveSelection()
+		private async Task SaveSelection()
 		{
 			if (Panel == null
 				|| Panel.Id == Guid.Empty)
@@ -101,7 +101,7 @@ namespace InkyCal.Server.Pages
 		/// <summary>
 		/// 
 		/// </summary>
-		public Dictionary<(int IdToken, global::Google.Apis.Oauth2.v2.Data.Userinfo profile), List<global::Google.Apis.Calendar.v3.Data.CalendarListEntry>> AvailableCalendars = new();
+		public Dictionary<(int IdToken, global::Google.Apis.Oauth2.v2.Data.Userinfo profile), List<global::Google.Apis.Calendar.v3.Data.CalendarListEntry>> AvailableCalendars { get; set; } = new();
 
 		/// <summary>
 		/// 

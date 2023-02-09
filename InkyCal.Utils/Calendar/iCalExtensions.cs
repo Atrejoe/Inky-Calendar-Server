@@ -19,7 +19,7 @@ namespace InkyCal.Utils.Calendar
 	/// <summary>
 	/// A helper class for obtaining calender info
 	/// </summary>
-	public static partial class iCalExtensions
+	public static partial class ICalExtensions
 	{
 		private static readonly HttpClient client = new HttpClient();
 
@@ -51,7 +51,6 @@ namespace InkyCal.Utils.Calendar
 				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, maxEvents):n0} events"))
 					items.AddRange(occurrences
 								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
-								.ToArray()
 								.SelectMany(x =>
 								{
 									//For multi-day periods, list each day within the period separately

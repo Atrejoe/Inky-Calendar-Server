@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace InkyCal.Data
 {
@@ -31,10 +32,10 @@ namespace InkyCal.Data
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DalException"/> class.
 		/// </summary>
-		/// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+		/// <param name="info">The <see cref="SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="context">The <see cref="StreamingContext" /> that contains contextual information about the source or destination.</param>
 		protected DalException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+		  SerializationInfo info,
+		  StreamingContext context) : base(info, context) { }
 	}
 }

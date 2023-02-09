@@ -7,7 +7,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduction of <see cref="Models.Panel.Starred"/>.
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class StarrablePanels : Migration
 	{
 		/// <inheritdoc/>

@@ -27,7 +27,7 @@ namespace InkyCal.Utils.Tests
 						}
 						,
 						new SubPanel() {
-							Panel = new ImagePanel() { Path = TestImagePanelRenderer.demoImageUrl}
+							Panel = new ImagePanel() { Path = TestImagePanelRenderer.DemoImageUrl}
 						}
 					 })
 			};

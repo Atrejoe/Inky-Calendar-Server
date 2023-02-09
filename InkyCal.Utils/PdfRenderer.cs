@@ -13,11 +13,29 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
+	/// <summary>
+	/// 
+	/// </summary>
+	[Serializable]
+	public class PdfRenderException : Exception
+	{
+		/// <inheritdoc/>
+		public PdfRenderException() { }
+		/// <inheritdoc/>
+		public PdfRenderException(string message) : base(message) { }
+		/// <inheritdoc/>
+		public PdfRenderException(string message, Exception inner) : base(message, inner) { }
+		/// <inheritdoc/>
+		protected PdfRenderException(
+		  System.Runtime.Serialization.SerializationInfo info,
+		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+	}
 	/// <summary>
 	/// /
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <seealso cref="InkyCal.Utils.PanelRenderer{T}" />
+	/// <seealso cref="PanelRenderer{T}" />
 	public abstract class PdfRenderer<T> : PanelRenderer<T> where T : Panel
 	{
 
@@ -63,7 +81,7 @@ namespace InkyCal.Utils
 						images.Read(pdf, settings);
 
 						if (images.Count == 0)
-							throw new Exception($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
+							throw new PdfRenderException($"{pdf.Length:n0} byte pdf file resulted in 0 images. Is Ghostscript installed?");
 
 						using var ms = new MemoryStream();
 

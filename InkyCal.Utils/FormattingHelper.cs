@@ -10,16 +10,7 @@ namespace InkyCal.Utils
 	/// </summary>
 	public static class FormattingHelper
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="value"></param>
-		/// <param name="maxLength"></param>
-		/// <returns></returns>
-		public static string Limit(this string value, int maxLength)
-		{
-			return value?.Substring(0, Math.Min(value.Length, maxLength));
-		}
+
 		/// <summary>
 		/// 
 		/// </summary>

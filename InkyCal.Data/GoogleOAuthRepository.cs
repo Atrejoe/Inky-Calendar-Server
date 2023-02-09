@@ -16,7 +16,7 @@ namespace InkyCal.Data
 		/// Stores the token.
 		/// </summary>
 		/// <param name="token">The token.</param>
-		/// <exception cref="System.ArgumentNullException">token</exception>
+		/// <exception cref="ArgumentNullException">token</exception>
 		public async Task StoreToken(GoogleOAuthAccess token)
 		{
 			if (token is null)

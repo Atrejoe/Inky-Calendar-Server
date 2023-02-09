@@ -22,7 +22,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// A confirmation page for Google OAuth consent
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public partial class Google : AuthenticatedComponentBase
 	{
 		/// <summary>
@@ -67,7 +67,7 @@ namespace InkyCal.Server.Pages
 						PermissionAlreadyGranted = true;
 					else
 					{
-						await new GoogleOAuthRepository().StoreToken(new Models.GoogleOAuthAccess()
+						await new GoogleOAuthRepository().StoreToken(new GoogleOAuthAccess()
 						{
 							RefreshToken = token.RefreshToken,
 							AccessToken = token.AccessToken,

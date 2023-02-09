@@ -11,7 +11,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// An editor UI for creating a <see cref="Models.Panel"/>
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public partial class Panel : AuthenticatedComponentBase
 	{
 		/// <summary>
@@ -104,7 +104,7 @@ namespace InkyCal.Server.Pages
 				return;
 
 			var user = await GetAuthenticatedUser();
-			await PanelRepository.Delete(_Panel.Id);
+			await PanelRepository.Delete(_Panel.Id, user.Id);
 
 			navigationManager.NavigateTo($"/fetchdata");
 		}

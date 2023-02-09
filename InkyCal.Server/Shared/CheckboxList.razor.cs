@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace InkyCal.Server.Shared
@@ -62,7 +63,7 @@ namespace InkyCal.Server.Shared
 		/// </summary>
 		/// <param name="aSelectedId"></param>
 		/// <param name="aChecked"></param>
-		public async void CheckboxClicked(string aSelectedId, object aChecked)
+		public async Task CheckboxClicked(string aSelectedId, object aChecked)
 		{
 			if ((bool)aChecked)
 			{

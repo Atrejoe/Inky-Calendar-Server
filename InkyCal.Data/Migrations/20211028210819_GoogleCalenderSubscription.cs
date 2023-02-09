@@ -7,7 +7,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduces <see cref="Models.CalendarPanel.SubscribedGoogleCalenders"/>
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class GoogleCalenderSubscription : Migration
     {
 		/// <inheritdoc/>

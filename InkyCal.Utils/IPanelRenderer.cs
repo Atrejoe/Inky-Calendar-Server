@@ -122,7 +122,7 @@ namespace InkyCal.Utils
 		/// <param name="ex">The exception to log</param>
 		/// <param name="handled">if set to <c>true</c> if the exception it deemed to be handled (and will not be reported as exception).</param>
 		/// <param name="explanation">Explanation o the exception, or why it was deemed to be handled, optional.</param>
-		public delegate void Log(Exception ex, bool handled = false, string explanation = null);
+		public delegate Task Log(Exception ex, bool handled = false, string explanation = null);
 
 
 		/// <summary>
@@ -201,7 +201,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// Signature for a helper class for rendering a specific type of <see cref="Panel"/>
 	/// </summary>
-	public interface IPanelRenderer<TPanel> : IPanelRenderer where TPanel : Panel
+	public interface IPanelRenderer<in TPanel> : IPanelRenderer where TPanel : Panel
 	{
 		/// <summary>
 		/// Configures the specified panel.

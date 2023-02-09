@@ -10,7 +10,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Corrects length of access tokens (<see cref="GoogleOAuthAccess.AccessToken"/>).
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class OAuthAccessTokenLengthCorrection : Migration
     {
 		/// <inheritdoc/>

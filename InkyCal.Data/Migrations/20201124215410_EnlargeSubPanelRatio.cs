@@ -6,7 +6,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Increases sub-panel ratios (<see cref="Models.SubPanel.Ratio"/>)
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class EnlargeSubPanelRatio : Migration
     {
 		/// <inheritdoc/>

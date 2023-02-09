@@ -72,7 +72,7 @@ namespace InkyCal.Utils.Calendar
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		public bool Equals(Event other)
+		public virtual bool Equals(Event other)
 		{
 			return other != null &&
 				   Date.Date == other.Date.Date &&

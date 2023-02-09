@@ -9,7 +9,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// Display the change log
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public partial class Changelog: ComponentBase
 	{
 		/// <summary>

@@ -10,7 +10,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// A base class for panels that need authentication information
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public class AuthenticatedComponentBase: ComponentBase
 	{
 		/// <summary>
@@ -31,27 +31,7 @@ namespace InkyCal.Server.Pages
 		[Inject]
 		protected UserManager<IdentityUser> userManager { get; set; }
 
-		///// <summary>
-		///// Gets the authenticated user.
-		///// </summary>
-		///// <value>
-		///// The authenticated user.
-		///// </value>
-		//protected Data.User AuthenticatedUser { get; private set; }
-
-		///// <summary>
-		///// Method invoked when the component is ready to start, having received its
-		///// initial parameters from its parent in the render tree.
-		///// Override this method if you will perform an asynchronous operation and
-		///// want the component to refresh when that operation is completed.
-		///// </summary>
-		//protected override async Task OnInitializedAsync()
-		//{
-		//	await GetAuthenticatedUser();
-		//	await base.OnInitializedAsync();
-		//}
-
-		private Models.User _authenticatedUser;
+		private User _authenticatedUser;
 
 		/// <summary>
 		/// Gets the authenticated user.

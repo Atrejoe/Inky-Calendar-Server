@@ -24,11 +24,11 @@ namespace InkyCal.Utils.Weather
 	}
 
 	/// <summary>
-	/// <see cref="WeatherAPIRequestFailureException" /> is thrown when....
+	/// <see cref="WeatherApiRequestFailureException" /> is thrown when....
 	/// </summary>
 	/// <remarks></remarks>
 	[Serializable()]
-	public class WeatherAPIRequestFailureException : Exception
+	public class WeatherApiRequestFailureException : Exception
 	{
 
 		/// <summary>
@@ -40,50 +40,50 @@ namespace InkyCal.Utils.Weather
 		public FailureReason Reason { get; } = FailureReason.Undetermined;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailureException" /> class.
+		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherAPIRequestFailureException() : this("An exception has occurred.")
+		public WeatherApiRequestFailureException() : this("An exception has occurred.")
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailureException" /> class.
+		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherAPIRequestFailureException(string message) : this(message, null)
+		public WeatherApiRequestFailureException(string message) : this(message, null)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailureException" /> class.
+		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
 		/// <param name="reason">The reason of failure</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherAPIRequestFailureException(string message, FailureReason reason) : this(message, null)
+		public WeatherApiRequestFailureException(string message, FailureReason reason) : this(message, null)
 		{
 			Reason = reason;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailureException" /> class.
+		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
 		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherAPIRequestFailureException(string message, Exception innerException) : base(message, innerException)
+		public WeatherApiRequestFailureException(string message, Exception innerException) : base(message, innerException)
 		{
 		}
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherAPIRequestFailureException" /> class.
+		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
 		/// <param name="message">The message that describes the error</param>
 		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
 		/// <param name="reason">The reason of failure</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherAPIRequestFailureException(string message, Exception innerException, FailureReason reason) : this(message, innerException)
+		public WeatherApiRequestFailureException(string message, Exception innerException, FailureReason reason) : this(message, innerException)
 		{
 			Reason = reason;
 		}
@@ -92,7 +92,7 @@ namespace InkyCal.Utils.Weather
 		/// Constructor for deserialization
 		/// </summary>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		protected WeatherAPIRequestFailureException(
+		protected WeatherApiRequestFailureException(
 			  System.Runtime.Serialization.SerializationInfo info,
 			  System.Runtime.Serialization.StreamingContext context)
 				: base(info, context)
@@ -129,7 +129,7 @@ namespace InkyCal.Utils.Weather
 				switch (response.StatusCode)
 				{
 					case System.Net.HttpStatusCode.Unauthorized:
-						throw new WeatherAPIRequestFailureException(response.ReasonPhrase, FailureReason.Unauthenticated);
+						throw new WeatherApiRequestFailureException(response.ReasonPhrase, FailureReason.Unauthenticated);
 					default:
 						response.EnsureSuccessStatusCode();
 						break;
@@ -168,7 +168,7 @@ namespace InkyCal.Utils.Weather
 			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
 			Dispose(true);
 			// TODO: uncomment the following line if the finalizer is overridden above.
-			// GC.SuppressFinalize(this);
+			GC.SuppressFinalize(this);
 		}
 		#endregion
 	}

@@ -13,7 +13,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	/// <seealso cref="PanelCacheKey" />
 	public class ImagePanelCacheKey : PanelCacheKey
 	{
 		/// <summary>
@@ -50,6 +50,12 @@ namespace InkyCal.Utils
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
 		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), ImageUrl, RotateImage);
+
+		/// <summary>
+		/// Refers to <see cref="Equals(PanelCacheKey)"/>.
+		/// </summary>
+		public override bool Equals(object obj) 
+			=> Equals(obj as ImagePanelCacheKey);
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
@@ -132,7 +138,6 @@ namespace InkyCal.Utils
 		{
 			this.imageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
 			this.rotateImage = rotateImage;
-			//cachedImage = new Lazy<byte[]>(GetTestImage);
 
 			cacheKey = new ImagePanelCacheKey(expiration: TimeSpan.FromMinutes(1), imageUrl, rotateImage);
 		}

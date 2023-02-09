@@ -1,6 +1,5 @@
 ﻿using InkyCal.Data;
 using InkyCal.Models;
-//using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace InkyCal.Server.Controllers
 		[Microsoft.AspNetCore.Components.Inject]
 		protected UserManager<IdentityUser> userManager { get; set; }
 
-		private Models.User _authenticatedUser;
+		private User _authenticatedUser;
 
 		/// <summary>
 		/// Gets the authenticated user.

@@ -7,7 +7,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Basic model improvements
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class ModelImprovements : Migration
 	{
 		/// <inheritdoc/>

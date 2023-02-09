@@ -20,7 +20,7 @@ namespace InkyCal.Data
 		/// <param name="panel">The panel.</param>
 		/// <param name="calenders">The calenders.</param>
 		/// <returns></returns>
-		/// <exception cref="System.ArgumentNullException">panel</exception>
+		/// <exception cref="ArgumentNullException">panel</exception>
 		public static async Task<int> SaveSubscribedCalenders(this CalendarPanel panel, HashSet<(int IdAccessToken, string Calender)> calenders)
 		{
 			if (panel is null)

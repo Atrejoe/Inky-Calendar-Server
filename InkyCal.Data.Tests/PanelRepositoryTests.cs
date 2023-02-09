@@ -16,7 +16,7 @@ namespace InkyCal.Data.Tests
 		}
 
 		[SkippableFact()]
-		public async void ToggleStarTest()
+		public async Task ToggleStarTest()
 		{
 			//Arrange
 			Panel panel;
@@ -47,7 +47,7 @@ namespace InkyCal.Data.Tests
 		}
 
 		[SkippableFact()]
-		public async void PanelAccessTest()
+		public async Task PanelAccessTest()
 		{
 			//Arrange
 			Panel panel;
@@ -87,11 +87,14 @@ namespace InkyCal.Data.Tests
 			//Arrange
 			var panel = await PanelRepository.GetRandom<CalendarPanel>().SkipConnectionException();
 			Skip.If(panel is null);
+			var previousDateModified = panel.Modified;
 
 			//Act
-			await PanelRepository.Update(panel);
+			var actual = await PanelRepository.Update(panel);
 
 			//Assert
+			Assert.NotNull(actual);
+			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
 		[SkippableFact()]
@@ -114,11 +117,14 @@ namespace InkyCal.Data.Tests
 			//Arrange
 			var panel = await PanelRepository.GetRandom<PanelOfPanels>().SkipConnectionException();
 			Skip.If(panel is null);
+			var previousDateModified = panel.Modified;
 
 			//Act
-			await PanelRepository.Update(panel);
+			var actual = await PanelRepository.Update(panel);
 
 			//Assert
+			Assert.NotNull(actual);
+			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
 		[SkippableFact()]
@@ -127,15 +133,18 @@ namespace InkyCal.Data.Tests
 			//Arrange
 			var panel = await PanelRepository.GetRandom<ImagePanel>().SkipConnectionException();
 			Skip.If(panel is null);
+			var previousDateModified = panel.Modified;
 
 			//Act
-			await PanelRepository.Update(panel);
+			var actual = await PanelRepository.Update(panel);
 
 			//Assert
+			Assert.NotNull(actual);
+			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
 		[SkippableFact()]
-		public async void ListTest()
+		public async Task ListTest()
 		{
 			//Arrange
 			var user = (await UserRepository.GetAll().SkipConnectionException()).Last(x => x.Panels.Any());
@@ -149,7 +158,7 @@ namespace InkyCal.Data.Tests
 		}
 
 		[SkippableFact()]
-		public async void DeleteTest()
+		public async Task DeleteTest()
 		{
 			//Arrange
 			var panel = (await PanelRepository.All().SkipConnectionException()).LastOrDefault(x => x is PanelOfPanels);
@@ -157,20 +166,20 @@ namespace InkyCal.Data.Tests
 
 			//Act
 
-			await PanelRepository.Delete(panel.Id);
+			await PanelRepository.Delete(panel.Id, panel.Owner.Id);
 
 			//Assert
 			Assert.NotNull(panel);
 		}
 
 		[SkippableFact()]
-		public async void DeleteInvalidTest()
+		public async Task DeleteInvalidTest()
 		{
 			await Assert.ThrowsAsync<DalException>(async () =>
 			{
 				//Arrange
 				//Act
-				await PanelRepository.Delete(Guid.Empty).SkipConnectionException();
+				await PanelRepository.Delete(Guid.Empty, int.MaxValue).SkipConnectionException();
 
 				//Assert
 			});

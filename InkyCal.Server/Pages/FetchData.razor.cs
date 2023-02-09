@@ -11,7 +11,7 @@ namespace InkyCal.Server.Pages
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Components.ComponentBase" />
+	/// <seealso cref="ComponentBase" />
 	public partial class FetchData : AuthenticatedComponentBase
 	{
 		private List<Models.Panel> _panels;
@@ -71,13 +71,6 @@ namespace InkyCal.Server.Pages
 
 			SetAsLoading();
 		}
-		private async Task Delete(Guid id)
-		{
-			var user = await GetAuthenticatedUser();
-			await PanelRepository.Delete(id);
-			_panels.RemoveAll(x => x.Id == id);
-		}
-
 
 		private Guid CacheBreaker = Guid.NewGuid();
 

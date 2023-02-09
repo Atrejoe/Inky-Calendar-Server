@@ -17,6 +17,6 @@ namespace InkyCal.Models
 		/// The date.
 		/// </value>
 		[NotMapped]
-		public virtual DateTime Date { get { return DateTime.Now; } set { } }
+		public virtual DateTime Date => DateTime.Now;
 	}
 }

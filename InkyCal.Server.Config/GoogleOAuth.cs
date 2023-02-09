@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace InkyCal.Server.Config
 {
@@ -15,8 +16,26 @@ namespace InkyCal.Server.Config
 
 		public static string ProjectId { get; set; }
 
-		public static Uri InkyCalRoot { get; set; } = new Uri("/", UriKind.Relative);
+		[Url]
+		public static Uri InkyCalRoot { get; set; }
 
-		public static Uri Website { get; set; } = new Uri("https://inkycal.robertsirre.nl", UriKind.Absolute);
+		[Url(UriKind= UriKind.Absolute)]
+		public static Uri Website { get; set; }
+	}
+
+	public class UrlAttribute : ValidationAttribute
+	{
+		public UriKind UriKind { get; set; } = UriKind.RelativeOrAbsolute;
+
+		public override bool IsValid(object value)
+		{
+			if(value is null)
+				return true;
+
+			return value is string strValue 
+				&& Uri.TryCreate(strValue, UriKind, out var _);
+		}
+
+		public override bool RequiresValidationContext => false;
 	}
 }

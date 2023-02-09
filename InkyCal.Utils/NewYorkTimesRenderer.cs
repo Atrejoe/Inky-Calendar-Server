@@ -6,26 +6,28 @@ using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="TPanel">The type of the panel.</typeparam>
-	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
-	public class PanelCacheKey<TPanel> : PanelCacheKey where TPanel : IPanelRenderer
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PanelCacheKey{TPanel}"/> class.
-		/// </summary>
-		/// <param name="expiration">The expiration.</param>
-		public PanelCacheKey(TimeSpan expiration) : base(expiration)
-		{
-		}
-	}
 
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="InkyCal.Utils.PdfRenderer{NewYorkTimesPanel}" />
+	[Serializable]
+	public class NewYorkTimeRenderException : Exception
+	{
+		/// <inheritdoc/>
+		public NewYorkTimeRenderException() { }
+		/// <inheritdoc/>
+		public NewYorkTimeRenderException(string message) : base(message) { }
+		/// <inheritdoc/>
+		public NewYorkTimeRenderException(string message, Exception inner) : base(message, inner) { }
+		/// <inheritdoc/>
+		protected NewYorkTimeRenderException(
+		  System.Runtime.Serialization.SerializationInfo info,
+		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+	}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="PdfRenderer{NewYorkTimesPanel}" />
 	public class NewYorkTimesRenderer : PdfRenderer<NewYorkTimesPanel>
 	{
 		/// <summary>
@@ -42,12 +44,13 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The cache key.
 		/// </value>
-		public override PanelCacheKey CacheKey => new PanelCacheKey<NewYorkTimesRenderer>(TimeSpan.FromMinutes(60));
+		public override PanelCacheKey CacheKey => new PanelCacheKey(TimeSpan.FromMinutes(60));
 
 		/// <summary>
 		/// Gets the Pdf file from <c>https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf</c>
 		/// </summary>
 		/// <returns></returns>
+		/// <exception cref="NewYorkTimeRenderException"/>
 		protected override async Task<byte[]> GetPdf()
 		{
 			var d = Date;
@@ -81,7 +84,7 @@ namespace InkyCal.Utils
 			}
 
 			if (!(pdf?.Any()).GetValueOrDefault())
-				throw new Exception("Failed to download NYT homepage");
+				throw new NewYorkTimeRenderException("Failed to download NYT homepage");
 
 			return pdf;
 		}

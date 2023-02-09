@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,7 +16,7 @@ namespace InkyCal.Data.Tests
 
 
 		[SkippableFact()]
-		public async void GetUserTest()
+		public async Task GetUserTest()
 		{
 			//arrange
 			//act
@@ -26,7 +27,7 @@ namespace InkyCal.Data.Tests
 		}
 
 		[SkippableFact()]
-		public async void GetAllTest()
+		public async Task GetAllTest()
 		{
 			//arrange
 			//act
@@ -34,6 +35,7 @@ namespace InkyCal.Data.Tests
 
 
 			//assert
+			Assert.NotNull(actual);
 			output.WriteLine(string.Join(Environment.NewLine, actual.Select(x => x.Id)));
 
 		}

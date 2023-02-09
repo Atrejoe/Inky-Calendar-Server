@@ -131,28 +131,6 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
-		/// Returns a weather forecast panel for a single calendar
-		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="token"></param>
-		/// <param name="city"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <returns>A badge containing the calculated SHA1 hash.</returns>
-		/// <remarks>
-		/// The hash may be cached.
-		/// </remarks>
-		/// <response code="200">Returns the panel as a PNG image</response>
-		[HttpGet("weather/{model}/forecast/{token}/{city}")]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> GetWeather(DisplayModel model, string token, string city, int? width = null, int? height = null)
-		{
-			return await this.Image(new WeatherPanelRenderer(token, city), model, width, height);
-		}
-
-		/// <summary>
 		/// Returns a calendar panel for multiple calendars
 		/// </summary>
 		/// <param name="model"></param>
@@ -175,6 +153,28 @@ namespace InkyCal.Server.Controllers
 				return BadRequest("Calender urls must be absolute urls");
 
 			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendars), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a weather forecast panel for a single calendar
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="token"></param>
+		/// <param name="city"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A badge containing the calculated SHA1 hash.</returns>
+		/// <remarks>
+		/// The hash may be cached.
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("weather/{model}/forecast/{token}/{city}")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> GetWeather(DisplayModel model, string token, string city, int? width = null, int? height = null)
+		{
+			return await this.Image(new WeatherPanelRenderer(token, city), model, width, height);
 		}
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace InkyCal.Server.Controllers
 				?? (DisplayModel?)(int?)panel.Model
 				?? DisplayModel.epd_7_in_5_v2_colour;
 
-			var helper = new PanelRenderHelper((new InkyCal.Data.GoogleOAuthRepository()).UpdateAccessToken);
+			var helper = new PanelRenderHelper((new Data.GoogleOAuthRepository()).UpdateAccessToken);
 			var renderer = helper.GetRenderer(panel);
 
 			PerformanceMonitor.Trace($"Rendering panel {id}");

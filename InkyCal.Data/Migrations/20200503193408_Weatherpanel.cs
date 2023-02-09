@@ -6,7 +6,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduces weather panels (<see cref="Weatherpanel"/>).
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class Weatherpanel : Migration
 	{
 		/// <inheritdoc/>

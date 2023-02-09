@@ -4,7 +4,7 @@ namespace InkyCal.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="Models.CurrentDatePanel" />
+	/// <seealso cref="CurrentDatePanel" />
 	public class NewYorkTimesPanel : CurrentDatePanel
 	{
 		public NewYorkTimesPanel() { }

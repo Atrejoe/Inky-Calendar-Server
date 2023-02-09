@@ -11,6 +11,25 @@ using SixLabors.ImageSharp.Processing;
 
 namespace InkyCal.Utils
 {
+
+	/// <summary>
+	/// A failure when a panel renderer could not be obtained.
+	/// </summary>
+	[Serializable]
+	public class GetRendererException : Exception
+	{
+		/// <inheritdoc/>
+		public GetRendererException() { }
+		/// <inheritdoc/>
+		public GetRendererException(string message) : base(message) { }
+		/// <inheritdoc/>
+		public GetRendererException(string message, Exception inner) : base(message, inner) { }
+		/// <inheritdoc/>
+		protected GetRendererException(
+		  System.Runtime.Serialization.SerializationInfo info,
+		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+	}
+
 	/// <summary>
 	/// A helper class for mapping a <see cref="Panel"/> to a <see cref="IPanelRenderer"/>.
 	/// </summary>
@@ -20,7 +39,8 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// 
 		/// </summary>
-		public PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken) {
+		public PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken)
+		{
 			this.saveToken = saveToken;
 		}
 
@@ -29,6 +49,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <returns></returns>
+		/// <exception cref="GetRendererException"/>
 		public IPanelRenderer GetRenderer(Panel panel)
 		{
 			if (panel is null)
@@ -89,11 +110,10 @@ namespace InkyCal.Utils
 							}
 							else
 								renderer = (IPanelRenderer)c.Invoke(new[] { panel });
-							//throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 						}
 						catch (Exception ex)
 						{
-							throw new Exception($"Could not determine panel renderer for {panel.GetType().Name}, see inner exception for details: {ex.Message}", ex);
+							throw new GetRendererException($"Could not determine panel renderer for {panel.GetType().Name}, see inner exception for details: {ex.Message}", ex);
 						}
 					}
 					break;
@@ -119,7 +139,8 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class PanelRenderingHelper { 
+	public static class PanelRenderingHelper
+	{
 
 		/// <summary>
 		/// Returns meaningful colors for drawing purposes
@@ -168,13 +189,15 @@ namespace InkyCal.Utils
 			Font font)
 		{
 			var rendererOptions = new TextGraphicsOptions(
-				new GraphicsOptions() { Antialias = false }, 
-				new TextOptions() { 
-					HorizontalAlignment = HorizontalAlignment.Left, 
-					VerticalAlignment= VerticalAlignment.Top, 
+				new GraphicsOptions() { Antialias = false },
+				new TextOptions()
+				{
+					HorizontalAlignment = HorizontalAlignment.Left,
+					VerticalAlignment = VerticalAlignment.Top,
 					WrapTextWidth = width,
-					DpiX =96, 
-					DpiY = 96 }
+					DpiX = 96,
+					DpiY = 96
+				}
 				).ToRendererOptions(font);
 
 			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, rendererOptions);
@@ -195,12 +218,12 @@ namespace InkyCal.Utils
 
 			var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, renderOptions);
 
-			canvas.Fill(errorColor, 
+			canvas.Fill(errorColor,
 				new Rectangle(
-					(int)errorMessageHeight.X, 
-					(int)errorMessageHeight.Y, 
-					(int)errorMessageHeight.Width, 
-					(int)errorMessageHeight.Height+4)//Pad 2 px on all sides
+					(int)errorMessageHeight.X,
+					(int)errorMessageHeight.Y,
+					(int)errorMessageHeight.Width,
+					(int)errorMessageHeight.Height + 4)//Pad 2 px on all sides
 				);
 
 			var pError = new PointF(2, 2);//Adhere to padding

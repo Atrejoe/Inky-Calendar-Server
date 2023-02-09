@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace InkyCal.Data
 		/// <typeparam name="TPanel">The type of the panel.</typeparam>
 		/// <param name="panel">The panel.</param>
 		/// <returns></returns>
-		/// <exception cref="System.ArgumentNullException">panel</exception>
+		/// <exception cref="ArgumentNullException">panel</exception>
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
 			if (panel is null)
@@ -52,33 +52,25 @@ namespace InkyCal.Data
 
 			using (var c = new ApplicationDbContext())
 			{
-				//Prevent tracking of referenced existing items
+				//Should not modify, nor create a user
+				c.Entry(panel.Owner).State = EntityState.Unchanged;
 
+				//Should not modify, nor create a referenced panels
+				if (panel is PanelOfPanels pop)
 				{
-					//Should not modify, nor create a user
-					c.Entry(panel.Owner).State = EntityState.Unchanged;
-
-					//Should not modify, nor create a referenced panels
-					if (panel is PanelOfPanels pp)
+					var ids = new HashSet<Guid>();
+					foreach (var referencedPanel in pop.Panels.Select(x => x.Panel))
 					{
-						var ids = new HashSet<Guid>();
-						//foreach (var referencedPanel in pp.Panels)
-						//{
-						//	c.Entry(referencedPanel).State = EntityState.Unchanged;
-						//}
-						foreach (var referencedPanel in pp.Panels.Select(x => x.Panel))
+						if (!ids.Contains(referencedPanel.Id))
 						{
-							if (!ids.Contains(referencedPanel.Id))
-							{
-								c.Entry(referencedPanel).State = EntityState.Unchanged;
-								ids.Add(referencedPanel.Id);
-							}
+							c.Entry(referencedPanel).State = EntityState.Unchanged;
+							ids.Add(referencedPanel.Id);
 						}
 					}
 				}
 
 				//When updating
-				if (panel.Id != default)
+				if (panel.Id != Guid.Empty)
 				{
 					if (panel is PanelOfPanels pp)
 					{
@@ -98,7 +90,7 @@ namespace InkyCal.Data
 						//Remove existing links which are not present in posted data
 						c.RemoveRange(
 							existingLinks.Where(
-								x => !pp.Panels.ToList().Any(y => comparison(x, y))));
+								x => !pp.Panels.Any(y => comparison(x, y))));
 
 						//Update existing links
 						foreach (var linkedPanel in existingLinks.Where(x => pp.Panels.Any(y => comparison(x, y))))
@@ -124,7 +116,7 @@ namespace InkyCal.Data
 							.AsNoTracking()
 							.Where(x => x.IdPanel == panel.Id).ToListAsync();
 
-						var entities = existingLinks.Where(x => !cp.CalenderUrls.ToList().Any(y => y.Url == x.Url));
+						var entities = existingLinks.Where(x => !cp.CalenderUrls.Any(y => y.Url == x.Url));
 
 						c.RemoveRange(entities);
 					}
@@ -157,15 +149,12 @@ namespace InkyCal.Data
 							.Where(x => x.Owner.Id.Equals(user.Id))
 							.AsNoTracking();
 
-			//queryable.OfType<PanelOfPanels>().Include(x => x.Panels).AsNoTracking();
-			//queryable.OfType<CalendarPanel>().Include(x => x.CalenderUrls);
-
 			return await queryable.ToArrayAsync();
 		}
 
 
 		/// <summary>
-		/// Gets the specified <see cref="Models.Panel"/> by <see cref="Panel.Id"/> and <see cref="Panel.Owner"/>.
+		/// Gets the specified <see cref="Panel"/> by <see cref="Panel.Id"/> and <see cref="Panel.Owner"/>.
 		/// </summary>
 		/// <typeparam name="TPanel">The type of the panel.</typeparam>
 		/// <param name="id">The identifier.</param>
@@ -186,93 +175,6 @@ namespace InkyCal.Data
 
 			return result;
 		}
-
-		private static async Task AddMissingUntrackedEntities<TPanel>(this TPanel result) where TPanel : Panel
-		{
-			if (result != null
-				 && result is CalendarPanel cp
-				 && cp.SubscribedGoogleCalenders.Any(x => x.AccessToken is null))
-			{
-
-				var tokens = await new GoogleOAuthRepository().GetTokens(result.Owner.Id);
-
-				foreach (var gcal in cp.SubscribedGoogleCalenders)
-					gcal.AccessToken ??= tokens.SingleOrDefault(x => x.Id == gcal.IdAccessToken);
-			}
-		}
-
-		/// <summary>
-		/// Gets a random <see cref="Models.Panel"/>.
-		/// </summary>
-		/// <typeparam name="TPanel">The type of the panel.</typeparam>
-		/// <returns></returns>
-		internal static async Task<TPanel> GetRandom<TPanel>() where TPanel : Panel
-		{
-			using var c = new ApplicationDbContext();
-
-			var result = await c.Set<TPanel>()
-								.EagerLoad()
-								.AsNoTracking()
-								.OrderBy(x => Guid.NewGuid())
-								.FirstOrDefaultAsync();
-
-			await result.AddMissingUntrackedEntities();
-
-			return result;
-		}
-
-		/// <summary>
-		/// Gets a random <see cref="CalendarPanel"/>.
-		/// </summary>
-		/// <returns></returns>
-		internal static async Task<CalendarPanel> GetRandomGoogleCalendarPanel()
-		{
-			using var c = new ApplicationDbContext();
-
-			var result = await c.Set<CalendarPanel>()
-								.EagerLoad()
-								.AsNoTracking()
-								.Where(x => x.SubscribedGoogleCalenders.Any())
-								.OrderByDescending(x => x.SubscribedGoogleCalenders.Count())
-								.FirstOrDefaultAsync();
-
-			await result.AddMissingUntrackedEntities();
-
-			return result;
-		}
-
-
-		/// <summary>
-		/// Deletes the specified <see cref="Panel"/> by <see cref="Panel.Id"/> (<paramref name="id"/>).
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <exception cref="InkyCal.Data.DalException">Not deleted</exception>
-		public static async Task Delete(Guid id)
-		{
-			using var c = new ApplicationDbContext();
-
-			//var panel = await Get<Panel>(id, user);
-			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id));
-			if ((await c.SaveChangesAsync()) != 1)
-				throw new DalException("Not deleted");
-		}
-
-		/// <summary>
-		/// Returns ALL panels (regardless of <see cref="Panel.Owner"/>).
-		/// </summary>
-		/// <returns></returns>
-		public static async Task<Panel[]> All()
-		{
-			using var c = new ApplicationDbContext();
-
-			var result = await c.Set<Panel>()
-								.EagerLoad()
-								.AsNoTracking()
-								.ToArrayAsync();
-
-			return result;
-		}
-
 
 		/// <summary>
 		/// Gets the specified identifier.
@@ -303,11 +205,93 @@ namespace InkyCal.Data
 				await c.SaveChangesAsync();
 			}
 
-			
+			return result;
+		}
+
+		private static async Task AddMissingUntrackedEntities<TPanel>(this TPanel result) where TPanel : Panel
+		{
+			if (result is CalendarPanel cp
+				 && cp.SubscribedGoogleCalenders.Any(x => x.AccessToken is null))
+			{
+
+				var tokens = await new GoogleOAuthRepository().GetTokens(result.Owner.Id);
+
+				foreach (var gcal in cp.SubscribedGoogleCalenders)
+					gcal.AccessToken ??= tokens.SingleOrDefault(x => x.Id == gcal.IdAccessToken);
+			}
+		}
+
+		/// <summary>
+		/// Gets a random <see cref="Panel"/>.
+		/// </summary>
+		/// <typeparam name="TPanel">The type of the panel.</typeparam>
+		/// <returns></returns>
+		internal static async Task<TPanel> GetRandom<TPanel>() where TPanel : Panel
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<TPanel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.OrderBy(x => Guid.NewGuid())
+								.FirstOrDefaultAsync();
+
+			await result.AddMissingUntrackedEntities();
 
 			return result;
 		}
 
+		/// <summary>
+		/// Gets a random <see cref="CalendarPanel"/>.
+		/// </summary>
+		/// <returns></returns>
+		internal static async Task<CalendarPanel> GetRandomGoogleCalendarPanel()
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<CalendarPanel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.Where(x => x.SubscribedGoogleCalenders.Any())
+								.OrderByDescending(x => x.SubscribedGoogleCalenders.Count)
+								.FirstOrDefaultAsync();
+
+			await result.AddMissingUntrackedEntities();
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Deletes the specified <see cref="Panel"/> by <see cref="Panel.Id"/> (<paramref name="id"/>).
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="idOwner">The identifier of the autheticated user</param>
+		/// <exception cref="DalException">Not deleted</exception>
+		public static async Task Delete(Guid id, int idOwner)
+		{
+			using var c = new ApplicationDbContext();
+
+			c.Set<Panel>().RemoveRange(c.Set<Panel>().Where(x => x.Id == id && x.Owner.Id == idOwner));
+			if ((await c.SaveChangesAsync()) != 1)
+				throw new DalException("Not deleted");
+		}
+
+		/// <summary>
+		/// Returns ALL panels (regardless of <see cref="Panel.Owner"/>).
+		/// </summary>
+		/// <returns></returns>
+		public static async Task<Panel[]> All()
+		{
+			using var c = new ApplicationDbContext();
+
+			var result = await c.Set<Panel>()
+								.EagerLoad()
+								.AsNoTracking()
+								.ToArrayAsync();
+
+			return result;
+		}
 
 		internal static IQueryable<TPanel> EagerLoad<TPanel>(this DbSet<TPanel> set) where TPanel : class
 		{
@@ -318,11 +302,6 @@ namespace InkyCal.Data
 			{
 				x = x.Include(x => (x as CalendarPanel).CalenderUrls)
 						.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders).AsNoTracking();
-
-				// Eager loading of access tokens causes issues...working around
-				//x = x.Include(x => (x as CalendarPanel).CalenderUrls)
-				//		.Include(x => (x as CalendarPanel).SubscribedGoogleCalenders)
-				//		.ThenInclude(x=>x.AccessToken).AsNoTracking();
 			}
 
 			if (typeof(TPanel).IsAssignableFrom(typeof(PanelOfPanels)))

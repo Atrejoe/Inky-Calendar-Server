@@ -10,12 +10,12 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// The demo image URL
 		/// </summary>
-		public const string demoImageUrl = "http://eskipaper.com/images/beautiful-grayscale-wallpaper-1.jpg";
+		public const string DemoImageUrl = "http://eskipaper.com/images/beautiful-grayscale-wallpaper-1.jpg";
 
         /// <summary>
-        /// Creates the demo panel, uses <see cref="demoImageUrl"/>
+        /// Creates the demo panel, uses <see cref="DemoImageUrl"/>
         /// </summary>
-        public TestImagePanelRenderer() : base(new Uri(demoImageUrl))
+        public TestImagePanelRenderer() : base(new Uri(DemoImageUrl))
         {
         }
     }

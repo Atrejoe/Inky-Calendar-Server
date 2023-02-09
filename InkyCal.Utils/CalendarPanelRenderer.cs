@@ -21,7 +21,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	/// <seealso cref="PanelCacheKey" />
 	public class CalendarPanelCacheKey : PanelCacheKey
 	{
 		/// <summary>
@@ -237,7 +237,7 @@ namespace InkyCal.Utils
 									? @$"{x.Key:ddd dd MMM} "
 									: @$"{x.Key:ddd dd MMM `yy} ";
 
-							var indentSize = day.Length;
+							//var indentSize = day.Length;
 
 							int indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
 									   + 10; //Space of 10 pixels
@@ -381,16 +381,16 @@ namespace InkyCal.Utils
 			//Get iCal-based events
 			if ((ICalUrls?.Any()).GetValueOrDefault())
 				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} iCal based calendars"))
-					result.AddRange(await iCalExtensions.GetEvents(sbErrors, ICalUrls));
+					result.AddRange(await ICalExtensions.GetEvents(sbErrors, ICalUrls));
 
 			//Get Google Calender-based events
-			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
-				if ((Calendars?.Any()).GetValueOrDefault())
-					using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
-					{
-						var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken)).ToList();
-						result.AddRange(events);
-					}
+			if (InkyCal.Server.Config.GoogleOAuth.Enabled
+				&& (Calendars?.Any()).GetValueOrDefault())
+				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
+				{
+					var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken)).ToList();
+					result.AddRange(events);
+				}
 
 			if (!(ICalUrls?.Any()).GetValueOrDefault()
 				&& (!InkyCal.Server.Config.GoogleOAuth.Enabled
@@ -434,15 +434,19 @@ namespace InkyCal.Utils
 
 			var remainingSize = characterPerLine - (period.Length + indentSize + 1);
 
-			var summary = characterPerLine.GetValueOrDefault() > 0
-							? remainingSize > 3
-								? item.Summary.Limit(remainingSize.Value, " ...")
-								: string.Empty
-							: item.Summary;
+			string summary;
 
-			return $"{period} {summary}";
+			if (characterPerLine.GetValueOrDefault() <= 0)
+				summary = string.Empty;
+			else if (remainingSize > 3)
+				summary = item.Summary.Limit(remainingSize.Value, " ...");
+			else
+				summary = string.Empty;
+
+			return $"{period}{summary}".Trim();
 		}
 
+		[SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Reads just fine")]
 		private static string DescribePeriod(Event item)
 		{
 			if (item is null)

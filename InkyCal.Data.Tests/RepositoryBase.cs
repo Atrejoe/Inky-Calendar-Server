@@ -10,10 +10,10 @@ namespace InkyCal.Data.Tests
 	{
 
 		protected readonly ITestOutputHelper output;
-		private TransactionScope _t;
+		private readonly TransactionScope _t;
 		private bool disposedValue;
 
-		public RepositoryBase(ITestOutputHelper output)
+		protected RepositoryBase(ITestOutputHelper output)
 		{
 			var options = MiniProfiler.DefaultOptions;
 			options.AddEntityFramework();
@@ -41,15 +41,6 @@ namespace InkyCal.Data.Tests
 
 				disposedValue = true;
 			}
-		}
-
-		// TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-		~RepositoryBase()
-		{
-			//output.WriteLine(_profiler.RenderPlainText());
-
-			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-			Dispose(disposing: false);
 		}
 
 		public void Dispose()

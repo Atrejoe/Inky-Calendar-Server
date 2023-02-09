@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json.Serialization;
 using Bugsnag.AspNet.Core;
 using InkyCal.Data;
@@ -17,7 +16,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Sentry;
 using StackExchange.Profiling.Storage;
 
 namespace InkyCal.Server
@@ -37,7 +35,7 @@ namespace InkyCal.Server
 		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"" target=""github"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
 
 		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices(IServiceCollection services)
+		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
 
@@ -139,9 +137,9 @@ namespace InkyCal.Server
 
 			try
 			{
-				throw new ApplicationException("Application has started");
+				throw new NotificationException("Application has started");
 			}
-			catch (ApplicationException ex)
+			catch (NotificationException ex)
 			{
 				ex.Log(severity: Bugsnag.Severity.Info);
 			}

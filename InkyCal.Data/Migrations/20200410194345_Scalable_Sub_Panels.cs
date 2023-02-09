@@ -7,7 +7,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduces scalabale sub panels
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Naming not bad enough to tackle")]
 	public partial class Scalable_Sub_Panels : Migration
 	{

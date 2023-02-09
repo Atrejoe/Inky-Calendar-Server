@@ -8,14 +8,14 @@ namespace InkyCal.Utils
 	/// First step for 
 	/// </summary>
 	/// <typeparam name="TPanel">The type of the panel.</typeparam>
-	/// <seealso cref="InkyCal.Utils.IPanelRenderer" />
+	/// <seealso cref="IPanelRenderer" />
 	public abstract class PanelRenderer<TPanel> : IPanelRenderer<TPanel> where TPanel : Panel
 	{
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PanelRenderer{TPanel}"/> class.
 		/// </summary>
-		public PanelRenderer()
+		protected PanelRenderer()
 		{
 		}
 
@@ -23,7 +23,7 @@ namespace InkyCal.Utils
 		/// Initializes a new instance of the <see cref="PanelRenderer{TPanel}"/> class.
 		/// </summary>
 		/// <param name="panel">The panel to pass to <see cref="Configure(TPanel)"/>.</param>
-		public PanelRenderer(TPanel panel)
+		protected PanelRenderer(TPanel panel)
 		{
 			Configure(panel);
 		}

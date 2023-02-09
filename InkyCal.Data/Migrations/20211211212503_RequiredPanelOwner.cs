@@ -8,7 +8,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Requires panel owner
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class RequiredPanelOwner : Migration
 	{
 		/// <inheritdoc/>

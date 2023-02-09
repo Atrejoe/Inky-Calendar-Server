@@ -10,7 +10,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduces measuring of <see cref="Panel"/> usage.
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class PanelUsageMeasuring : Migration
 	{
 		/// <inheritdoc/>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//using Microsoft.AspNetCore.Identity;
 
 namespace InkyCal.Models
 {
@@ -31,11 +30,10 @@ namespace InkyCal.Models
 		[Required, MaxLength(200), MinLength(1)]
 		public string RefreshToken { get; set; }
 
-		//public IdentityUser IdentityUser { get; set; }
 	}
 
 	[Table("CalendarPanel_GoogleCalender", Schema = "InkyCal")]
-	public class SubscribedGoogleCalender : IEquatable<SubscribedGoogleCalender>
+	public sealed class SubscribedGoogleCalender : IEquatable<SubscribedGoogleCalender>
 	{
 		[Required, MaxLength(255), MinLength(1)]
 		public string Calender { get; set; }
@@ -47,14 +45,14 @@ namespace InkyCal.Models
 		public GoogleOAuthAccess AccessToken { get; set; }
 
 		public override bool Equals(object obj) 
-			=> base.Equals(obj as SubscribedGoogleCalender);
+			=> Equals(obj as SubscribedGoogleCalender);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		bool IEquatable<SubscribedGoogleCalender>.Equals(SubscribedGoogleCalender other) 
+		public bool Equals(SubscribedGoogleCalender other) 
 			=> other != null
 				&& IdAccessToken.Equals(other.IdAccessToken)
 				&& Calender.Equals(other.Calender);

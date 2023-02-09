@@ -6,7 +6,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Maintenance: renames index
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class RenameToCalendarPanelUrl : Migration
     {
 		/// <inheritdoc/>

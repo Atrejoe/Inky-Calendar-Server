@@ -28,7 +28,6 @@ namespace InkyCal.Utils.Tests
 		public async Task GetImageTest(DisplayModel displayModel)
 		{
 			//arrange
-			//const DisplayModel displayModel = DisplayModel.epd_7_in_5_v3_colour;
 			var panel = GetRenderer();
 			var filename = $"GetImageTest_{typeof(T).Name}_{displayModel}.png";
 			displayModel.GetSpecs(out var width, out var height, out var colors);
@@ -51,8 +50,8 @@ namespace InkyCal.Utils.Tests
 
 			//act
 			var image = await panel.GetImage(
-								width: height,
-								height: width,
+								width: width,
+								height: height,
 								colors: colors,
 								assertHandledOnly);
 

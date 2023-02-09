@@ -9,7 +9,7 @@ using Xunit;
 namespace InkyCal.Utils.Tests.Calender
 {
 	/// <summary>
-	/// Tests <see cref="iCalExtensions"/>
+	/// Tests <see cref="ICalExtensions"/>
 	/// </summary>
 	public class CalenderExtensionsTest
 	{
@@ -135,11 +135,11 @@ END:VCALENDAR
 			var calendars = new CalendarCollection();
 
 			//act
-			var actual = iCalExtensions
+			var actual = ICalExtensions
 							.LoadCalendar(demoCalender);
 			calendars.Add(actual);
 
-			actual = iCalExtensions
+			actual = ICalExtensions
 							.LoadCalendar(demoCalender);
 
 			calendars.Add(actual);

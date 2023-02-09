@@ -46,13 +46,14 @@ namespace InkyCal.Utils
 						});
 		}
 
-		private static readonly Client _bugsnag;
+		private static  Client __bugsnag;
+		
+		private static Client BugsnagClient { get {
+				if (string.IsNullOrWhiteSpace(Server.Config.Config.BugSnagAPIKey))
+					return null;
 
-		[SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Conditional initializatiop")]
-		static PerformanceMonitor()
-		{
-			if (!string.IsNullOrWhiteSpace(Server.Config.Config.BugSnagAPIKey))
-				_bugsnag = new Client(new Configuration(Server.Config.Config.BugSnagAPIKey));
+				return __bugsnag ??= new Client(new Configuration(Server.Config.Config.BugSnagAPIKey));
+			}
 		}
 
 
@@ -80,18 +81,18 @@ namespace InkyCal.Utils
 			using (fgColor.TempForegroundColor())
 				Console.Write(severityAsString);
 
-			if (_bugsnag is null && !SentrySdk.IsEnabled)
+			if (BugsnagClient is null && !SentrySdk.IsEnabled)
 			{
 				Console.Error.WriteLine($"Bugsnag nor Sentry have been configured.");
 				Console.Error.WriteLine(ex.ToString());
 			}
 
-			if (_bugsnag != null)
+			if (BugsnagClient != null)
 			{
 				Console.Error.WriteLine($": Logging {severityAsString} to Bugsnag : {ex.Message}");
 
 				using (MiniProfiler.Current.Step("Reporting error to BugSnag"))
-					_bugsnag.Notify(ex, severity, (report) => FillReport(report, user));
+					BugsnagClient.Notify(ex, severity, (report) => FillReport(report, user));
 
 			}
 
@@ -111,11 +112,8 @@ namespace InkyCal.Utils
 				Console.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
 
 			//Write as BugSnag breadcurmbs
-			if (_bugsnag != null)
-			{
-				_bugsnag.Breadcrumbs
+			BugsnagClient?.Breadcrumbs
 					.Leave(message, BreadcrumbType.Process, metaData);
-			}
 
 			//Write as Sentry message (without metaData)
 			if (SentrySdk.IsEnabled)
@@ -129,7 +127,7 @@ namespace InkyCal.Utils
 		/// <param name="user"></param>
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-		public static void FillReport(Report report, InkyCal.Models.User user = null)
+		public static void FillReport(Report report, Models.User user = null)
 		{
 			if (report is null)
 				return;
@@ -169,8 +167,8 @@ namespace InkyCal.Utils
 					{
 						report.Event.Metadata.AddToPayload(p.Name, $"Failure to obtain value: {pv.Message}");
 					}
-					finally
-					{
+					catch (System.Exception) { 
+						//ignore
 					}
 				}
 			}

@@ -80,7 +80,6 @@ namespace InkyCal.Utils.Tests
 		public void TestDiaCritics(DisplayModel displayModel, EventWrapper calenderEvent)
 		{
 			//arrange
-			//const DisplayModel displayModel = DisplayModel.epd_7_in_5_v3_colour;
 			var filename = $"GetImageTest_{typeof(CalendarPanelRenderer).Name}_{displayModel}_Diacritics_{Guid.NewGuid()}.png";
 			displayModel.GetSpecs(out var width, out var height, out var colors);
 
@@ -102,8 +101,8 @@ namespace InkyCal.Utils.Tests
 
 			//act
 			var image = CalendarPanelRenderer.DrawImage(
-								width: height,
-								height: width,
+								width: width,
+								height: height,
 								colors: colors,
 								new List<Event> { calenderEvent },
 								string.Empty,

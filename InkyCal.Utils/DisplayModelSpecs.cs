@@ -9,7 +9,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// Specs for a <see cref="DisplayModel"/>
 	/// </summary>
-	public struct DisplayModelSpecs : System.IEquatable<DisplayModelSpecs>
+	public struct DisplayModelSpecs : IEquatable<DisplayModelSpecs>
 	{
 		/// <summary>
 		/// Gets or sets the width.
@@ -32,21 +32,6 @@ namespace InkyCal.Utils
 		/// The colors.
 		/// </value>
 		public ReadOnlyCollection<Color> Colors { get; set; }
-
-		/// <summary>
-		/// Determines whether the specified <see cref="object" />, is equal to this instance.
-		/// </summary>
-		/// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
-		/// <returns>
-		///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
-		/// </returns>
-		public override bool Equals(object obj)
-		{
-			if(obj is DisplayModelSpecs other)
-				Equals(other);
-
-			return false;
-		}
 
 		/// <summary>
 		/// Returns a hash code for this instance.
@@ -78,6 +63,21 @@ namespace InkyCal.Utils
 		/// The result of the operator.
 		/// </returns>
 		public static bool operator !=(DisplayModelSpecs left, DisplayModelSpecs right) => !(left == right);
+
+		/// <summary>
+		/// Determines whether the specified <see cref="object" />, is equal to this instance.
+		/// </summary>
+		/// <param name="obj">The <see cref="object" /> to compare with this instance.</param>
+		/// <returns>
+		///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
+		/// </returns>
+		public override bool Equals(object obj)
+		{
+			if (obj is DisplayModelSpecs other)
+				Equals(other);
+
+			return false;
+		}
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.

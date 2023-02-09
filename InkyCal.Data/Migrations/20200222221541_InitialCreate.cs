@@ -7,7 +7,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Initial creation script
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class InitialCreate : Migration
 	{
 		/// <inheritdoc/>

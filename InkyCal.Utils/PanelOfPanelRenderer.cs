@@ -49,6 +49,12 @@ namespace InkyCal.Utils
 		}
 
 		/// <summary>
+		/// Refers to <see cref="Equals(PanelCacheKey)"/>.
+		/// </summary>
+		public override bool Equals(object obj)
+			=> Equals(obj as PerPanelCacheKey);
+
+		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
 		/// </summary>
 		/// <param name="other">An object to compare with this object.</param>
@@ -67,7 +73,7 @@ namespace InkyCal.Utils
 	/// </summary>
 	public class PanelOfPanelRenderer : IPanelRenderer
 	{
-		private PanelOfPanels pp;
+		private readonly PanelOfPanels pp;
 		private readonly PanelRenderHelper panelRenderHelper;
 
 		/// <summary>

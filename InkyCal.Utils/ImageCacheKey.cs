@@ -6,7 +6,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="System.IEquatable{ImageCacheKey}" />
+	/// <seealso cref="IEquatable{ImageCacheKey}" />
 	public sealed class ImageCacheKey : IEquatable<ImageCacheKey>
 	{
 		/// <summary>

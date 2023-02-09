@@ -124,6 +124,7 @@ namespace InkyCal.Utils
 
 
 		[SuppressMessage("Design", "CA1810:Initialize reference type static fields inline", Justification = "Easier to read initialization")]
+		[SuppressMessage("Minor Code Smell", "S3963:\"static\" fields should be initialized inline", Justification = "Easier to read initialization")]
 		static FontHelper()
 		{
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;

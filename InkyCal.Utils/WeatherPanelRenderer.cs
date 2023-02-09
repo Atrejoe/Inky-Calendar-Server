@@ -15,7 +15,7 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	/// <seealso cref="PanelCacheKey" />
 	public class WeatherPanelCacheKey: PanelCacheKey{
 		internal readonly string Token;
 		internal readonly string City;
@@ -38,6 +38,29 @@ namespace InkyCal.Utils
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
 		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Token, City.ToUpperInvariant());
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as WeatherPanelCacheKey);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		protected override bool Equals(PanelCacheKey other)
+		{
+			return other is WeatherPanelCacheKey wpc
+				&& base.Equals(other)
+				&& Token == wpc.Token
+				&& City == wpc.City;
+		}
 	}
 
 	/// <summary>
@@ -81,7 +104,7 @@ namespace InkyCal.Utils
 		/// <returns>A panel with weather information</returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Contains catch-all-and-log logic")]
 		[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller is responsible for disposing result")]
-		override public async Task<Image> GetImage(int width, int height, SixLabors.ImageSharp.Color[] colors, IPanelRenderer.Log log)
+		override public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Forecast weather;
 			//Station station;
@@ -143,7 +166,7 @@ namespace InkyCal.Utils
 					using (var util = new Weather.Util(cacheKey.Token))
 						weather = await util.GetForeCast(cacheKey.City);
 				}
-				catch (Weather.WeatherAPIRequestFailureException ex)
+				catch (Weather.WeatherApiRequestFailureException ex)
 				{
 					var explanation = "Weather service indicated API authentication failure failure";
 					log?.Invoke(ex, true, explanation);

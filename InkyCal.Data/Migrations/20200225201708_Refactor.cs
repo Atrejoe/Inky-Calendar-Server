@@ -5,7 +5,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Some model refactoring
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class Refactor : Migration
 	{
 		/// <inheritdoc/>

@@ -72,7 +72,7 @@ namespace InkyCal.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="InkyCal.Models.PanelCacheKey" />
+	/// <seealso cref="PanelCacheKey" />
 	public class PanelInstanceCacheKey : PanelCacheKey
 	{
 		/// <summary>
@@ -95,6 +95,10 @@ namespace InkyCal.Models
 
 		public override int GetHashCode() => HashCode.Combine(Guid, base.GetHashCode());
 
+		public override bool Equals(object obj) {
+			return Equals(obj as PanelCacheKey);
+		}
+
 		protected override bool Equals(PanelCacheKey other)
 		{
 			return other is PanelInstanceCacheKey pic
@@ -105,7 +109,7 @@ namespace InkyCal.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="System.IEquatable{PanelCacheKey}" />
+	/// <seealso cref="IEquatable{PanelCacheKey}" />
 	public class PanelCacheKey : IEquatable<PanelCacheKey>
 	{
 		/// <summary>
@@ -137,12 +141,9 @@ namespace InkyCal.Models
 		/// <returns>
 		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		public sealed override bool Equals(object obj)
+		public override bool Equals(object obj)
 		{
-			return obj != null
-				&& obj.GetType().Equals(GetType())//On when matching exact type
-				&& ((PanelCacheKey)obj).Expiration.Equals(Expiration)
-				&& ((PanelCacheKey)obj).Equals(this);
+			return Equals(obj as PanelCacheKey);
 		}
 
 		/// <summary>
@@ -152,7 +153,10 @@ namespace InkyCal.Models
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		protected virtual bool Equals(PanelCacheKey other) => true;
+		protected virtual bool Equals(PanelCacheKey other) 
+			=> other!=null
+				&& other.GetType().Equals(GetType())//On when matching exact type
+				&& other.Expiration.Equals(Expiration);
 
 		/// <summary>
 		/// Returns a hash code for this instance.

@@ -8,7 +8,7 @@ namespace InkyCal.Data.Migrations
 	/// <summary>
 	/// Introduces <see cref="Models.GoogleOAuthAccess"/>
 	/// </summary>
-	/// <seealso cref="Microsoft.EntityFrameworkCore.Migrations.Migration" />
+	/// <seealso cref="Migration" />
 	public partial class GoogleOAuth : Migration
 	{
 		/// <inheritdoc/>

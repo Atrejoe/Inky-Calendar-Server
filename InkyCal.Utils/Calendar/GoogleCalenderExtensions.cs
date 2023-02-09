@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
+using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -54,10 +56,9 @@ namespace InkyCal.Utils.Calendar
 		/// <param name="tokens"></param>
 		/// <param name="saveToken"></param>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens(IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
+		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens([NotNull] IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
 		{
-			if (saveToken is null)
-				throw new ArgumentNullException(nameof(saveToken));
+			Validate(tokens, saveToken);
 
 			foreach (var token in tokens)
 			{
@@ -87,6 +88,15 @@ namespace InkyCal.Utils.Calendar
 			}
 		}
 
+		private static void Validate([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
+		{
+			if (tokens is null)
+				throw new ArgumentNullException(nameof(tokens));
+
+			if (saveToken is null)
+				throw new ArgumentNullException(nameof(saveToken));
+		}
+
 		/// <summary>
 		/// Converts refresh tokens into usable access tokens
 		/// </summary>
@@ -109,7 +119,7 @@ namespace InkyCal.Utils.Calendar
 				//todo: store updated access token & expiry
 				//todo: handle revoked access
 			}
-			return (token.Id, token.AccessToken, refreshed); ;
+			return (token.Id, token.AccessToken, refreshed);
 		}
 
 		/// <summary>
@@ -125,10 +135,9 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars(IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
+		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull]IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
 		{
-			if (saveToken is null)
-				throw new ArgumentNullException(nameof(saveToken));
+			Validate(tokens, saveToken);
 
 			await foreach (var token in GetAccessTokens(tokens, saveToken))
 				if (token != default)
@@ -140,7 +149,6 @@ namespace InkyCal.Utils.Calendar
 				}
 
 		}
-
 
 
 		/// <summary>
@@ -210,7 +218,7 @@ namespace InkyCal.Utils.Calendar
 						default:
 							break;
 					}
-					//Console.WriteLine($"{calendar.Id} {calendar.Summary} ({calendar.Description})");
+
 					var itemRequest = CalendarService.Value.Events.List(calendar.Id);
 
 					itemRequest.OauthToken = accessToken;
@@ -259,7 +267,7 @@ namespace InkyCal.Utils.Calendar
 							}
 						}
 
-					};
+					}
 
 				}
 				catch (Exception ex)
@@ -298,7 +306,7 @@ namespace InkyCal.Utils.Calendar
 				Summary = item.Summary
 			});
 
-			Console.WriteLine($"	{item.Id} [{item.Start?.DateTime} - {item.End?.DateTime}]{item.Summary}");
+			Console.WriteLine($"\t{item.Id} [{item.Start?.DateTime} - {item.End?.DateTime}]{item.Summary}");
 		}
 
 		/// <summary>

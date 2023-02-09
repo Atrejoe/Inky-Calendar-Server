@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using InkyCal.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,8 +19,6 @@ namespace InkyCal.Data
 		{
 		}
 
-		//private static StreamWriter writer = File.AppendText("QueryLog.txt");
-
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			if (optionsBuilder is null)
@@ -38,10 +37,8 @@ namespace InkyCal.Data
 
 				optionsBuilder.LogTo(msg =>
 					{
-						System.Console.WriteLine(msg);
-						//System.Console.Error.WriteLine(msg);
-						System.Diagnostics.Debug.WriteLine(msg);
-						//await writer.WriteLineAsync(msg);
+						Console.WriteLine(msg);
+						Debug.WriteLine(msg);
 					});
 
 			base.OnConfiguring(optionsBuilder);
