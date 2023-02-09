@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InkyCal.Utils;
+using System;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,7 +10,8 @@ namespace InkyCal.Utils.Tests
 
 		protected readonly ITestOutputHelper output;
 
-		public CalendarPanelRendererTests(ITestOutputHelper output) {
+		public CalendarPanelRendererTests(ITestOutputHelper output)
+		{
 			this.output = output;
 		}
 
@@ -50,6 +52,41 @@ namespace InkyCal.Utils.Tests
 
 			output.WriteLine(actual);
 
+		}
+
+		[Theory()]
+		#pragma warning disable format
+		[InlineData("14:00", null   , "Hallo"      , "14:00 Hallo"                   )]
+		[InlineData(null   , null   , "Hallo"      , "All day Hallo"                 )]
+		[InlineData("17:33", "18:42", "Hi"         , "17:33 - 18:42 Hi"              )]
+		[InlineData("17:33", "18:42", "Hello world", "17:33 - 18:42"          , 15   )]
+		[InlineData("17:33", "18:42", "Hello world", "17:33 - 18:42  ..."     , 18   )]
+		[InlineData("17:33", "18:42", "Hello world", "17:33 - 18:42  ..."     , 20, 2)]
+		[InlineData("17:33", "18:42", "Hello world", "17:33 - 18:42 Hello ...", 25, 2)]
+		[InlineData(null   , "18:42", "Hi"         , "All day Hi"                    )]
+		#pragma warning restore format
+		public void DescribeEventTest(string start, string end, string summary, string expectation, int characterPerLine = 50, int indentSize = 0)
+		{
+			//arrange
+
+			TimeSpan? startDate = string.IsNullOrEmpty(start) ? null : TimeSpan.Parse(start);
+			TimeSpan? endDate = string.IsNullOrEmpty(end) ? null : TimeSpan.Parse(end);
+
+			var e = new Calendar.Event()
+			{
+				Date = DateTime.Now.Date,
+				Start = startDate,
+				End = endDate,
+				Summary = summary
+			};
+
+			//act
+			var actual = CalendarPanelRenderer.DescribeEvent(e, characterPerLine, indentSize);
+
+			//assert
+			Assert.Equal(expectation, actual);
+
+			output.WriteLine(actual);
 		}
 	}
 }

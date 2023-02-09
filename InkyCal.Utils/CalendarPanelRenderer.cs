@@ -427,15 +427,21 @@ namespace InkyCal.Utils
 								}));
 		}
 
-		private static string DescribeEvent(Event item, int? characterPerLine = null, int indentSize = 0)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="item"></param>
+		/// <param name="characterPerLine"></param>
+		/// <param name="indentSize"></param>
+		/// <returns></returns>
+		public static string DescribeEvent(Event item, int? characterPerLine = null, int indentSize = 0)
 		{
-			//var calendarName = item.CalendarName;
 			var period = DescribePeriod(item);
 
 			var remainingSize = characterPerLine - (period.Length + indentSize + 1);
 
 			var summary = ReduceSummary(item.Summary, remainingSize);
-			return $"{period}{summary}".Trim();
+			return $"{period} {summary}".Trim();
 		}
 
 		/// <summary>
