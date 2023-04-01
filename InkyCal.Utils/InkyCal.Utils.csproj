@@ -46,6 +46,9 @@
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.52.0.60960">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+
+
+
 		</PackageReference>
 		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
 	</ItemGroup>

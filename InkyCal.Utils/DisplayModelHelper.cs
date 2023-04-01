@@ -1,7 +1,8 @@
-﻿using InkyCal.Models;
-using SixLabors.ImageSharp;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using InkyCal.Models;
+using SixLabors.ImageSharp;
 
 namespace InkyCal.Utils
 {
@@ -41,71 +42,28 @@ namespace InkyCal.Utils
 		public static void GetSpecs(this DisplayModel model, out int width, out int height, out Color[] colors)
 		{
 
-			switch (model)
-			{
-				case DisplayModel.epd_7_in_5_v3_colour:
-				case DisplayModel.epd_7_in_5_v3:
-					width = 880;
-					height = 528;
-					break;
-				case DisplayModel.epd_7_in_5_v2_colour:
-				case DisplayModel.epd_7_in_5_v2:
-					width = 800;
-					height = 480;
-					break;
-				case DisplayModel.epd_7_in_5_colour:
-				case DisplayModel.epd_7_in_5:
-					width = 640;
-					height = 384;
-					break;
-				case DisplayModel.epd_5_in_83_colour:
-				case DisplayModel.epd_5_in_83:
-					width = 600;
-					height = 448;
-					break;
-				case DisplayModel.epd_4_in_2_colour:
-				case DisplayModel.epd_4_in_2:
-					width = 400;
-					height = 300;
-					break;
-				case DisplayModel.epd_12_in_48_colour:
-				case DisplayModel.epd_12_in_48_colour_with_grayscale:
-					width = 1304;
-					height = 984;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(model), model, $"Model `{model}` is not supported, dimensions unknown.");
-			}
+			var attr = model.GetAttribute<DisplayResolutionAttribute>()
+				?? throw new ArgumentOutOfRangeException(nameof(model), model, $"Model `{model}` is not supported, dimensions & colors unknown.");
 
-			switch (model)
-			{
-				case DisplayModel.epd_7_in_5_v3_colour:
-				case DisplayModel.epd_7_in_5_v2_colour:
-				case DisplayModel.epd_7_in_5_colour:
-				case DisplayModel.epd_12_in_48_colour:
-					colors = new[] { Color.Black, Color.White, Color.Red }; //Could be yellow too, maybe introduce a new panel type
-					break;
+			width = attr.Width;
+			height = attr.Height;
+			colors = attr.Colors.Select(x => Color.FromRgba(r: x.R, g: x.G, b: x.B, a: x.A)).ToArray();
+		}
 
-				case DisplayModel.epd_12_in_48_colour_with_grayscale:
-					colors = new[] { Color.Black, Color.White, Color.Red, Color.Gray }; //Could be yellow too, maybe introduce a new panel type
-					break;
-				case DisplayModel.epd_7_in_5_v3:
-				case DisplayModel.epd_7_in_5_v2:
-				case DisplayModel.epd_7_in_5:
-					colors = new[] { Color.Black, Color.White };
-					break;
-				case DisplayModel.epd_5_in_83_colour:
-				case DisplayModel.epd_4_in_2_colour:
-					colors = new[] { Color.Black, Color.White, Color.Red };
-					break;
-				case DisplayModel.epd_5_in_83:
-				case DisplayModel.epd_4_in_2:
-					colors = new[] { Color.Black, Color.White };
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException(nameof(model), model, $"Model `{model}` is not supported, colors unknown.");
-			}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static T GetAttribute<T>(this Enum value) where T : Attribute
+		{
+			var type = value.GetType();
+			var memberInfo = type.GetMember(value.ToString());
+			var attributes = memberInfo[0].GetCustomAttributes(typeof(T), false);
+			return attributes.Length > 0
+			  ? (T)attributes[0]
+			  : null;
 		}
 	}
 }
