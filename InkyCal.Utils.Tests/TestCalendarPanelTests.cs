@@ -44,8 +44,6 @@ namespace InkyCal.Utils.Tests
 			return new TestCalendarPanelRenderer();
 		}
 
-		delegate object[] MyDelegate();
-
 		public static IEnumerable<object[]> DisplayModelsAndEvents()
 		{
 

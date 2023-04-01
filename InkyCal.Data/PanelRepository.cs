@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -73,7 +73,6 @@ namespace InkyCal.Data
 				{
 					if (panel is PanelOfPanels pp)
 					{
-						//
 						var comparison = new Func<SubPanel, SubPanel, bool>((x, y) =>
 						{
 							return x.IdPanel.Equals(y.IdPanel)

@@ -285,7 +285,7 @@ namespace InkyCal.Utils
 												//Draw a red line for each day
 												y += 4;
 
-												canvas.DrawLines(supportColor, 2, new[] { new PointF(2, y), new PointF(width - 2, y) });
+												canvas.DrawLines(supportColor, 2, new PointF(2, y), new PointF(width - 2, y));
 
 												firstEntry = false;
 											}

@@ -72,14 +72,15 @@ namespace InkyCal.Server.Pages
 			newPanelId = selectablePanels.FirstOrDefault()?.Id;
 		}
 
-		private void RemovePanel(byte index)
-		{
-			Console.WriteLine($"Removing by index {index}");
-			//Urls are case-sensitive
-			Panel.Panels.RemoveWhere(x => x.SortIndex.Equals(index));
+		//private void RemovePanel(byte index)
+		//{
+		//	Console.WriteLine($"Removing by index {index}");
+		//	//Urls are case-sensitive
+		//	Panel.Panels.RemoveWhere(x => x.SortIndex.Equals(index));
 
-			StateHasChanged();
-		}
+		//	StateHasChanged();
+		//}
+
 		private void RemovePanel()
 		{
 			Console.WriteLine($"Removing by index {currentIndex}");
