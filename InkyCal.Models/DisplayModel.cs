@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace InkyCal.Models
 {
