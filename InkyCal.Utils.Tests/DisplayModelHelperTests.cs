@@ -12,7 +12,7 @@ namespace InkyCal.Utils.Tests
 	{
 		protected readonly ITestOutputHelper output;
 
-		public CalendarPanelRendererTests(ITestOutputHelper output)
+		public DisplayModelHelperTests(ITestOutputHelper output)
 		{
 			this.output = output;
 		}
