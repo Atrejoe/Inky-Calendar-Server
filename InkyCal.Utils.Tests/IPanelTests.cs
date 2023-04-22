@@ -23,7 +23,7 @@ namespace InkyCal.Utils.Tests
 				.Select(x => new object[] { x });
 		}
 
-		[Theory]
+		[SkippableTheory]
 		[MemberData(nameof(DisplayModels))]
 		public async Task GetImageTest(DisplayModel displayModel)
 		{
