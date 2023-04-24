@@ -1,4 +1,4 @@
-[![Build and test](https://github.com/Atrejoe/Inky-Calendar-Server/actions/workflows/dotnet-core-build-and-test.yml/badge.svg)](https://github.com/Atrejoe/Inky-Calendar-Server/actions/workflows/dotnet-core-build-and-test.yml)
+[![Build and test](https://github.com/Atrejoe/Inky-Calendar-Server/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/Atrejoe/Inky-Calendar-Server/actions/workflows/build-and-test.yml)
 
 # Inky-Calendar Server
 
