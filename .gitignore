@@ -12,3 +12,5 @@ tools/
 documentation/Help/
 
 nCrunchTemp_*.csproj
+
+*.trx
