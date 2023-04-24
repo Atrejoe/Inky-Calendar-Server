@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - '**'
-  pull_request:
-    branches: [ develop ]
+  # pull_request:
+  #   branches: [ develop ]
 
 jobs:
   build:
@@ -64,29 +64,4 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: false
-        tags: atreyu/inkycal.server:latest
-
-  publish:
-    name: Publish to docker.io
-    runs-on: ubuntu-latest
-    needs: [build, build-docker]
-    steps:
-    - name: Docker Login
-      # You may pin to the exact commit or the version.
-      uses: docker/login-action@v2
-      with:
-        # Server address of Docker registry. If not set then will default to Docker Hub
-        # registry: # optional
-        # Username used to log against the Docker registry
-        username: ${{ secrets.DOCKER_USERNAME }} # optional
-        # Password or personal access token used to log against the Docker registry
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        # Log out from the Docker registry at the end of a job
-        # logout: # optional, default is true
-
-    - name: Push Docker image
-      # You may pin to the exact commit or the version.
-      uses: docker/build-push-action@v4
-      with:
-        push: true
         tags: atreyu/inkycal.server:latest
