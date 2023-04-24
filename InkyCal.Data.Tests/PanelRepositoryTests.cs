@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace InkyCal.Data.Tests
 {
+
 	public class PanelRepositoryTests : RepositoryBase
 	{
 
@@ -60,11 +61,11 @@ namespace InkyCal.Data.Tests
 
 			//Act
 			using (MiniProfiler.Current.Step("Get panel again, marking as accessed"))
-				panel = await PanelRepository.Get<Panel>(panel.Id, markAsAccessed:true);
+				panel = await PanelRepository.Get<Panel>(panel.Id, markAsAccessed: true);
 
 			//Assert
 			Assert.NotNull(panel);
-			Assert.NotEqual(accessCount ,panel.AccessCount);
+			Assert.NotEqual(accessCount, panel.AccessCount);
 			Assert.True(accessCount < panel.AccessCount);
 			Assert.NotEqual(accessed, panel.Accessed);
 			Assert.True(accessed < panel.Accessed);
@@ -189,7 +190,7 @@ namespace InkyCal.Data.Tests
 				await PanelRepository.Delete(Guid.Empty, int.MaxValue).SkipConnectionException();
 
 				//Assert
-			});
+			}).SkipConnectionException();
 		}
 	}
 }
