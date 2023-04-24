@@ -146,3 +146,7 @@ visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public
 # dotnet code quality         #
 ###############################
 dotnet_code_quality.CA2007.output_kind = ConsoleApplication, DynamicallyLinkedLibrary
+
+[*.yml]
+indent_style = space
+indent_size = 2
