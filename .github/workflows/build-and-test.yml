@@ -37,7 +37,9 @@ jobs:
       run: dotnet build InkyCal.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test InkyCal.sln --no-restore --verbosity detailed --logger "trx;LogFileName=test-results.trx"
+      env: # Or as an environment variable
+        OpenWeatherAPIKey: ${{ secrets.OpenWeatherAPIKey }}
+      run: dotnet test InkyCal.sln --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
