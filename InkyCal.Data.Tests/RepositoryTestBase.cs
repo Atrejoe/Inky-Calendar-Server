@@ -6,14 +6,14 @@ using Xunit.Abstractions;
 
 namespace InkyCal.Data.Tests
 {
-	public abstract class RepositoryBase : IDisposable
+	public abstract class RepositoryTestBase : IDisposable
 	{
 
 		protected readonly ITestOutputHelper output;
 		private readonly TransactionScope _t;
 		private bool disposedValue;
 
-		protected RepositoryBase(ITestOutputHelper output)
+		protected RepositoryTestBase(ITestOutputHelper output)
 		{
 			var options = MiniProfiler.DefaultOptions;
 			options.AddEntityFramework();

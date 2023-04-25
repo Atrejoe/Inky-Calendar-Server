@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 namespace InkyCal.Data.Tests
 {
 
-	public class UserRepositoryTests : RepositoryBase
+	public class UserRepositoryTests : RepositoryTestBase
 	{
 
 		public UserRepositoryTests(ITestOutputHelper output) : base(output)

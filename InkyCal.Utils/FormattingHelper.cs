@@ -107,7 +107,7 @@ namespace InkyCal.Utils
 				throw new ArgumentNullException(nameof(options));
 
 			var result = new RendererOptions(font)
-			{
+			{ 
 				HorizontalAlignment = options.TextOptions.HorizontalAlignment,
 				VerticalAlignment = options.TextOptions.VerticalAlignment,
 				WrappingWidth = options.TextOptions.WrapTextWidth,

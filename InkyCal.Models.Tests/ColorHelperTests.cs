@@ -1,28 +1,23 @@
 ﻿using Xunit;
-using InkyCal.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InkyCal.Models.Tests
 {
 	public class ColorHelperTests
 	{
 		[Theory()]
-		[InlineData((byte)1)]
+		[InlineData((byte)1, (byte)2)]
 		[InlineData((byte)2)]
 		[InlineData((byte)3)]
-		public void GrayScalesTest(byte levels)
+		[InlineData((byte)16)]
+		public void GrayScalesTest(byte levels, byte? expected = null)
 		{
 			//arrange
 
 			//act
-			var colors = ColorHelper.GrayScales(levels);
+			var colors = ColorHelper.GrayScales(levels).Distinct().ToArray();
 
 			//assert
-			Assert.Equal(levels, colors.Length);
+			Assert.Equal(expected ?? levels, colors.Length);
 		}
 	}
 }
