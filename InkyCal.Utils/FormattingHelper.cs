@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -18,14 +19,17 @@ namespace InkyCal.Utils
 		/// <param name="maxLength"></param>
 		/// <param name="truncateIndicator"></param>
 		/// <returns></returns>
-		public static string Limit(this string value, int maxLength, string truncateIndicator = "...")
+		public static string Limit(this string value, [Range(1, int.MaxValue)] int maxLength, string truncateIndicator = "...")
 		{
 			if (truncateIndicator?.Length > maxLength)
 				throw new ArgumentOutOfRangeException(nameof(truncateIndicator), truncateIndicator, $"The length of the truncation indicator cannot exceed `{nameof(maxLength)}`");
 
-			return (value?.Length).GetValueOrDefault() <= maxLength
-				? value
-				: value.Substring(0, maxLength - (truncateIndicator?.Length).GetValueOrDefault()) + truncateIndicator;
+			if (maxLength == 0)
+				return string.Empty;
+
+			return (value is null || value.Length <= maxLength)
+			? value
+			: value.Substring(0, maxLength - (truncateIndicator?.Length).GetValueOrDefault()) + truncateIndicator;
 		}
 
 		/// <summary>
@@ -37,7 +41,7 @@ namespace InkyCal.Utils
 		{
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			
+
 
 			var result = new TextGraphicsOptions(
 				options.GraphicsOptions.DeepClone(),
@@ -56,7 +60,7 @@ namespace InkyCal.Utils
 		{
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			
+
 
 			var result = new RendererOptions(options.Font)
 			{
@@ -79,7 +83,7 @@ namespace InkyCal.Utils
 		public static TextGraphicsOptions ToTextGraphicsOptions(this RendererOptions options, bool enableAntialiasing)
 		{
 			if (options is null)
-				throw new ArgumentNullException(nameof(options));			
+				throw new ArgumentNullException(nameof(options));
 
 			var result = new TextGraphicsOptions(
 				new GraphicsOptions() { Antialias = enableAntialiasing },
@@ -107,7 +111,7 @@ namespace InkyCal.Utils
 				throw new ArgumentNullException(nameof(options));
 
 			var result = new RendererOptions(font)
-			{ 
+			{
 				HorizontalAlignment = options.TextOptions.HorizontalAlignment,
 				VerticalAlignment = options.TextOptions.VerticalAlignment,
 				WrappingWidth = options.TextOptions.WrapTextWidth,

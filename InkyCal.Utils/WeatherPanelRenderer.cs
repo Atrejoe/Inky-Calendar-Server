@@ -237,10 +237,10 @@ namespace InkyCal.Utils
 				try
 				{
 					if (weather is null)
-						context.DrawText(textGraphicsOptions, $"No weather found for {station.name}", textFont, primaryColor, new PointF(0, y));
+						context.DrawText(textGraphicsOptions, $"No weather found for {station?.name}", textFont, primaryColor, new PointF(0, y));
 					else
 					{
-						var firstIcon = weather.list.OrderBy(l => l.dt).FirstOrDefault().weather.FirstOrDefault().icon;
+						var firstIcon = (weather.list.OrderBy(l => l.dt).FirstOrDefault()?.weather.FirstOrDefault())?.icon;
 						var weatherIconDimensions = TextMeasurer.Measure(firstIcon, weatherRendererOptions);
 						var widthPerIcon = (int)Math.Ceiling(weatherIconDimensions.Width);
 						var heightPerIcon = (int)Math.Ceiling(weatherIconDimensions.Height);
