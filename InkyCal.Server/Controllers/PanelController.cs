@@ -26,10 +26,8 @@ namespace InkyCal.Server.Controllers
 		/// <param name="model"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		/// <returns>A badge containing the calculated SHA1 hash.</returns>
-		/// <remarks>
-		/// The hash may be cached.
-		/// </remarks>
+		/// <returns>A demo image panel</returns>
+		/// <remarks></remarks>
 		/// <response code="200">Returns the panel as a PNG image</response>
 		[HttpGet("test/{model}/image")]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -45,9 +43,8 @@ namespace InkyCal.Server.Controllers
 		/// <param name="model"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		/// <returns>A badge containing the calculated SHA1 hash.</returns>
+		/// <returns>A demo calendar panel.</returns>
 		/// <remarks>
-		/// The hash may be cached.
 		/// </remarks>
 		/// <response code="200">Returns the panel as a PNG image</response>
 		[HttpGet("test/{model}/calendar")]
@@ -57,6 +54,60 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> TestCalendar(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 			return await this.Image(new TestCalendarPanelRenderer(), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a demo weather panel, mapped for <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A demo weather panel (for the city of Rotterdam)</returns>
+		/// <remarks>
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("test/{model}/weather")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> TestWeather(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		{
+			return await this.Image(new WeatherPanelRenderer(Config.Config.OpenWeatherAPIKey, "Rotterdam, NL"), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a demo weather panel, mapped for <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A demo weather panel (for the city of Rotterdam)</returns>
+		/// <remarks>
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("test/{model}/panel-of-panels")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> TestPanelOfPanels(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		{
+
+			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken);
+			var panels = (new Panel[] {
+								new WeatherPanel() { Token = Config.Config.OpenWeatherAPIKey, Location = "Rotterdam, NL" },
+								new NewYorkTimesPanel() { },
+								new ImagePanel() { Path = TestImagePanelRenderer.DemoImageUrl, Rotation= Rotation.Zero },
+								new CalendarPanel(){  CalenderUrls = new []{ new CalendarPanelUrl() { Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl } }.ToHashSet() }
+							}).
+								Select(x => 
+									new SubPanel() { Panel = x, Ratio = 1 }
+							).ToHashSet();
+
+			return await this.Image(
+						new PanelOfPanelRenderer(new PanelOfPanels()
+						{
+							Panels = panels, Rotation = Rotation.Zero
+						}, helper),model,width,height) ;
 		}
 
 		/// <summary>
@@ -123,10 +174,10 @@ namespace InkyCal.Server.Controllers
 
 			return await this.Image(
 							renderer: new CalendarPanelRenderer(
-								saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken, 
-								iCalUrl: calendar), 
-							model: model, 
-							requestedWidth: width, 
+								saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken,
+								iCalUrl: calendar),
+							model: model,
+							requestedWidth: width,
 							requestedHeight: height);
 		}
 

@@ -7,6 +7,7 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -16,7 +17,8 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public class WeatherPanelCacheKey: PanelCacheKey{
+	public class WeatherPanelCacheKey : PanelCacheKey
+	{
 		internal readonly string Token;
 		internal readonly string City;
 
@@ -26,7 +28,8 @@ namespace InkyCal.Utils
 		/// <param name="expiration"></param>
 		/// <param name="token">The token.</param>
 		/// <param name="city">The city.</param>
-		public WeatherPanelCacheKey(TimeSpan expiration, string token, string city):base(expiration) {
+		public WeatherPanelCacheKey(TimeSpan expiration, string token, string city) : base(expiration)
+		{
 			this.Token = token;
 			this.City = city;
 		}
@@ -144,10 +147,34 @@ namespace InkyCal.Utils
 				);
 
 			var result = PanelRenderingHelper.CreateImage(width, height, backgroundColor);
-			var textFont = new Font(FontHelper.MonteCarlo, 12);
+			var textFont = new Font(FontHelper.ProFont, 15);
 			var weatherFont = new Font(FontHelper.WeatherIcons, 40);
 
-			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
+
+			var isGrayScale = (SixLabors.ImageSharp.Color color) => color.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count() == 1;
+
+			// Only anti-alias when the support color (this color of the icons) is a grayscale image
+			// This assumes that a larger palette only contains one non-grayscale color, which would make it unsuitable for anti-aiassing.
+			var antiAlias = colors.Length >= 4 && isGrayScale(supportColor);
+
+			//Console.WriteLine($"Support color: {supportColor}");
+			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Select(x => new string(x))));
+			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x))));
+			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct()));
+			foreach(var color in colors)
+				Console.WriteLine($"Color: {color}");
+
+			Console.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
+
+			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = antiAlias }, new TextOptions()
+			{
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				WrapTextWidth = width,
+				DpiX = 96,
+				DpiY = 96
+			});
+			var weatherGraphicOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
 			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
@@ -156,15 +183,15 @@ namespace InkyCal.Utils
 				DpiY = 96
 			});
 			var rendererOptions = textGraphicsOptions.ToRendererOptions(textFont);
-			var weatherRendererOptions = textGraphicsOptions.ToRendererOptions(weatherFont);
+			var weatherRendererOptions = weatherGraphicOptions.ToRendererOptions(weatherFont);
 
 			Weather.RootObject weather;
 
 			using (MiniProfiler.Current.Step($"Get weather for '{cacheKey.City}'"))
 				try
 				{
-					using (var util = new Weather.Util(cacheKey.Token))
-						weather = await util.GetForeCast(cacheKey.City);
+					using var util = new Weather.Util(cacheKey.Token);
+					weather = await util.GetForeCast(cacheKey.City);
 				}
 				catch (Weather.WeatherApiRequestFailureException ex)
 				{
@@ -174,9 +201,10 @@ namespace InkyCal.Utils
 					result.Mutate(context =>
 					{
 						var y = 100;
-						context.RenderErrorMessage(
-							explanation,
-							errorColor, backgroundColor, ref y, width, rendererOptions);
+						context
+							.RenderErrorMessage(
+								explanation,
+								errorColor, backgroundColor, ref y, width, rendererOptions);
 					});
 					return result;
 				}
@@ -187,9 +215,10 @@ namespace InkyCal.Utils
 					result.Mutate(context =>
 					{
 						var y = 100;
-						context.RenderErrorMessage(
-							ex.Message.ToString(),
-							errorColor, backgroundColor, ref y, width, rendererOptions);
+						context
+							.RenderErrorMessage(
+								ex.Message.ToString(),
+								errorColor, backgroundColor, ref y, width, rendererOptions);
 					});
 					return result;
 				}
@@ -266,6 +295,11 @@ namespace InkyCal.Utils
 				}
 			});
 
+			if (antiAlias)
+				result.Mutate(context =>
+				{
+					context.Quantize(new PaletteQuantizer(colors));
+				});
 
 			return result;
 		}
@@ -278,6 +312,6 @@ namespace InkyCal.Utils
 		/// </value>
 		public override PanelCacheKey CacheKey
 			=> cacheKey;
-		
+
 	}
 }

@@ -21,8 +21,8 @@ namespace InkyCal.Utils
 		public NewYorkTimeRenderException(string message, Exception inner) : base(message, inner) { }
 		/// <inheritdoc/>
 		protected NewYorkTimeRenderException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+			System.Runtime.Serialization.SerializationInfo info,
+			System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}
 	/// <summary>
 	/// 
@@ -77,7 +77,13 @@ namespace InkyCal.Utils
 					Console.WriteLine(url.ToString());
 					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
-				catch (HttpRequestException ex) when (tries <= maxTries && ex.Message.Contains("404"))
+				catch (HttpRequestException ex) when (
+					tries <= maxTries
+					&& (!ex.StatusCode.HasValue
+					//On some days (sundays) NYT is not available.
+					|| new[] { System.Net.HttpStatusCode.NotFound
+							 , System.Net.HttpStatusCode.Forbidden
+					}.Contains(ex.StatusCode.Value)))
 				{
 					d = d.AddDays(-1);
 				}

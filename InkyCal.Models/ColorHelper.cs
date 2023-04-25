@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 
@@ -9,25 +10,28 @@ namespace InkyCal.Models
 	/// </summary>
 	public static class ColorHelper
 	{
-		public static Color[] GrayScales([Range(1, byte.MaxValue)] byte levels = 16)
+		public static IEnumerable<Color> GrayScales([Range(1, byte.MaxValue)] byte levels = 16)
 		{
-			if (levels <= 1)
-				return new[] { Color.Black };
+			yield return Color.Black;
+			yield return Color.White;
 
-			int step = 256 / (levels - 1);
-			return Enumerable
-				.Range(0, levels)
+			if (levels <= 2)
+				yield break;
+
+			int step = 256 / (levels-1);
+			foreach (var color in Enumerable
+				.Range(1, levels - 2)
 				.Select(x => (step * x) > byte.MaxValue ? byte.MaxValue : (byte)(step * x))
 				.Select(x => Color.FromArgb(x, x, x))
-				.Distinct()
-				.ToArray();
+				.Distinct())
+				yield return color;
 		}
 
 		public static Color[] GrayScalesWithSupportColor(byte levels = 16, Color? suppportColor = null)
 		{
-			return GrayScales(levels)
-				.Append(suppportColor ?? Color.Red)
-				.ToArray();
+			var result = GrayScales(levels).ToList();
+			result.Insert(2, suppportColor ?? Color.Red);
+			return result.ToArray();
 		}
 	}
 }

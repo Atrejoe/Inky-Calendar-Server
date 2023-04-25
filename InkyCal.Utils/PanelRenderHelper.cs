@@ -203,7 +203,7 @@ namespace InkyCal.Utils
 			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, rendererOptions);
 		}
 
-		internal static void RenderErrorMessage(
+		internal static IImageProcessingContext RenderErrorMessage(
 		this IImageProcessingContext canvas,
 		string errorMessage,
 		Color errorColor,
@@ -235,6 +235,8 @@ namespace InkyCal.Utils
 			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font), renderOptions.Font, backgroundColor, pError);
 
 			y += (int)errorMessageHeight.Height;
+
+			return canvas;
 		}
 	}
 }

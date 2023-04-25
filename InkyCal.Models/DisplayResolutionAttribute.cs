@@ -27,7 +27,7 @@ namespace InkyCal.Models
 			=> Colors = colors.Select(x => Color.FromKnownColor(x)).ToArray();
 
 		public DisplayResolutionAttribute(ushort width, ushort height, byte grayscales) : this(width, height)
-			=> Colors = ColorHelper.GrayScales(grayscales);
+			=> Colors = ColorHelper.GrayScales(grayscales).ToArray();
 
 		public DisplayResolutionAttribute(ushort width, ushort height, byte grayscales, KnownColor supportColor) : this(width, height)
 			=> Colors = ColorHelper.GrayScalesWithSupportColor(grayscales, Color.FromKnownColor(supportColor));
@@ -39,6 +39,6 @@ namespace InkyCal.Models
 		public ushort Width { get; }
 		
 		public ushort Height { get; }
-		public Color[] Colors { get; } = ColorHelper.GrayScales(2);
+		public Color[] Colors { get; } = ColorHelper.GrayScales(2).ToArray();
 	}
 }

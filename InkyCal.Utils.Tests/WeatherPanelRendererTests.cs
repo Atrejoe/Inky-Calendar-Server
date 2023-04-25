@@ -8,7 +8,7 @@
 		protected override WeatherPanelRenderer GetRenderer()
 		{
 			return new WeatherPanelRenderer(
-				"token", 
+				InkyCal.Server.Config.Config.OpenWeatherAPIKey, 
 				"Rotterdam,NL");
 		}
 	}

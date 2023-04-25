@@ -21,9 +21,11 @@ namespace InkyCal.Server.Config
 		}
 
 		public static string ConnectionString => configuration.Value.GetConnectionString("DefaultConnection");
-		public static string SentryDSN => configuration.Value.GetValue("SentryDSN", string.Empty);
-		public static string BugSnagAPIKey => configuration.Value.GetValue("BugSnagAPIKey", string.Empty);
-		public static bool TraceQueries => configuration.Value.GetValue("TraceQueries", false);
+		public static string SentryDSN => configuration.Value.GetValue(nameof(SentryDSN), string.Empty);
+		public static string BugSnagAPIKey => configuration.Value.GetValue(nameof(BugSnagAPIKey), string.Empty);
+		public static bool TraceQueries => configuration.Value.GetValue(nameof(TraceQueries), false);
+
+		public static string OpenWeatherAPIKey => configuration.Value.GetValue(nameof(OpenWeatherAPIKey), string.Empty);
 
 	}
 }
