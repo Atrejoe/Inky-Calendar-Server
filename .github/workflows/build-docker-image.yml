@@ -1,0 +1,24 @@
+name: Build Docker image
+
+on:
+  # Nightly build - pull base image
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # Or when code has been pushed
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-docker:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Docker image
+      # You may pin to the exact commit or the version.
+      # uses: docker/build-push-action@ab83648e2e224cfeeab899e23b639660765c3a89
+      uses: docker/build-push-action@v4
+      with:
+        push: false
+        tags: atreyu/inkycal.server:latest

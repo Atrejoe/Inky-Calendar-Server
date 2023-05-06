@@ -55,15 +55,3 @@ jobs:
           name: Dotnet testresult # Name of the check run which will be created
           path: '**/*.trx'        # All test results
           reporter: dotnet-trx    # Format of test results
-
-  build-docker:
-    name: Build Docker image
-    runs-on: ubuntu-latest
-    steps:
-    - name: Build Docker image
-      # You may pin to the exact commit or the version.
-      # uses: docker/build-push-action@ab83648e2e224cfeeab899e23b639660765c3a89
-      uses: docker/build-push-action@v4
-      with:
-        push: false
-        tags: atreyu/inkycal.server:latest

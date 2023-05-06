@@ -1,8 +1,8 @@
-name: Publish
+name: Publish Docker image
 
 on:
   workflow_run:
-    workflows: [Build and test]
+    workflows: [Build Docker image]
     types:
       - completed
     branches: [develop, main, master]
