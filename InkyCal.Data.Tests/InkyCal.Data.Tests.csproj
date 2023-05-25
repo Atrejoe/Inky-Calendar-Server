@@ -1,42 +1,43 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<IsPackable>false</IsPackable>
-		<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
-	</PropertyGroup>
+  <PropertyGroup>
+	<TargetFramework>net7.0</TargetFramework>
+	<IsPackable>false</IsPackable>
+	<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+  <ItemGroup>
+	<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-		<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
-		<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
-		<PackageReference Include="coverlet.collector" Version="3.2.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit" Version="2.4.2" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-		<PackageReference Include="XunitXml.TestLogger" Version="3.0.78" />
-	</ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
+	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
+	<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+	<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+	<PackageReference Include="coverlet.collector" Version="3.2.0">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="xunit" Version="2.4.2" />
+	<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+	<PackageReference Include="XunitXml.TestLogger" Version="3.0.78" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\InkyCal.Data\InkyCal.Data.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\InkyCal.Data\InkyCal.Data.csproj" />
+  </ItemGroup>
 
 </Project>

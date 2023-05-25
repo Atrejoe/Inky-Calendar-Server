@@ -1,49 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<EnableNETAnalyzers>True</EnableNETAnalyzers>
-		<AnalysisLevel>latest-all</AnalysisLevel>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-	</PropertyGroup>
+  <PropertyGroup>
+	<TargetFramework>net7.0</TargetFramework>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	<EnableNETAnalyzers>True</EnableNETAnalyzers>
+	<AnalysisLevel>latest-all</AnalysisLevel>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Compile Remove="Migrations\20200224234735_ModelImprovements.cs" />
-		<Compile Remove="Migrations\20200224234735_ModelImprovements.Designer.cs" />
-		<Compile Remove="Migrations\20200224235110_ModelImprovements.cs" />
-		<Compile Remove="Migrations\20200224235110_ModelImprovements.Designer.cs" />
-		<Compile Remove="Migrations\20200224235128_ModelImprovements.cs" />
-		<Compile Remove="Migrations\20200224235128_ModelImprovements.Designer.cs" />
-		<Compile Remove="Migrations\20200225195030_Refactor.cs" />
-		<Compile Remove="Migrations\20200225195030_Refactor.Designer.cs" />
-	</ItemGroup>
+  <ItemGroup>
+	<Compile Remove="Migrations\20200224234735_ModelImprovements.cs" />
+	<Compile Remove="Migrations\20200224234735_ModelImprovements.Designer.cs" />
+	<Compile Remove="Migrations\20200224235110_ModelImprovements.cs" />
+	<Compile Remove="Migrations\20200224235110_ModelImprovements.Designer.cs" />
+	<Compile Remove="Migrations\20200224235128_ModelImprovements.cs" />
+	<Compile Remove="Migrations\20200224235128_ModelImprovements.Designer.cs" />
+	<Compile Remove="Migrations\20200225195030_Refactor.cs" />
+	<Compile Remove="Migrations\20200225195030_Refactor.Designer.cs" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json" />
-	</ItemGroup>
+  <ItemGroup>
+	<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.1">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\InkyCal.Models\InkyCal.Models.csproj" />
-		<ProjectReference Include="..\InkyCal.Server.Config\InkyCal.Server.Config.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\InkyCal.Models\InkyCal.Models.csproj" />
+	<ProjectReference Include="..\InkyCal.Server.Config\InkyCal.Server.Config.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
+  <ItemGroup>
+	<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
 
 </Project>
