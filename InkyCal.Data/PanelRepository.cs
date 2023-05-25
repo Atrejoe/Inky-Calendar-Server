@@ -95,7 +95,7 @@ namespace InkyCal.Data
 							linkedPanel.Ratio = pp.Panels.Single(x => comparison(x, linkedPanel)).Ratio;
 
 						//Add new links
-						foreach (var linkedPanel in pp.Panels.Where(x => !existingLinks.Any(y => comparison(x, y))))
+						foreach (var linkedPanel in pp.Panels.Where(x => !existingLinks.Exists(y => comparison(x, y))))
 							await c.AddAsync(new SubPanel()
 							{
 								SortIndex = linkedPanel.SortIndex,

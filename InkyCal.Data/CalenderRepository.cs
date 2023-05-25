@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -26,7 +27,7 @@ namespace InkyCal.Data
 			if (panel is null)
 				throw new ArgumentNullException(nameof(panel));
 
-			var set = await panel.SubscribedCalenders();
+			var set = (await panel.SubscribedCalenders()).ToList();
 
 			using var c = new ApplicationDbContext();
 			//Remove items from DB not present in selection
@@ -34,7 +35,7 @@ namespace InkyCal.Data
 				c.Remove(item);
 
 			//Add new items to DB
-			foreach (var item in calenders.Where(x => !set.Any(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
+			foreach (var item in calenders.Where(x => !set.Exists(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
 				c.Add(new SubscribedGoogleCalender()
 				{
 					Panel = panel.Id,

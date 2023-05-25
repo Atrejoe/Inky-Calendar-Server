@@ -56,7 +56,7 @@ namespace InkyCal.Server.Pages
 
 			if (QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query).TryGetValue("code", out var values))
 			{
-				var code = values.First();
+				var code = values[0];
 
 				if (!string.IsNullOrEmpty(code))
 				{

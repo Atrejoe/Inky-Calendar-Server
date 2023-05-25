@@ -200,7 +200,7 @@ namespace InkyCal.Server.Controllers
 		[ResponseCache(NoStore = true)]
 		public async Task<ActionResult> GetCalendar(DisplayModel model, [Required(AllowEmptyStrings = false)] Uri[] calendars, int? width = null, int? height = null)
 		{
-			if (calendars.Any(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
+			if (calendars.ToList().Exists(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
 				return BadRequest("Calender urls must be absolute urls");
 
 			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendars), model, width, height);

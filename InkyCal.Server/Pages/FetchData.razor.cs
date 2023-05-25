@@ -43,7 +43,7 @@ namespace InkyCal.Server.Pages
 			_panels = (await PanelRepository.List<Models.Panel>(user)).ToList();
 
 			if (_panels.Any())
-				await SelectPanel(_panels.First().Id);
+				await SelectPanel(_panels[0].Id);
 
 
 			SetAsLoading();

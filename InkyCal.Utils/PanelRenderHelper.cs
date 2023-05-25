@@ -93,12 +93,12 @@ namespace InkyCal.Utils
 							if (rendererTypes is null)
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
-							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments().First().Equals(panel.GetType()));
+							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments()[0].Equals(panel.GetType()));
 
 							if (rendererType == null)
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
-							var paneltype = rendererType.BaseType.GetGenericArguments().First();
+							var paneltype = rendererType.BaseType.GetGenericArguments()[0];
 							var c = rendererType.GetConstructor(new[] { paneltype });
 							if (c is null)
 							{
