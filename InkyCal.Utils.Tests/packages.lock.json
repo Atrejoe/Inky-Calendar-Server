@@ -174,16 +174,16 @@
       },
       "Magick.NET-Q16-AnyCPU": {
         "type": "Transitive",
-        "resolved": "13.1.0",
-        "contentHash": "XkFybgFS9p9VD3a4qx2yMn5iBwvscDvhkAnVP5c11fmBlAaas054VNPheh2XwI83f1tMdLgsTttT+ZHIc481TQ==",
+        "resolved": "13.1.2",
+        "contentHash": "u0s0WhQwP4hSQxqeTG/aaVBsimVzTJVa0Yk525EEBhNV5I3uyX5QOnU2goZW8klKXAdEqrTURAd7eG2x9mExBQ==",
         "dependencies": {
-          "Magick.NET.Core": "13.1.0"
+          "Magick.NET.Core": "13.1.2"
         }
       },
       "Magick.NET.Core": {
         "type": "Transitive",
-        "resolved": "13.1.0",
-        "contentHash": "R5WBgL7JlLoWIlfI4OoSE8qV3M5WyBiXt56FBfR+8N4lvc/FD1gv/ETMIslKs1CffVZDYjKrEWIqj9yvk6tHIA=="
+        "resolved": "13.1.2",
+        "contentHash": "rCcGFN3gei9hd8WynJGI6xo4Yv3djBnG1IWopoCZ7quqbhIJOHF8ArORiu3RE4+Ai5fzeqLIeknj8NQOnGHOnA=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -1551,8 +1551,8 @@
           "Ical.Net": "[4.2.0, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
-          "Magick.NET-Q16-AnyCPU": "[13.1.0, )",
-          "Magick.NET.Core": "[13.1.0, )",
+          "Magick.NET-Q16-AnyCPU": "[13.1.2, )",
+          "Magick.NET.Core": "[13.1.2, )",
           "Microsoft.Extensions.Caching.Memory": "[7.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "Newtonsoft.Json": "[13.0.3, )",
