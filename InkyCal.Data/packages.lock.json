@@ -30,9 +30,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[9.1.0.70676, )",
-        "resolved": "9.1.0.70676",
-        "contentHash": "Vq/chjlBPmtp3SgNVy9fgQFUd+SLZUTm4DrJLw26wH3MpXHA1JvCpzQeGDqvG1aw4lBgX/yYx09l7VGJCDnfYA=="
+        "requested": "[9.4.0.72892, )",
+        "resolved": "9.4.0.72892",
+        "contentHash": "hSUQ8ddC56salRggZHY69hR51HU1HVSlmKuQ9+0kXGFa9NYUdJ3WI81LMbuXT4Ui0UCdGKeCEoJzZJlfBF8kqA=="
       },
       "Azure.Core": {
         "type": "Transitive",
