@@ -283,9 +283,9 @@ namespace InkyCal.Utils.Calendar
 		private static void ConvertEvent(List<Event> result, Google.Apis.Calendar.v3.Data.Event item, CalendarListEntry calendar)
 		{
 			DateTime date;
-			if (item.Start.DateTime.HasValue)
+			if (item.Start.DateTimeDateTimeOffset.HasValue)
 			{
-				date = item.Start.DateTime.Value.Date;
+				date = item.Start.DateTimeDateTimeOffset.Value.Date;
 			}
 			else if (!DateTime.TryParse(item.Start.Date, out date))
 				return;
@@ -301,12 +301,12 @@ namespace InkyCal.Utils.Calendar
 			{
 				CalendarName = calendar.Summary,
 				Date = date.ToSpecificTimeZone(DutchTZ),
-				Start = item.Start?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
-				End = item.End?.DateTime.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
+				Start = item.Start?.DateTimeDateTimeOffset.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
+				End = item.End?.DateTimeDateTimeOffset.ToSpecificTimeZone(DutchTZ)?.TimeOfDay,
 				Summary = item.Summary
 			});
 
-			Console.WriteLine($"\t{item.Id} [{item.Start?.DateTime} - {item.End?.DateTime}]{item.Summary}");
+			Console.WriteLine($"\t{item.Id} [{item.Start?.DateTimeDateTimeOffset} - {item.End?.DateTimeDateTimeOffset}]{item.Summary}");
 		}
 
 		/// <summary>
