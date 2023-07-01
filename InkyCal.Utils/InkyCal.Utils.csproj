@@ -41,7 +41,7 @@
 	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-	<PackageReference Include="Sentry" Version="3.33.0" />
+	<PackageReference Include="Sentry" Version="3.33.1" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 	<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.1.0.70676">
