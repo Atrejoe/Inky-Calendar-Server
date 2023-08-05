@@ -114,9 +114,9 @@
       },
       "Markdig.Signed": {
         "type": "Direct",
-        "requested": "[0.31.0, )",
-        "resolved": "0.31.0",
-        "contentHash": "u05eQvNRunYLR+J0SZAgt8ia+qCF3cMfyYh7LR4jSjG5Tg+0HuRrv7u/Gox9kOItWlSacMITcHBio7jas/zaEQ=="
+        "requested": "[0.32.0, )",
+        "resolved": "0.32.0",
+        "contentHash": "eK5fgokiOtBqyynEexFeYOmx4EUbuuSWOUo6F3PZ4A1VroaHeNztWxPagAGRWBTfKIIRDGCl6QotUI52iISnEA=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
