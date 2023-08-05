@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -287,7 +288,10 @@ namespace InkyCal.Utils.Calendar
 			{
 				date = item.Start.DateTimeDateTimeOffset.Value.Date;
 			}
-			else if (!DateTime.TryParse(item.Start.Date, out date))
+			else if (!DateTime.TryParseExact(item.Start.Date, "yyyy-MM-dd",
+					   CultureInfo.InvariantCulture,
+					   DateTimeStyles.None, 
+					   out date))
 				return;
 
 			//date = DateTime.SpecifyKind(date, DateTimeKind.Utc);

@@ -175,12 +175,7 @@ namespace InkyCal.Utils.Weather
 
 	internal static class DateTimeHelper
 	{
-		private static readonly DateTime Epoch = new DateTime(1970, 01, 01, 0, 0, 0, DateTimeKind.Utc);
-
-		public static DateTime ToDateTime(this int secondsSinceEpoch)
-		{
-			return Epoch.AddSeconds(secondsSinceEpoch);
-		}
+		public static DateTime ToDateTime(this int secondsSinceEpoch) => DateTime.UnixEpoch.AddSeconds(secondsSinceEpoch);
 	}
 
 
