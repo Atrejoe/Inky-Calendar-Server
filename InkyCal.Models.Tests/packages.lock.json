@@ -49,9 +49,9 @@
       },
       "XunitXml.TestLogger": {
         "type": "Direct",
-        "requested": "[3.0.78, )",
-        "resolved": "3.0.78",
-        "contentHash": "3PgUzqy+sF5173JZyWiwx6v49SxqfeybbivGgElzCV1HszrBDDakud9pxuPxX87ThfFK/X+4tQ5YRxkegdI2MQ=="
+        "requested": "[3.1.11, )",
+        "resolved": "3.1.11",
+        "contentHash": "QVo/s8T4MPap7gLLWVoWfE8vmlturIw2Me06ErDjGc+xNAueAsqhlVXXH8lh4gh3d/2q0xo0pK4u/2/ohwU4Dw=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
