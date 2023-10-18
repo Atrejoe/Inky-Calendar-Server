@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFramework>net7.0</TargetFramework>
@@ -32,7 +32,7 @@
 	<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.61.0.1869" />
 	<PackageReference Include="Google.Apis.ServiceUser.v1" Version="1.36.0.1373" />
 	<PackageReference Include="Ical.Net" Version="4.2.0" />
-	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.2.0" />
+	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.3.0" />
 	<PackageReference Include="Magick.NET.Core" Version="13.2.0" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.3">
 	  <PrivateAssets>all</PrivateAssets>
