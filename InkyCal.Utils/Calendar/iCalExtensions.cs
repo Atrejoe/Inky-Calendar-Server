@@ -30,7 +30,7 @@ namespace InkyCal.Utils.Calendar
 			var urls = ICalUrls.ToArray();
 			var items = new List<Event>();
 
-			if (!(urls?.Any()).GetValueOrDefault())
+			if (!urls.Any())
 				return items;
 
 			CalendarCollection calendars;
@@ -55,7 +55,7 @@ namespace InkyCal.Utils.Calendar
 								{
 									//For multi-day periods, list each day within the period separately
 
-									if (!(x.Source is CalendarEvent calendarEvent))
+									if (x.Source is not CalendarEvent calendarEvent)
 										return null;
 
 									var thisDate = date;
@@ -107,8 +107,8 @@ namespace InkyCal.Utils.Calendar
 											//Display of events often have the perspective from a specific time zone.
 											Start = start,
 											End = end,
-											Summary = calendarEvent?.Summary,
-											CalendarName = (string)calendarEvent?.Properties["X-WR-CALNAME"]?.Value
+											Summary = calendarEvent.Summary,
+											CalendarName = (string)calendarEvent.Properties["X-WR-CALNAME"]?.Value
 										});
 
 										thisDate = thisDate.AddDays(1);
@@ -124,8 +124,8 @@ namespace InkyCal.Utils.Calendar
 			}
 
 
-			if (!(items?.Any()).GetValueOrDefault())
-				sbErrors.AppendLine($"No events in {urls?.Length:n0} calendars");
+			if (!items.Any())
+				sbErrors.AppendLine($"No events in {urls.Length:n0} calendars");
 
 			return items.Distinct().ToList();
 		}

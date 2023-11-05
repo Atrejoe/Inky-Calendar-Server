@@ -251,11 +251,9 @@ namespace InkyCal.Server.Controllers
 			if (panel is null)
 				return NotFound($"Panel with id {id} not found");
 
-			model = model
-				?? (DisplayModel?)(int?)panel.Model
-				?? DisplayModel.epd_7_in_5_v2_colour;
+			model ??= panel.Model;
 
-			var helper = new PanelRenderHelper((new Data.GoogleOAuthRepository()).UpdateAccessToken);
+			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken);
 			var renderer = helper.GetRenderer(panel);
 
 			PerformanceMonitor.Trace($"Rendering panel {id}");

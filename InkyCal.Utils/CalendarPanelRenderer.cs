@@ -33,7 +33,7 @@ namespace InkyCal.Utils
 		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders) : base(expiration)
 		{
 			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
-			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken)?.ThenBy(x => x.Calender)?.ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
+			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace InkyCal.Utils
 		/// <param name="calendars"></param>
 		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) : this(saveToken)
 		{
-			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls) ?? throw new ArgumentNullException(nameof(iCalUrls));
+			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
 			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
 			Calendars = calendars?.ToArray();
 		}

@@ -90,9 +90,6 @@ namespace InkyCal.Utils
 						{
 							var rendererTypes = Renderers.Value.Where(x => typeof(PanelRenderer<>).IsSubclassOfRawGeneric(x));
 
-							if (rendererTypes is null)
-								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
-
 							var rendererType = rendererTypes.SingleOrDefault(x => x.BaseType.GetGenericArguments()[0].Equals(panel.GetType()));
 
 							if (rendererType == null)
