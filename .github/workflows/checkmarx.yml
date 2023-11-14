@@ -24,7 +24,7 @@ jobs:
         uses: checkmarx-ts/checkmarx-cxflow-github-action@v1.9
         with:
           project: 'InkyCal Server'
-          team: 'CxServer/Test'
+          team: CxServer/Test
           checkmarx_url: ${{ secrets.CHECKMARX_URL }}
           checkmarx_username: ${{ secrets.CHECKMARX_USERNAME }}
           checkmarx_password: ${{ secrets.CHECKMARX_PASSWORD }}
