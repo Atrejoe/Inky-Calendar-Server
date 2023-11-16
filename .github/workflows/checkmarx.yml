@@ -20,10 +20,10 @@ jobs:
  
       # Scan code with Checkmarx
       - name: Checkmarx CxFlow Action
-        uses: checkmarx-ts/checkmarx-cxflow-github-action@v1.8
+        uses: checkmarx-ts/checkmarx-cxflow-github-action@v1.9
         with:
           project: 'InkyCal Server'
-          # team: CxServer
+          team: /CxServer
           checkmarx_url: ${{ secrets.CHECKMARX_URL }}
           checkmarx_username: ${{ secrets.CHECKMARX_USERNAME }}
           checkmarx_password: ${{ secrets.CHECKMARX_PASSWORD }}
