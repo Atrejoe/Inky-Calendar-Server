@@ -1,0 +1,37 @@
+name: Checkmarx analysis
+permissions:
+  contents: read
+on:
+  workflow_dispatch: # Manual trigger
+  pull_request: # Pull request where the backend code has been modified
+ 
+jobs:
+ 
+  security:
+    name: Security checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+ 
+      # Scan code with Checkmarx
+      - name: Checkmarx CxFlow Action
+        uses: checkmarx-ts/checkmarx-cxflow-github-action@v1.9
+        with:
+          project: 'InkyCal Server'
+          team: /CxServer/Test
+          checkmarx_url: ${{ secrets.CHECKMARX_URL }}
+          checkmarx_username: ${{ secrets.CHECKMARX_USERNAME }}
+          checkmarx_password: ${{ secrets.CHECKMARX_PASSWORD }}
+          checkmarx_client_secret: 014DF517-39D1-4453-B7B3-9930C563627C
+          params: --checkmarx.version=9.0
+          #--logging.level.org.springframework.web.client.RestTemplate=TRACE --logging.level.com.checkmarx.flow.service=DEBUG --logging.level.org.apache.http.wire=TRACE
+      # Upload SARIF report for CodeQL / Security Alerts PRocessing
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: cx.sarif
