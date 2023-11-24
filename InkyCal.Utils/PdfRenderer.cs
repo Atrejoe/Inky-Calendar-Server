@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Ignore Spelling: Pdf Utils
+
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using ImageMagick;
@@ -17,7 +18,6 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	[Serializable]
 	public class PdfRenderException : Exception
 	{
 		/// <inheritdoc/>
@@ -26,11 +26,8 @@ namespace InkyCal.Utils
 		public PdfRenderException(string message) : base(message) { }
 		/// <inheritdoc/>
 		public PdfRenderException(string message, Exception inner) : base(message, inner) { }
-		/// <inheritdoc/>
-		protected PdfRenderException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}
+
 	/// <summary>
 	/// /
 	/// </summary>
@@ -55,7 +52,7 @@ namespace InkyCal.Utils
 		public override async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			//Get pdf as byte array
-			var pdf = await GetPdf();
+			var pdf = await GetPDF();
 
 			Image image;
 
@@ -122,6 +119,6 @@ namespace InkyCal.Utils
 		/// Gets the Pdf file as binary
 		/// </summary>
 		/// <returns></returns>
-		protected abstract Task<byte[]> GetPdf();
+		protected abstract Task<byte[]> GetPDF();
 	}
 }

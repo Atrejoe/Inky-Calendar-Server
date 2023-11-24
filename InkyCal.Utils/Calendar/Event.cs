@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 

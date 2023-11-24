@@ -1,7 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿// Ignore Spelling: Api Utils Util
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace InkyCal.Utils.Weather
@@ -27,7 +30,6 @@ namespace InkyCal.Utils.Weather
 	/// <see cref="WeatherApiRequestFailureException" /> is thrown when....
 	/// </summary>
 	/// <remarks></remarks>
-	[Serializable()]
 	public class WeatherApiRequestFailureException : Exception
 	{
 
@@ -88,18 +90,6 @@ namespace InkyCal.Utils.Weather
 			Reason = reason;
 		}
 
-		/// <summary>
-		/// Constructor for deserialization
-		/// </summary>
-		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		protected WeatherApiRequestFailureException(
-			  System.Runtime.Serialization.SerializationInfo info,
-			  System.Runtime.Serialization.StreamingContext context)
-				: base(info, context)
-		{
-			// Implement type-specific serialization constructor logic.
-			Reason = ((FailureReason?)info.GetValue("reason", typeof(FailureReason?))).GetValueOrDefault();
-		}
 	}
 
 	internal class Util : IDisposable
@@ -182,9 +172,9 @@ namespace InkyCal.Utils.Weather
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable CA1707 // Identifiers should not contain underscores : Mapped from OpenWeatherAPI dtos
-#pragma warning disable CA2227 // Collection properties should be read only
 #pragma warning disable CA1724 // Class anmes should not conflict with namespaces
 
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Mapped classes from OpenWeather")]
 	public class Main
 	{
 		public double temp { get; set; }
@@ -193,6 +183,7 @@ namespace InkyCal.Utils.Weather
 		public double temp_max { get; set; }
 		public int pressure { get; set; }
 		public int sea_level { get; set; }
+		
 		public int grnd_level { get; set; }
 		public int humidity { get; set; }
 		public double temp_kf { get; set; }
@@ -222,6 +213,7 @@ namespace InkyCal.Utils.Weather
 		public string pod { get; set; }
 	}
 
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Mapped classes from OpenWeather")]
 	public class List
 	{
 		public int dt { get; set; }
@@ -236,12 +228,14 @@ namespace InkyCal.Utils.Weather
 		public string dt_txt { get; set; }
 	}
 
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Mapped classes from OpenWeather")]
 	public class Coord
 	{
 		public double lat { get; set; }
 		public double lon { get; set; }
 	}
 
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Mapped classes from OpenWeather")]
 	public class City
 	{
 		public int id { get; set; }
@@ -253,6 +247,7 @@ namespace InkyCal.Utils.Weather
 		public int sunset { get; set; }
 	}
 
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Mapped classes from OpenWeather")]
 	public class RootObject
 	{
 		public string cod { get; set; }

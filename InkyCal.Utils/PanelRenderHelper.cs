@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Type = System.Type;
 
 namespace InkyCal.Utils
 {
@@ -15,7 +18,6 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// A failure when a panel renderer could not be obtained.
 	/// </summary>
-	[Serializable]
 	public class GetRendererException : Exception
 	{
 		/// <inheritdoc/>
@@ -24,10 +26,6 @@ namespace InkyCal.Utils
 		public GetRendererException(string message) : base(message) { }
 		/// <inheritdoc/>
 		public GetRendererException(string message, Exception inner) : base(message, inner) { }
-		/// <inheritdoc/>
-		protected GetRendererException(
-		  System.Runtime.Serialization.SerializationInfo info,
-		  System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}
 
 	/// <summary>

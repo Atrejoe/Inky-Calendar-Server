@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,7 +12,6 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	[Serializable]
 	public class NewYorkTimeRenderException : Exception
 	{
 		/// <inheritdoc/>
@@ -19,10 +20,6 @@ namespace InkyCal.Utils
 		public NewYorkTimeRenderException(string message) : base(message) { }
 		/// <inheritdoc/>
 		public NewYorkTimeRenderException(string message, Exception inner) : base(message, inner) { }
-		/// <inheritdoc/>
-		protected NewYorkTimeRenderException(
-			System.Runtime.Serialization.SerializationInfo info,
-			System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 	}
 	/// <summary>
 	/// 
@@ -51,7 +48,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <returns></returns>
 		/// <exception cref="NewYorkTimeRenderException"/>
-		protected override async Task<byte[]> GetPdf()
+		protected override async Task<byte[]> GetPDF()
 		{
 			var d = Date;
 
