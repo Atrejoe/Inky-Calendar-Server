@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -9,6 +10,7 @@ namespace InkyCal.Data
 	/// <summary>
 	/// 
 	/// </summary>
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "'Auth' is part of OAuth")]
 	public class GoogleOAuthRepository
 	{
 
@@ -19,8 +21,7 @@ namespace InkyCal.Data
 		/// <exception cref="ArgumentNullException">token</exception>
 		public async Task StoreToken(GoogleOAuthAccess token)
 		{
-			if (token is null)
-				throw new ArgumentNullException(nameof(token));
+			ArgumentNullException.ThrowIfNull(token);
 
 			using var c = new ApplicationDbContext();
 			token.User = new User() { Id = token.User.Id };
@@ -63,8 +64,7 @@ namespace InkyCal.Data
 		/// <returns></returns>
 		public async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken)
 		{
-			if (refreshedToken is null)
-				throw new ArgumentNullException(nameof(refreshedToken));
+			ArgumentNullException.ThrowIfNull(refreshedToken);
 
 			using var c = new ApplicationDbContext();
 			var token = await c.Set<GoogleOAuthAccess>().SingleAsync(x => x.Id == refreshedToken.Id);

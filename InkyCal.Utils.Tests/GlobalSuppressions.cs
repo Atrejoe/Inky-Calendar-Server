@@ -10,3 +10,4 @@ using System.Diagnostics.CodeAnalysis;
 	"Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores",
 	Justification = "Test methods require underscores for readability.",
 	Scope = "namespaceanddescendants", Target = "InkyCal.Server.Shared")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "namespace", Target = "~N:InkyCal.Utils.Tests")]

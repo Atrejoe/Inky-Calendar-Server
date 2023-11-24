@@ -14,9 +14,9 @@
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
-        "requested": "[7.0.4, )",
-        "resolved": "7.0.4",
-        "contentHash": "qkdUzgth6IBtGvGjII8PZ1B+dfXZ4VPXzlIGeE444vJlih/cVFTCTzF2ZY9s1buK1yLnkkDcTVGH2kyUWbyPTw=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "DxiTgkCl3CGq1rYmBX2wjY7XGbxiBdL4J+/AJIAFLKy5z70NxhnVRnPghnicXZ8oF6JKVXlW3xwznRbI3ioEKg=="
       },
       "Microsoft.EntityFrameworkCore.SqlServer": {
         "type": "Direct",

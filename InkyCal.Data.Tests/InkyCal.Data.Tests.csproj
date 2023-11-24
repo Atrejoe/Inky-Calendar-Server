@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
 	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
 	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
@@ -27,8 +31,8 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="xunit" Version="2.6.1" />
-	<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+	<PackageReference Include="xunit" Version="2.6.2" />
+	<PackageReference Include="xunit.runner.visualstudio" Version="2.5.4">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>

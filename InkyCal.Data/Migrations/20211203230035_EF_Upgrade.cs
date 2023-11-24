@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InkyCal.Data.Migrations
 {
 	[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Historical name, renaming would cause re-execution.")]
+	[SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "'EF' is short for Entity Framework")]
 	public partial class EF_Upgrade : Migration
 	{
 		/// <inheritdoc/>

@@ -46,8 +46,7 @@ namespace InkyCal.Data
 		/// <exception cref="ArgumentNullException">panel</exception>
 		public static async Task<TPanel> Update<TPanel>(this TPanel panel) where TPanel : Panel
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
+			ArgumentNullException.ThrowIfNull(panel);
 
 			using (var c = new ApplicationDbContext())
 			{
@@ -252,7 +251,7 @@ namespace InkyCal.Data
 			var result = await c.Set<CalendarPanel>()
 								.EagerLoad()
 								.AsNoTracking()
-								.Where(x => x.SubscribedGoogleCalenders.Any())
+								.Where(x => x.SubscribedGoogleCalenders.Count != 0)
 								.OrderByDescending(x => x.SubscribedGoogleCalenders.Count)
 								.FirstOrDefaultAsync();
 

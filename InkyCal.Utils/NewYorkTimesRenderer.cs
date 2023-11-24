@@ -74,7 +74,7 @@ namespace InkyCal.Utils
 				{
 					tries += 1;
 					var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
-					Console.WriteLine(url.ToString());
+					Console.WriteLine($"Downloading: {url}");
 					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
 				catch (HttpRequestException ex) when (
@@ -85,6 +85,7 @@ namespace InkyCal.Utils
 							 , System.Net.HttpStatusCode.Forbidden
 					}.Contains(ex.StatusCode.Value)))
 				{
+					Console.Error.WriteLine($"Failed to downloading: status code {ex.StatusCode}, error message: {ex.Message}");
 					d = d.AddDays(-1);
 				}
 			}

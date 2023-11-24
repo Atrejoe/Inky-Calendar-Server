@@ -1,55 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net7.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
 
-	<IsPackable>false</IsPackable>
-	<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
-	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-  </PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-	<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.4">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-	<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-	<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
-	<PackageReference Include="coverlet.collector" Version="6.0.0">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.12.0.78982">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="xunit" Version="2.6.1" />
-	<PackageReference Include="xunit.analyzers" Version="1.4.0" />
-	<PackageReference Include="xunit.runner.console" Version="2.6.1">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
-	<PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-	<PackageReference Include="XunitXml.TestLogger" Version="3.1.17" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.12.0.78982">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit" Version="2.6.2" />
+		<PackageReference Include="xunit.analyzers" Version="1.6.0" />
+		<PackageReference Include="xunit.runner.console" Version="2.6.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+		<PackageReference Include="XunitXml.TestLogger" Version="3.1.17" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<ProjectReference Include="..\InkyCal.Utils\InkyCal.Utils.csproj">
-	  <IncludeAssets></IncludeAssets>
-	  <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-	</ProjectReference>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\InkyCal.Utils\InkyCal.Utils.csproj">
+			<IncludeAssets></IncludeAssets>
+			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+		</ProjectReference>
+	</ItemGroup>
 
 </Project>

@@ -24,8 +24,7 @@ namespace InkyCal.Data
 		/// <exception cref="ArgumentNullException">panel</exception>
 		public static async Task<int> SaveSubscribedCalenders(this CalendarPanel panel, HashSet<(int IdAccessToken, string Calender)> calenders)
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
+			ArgumentNullException.ThrowIfNull(panel);
 
 			var set = (await panel.SubscribedCalenders()).ToList();
 

@@ -23,8 +23,7 @@ namespace InkyCal.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			if (optionsBuilder is null)
-				throw new ArgumentNullException(nameof(optionsBuilder));
+			ArgumentNullException.ThrowIfNull(optionsBuilder);
 
 			optionsBuilder
 				.EnableSensitiveDataLogging()
@@ -48,8 +47,7 @@ namespace InkyCal.Data
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
-			if (builder is null)
-				throw new ArgumentNullException(nameof(builder));
+			ArgumentNullException.ThrowIfNull(builder);
 
 			base.OnModelCreating(builder);
 

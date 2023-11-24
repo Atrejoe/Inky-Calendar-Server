@@ -1,5 +1,6 @@
 ﻿using InkyCal.Utils;
 using System;
+using System.Globalization;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,6 +10,9 @@ namespace InkyCal.Utils.Tests
 	{
 
 		protected readonly ITestOutputHelper output;
+
+
+		private readonly CultureInfo parseCulture = new CultureInfo("en-US");
 
 		public CalendarPanelRendererTests(ITestOutputHelper output)
 		{
@@ -40,8 +44,8 @@ namespace InkyCal.Utils.Tests
 		public void DescribePeriodTest(string start, string end)
 		{
 			//arrange
-			TimeSpan? startDate = string.IsNullOrEmpty(start) ? null : TimeSpan.Parse(start);
-			TimeSpan? endDate = string.IsNullOrEmpty(end) ? null : TimeSpan.Parse(end);
+			TimeSpan? startDate = string.IsNullOrEmpty(start) ? null : TimeSpan.Parse(start, parseCulture);
+			TimeSpan? endDate = string.IsNullOrEmpty(end) ? null : TimeSpan.Parse(end, parseCulture);
 
 			//act
 			var actual = CalendarPanelRenderer.DescribePeriod(startDate, endDate);
@@ -69,8 +73,8 @@ namespace InkyCal.Utils.Tests
 		{
 			//arrange
 
-			TimeSpan? startDate = string.IsNullOrEmpty(start) ? null : TimeSpan.Parse(start);
-			TimeSpan? endDate = string.IsNullOrEmpty(end) ? null : TimeSpan.Parse(end);
+			TimeSpan? startDate = string.IsNullOrEmpty(start) ? null : TimeSpan.Parse(start, parseCulture);
+			TimeSpan? endDate = string.IsNullOrEmpty(end) ? null : TimeSpan.Parse(end, parseCulture);
 
 			var e = new Calendar.Event()
 			{
