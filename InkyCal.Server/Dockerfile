@@ -1,11 +1,11 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /src
 COPY ["InkyCal.Models/.", "InkyCal.Models/."]
 COPY ["InkyCal.Server/.", "InkyCal.Server/."]
@@ -36,6 +36,7 @@ RUN apk add tzdata
 # Don't have a clue about the repercussions
 # https://github.com/dotnet/SqlClient/issues/220#issue-498595465
 RUN apk add icu-libs
+RUN apk cache clean
 #ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
 
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]

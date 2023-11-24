@@ -36,6 +36,7 @@ RUN apk add tzdata
 # Don't have a clue about the repercussions
 # https://github.com/dotnet/SqlClient/issues/220#issue-498595465
 RUN apk add icu-libs
+RUN apk cache clean
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
 
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
