@@ -19,7 +19,7 @@ WORKDIR "/src/InkyCal.Server"
 RUN dotnet build "InkyCal.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish -r linux-musl-x64
+RUN dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish --no-self-contained -r linux-musl-x64
 
 FROM base AS final
 WORKDIR /app
