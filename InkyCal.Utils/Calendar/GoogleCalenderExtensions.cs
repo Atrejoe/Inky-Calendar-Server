@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -11,7 +13,6 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
-using Microsoft.Extensions.Options;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -223,8 +224,8 @@ namespace InkyCal.Utils.Calendar
 					var itemRequest = CalendarService.Value.Events.List(calendar.Id);
 
 					itemRequest.OauthToken = accessToken;
-					itemRequest.TimeMin = DateTime.UtcNow.Date;
-					itemRequest.TimeMax = DateTime.UtcNow.AddDays(7);
+					itemRequest.TimeMinDateTimeOffset = DateTime.UtcNow.Date;
+					itemRequest.TimeMaxDateTimeOffset = DateTime.UtcNow.AddDays(7);
 					itemRequest.ETagAction = Google.Apis.ETagAction.IfNoneMatch;
 
 					itemRequest.SingleEvents = true;
@@ -251,8 +252,8 @@ namespace InkyCal.Utils.Calendar
 
 							var instancesRequest = CalendarService.Value.Events.Instances(calendar.Id, item.Id);
 							instancesRequest.OauthToken = accessToken;
-							instancesRequest.TimeMin = itemRequest.TimeMin;
-							instancesRequest.TimeMax = itemRequest.TimeMax;
+							instancesRequest.TimeMinDateTimeOffset = itemRequest.TimeMinDateTimeOffset;
+							instancesRequest.TimeMaxDateTimeOffset = itemRequest.TimeMaxDateTimeOffset;
 
 							Events instances;
 							using (MiniProfiler.Current.Step($"Gathering instances of recurring event '{item.Summary}'"))

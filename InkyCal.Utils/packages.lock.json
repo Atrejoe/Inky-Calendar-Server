@@ -18,22 +18,22 @@
       },
       "Google.Apis.Calendar.v3": {
         "type": "Direct",
-        "requested": "[1.63.0.3171, )",
-        "resolved": "1.63.0.3171",
-        "contentHash": "hNz+hkl/v1hYL9Rj0RxHTx0jIRx3Qg8pWVaqqeFwzQBjlvCE969wLWhacje01fMPWrl78nsAG8NDllPeDzgzJQ==",
+        "requested": "[1.64.0.3171, )",
+        "resolved": "1.64.0.3171",
+        "contentHash": "BY+4+/cQj5A8CE9bY0XHS8lfdV0FRNqDjRzN0wb2CAoiPtvWwQHZoML/APYWWLcUdeZnog43PZbGuIF3AsjH2A==",
         "dependencies": {
-          "Google.Apis": "1.63.0",
-          "Google.Apis.Auth": "1.63.0"
+          "Google.Apis": "1.64.0",
+          "Google.Apis.Auth": "1.64.0"
         }
       },
       "Google.Apis.Oauth2.v2": {
         "type": "Direct",
-        "requested": "[1.63.0.1869, )",
-        "resolved": "1.63.0.1869",
-        "contentHash": "fEnoKjR1n0BwJgIbTJaDvdkwGzxPnwJyX7CyLLNnDwrmtIX6YZ76A2BTd4F0a5qfv2YPsJZok03mFvVyX+7pow==",
+        "requested": "[1.64.0.1869, )",
+        "resolved": "1.64.0.1869",
+        "contentHash": "8SKAzcY5KFFuJ6PzCYoKZhN+loIIRduQ6EY9aQph3QAjhwYHdz3fkkbMfH4YZ8JiFpWKNJM8NFuTLezOPkwGQg==",
         "dependencies": {
-          "Google.Apis": "1.63.0",
-          "Google.Apis.Auth": "1.63.0"
+          "Google.Apis": "1.64.0",
+          "Google.Apis.Auth": "1.64.0"
         }
       },
       "Google.Apis.ServiceUser.v1": {
@@ -150,26 +150,26 @@
       },
       "Google.Apis": {
         "type": "Transitive",
-        "resolved": "1.63.0",
-        "contentHash": "+eZyt17tnx3KiNqYTu3s810RWe4P5t7Ou1sdLVGaHkwagWAUN5NfnD4/xLA9gMvnFT2ETGyrsUXgxQ8wU0KRAw==",
+        "resolved": "1.64.0",
+        "contentHash": "0ki3AJDiTuV5Cb7NUyq+0DDGDLWcPCKbZC1HgyvAW+o/I0rY/HXMvv6IAF65hhfbQB/Scfm8nuAW3weNEXYkxw==",
         "dependencies": {
-          "Google.Apis.Core": "1.63.0"
+          "Google.Apis.Core": "1.64.0"
         }
       },
       "Google.Apis.Auth": {
         "type": "Transitive",
-        "resolved": "1.63.0",
-        "contentHash": "+kdWA72t5B9kjm1MO4niU6NUOqakFFwTIaaikpdejUMAYrgBreQs6r8ntk/jPB727XlJ/ho+kQKE7CYJVT180A==",
+        "resolved": "1.64.0",
+        "contentHash": "u3cwX0E3IpAkROzRPgZtohFSS2DUblkSmwMfh3/2Qwbi/QXHd8ebq2JuCNqmfpJyfgW5AG0+fO0UrrLsYtglMQ==",
         "dependencies": {
-          "Google.Apis": "1.63.0",
-          "Google.Apis.Core": "1.63.0",
+          "Google.Apis": "1.64.0",
+          "Google.Apis.Core": "1.64.0",
           "System.Management": "7.0.2"
         }
       },
       "Google.Apis.Core": {
         "type": "Transitive",
-        "resolved": "1.63.0",
-        "contentHash": "pXFvqBBkvsA7USZMHXRQqi6GNUi4MSvJSi0fq5LPqEM3RXA1qHCpwXtaIUO8gGtXHNFtmmDJtRvROybBu0/3EQ==",
+        "resolved": "1.64.0",
+        "contentHash": "bqrUhDeMFeMdjtv4QT4Z99WDPSEbS6EKnp1bYvqyc/VpEu4oFNMqw8/bk/7SS7Ko+bodDgum8fkvDwCMZtdWDg==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3"
         }
