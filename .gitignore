@@ -14,3 +14,5 @@ documentation/Help/
 nCrunchTemp_*.csproj
 
 *.trx
+
+InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject

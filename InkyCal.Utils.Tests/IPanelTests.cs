@@ -17,7 +17,8 @@ namespace InkyCal.Utils.Tests
 		protected abstract T GetRenderer();
 
 		[SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Method for delivery test data")]
-		public static IEnumerable<object[]> DisplayModels() {
+		public static IEnumerable<object[]> DisplayModels()
+		{
 			return Enum.GetValues(typeof(DisplayModel))
 				.Cast<DisplayModel>()
 				.Select(x => new object[] { x });
@@ -36,7 +37,7 @@ namespace InkyCal.Utils.Tests
 			{
 				if (handled)
 				{
-					var errorMessage = $"{explanation ?? "Handled exception" }: {ex.Message}";
+					var errorMessage = $"{explanation ?? "Handled exception"}: {ex.Message}";
 					Console.WriteLine(errorMessage);
 					throw new SkipException(errorMessage);
 				}
@@ -49,20 +50,24 @@ namespace InkyCal.Utils.Tests
 			};
 
 			//act
-			var image = await panel.GetImage(
+
+			SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> bitmap;
+
+			using (var image = await panel.GetImage(
 								width: width,
 								height: height,
 								colors: colors,
-								assertHandledOnly);
+								assertHandledOnly))
+			{
+				bitmap = image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
 
-			var bitmap = image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
-
-			//assert
-			Assert.NotNull(image);
+				//assert
+				Assert.NotNull(image);
 
 
-			using var fileStream = File.Create(filename);
-			image.Save(fileStream, new PngEncoder());
+				using var fileStream = File.Create(filename);
+				image.Save(fileStream, new PngEncoder());
+			}
 
 			var fi = new FileInfo(filename);
 			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFramework>net8.0</TargetFramework>
@@ -41,6 +41,7 @@
 	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+	<PackageReference Include="OpenAI-DotNet" Version="7.4.1" />
 	<PackageReference Include="Sentry" Version="3.41.3" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 	<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
@@ -69,6 +70,10 @@
 	<Content Update="C:\Users\Robert\.nuget\packages\cete.dynamicpdf.rasterizer.net\3.11.0\build\netstandard20\..\netcoreapp20\DPDFRenderNative_x64.dll">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CalendarImage\" />
   </ItemGroup>
 
 </Project>
