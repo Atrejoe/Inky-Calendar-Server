@@ -7,6 +7,7 @@ using InkyCal.Data;
 using InkyCal.Server.Areas.Identity;
 using InkyCal.Utils;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -109,6 +110,17 @@ namespace InkyCal.Server
 				}
 				)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
+
+			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+			{
+				services.AddAuthentication()
+					.AddGoogle(googleOptions =>
+					{
+						googleOptions.ClientId = InkyCal.Server.Config.GoogleOAuth.ClientId;
+						googleOptions.ClientSecret = InkyCal.Server.Config.GoogleOAuth.ClientSecret;
+						googleOptions.CallbackPath = "/google/authorize";
+					});
+			}
 
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
