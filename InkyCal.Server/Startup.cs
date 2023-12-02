@@ -110,6 +110,17 @@ namespace InkyCal.Server
 				)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
+			if (InkyCal.Server.Config.GoogleOAuth.Enabled)
+			{
+				services.AddAuthentication()
+					.AddGoogle(googleOptions =>
+					{
+						googleOptions.ClientId = InkyCal.Server.Config.GoogleOAuth.ClientId;
+						googleOptions.ClientSecret = InkyCal.Server.Config.GoogleOAuth.ClientSecret;
+						googleOptions.CallbackPath = "/google/authorize";
+					});
+			}
+
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();

@@ -92,6 +92,12 @@
         "resolved": "0.37.0",
         "contentHash": "J7Mt1QjKijE7aAK81u5nt4SYPYEvt1odfr4ddMvyOscyNT3PoGfHKKTBB5VBSXJrWZWhfJlcG7hHBLiqawg+nw=="
       },
+      "Microsoft.AspNetCore.Authentication.Google": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "dPE/IiHhBqnJ7WrD72T20+DcHGCaR9F4RmIFap83W1Ts/ze5gBVe4Ii02qJdJzkUniQy5S/v42zpRIgJTPzPqQ=="
+      },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
         "requested": "[8.0.7, )",
