@@ -38,6 +38,7 @@ namespace InkyCal.Server
 		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
+			services.AddHealthChecks();
 
 			//services.AddMvc().AddJsonOptions(options =>
 			//{
@@ -295,6 +296,7 @@ namespace InkyCal.Server
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
+				endpoints.MapHealthChecks("/health");
 			});
 		}
 	}
