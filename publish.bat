@@ -2,7 +2,7 @@
 dotnet list package --vulnerable
 
 :: Publish Docker image, requires write access atreyu/inkycal.server
-docker-compose build --pull
+docker compose build --pull
 
 :: Tag it as the latest version
 ::docker tag inky-calendar-server_web:latest atreyu/inkycal.server:latest

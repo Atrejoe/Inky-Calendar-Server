@@ -39,4 +39,6 @@ RUN apk add icu-libs
 RUN apk cache clean
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
 
+HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 CMD curl --silent --fail http://localhost/health || exit 1
+
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
