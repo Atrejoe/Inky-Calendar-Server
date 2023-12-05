@@ -44,18 +44,6 @@
           "System.Diagnostics.DiagnosticSource": "4.4.1"
         }
       },
-      "ceTe.DynamicPDF.Rasterizer.NET.x64": {
-        "type": "Direct",
-        "requested": "[3.2.0.38353, )",
-        "resolved": "3.2.0.38353",
-        "contentHash": "ZabHnPpW7ccgAWoshUx51qRI123jSxBLMjulu2jTfd3i8KjRJnH3W+H1PDc01oxStMXhdz/ehDpbuJW/U+Fuhw=="
-      },
-      "ceTe.DynamicPDF.Rasterizer.NET.x86": {
-        "type": "Direct",
-        "requested": "[3.2.0.38353, )",
-        "resolved": "3.2.0.38353",
-        "contentHash": "7mqReoKYfpFNfEKE5hJ/B7Fez+qYDEJjwxYK2I6xrPcOI7Gf1H3vhfaF1PyQ4fOa7ny9F7dcI2G0CdNk8IwOJg=="
-      },
       "Google.Apis.Oauth2.v2": {
         "type": "Direct",
         "requested": "[1.64.0.1869, )",
