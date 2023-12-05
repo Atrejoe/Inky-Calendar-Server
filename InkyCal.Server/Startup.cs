@@ -146,7 +146,7 @@ namespace InkyCal.Server
 			}
 			catch (NotificationException ex)
 			{
-				ex.Log(severity: Bugsnag.Severity.Info);
+				ex.Log(severity: Severity.Info);
 			}
 
 			// Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense

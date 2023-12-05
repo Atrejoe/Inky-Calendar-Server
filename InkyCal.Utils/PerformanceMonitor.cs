@@ -61,7 +61,7 @@ namespace InkyCal.Utils
 		/// Logs the specified exception to all registered exception handlers.
 		/// </summary>
 		/// <param name="ex">The ex.</param>
-		/// <param name="user">The authrnticated user, if any</param>
+		/// <param name="user">The authenticated user, if any</param>
 		/// <param name="severity"></param>
 		public static void Log(this System.Exception ex, Models.User user = null, Severity severity = Severity.Error)
 		{
@@ -92,7 +92,7 @@ namespace InkyCal.Utils
 				Console.Error.WriteLine($": Logging {severityAsString} to Bugsnag : {ex.Message}");
 
 				using (MiniProfiler.Current.Step("Reporting error to BugSnag"))
-					BugsnagClient.Notify(ex, severity, (report) => FillReport(report, user));
+					BugsnagClient.Notify(ex, severity.MapToBugSnag(), (report) => FillReport(report, user));
 
 			}
 

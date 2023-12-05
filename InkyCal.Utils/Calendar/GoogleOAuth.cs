@@ -50,7 +50,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex) when (ex.Error.Error == "invalid_grant")
 			{
-				ex.Log(severity:Bugsnag.Severity.Warning);
+				ex.Log(severity:Severity.Warning);
 				return default;
 			}
 		}
@@ -72,7 +72,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex)
 			{
-				ex.Log(severity: Bugsnag.Severity.Warning);
+				ex.Log(severity: Severity.Warning);
 				return false;
 			}
 		}
@@ -101,7 +101,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex)
 			{
-				ex.Log(severity: Bugsnag.Severity.Warning);
+				ex.Log(severity: Severity.Warning);
 
 				return default;
 			}
