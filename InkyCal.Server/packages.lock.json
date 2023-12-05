@@ -251,11 +251,11 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[3.41.2, )",
-        "resolved": "3.41.2",
-        "contentHash": "CVszJ9lGQS99FC1c56AVeEbH5yXV+FnHk215T4oJVzs8AgJrjbG3/C/fdFLWnCaWrNl/Phz2L64MEUM0U5/i6g==",
+        "requested": "[3.41.3, )",
+        "resolved": "3.41.3",
+        "contentHash": "t1KDDQ7wVSXi2+WHicy7yf9IpkD5c7yTVdPeWt9qmIATu/sKXGvw/kHXdSWHZZYLQqQP+SkMoUzuko5JGxpO9g==",
         "dependencies": {
-          "Sentry.Extensions.Logging": "3.41.2"
+          "Sentry.Extensions.Logging": "3.41.3"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1819,17 +1819,17 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "3.41.2",
-        "contentHash": "6ifhb3RnJtQakoJR3jj3SEmjmx+vYfgoAnzlFjKxfQUilLgYTvbSYZskxVKrUbY0qc2P9j+VdfDqw9VwiweZ5A=="
+        "resolved": "3.41.3",
+        "contentHash": "4vYXsUIaLhqwNE+g6Q/MYcgrLl2ZVbUPMt1bzFSqlCOBngNZOQ05O4SZveszPzGv/mBc/yelA4Ekr8SVFF8RfA=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "3.41.2",
-        "contentHash": "fXd2Rl/CfkWsNRDYDblOLg6yw9r3y/4n85+w7lNFf13HsnclDLtg1YvtAvC2K/77HNqqoDhFyGWeLfVilM9Ipw==",
+        "resolved": "3.41.3",
+        "contentHash": "L2eQVTe3iLZZi5PPIV8dHgcLOfykH29o5PlCrJUTl5XSekkVWapYbk6Fcly+ZWcGKD+TMmzB0lekG7vqpTxg/Q==",
         "dependencies": {
           "Microsoft.Extensions.Http": "6.0.0",
           "Microsoft.Extensions.Logging.Configuration": "6.0.0",
-          "Sentry": "3.41.2"
+          "Sentry": "3.41.3"
         }
       },
       "SixLabors.Fonts": {
@@ -3018,7 +3018,7 @@
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "Newtonsoft.Json": "[13.0.3, )",
-          "Sentry": "[3.41.2, )",
+          "Sentry": "[3.41.3, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )"

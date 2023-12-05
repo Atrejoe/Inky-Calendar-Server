@@ -553,8 +553,8 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "3.41.2",
-        "contentHash": "6ifhb3RnJtQakoJR3jj3SEmjmx+vYfgoAnzlFjKxfQUilLgYTvbSYZskxVKrUbY0qc2P9j+VdfDqw9VwiweZ5A=="
+        "resolved": "3.41.3",
+        "contentHash": "4vYXsUIaLhqwNE+g6Q/MYcgrLl2ZVbUPMt1bzFSqlCOBngNZOQ05O4SZveszPzGv/mBc/yelA4Ekr8SVFF8RfA=="
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
@@ -1570,7 +1570,7 @@
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "Newtonsoft.Json": "[13.0.3, )",
-          "Sentry": "[3.41.2, )",
+          "Sentry": "[3.41.3, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )"
