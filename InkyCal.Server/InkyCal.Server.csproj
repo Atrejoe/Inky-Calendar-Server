@@ -49,6 +49,8 @@
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
 	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
+	<PackageReference Include="NuGet.Common" Version="6.8.0" />
+	<PackageReference Include="NuGet.Protocol" Version="6.8.0" />
 	<PackageReference Include="Sentry.AspNetCore" Version="3.41.3" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
 	  <PrivateAssets>all</PrivateAssets>
