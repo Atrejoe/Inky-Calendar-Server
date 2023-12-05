@@ -2,8 +2,8 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+# EXPOSE 80
+# EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
@@ -39,6 +39,8 @@ RUN apk add icu-libs
 RUN apk cache clean
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false 
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 CMD curl --silent --fail http://localhost/health || exit 1
+# CURL-based health check
+# Used configured Asp Net Core url
+HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 CMD wget --no-verbose --tries=1 --spider "$(echo $ASPNETCORE_URLS | cut -d ';' -f 1)health" || exit 1
 
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
