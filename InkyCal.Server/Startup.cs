@@ -9,11 +9,14 @@ using InkyCal.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using StackExchange.Profiling.Storage;
@@ -39,7 +42,7 @@ namespace InkyCal.Server
 		{
 			services.AddControllers();
 			services.AddHealthChecks()
-				.AddSqlServer(Config.Config.ConnectionString);
+				.AddSqlServer(Config.Config.ConnectionString,failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
 
 			//services.AddMvc().AddJsonOptions(options =>
 			//{
@@ -297,7 +300,16 @@ namespace InkyCal.Server
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
-				endpoints.MapHealthChecks("/health");
+				endpoints.MapHealthChecks("/health"
+				, new HealthCheckOptions
+				{
+					ResultStatusCodes =
+						{
+							[HealthStatus.Healthy] = StatusCodes.Status200OK,
+							[HealthStatus.Degraded] = StatusCodes.Status417ExpectationFailed,
+							[HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+						}
+				});
 			});
 		}
 	}
