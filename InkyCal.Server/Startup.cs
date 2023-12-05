@@ -38,7 +38,8 @@ namespace InkyCal.Server
 		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
-			services.AddHealthChecks();
+			services.AddHealthChecks()
+				.AddSqlServer(Config.Config.ConnectionString);
 
 			//services.AddMvc().AddJsonOptions(options =>
 			//{
