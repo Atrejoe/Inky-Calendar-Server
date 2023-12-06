@@ -1,11 +1,12 @@
 ﻿using System;
+using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
 	/// <summary>
 	/// A test version for <see cref="CalendarPanelRenderer"/>
 	/// </summary>
-	public class TestCalendarPanelRenderer : CalendarPanelRenderer
+	public class TestCalendarImagePanelRenderer : CalendarPanelRenderer
 	{
 		/// <summary>
 		/// A public iCal calendar with public holidays for demo/test purposes
@@ -20,16 +21,17 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// 
 		/// </summary>
-		public TestCalendarPanelRenderer() : base(
-			async (token) => {
+		public TestCalendarImagePanelRenderer() : base(
+			async (token) =>
+			{
 				await System.Threading.Tasks.Task.CompletedTask;
 			},
 			iCalUrls: [
-				new Uri(PublicHolidayCalenderUrl), 
-				new Uri(DebugCalenderUrl) 
+				new Uri(PublicHolidayCalenderUrl),
+				new Uri(DebugCalenderUrl)
 			],
-			calendars: [],
-			drawMode: Models.CalenderDrawMode.List)
+			[],
+			drawMode: CalenderDrawMode.AIImage)
 		{
 		}
 	}

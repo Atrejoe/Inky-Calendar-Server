@@ -1,5 +1,4 @@
-﻿using InkyCal.Utils;
-using System;
+﻿using System;
 using System.Globalization;
 using Xunit;
 using Xunit.Abstractions;

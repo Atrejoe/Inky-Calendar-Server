@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
+using OpenAI.Chat;
+using OpenAI.Images;
+using OpenAI.Models;
+using OpenAI;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -15,6 +19,9 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using StackExchange.Profiling;
 using static InkyCal.Utils.FontHelper;
+using Event = InkyCal.Utils.Calendar.Event;
+using System.IO;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 
 namespace InkyCal.Utils
 {
@@ -30,10 +37,12 @@ namespace InkyCal.Utils
 		/// <param name="expiration">The expiration.</param>
 		/// <param name="iCalUrls">The i cal urls.</param>
 		/// <param name="subscribedCalenders"></param>
-		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders) : base(expiration)
+		/// <param name="drawMode"></param>
+		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders, CalenderDrawMode drawMode) : base(expiration)
 		{
 			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
 			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
+			DrawMode = drawMode;
 		}
 
 		/// <summary>
@@ -50,6 +59,11 @@ namespace InkyCal.Utils
 		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; }
 
 		/// <summary>
+		/// Draw mode
+		/// </summary>
+		public CalenderDrawMode DrawMode { get; }
+
+		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
 		/// </summary>
 		/// <param name="other">An object to compare with this object.</param>
@@ -59,6 +73,7 @@ namespace InkyCal.Utils
 		protected override bool Equals(PanelCacheKey other)
 		{
 			return other is CalendarPanelCacheKey cpc
+				&& DrawMode.Equals(cpc.DrawMode)
 				&& ICalUrls.SequenceEqual(cpc.ICalUrls)
 				&& SubscribedGoogleCalenders.SequenceEqual(cpc.SubscribedGoogleCalenders);
 		}
@@ -85,11 +100,10 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl) : this(saveToken, new[] { iCalUrl })
+		/// <param name="drawMode">Indicates how the image should be drawn</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode)
 		{
-			if (iCalUrl is null)
-				throw new ArgumentNullException(nameof(iCalUrl));
-
+			ArgumentNullException.ThrowIfNull(iCalUrl);
 		}
 		/// <summary>
 		/// Show one or more calendars
@@ -97,11 +111,21 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) : this(saveToken)
+		/// <param name="drawMode">Indicates how the image should be drawn</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode) : this(saveToken)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
-			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
+
+			var cacheExpiration = drawMode switch
+			{
+				// Cache more aggressively for AI images
+				CalenderDrawMode.AIImage => TimeSpan.FromMinutes(15),
+				_ => TimeSpan.FromMinutes(1)
+			};
+
+			CacheKey = new CalendarPanelCacheKey(cacheExpiration, iCalUrls, calendars, drawMode);
 			Calendars = calendars?.ToArray();
+			DrawMode = drawMode;
 		}
 
 		/// <summary>
@@ -112,8 +136,12 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Gets the cache key.
 		/// </summary>
-		public PanelCacheKey CacheKey { get; }
+		public virtual PanelCacheKey CacheKey { get; }
 
+		/// <summary>
+		/// The mode of drawing
+		/// </summary>
+		public CalenderDrawMode DrawMode { get; private set; }
 
 		/// <summary>
 		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
@@ -121,7 +149,7 @@ namespace InkyCal.Utils
 		/// <param name="width">The height of the panel (in landscape mode).</param>
 		/// <param name="height">The width of the panel (in landscape mode).</param>
 		/// <param name="colors">The number of color to render in.</param>
-		/// <param name="log">A callbac method for logging errors to</param>
+		/// <param name="log">A callback method for logging errors to</param>
 		/// <returns></returns>
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
@@ -135,21 +163,25 @@ namespace InkyCal.Utils
 			if (!(events?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events listed");
 
-			var result = DrawImage(width, height, colors, events, sbErrors.ToString(), log);
-
-			return result;
+			return DrawMode switch
+			{
+				CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
+				CalenderDrawMode.List => DrawImage(width, height, colors, events, sbErrors.ToString(), log),
+				_ => throw new NotImplementedException($"DrawMode {DrawMode} is not implemented"),
+			};
 		}
 
-		private readonly Func<GoogleOAuthAccess, Task> SaveToken;
-
-
+		/// <summary>
+		/// 
+		/// </summary>
+		protected internal readonly Func<GoogleOAuthAccess, Task> SaveToken;
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		internal static Image<Rgba32> DrawImage(
 			int width,
 			int height,
 			Color[] colors,
-			List<Event> events,
+			List<Calendar.Event> events,
 			string calenderParseErrors,
 			IPanelRenderer.Log log)
 		{
@@ -362,6 +394,104 @@ namespace InkyCal.Utils
 				}
 
 			});
+			return result;
+		}
+
+		/// <summary>
+		/// AI-powered image describing events, ported from https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/
+		/// </summary>
+		/// <returns></returns>
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
+		internal static async Task<Image<Rgba32>> DrawDallEImage(
+			int width,
+			int height,
+			Color[] colors,
+			List<Event> events,
+			string calenderParseErrors,
+			IPanelRenderer.Log log)
+		{
+			colors ??= [Color.Black, Color.White];
+
+			var key = Server.Config.Config.OpenAIAPIKey;
+
+			var api = new OpenAIClient(key);
+
+			//events = new List<Event>(new[] {
+			//	new Event() { Summary = "All day : Work" },
+			//	new Event() { Summary = "15:30 Pick up kids from school, shop for presents" },
+			//	new Event() { Summary = "17:00 Robert cooks dinner" },
+			//	new Event() { Summary = "20:00 Robert climbing" }
+			//});
+
+			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x=>x).FirstOrDefault(DateTime.Now);
+
+			events = events.Where(x => x.Date.Date == day).ToList();
+
+			var prompt = $@"This is todays calendar:
+- {string.Join($"{Environment.NewLine}- ", events.Select(x => x.Summary))}
+Use the following colors: 
+- {string.Join($"{Environment.NewLine}- ", colors.Select(x => x.ColorName()))}";
+
+			var messages = new List<Message>(new[] {
+				new Message(Role.System, @$"You are a master prompt maker for Dalle.
+You specialize in creating 19th century metal litograph images in the style of a vintage engraving, caravaggesque, flickr, ultrafine detail, neoclassicism based on my calendar entries.
+You are creative, hide allegories and details. You provide prompts based on the calender events provided, which all are on {day:D}.
+The image should be in a style of 19th century litograph or metal plate print as would be seen in an old book or newspaper and include the colors requested by the user."),
+				new Message(Role.User, prompt)
+			});
+
+
+			var chatRequest = new ChatRequest(messages);
+			var response = await api.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+			var imagePrompt = response.FirstChoice.Message;
+
+			Console.WriteLine(prompt);
+			Console.WriteLine(imagePrompt);
+
+
+			//var imageResult = await api.ImageGenerations.CreateImageAsync(
+			//	new ImageGenerationRequest(
+			//		prompt: imagePrompt,
+			//		numOfImages: 1,
+			//		size: ImageSize._1024,
+			//		responseFormat: ImageResponseFormat.B64_json));
+
+			var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
+			var imageResults = await api.ImagesEndPoint.GenerateImageAsync(request);
+
+
+			Image<Rgba32> result;
+			try
+			{
+				using var client = new System.Net.Http.HttpClient();
+				var url = imageResults[0].Url;
+				using var s = await client.GetStreamAsync(url);
+				using var ms = new MemoryStream();
+				await s.CopyToAsync(ms);
+
+				//var i = Image.Load(ms);
+				//Console.WriteLine(i.Metadata.ToString());
+				//byte[] data = Convert.FromBase64String(imageResult);
+				ms.Position = 0;
+				result = Image.Load<Rgba32>(ms);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				Console.WriteLine(ex.StackTrace);
+				Console.WriteLine(ex.InnerException?.Message);
+				Console.WriteLine(ex.InnerException?.StackTrace);
+				throw;
+			}
+
+			result.Mutate(x => x
+					.EntropyCrop()
+					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
+					.BackgroundColor(Color.Transparent)
+					.Quantize(new PaletteQuantizer(colors))
+					);
+
 			return result;
 		}
 

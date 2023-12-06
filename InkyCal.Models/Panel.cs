@@ -5,19 +5,34 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace InkyCal.Models
 {
 
+	/// <summary>
+	/// A display pane,
+	/// </summary>
 	[Table("Panel", Schema = "InkyCal")]
 	public class Panel : ITimeStampable
 	{
+		/// <summary>
+		/// The display name of the panel
+		/// </summary>
 		[Required, MaxLength(255), Column(Order = 1)]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// The <see cref="User"/> the panel belongs to.
+		/// </summary>
 		[Required]
 		public User Owner { get; set; }
 
+		/// <summary>
+		/// The unique identifier for this panel
+		/// </summary>
 		[Key, Column(Order = 0)]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
+		/// <summary>
+		/// The <see cref="DisplayModel"/> this panel uses
+		/// </summary>
 		public DisplayModel Model { get; set; }
 
 		/// <summary>
@@ -76,7 +91,7 @@ namespace InkyCal.Models
 
 
 	/// <summary>
-	/// 
+	/// A cache keys for panels that need to be individually cached
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
 	public class PanelInstanceCacheKey : PanelCacheKey
@@ -86,6 +101,11 @@ namespace InkyCal.Models
 		/// </summary>
 		public const int DefaultExpirationInSeconds = 30;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="PanelInstanceCacheKey"/>.
+		/// </summary>
+		/// <param name="guid"></param>
+		/// <param name="expiration"></param>
 		public PanelInstanceCacheKey(Guid guid, TimeSpan? expiration = null) : base(expiration.GetValueOrDefault(TimeSpan.FromSeconds(DefaultExpirationInSeconds)))
 		{
 			Guid = guid;
@@ -99,17 +119,18 @@ namespace InkyCal.Models
 		/// </value>
 		public Guid Guid { get; }
 
-		public override int GetHashCode() => HashCode.Combine(Guid, base.GetHashCode());
+		/// <inhgeritdoc/>
+		public override int GetHashCode() 
+			=> HashCode.Combine(Guid, base.GetHashCode());
 
-		public override bool Equals(object obj) {
-			return Equals(obj as PanelCacheKey);
-		}
+		/// <inhgeritdoc/>
+		public override bool Equals(object obj) 
+			=> Equals(obj as PanelCacheKey);
 
-		protected override bool Equals(PanelCacheKey other)
-		{
-			return other is PanelInstanceCacheKey pic
+		/// <inhgeritdoc/>
+		protected override bool Equals(PanelCacheKey other) 
+			=> other is PanelInstanceCacheKey pic
 				&& pic.Guid.Equals(Guid);
-		}
 	}
 
 	/// <summary>
@@ -148,9 +169,7 @@ namespace InkyCal.Models
 		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
 		public override bool Equals(object obj)
-		{
-			return Equals(obj as PanelCacheKey);
-		}
+			=> Equals(obj as PanelCacheKey);
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="PanelCacheKey" /> (or derived class))
@@ -170,6 +189,7 @@ namespace InkyCal.Models
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
-		public override int GetHashCode() => HashCode.Combine(Expiration, GetType());
+		public override int GetHashCode()
+			=> HashCode.Combine(Expiration, GetType());
 	}
 }

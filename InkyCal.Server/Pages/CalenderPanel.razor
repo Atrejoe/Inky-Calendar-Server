@@ -1,83 +1,99 @@
 @inherits AuthenticatedComponentBase
+@using InkyCal.Models.Helpers
 
 <EditForm Model="@Panel">
-	<DataAnnotationsValidator />
-	<ValidationSummary />
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>
+                <span>Drawing mode:</span>
+        </label>
+        <div class="input-group">
+            <InputSelect class="form-control" id="@nameof(@Panel.DrawMode)" @bind-Value="@Panel.DrawMode">
+                @foreach (var mode in Enum.GetValues<InkyCal.Models.CalenderDrawMode>())
+                {
+                    <option label="@mode.GetDisplayName()" value="@mode" title="@mode.GetDescription()">@mode.GetDisplayName()</option>
+                }
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => newUrl.Url)" />
+    </div>
 </EditForm>
 
 <EditForm Model="@newUrl" OnValidSubmit="AddUrl">
-	<DataAnnotationsValidator />
-	<div class="form-group">
-		<label>
-			@if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
-			{
-				<span>Add another calender url:</span>
-			}
-			else
-			{
-				<span>Add an iCal calender url:</span>
-			}
-		</label>
-		<div class="input-group">
-			<InputText class="form-control" id="newurl" @bind-Value="newUrl.Url" />
-			<span class="input-group-btn">
-				<button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
-			</span>
-		</div>
-		<ValidationMessage For="@(() => newUrl.Url)" />
-	</div>
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>
+            @if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
+            {
+                <span>Add another calender url:</span>
+            }
+            else
+            {
+                <span>Add an iCal calender url:</span>
+            }
+        </label>
+        <div class="input-group">
+            <InputText class="form-control" id="newurl" @bind-Value="newUrl.Url" />
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+            </span>
+        </div>
+        <ValidationMessage For="@(() => newUrl.Url)" />
+    </div>
 </EditForm>
 
 @if ((@Panel.CalenderUrls?.Any()).GetValueOrDefault())
 {
-	@(Panel.CalenderUrls.Count()==1?"Url":"Urls")
-	<ol>
-		@foreach (var url in @Panel.CalenderUrls)
-		{
-			<li>
-				@url.Url
-				<NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
-					<span class="oi oi-trash" aria-hidden="true"></span>
-				</NavLink>
-			</li>
-		}
-	</ol>
+    @(Panel.CalenderUrls.Count() == 1 ? "Url" : "Urls")
+    <ol>
+        @foreach (var url in @Panel.CalenderUrls)
+        {
+            <li>
+                @url.Url
+                <NavLink @onclick="@((e) => RemoveUrl(@url.Url))">
+                    <span class="oi oi-trash" aria-hidden="true"></span>
+                </NavLink>
+            </li>
+        }
+    </ol>
 }
 
 @if (InkyCal.Server.Config.GoogleOAuth.Enabled)
 {
-	<h3>Google calenders</h3>
+    <h3>Google calenders</h3>
 
-	@if ((AvailableCalendars?.Any()).GetValueOrDefault())
-	{
-		<label>Select calenders to display</label>
-		<br />
-	}
-	@foreach (var token in @AvailableCalendars)
-	{
+    @if ((AvailableCalendars?.Any()).GetValueOrDefault())
+    {
+        <label>Select calenders to display</label>
+        <br />
+    }
+    @foreach (var token in @AvailableCalendars)
+    {
 
-		<div class="input-group">
-			<code>@token.Key.profile.Name&lt;@(@token.Key.profile.Email)&gt;</code><br />
-			<CheckboxList Data="@token.Value"
-				  TextField="@((cal)=>cal.SummaryOverride ?? cal.Summary)"
-				  ValueField="@((cal)=>(token.Key.IdToken+"_"+cal.Id))"
-				  ItemStyle="@((cal)=>$"background-color: {@cal.BackgroundColor}; display:inline-block; border-radius:3px; border:1px solid {@cal.BackgroundColor}; padding:0px 3px 0px 3px; margin:1px;")"
-				  SelectedValues="@SubscribedCalenders"
-				  IconField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"warning":""))"
-				  IconTooltipField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"This calender is hidden in the Google Calender UI":""))"
-				  OnSelectionChanged="@SaveSelection" />
+        <div class="input-group">
+            <code>@token.Key.profile.Name&lt;@(@token.Key.profile.Email)&gt;</code><br />
+            <CheckboxList Data="@token.Value"
+                          TextField="@((cal)=>cal.SummaryOverride ?? cal.Summary)"
+                          ValueField="@((cal)=>(token.Key.IdToken+"_"+cal.Id))"
+                          ItemStyle="@((cal)=>$"background-color: {@cal.BackgroundColor}; display:inline-block; border-radius:3px; border:1px solid {@cal.BackgroundColor}; padding:0px 3px 0px 3px; margin:1px;")"
+                          SelectedValues="@SubscribedCalenders"
+                          IconField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"warning":""))"
+                          IconTooltipField="@((cal)=>(cal.Hidden.GetValueOrDefault()?"This calender is hidden in the Google Calender UI":""))"
+                          OnSelectionChanged="@SaveSelection" />
 
-		</div>
-	}
+        </div>
+    }
 
-	@if ((AvailableCalendars?.Any()).GetValueOrDefault())
-	{
-		<NavLink href="/google/authorize">Link another Google account</NavLink>
-	}
-	else
-	{
-		<NavLink href="/google/authorize">Link your Google account</NavLink>
-	}
+    @if ((AvailableCalendars?.Any()).GetValueOrDefault())
+    {
+        <NavLink href="/google/authorize">Link another Google account</NavLink>
+    }
+    else
+    {
+        <NavLink href="/google/authorize">Link your Google account</NavLink>
+    }
 }
 
 <br />

@@ -7,8 +7,14 @@ namespace InkyCal.Models
 	/// </summary>
 	public interface ITimeStampable
 	{
+		/// <summary>
+		/// The date and time this entity was created
+		/// </summary>
 		DateTime Created { get; set; }
 
+		/// <summary>
+		/// The date and time this entity was last modified
+		/// </summary>
 		DateTime Modified { get; set; }
 
 		/// <summary>

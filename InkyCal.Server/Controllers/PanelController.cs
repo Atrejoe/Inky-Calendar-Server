@@ -57,6 +57,25 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
+		/// Returns a AI-powered impression image for a demo calendar, mapped for <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A demo calendar panel.</returns>
+		/// <remarks>
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("test/{model}/calendar-image")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> TestCalendarImage(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		{
+			return await this.Image(new TestCalendarImagePanelRenderer(), model, width, height);
+		}
+
+		/// <summary>
 		/// Returns a demo weather panel, mapped for <paramref name="model"/>.
 		/// </summary>
 		/// <param name="model"></param>
@@ -99,15 +118,16 @@ namespace InkyCal.Server.Controllers
 								new ImagePanel() { Path = TestImagePanelRenderer.DemoImageUrl, Rotation= Rotation.Zero },
 								new CalendarPanel(){  CalenderUrls = new []{ new CalendarPanelUrl() { Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl } }.ToHashSet() }
 							}).
-								Select(x => 
+								Select(x =>
 									new SubPanel() { Panel = x, Ratio = 1 }
 							).ToHashSet();
 
 			return await this.Image(
 						new PanelOfPanelRenderer(new PanelOfPanels()
 						{
-							Panels = panels, Rotation = Rotation.Zero
-						}, helper),model,width,height) ;
+							Panels = panels,
+							Rotation = Rotation.Zero
+						}, helper), model, width, height);
 		}
 
 		/// <summary>
@@ -203,7 +223,13 @@ namespace InkyCal.Server.Controllers
 			if (calendars.ToList().Exists(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
 				return BadRequest("Calender urls must be absolute urls");
 
-			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendars), model, width, height);
+			return await this.Image(
+				new CalendarPanelRenderer(
+					saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken,
+					iCalUrls: calendars,
+					calendars: [],
+					drawMode: CalenderDrawMode.List), // Draw mode "AI generated image" is only available for authenticated users
+				model, width, height);
 		}
 
 		/// <summary>
