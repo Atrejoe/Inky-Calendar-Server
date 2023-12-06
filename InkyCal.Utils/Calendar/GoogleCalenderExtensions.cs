@@ -13,6 +13,7 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
+using InkyCal.Server.Config;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -139,6 +140,9 @@ namespace InkyCal.Utils.Calendar
 		/// <returns></returns>
 		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull]IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
 		{
+			if (!Server.Config.GoogleOAuth.Enabled)
+				yield break;
+
 			Validate(tokens, saveToken);
 
 			await foreach (var token in GetAccessTokens(tokens, saveToken))
