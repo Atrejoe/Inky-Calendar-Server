@@ -4,6 +4,7 @@
 	<TargetFramework>net8.0</TargetFramework>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

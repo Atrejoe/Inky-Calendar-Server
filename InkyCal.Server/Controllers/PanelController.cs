@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -99,15 +99,16 @@ namespace InkyCal.Server.Controllers
 								new ImagePanel() { Path = TestImagePanelRenderer.DemoImageUrl, Rotation= Rotation.Zero },
 								new CalendarPanel(){  CalenderUrls = new []{ new CalendarPanelUrl() { Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl } }.ToHashSet() }
 							}).
-								Select(x => 
+								Select(x =>
 									new SubPanel() { Panel = x, Ratio = 1 }
 							).ToHashSet();
 
 			return await this.Image(
 						new PanelOfPanelRenderer(new PanelOfPanels()
 						{
-							Panels = panels, Rotation = Rotation.Zero
-						}, helper),model,width,height) ;
+							Panels = panels,
+							Rotation = Rotation.Zero
+						}, helper), model, width, height);
 		}
 
 		/// <summary>

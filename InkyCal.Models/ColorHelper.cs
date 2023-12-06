@@ -6,10 +6,15 @@ using System.Linq;
 namespace InkyCal.Models
 {
 	/// <summary>
-	/// A class for helping to specify colour ranges
+	/// A class for helping to specify color ranges
 	/// </summary>
 	public static class ColorHelper
 	{
+		/// <summary>
+		/// Returns a range of gray scale colors
+		/// </summary>
+		/// <param name="levels"></param>
+		/// <returns></returns>
 		public static IEnumerable<Color> GrayScales([Range(1, byte.MaxValue)] byte levels = 16)
 		{
 			yield return Color.Black;
@@ -27,10 +32,16 @@ namespace InkyCal.Models
 				yield return color;
 		}
 
-		public static Color[] GrayScalesWithSupportColor(byte levels = 16, Color? suppportColor = null)
+		/// <summary>
+		/// Returns a range of gray scale colors, with a support color at the third position
+		/// </summary>
+		/// <param name="levels"></param>
+		/// <param name="supportColor"></param>
+		/// <returns></returns>
+		public static Color[] GrayScalesWithSupportColor(byte levels = 16, Color? supportColor = null)
 		{
 			var result = GrayScales(levels).ToList();
-			result.Insert(2, suppportColor ?? Color.Red);
+			result.Insert(2, supportColor ?? Color.Red);
 			return result.ToArray();
 		}
 	}
