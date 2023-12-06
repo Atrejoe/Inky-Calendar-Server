@@ -153,9 +153,7 @@ namespace InkyCal.Utils.Calendar
 					await foreach (var calender in ListGoogleCalendars(token.AccessToken))
 						yield return (token.Id, profile, calender);
 				}
-
 		}
-
 
 		/// <summary>
 		/// 
