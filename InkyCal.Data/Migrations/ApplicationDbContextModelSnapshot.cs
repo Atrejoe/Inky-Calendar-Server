@@ -401,6 +401,9 @@ namespace InkyCal.Data.Migrations
                 {
                     b.HasBaseType("InkyCal.Models.Panel");
 
+                    b.Property<byte>("DrawMode")
+                        .HasColumnType("tinyint");
+
                     b.ToTable("Panel", "InkyCal");
 
                     b.HasDiscriminator().HasValue("CalendarPanel");

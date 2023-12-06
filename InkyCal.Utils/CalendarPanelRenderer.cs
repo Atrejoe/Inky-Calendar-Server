@@ -37,10 +37,12 @@ namespace InkyCal.Utils
 		/// <param name="expiration">The expiration.</param>
 		/// <param name="iCalUrls">The i cal urls.</param>
 		/// <param name="subscribedCalenders"></param>
-		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders) : base(expiration)
+		/// <param name="drawMode"></param>
+		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders, CalenderDrawMode drawMode) : base(expiration)
 		{
 			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
 			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
+			DrawMode = drawMode;
 		}
 
 		/// <summary>
@@ -57,6 +59,11 @@ namespace InkyCal.Utils
 		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; }
 
 		/// <summary>
+		/// Draw mode
+		/// </summary>
+		public CalenderDrawMode DrawMode { get; }
+
+		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
 		/// </summary>
 		/// <param name="other">An object to compare with this object.</param>
@@ -66,6 +73,7 @@ namespace InkyCal.Utils
 		protected override bool Equals(PanelCacheKey other)
 		{
 			return other is CalendarPanelCacheKey cpc
+				&& DrawMode.Equals(cpc.DrawMode)
 				&& ICalUrls.SequenceEqual(cpc.ICalUrls)
 				&& SubscribedGoogleCalenders.SequenceEqual(cpc.SubscribedGoogleCalenders);
 		}
@@ -92,11 +100,10 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl) : this(saveToken, new[] { iCalUrl })
+		/// <param name="drawMode">Indicates how the image should be drawn</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode)
 		{
-			if (iCalUrl is null)
-				throw new ArgumentNullException(nameof(iCalUrl));
-
+			ArgumentNullException.ThrowIfNull(iCalUrl);
 		}
 		/// <summary>
 		/// Show one or more calendars
@@ -104,11 +111,21 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars = null) : this(saveToken)
+		/// <param name="drawMode">Indicates how the image should be drawn</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode) : this(saveToken)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
-			CacheKey = new CalendarPanelCacheKey(TimeSpan.FromMinutes(1), iCalUrls, calendars);
+
+			var cacheExpiration = drawMode switch
+			{
+				// Cache more aggressively for AI images
+				CalenderDrawMode.AIImage => TimeSpan.FromMinutes(15),
+				_ => TimeSpan.FromMinutes(1)
+			};
+
+			CacheKey = new CalendarPanelCacheKey(cacheExpiration, iCalUrls, calendars, drawMode);
 			Calendars = calendars?.ToArray();
+			DrawMode = drawMode;
 		}
 
 		/// <summary>
@@ -124,7 +141,7 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// The mode of drawing
 		/// </summary>
-		public CalenderDrawMode DrawMode { get; set; }
+		public CalenderDrawMode DrawMode { get; private set; }
 
 		/// <summary>
 		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
@@ -132,7 +149,7 @@ namespace InkyCal.Utils
 		/// <param name="width">The height of the panel (in landscape mode).</param>
 		/// <param name="height">The width of the panel (in landscape mode).</param>
 		/// <param name="colors">The number of color to render in.</param>
-		/// <param name="log">A callbac method for logging errors to</param>
+		/// <param name="log">A callback method for logging errors to</param>
 		/// <returns></returns>
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
@@ -146,17 +163,9 @@ namespace InkyCal.Utils
 			if (!(events?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events listed");
 
-			switch (this.DrawMode)
-			{
-				case CalenderDrawMode.List:
-					break;
-				case CalenderDrawMode.EpicImage:
-					break;
-			}
-
 			return DrawMode switch
 			{
-				CalenderDrawMode.EpicImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
+				CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
 				CalenderDrawMode.List => DrawImage(width, height, colors, events, sbErrors.ToString(), log),
 				_ => throw new NotImplementedException($"DrawMode {DrawMode} is not implemented"),
 			};
@@ -401,18 +410,22 @@ namespace InkyCal.Utils
 			string calenderParseErrors,
 			IPanelRenderer.Log log)
 		{
-			colors ??= new[] { Color.Black, Color.White };
+			colors ??= [Color.Black, Color.White];
 
-			var key = InkyCal.Server.Config.Config.OpenAIAPIKey;
+			var key = Server.Config.Config.OpenAIAPIKey;
 
 			var api = new OpenAIClient(key);
 
-			events = new List<Event>(new[] {
-				new Event() { Summary = "All day : Work" },
-				new Event() { Summary = "15:30 Pick up kids from school, shop for presents" },
-				new Event() { Summary = "17:00 Robert cooks dinner" },
-				new Event() { Summary = "20:00 Robert climbing" }
-			});
+			//events = new List<Event>(new[] {
+			//	new Event() { Summary = "All day : Work" },
+			//	new Event() { Summary = "15:30 Pick up kids from school, shop for presents" },
+			//	new Event() { Summary = "17:00 Robert cooks dinner" },
+			//	new Event() { Summary = "20:00 Robert climbing" }
+			//});
+
+			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x=>x).FirstOrDefault(DateTime.Now);
+
+			events = events.Where(x => x.Date.Date == day).ToList();
 
 			var prompt = $@"This is todays calendar:
 - {string.Join($"{Environment.NewLine}- ", events.Select(x => x.Summary))}
@@ -420,10 +433,10 @@ Use the following colors:
 - {string.Join($"{Environment.NewLine}- ", colors.Select(x => x.ColorName()))}";
 
 			var messages = new List<Message>(new[] {
-				new Message(Role.System, @$"You are a master prompt maker for dalle helping Ilkka.
-You specialise in creating 19th century metal litograph images in the style of a vintage engraving, caravaggesque, flickr, ultrafine detail, neoclassicism based on my calendar entries.
-You are creative, hide allegories and details. You provide prompts based on todays calendar.
-The image should be in a style of 19th century litograph or metal plate print as would be seen in an old book or newspaper and include the colors requested by the user. Today is {DateTime.Now.Date}."),
+				new Message(Role.System, @$"You are a master prompt maker for Dalle.
+You specialize in creating 19th century metal litograph images in the style of a vintage engraving, caravaggesque, flickr, ultrafine detail, neoclassicism based on my calendar entries.
+You are creative, hide allegories and details. You provide prompts based on the calender events provided, which all are on {day:D}.
+The image should be in a style of 19th century litograph or metal plate print as would be seen in an old book or newspaper and include the colors requested by the user."),
 				new Message(Role.User, prompt)
 			});
 

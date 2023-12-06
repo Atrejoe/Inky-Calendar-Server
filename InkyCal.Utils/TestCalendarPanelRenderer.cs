@@ -24,10 +24,12 @@ namespace InkyCal.Utils
 			async (token) => {
 				await System.Threading.Tasks.Task.CompletedTask;
 			},
-			iCalUrls: new[] { 
+			iCalUrls: [
 				new Uri(PublicHolidayCalenderUrl), 
 				new Uri(DebugCalenderUrl) 
-			})
+			],
+			calendars: [],
+			drawMode: Models.CalenderDrawMode.List)
 		{
 		}
 	}

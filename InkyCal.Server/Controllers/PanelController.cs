@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -203,7 +203,13 @@ namespace InkyCal.Server.Controllers
 			if (calendars.ToList().Exists(x => !x.IsAbsoluteUri || (x.Scheme != "http" && x.Scheme != "https")))
 				return BadRequest("Calender urls must be absolute urls");
 
-			return await this.Image(new CalendarPanelRenderer(new Data.GoogleOAuthRepository().UpdateAccessToken, calendars), model, width, height);
+			return await this.Image(
+				new CalendarPanelRenderer(
+					saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken,
+					iCalUrls: calendars,
+					calendars: [],
+					drawMode: CalenderDrawMode.List), // Draw mode "AI generated image" is only available for authenticated users
+				model, width, height);
 		}
 
 		/// <summary>

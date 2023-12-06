@@ -64,7 +64,8 @@ namespace InkyCal.Utils
 					renderer = new CalendarPanelRenderer(
 									saveToken,
 									iCalUrls: urls.ToArray(),
-									cp.SubscribedGoogleCalenders?.ToArray()
+									cp.SubscribedGoogleCalenders?.ToArray(),
+									cp.DrawMode
 									);
 
 					break;

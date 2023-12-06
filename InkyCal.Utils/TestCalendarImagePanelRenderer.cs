@@ -1,4 +1,5 @@
 ﻿using System;
+using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
@@ -25,12 +26,13 @@ namespace InkyCal.Utils
 			{
 				await System.Threading.Tasks.Task.CompletedTask;
 			},
-			iCalUrls: new[] {
+			iCalUrls: [
 				new Uri(PublicHolidayCalenderUrl),
 				new Uri(DebugCalenderUrl)
-			})
+			],
+			[],
+			drawMode: CalenderDrawMode.AIImage)
 		{
-			base.DrawMode = CalenderDrawMode.EpicImage;
 		}
 	}
 }
