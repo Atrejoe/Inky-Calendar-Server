@@ -460,12 +460,13 @@ The image should be in a style of 19th century litograph or metal plate print as
 			var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
 			var imageResults = await api.ImagesEndPoint.GenerateImageAsync(request);
 
-
 			Image<Rgba32> result;
 			try
 			{
 				using var client = new System.Net.Http.HttpClient();
 				var url = imageResults[0].Url;
+
+				Console.WriteLine($"Downloading image url: {url}");
 				using var s = await client.GetStreamAsync(url);
 				using var ms = new MemoryStream();
 				await s.CopyToAsync(ms);
@@ -487,7 +488,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 			result.Mutate(x => x
 					.EntropyCrop()
-					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
+					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.Center })
 					.BackgroundColor(Color.Transparent)
 					.Quantize(new PaletteQuantizer(colors))
 					);
