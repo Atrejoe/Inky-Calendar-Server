@@ -57,6 +57,25 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
+		/// Returns a AI-powered impression image for a demo calendar, mapped for <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A demo calendar panel.</returns>
+		/// <remarks>
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("test/{model}/calendar-image")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> TestCalendarImage(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		{
+			return await this.Image(new TestCalendarImagePanelRenderer(), model, width, height);
+		}
+
+		/// <summary>
 		/// Returns a demo weather panel, mapped for <paramref name="model"/>.
 		/// </summary>
 		/// <param name="model"></param>
