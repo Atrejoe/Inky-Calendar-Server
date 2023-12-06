@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
+using OpenAI;
 using OpenAI.Chat;
 using OpenAI.Images;
 using OpenAI.Models;
-using OpenAI;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 using static InkyCal.Utils.FontHelper;
 using Event = InkyCal.Utils.Calendar.Event;
-using System.IO;
-using SixLabors.ImageSharp.Processing.Processors.Quantization;
 
 namespace InkyCal.Utils
 {
@@ -119,13 +119,15 @@ namespace InkyCal.Utils
 			var cacheExpiration = drawMode switch
 			{
 				// Cache more aggressively for AI images
-				CalenderDrawMode.AIImage => TimeSpan.FromMinutes(15),
+				CalenderDrawMode.AIImage => TimeSpan.FromMinutes(30),
 				_ => TimeSpan.FromMinutes(1)
 			};
 
 			CacheKey = new CalendarPanelCacheKey(cacheExpiration, iCalUrls, calendars, drawMode);
 			Calendars = calendars?.ToArray();
-			DrawMode = drawMode;
+			DrawMode = string.IsNullOrEmpty(Server.Config.Config.OpenAIAPIKey)
+						? CalenderDrawMode.List //OpenAPI has not been configured
+						: drawMode;
 		}
 
 		/// <summary>
@@ -163,12 +165,13 @@ namespace InkyCal.Utils
 			if (!(events?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events listed");
 
-			return DrawMode switch
-			{
-				CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
-				CalenderDrawMode.List => DrawImage(width, height, colors, events, sbErrors.ToString(), log),
-				_ => throw new NotImplementedException($"DrawMode {DrawMode} is not implemented"),
-			};
+			using (MiniProfiler.Current.Step($"Rendering image for draw mode: {DrawMode}"))
+				return DrawMode switch
+				{
+					CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
+					CalenderDrawMode.List => DrawImage(width, height, colors, events, sbErrors.ToString(), log),
+					_ => throw new NotImplementedException($"DrawMode {DrawMode} is not implemented"),
+				};
 		}
 
 		/// <summary>
@@ -185,8 +188,7 @@ namespace InkyCal.Utils
 			string calenderParseErrors,
 			IPanelRenderer.Log log)
 		{
-			if (colors is null)
-				colors = new[] { Color.Black, Color.White };
+			colors ??= [Color.Black, Color.White];
 
 			var primaryColor = colors.FirstOrDefault();
 			var supportColor = colors.Length > 2 ? colors[2] : primaryColor;
@@ -423,7 +425,7 @@ namespace InkyCal.Utils
 			//	new Event() { Summary = "20:00 Robert climbing" }
 			//});
 
-			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x=>x).FirstOrDefault(DateTime.Now);
+			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x => x).FirstOrDefault(DateTime.Now);
 
 			events = events.Where(x => x.Date.Date == day).ToList();
 
@@ -442,13 +444,15 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 
 			var chatRequest = new ChatRequest(messages);
-			var response = await api.ChatEndpoint.GetCompletionAsync(chatRequest);
+
+			ChatResponse response;
+			using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
+				response = await api.ChatEndpoint.GetCompletionAsync(chatRequest);
 
 			var imagePrompt = response.FirstChoice.Message;
 
 			Console.WriteLine(prompt);
 			Console.WriteLine(imagePrompt);
-
 
 			//var imageResult = await api.ImageGenerations.CreateImageAsync(
 			//	new ImageGenerationRequest(
@@ -458,18 +462,24 @@ The image should be in a style of 19th century litograph or metal plate print as
 			//		responseFormat: ImageResponseFormat.B64_json));
 
 			var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
-			var imageResults = await api.ImagesEndPoint.GenerateImageAsync(request);
+
+
+			IReadOnlyList<ImageResult> imageResults;
+			using (MiniProfiler.Current.Step($"Generating image"))
+				imageResults = await api.ImagesEndPoint.GenerateImageAsync(request);
 
 			Image<Rgba32> result;
 			try
 			{
 				using var client = new System.Net.Http.HttpClient();
 				var url = imageResults[0].Url;
-
-				Console.WriteLine($"Downloading image url: {url}");
-				using var s = await client.GetStreamAsync(url);
 				using var ms = new MemoryStream();
-				await s.CopyToAsync(ms);
+				using (MiniProfiler.Current.Step($"Downloading image url: {url}"))
+				{
+					using var s = await client.GetStreamAsync(url);
+					await s.CopyToAsync(ms);
+				}
+
 
 				//var i = Image.Load(ms);
 				//Console.WriteLine(i.Metadata.ToString());
