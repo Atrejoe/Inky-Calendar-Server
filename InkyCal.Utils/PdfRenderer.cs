@@ -104,7 +104,7 @@ namespace InkyCal.Utils
 					}
 				}
 
-			using (MiniProfiler.Current.Step($"Converting hi-res image to correct resultion and color palette"))
+			using (MiniProfiler.Current.Step($"Converting hi-res image to correct resolution and color palette"))
 				image.Mutate(x => x
 					.EntropyCrop()
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
