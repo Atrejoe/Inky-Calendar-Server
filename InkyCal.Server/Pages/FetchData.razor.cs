@@ -44,9 +44,6 @@ namespace InkyCal.Server.Pages
 
 			if (_panels.Any())
 				await SelectPanel(_panels[0].Id);
-
-
-			SetAsLoading();
 		}
 
 		/// <summary>
@@ -67,25 +64,8 @@ namespace InkyCal.Server.Pages
 			{
 				_selectedPanelLoading = false;
 			}
-
-
-			SetAsLoading();
 		}
 
 		private Guid CacheBreaker = Guid.NewGuid();
-
-		private string LoadingCSS = "loading";
-
-		private void SetAsLoading()
-		{
-			Console.WriteLine("Setting image as \"Loading\"");
-			LoadingCSS = "loading";
-		}
-
-		private void HandleOnLoad()
-		{
-			LoadingCSS = string.Empty;
-			Console.WriteLine("Image loading complete");
-		}
 	}
 }

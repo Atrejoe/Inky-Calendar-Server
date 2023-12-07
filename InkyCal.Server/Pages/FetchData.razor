@@ -126,12 +126,7 @@ inkycal_image_path = '@(navigationManager.BaseUri)panel/@_selectedPanel.Id' #Thi
 </code></pre>
 				</span>
 
-				<span class="panel @LoadingCSS">
-					<img src="/panel/@_selectedPanel.Id?@CacheBreaker" @onload="HandleOnLoad" />
-					<span class="overlay">
-						<i class="oi oi-reload" title="Loading" alt="Loading panel image"></i>
-					</span>
-				</span>
+                <ImageWithProgress src="@($"/panel/{_selectedPanel.Id}?{CacheBreaker}")" />
 
 			}
 			else if (_selectedPanelLoading)

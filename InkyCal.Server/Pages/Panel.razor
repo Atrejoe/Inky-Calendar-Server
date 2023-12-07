@@ -146,12 +146,7 @@
 					@if (PanelId.HasValue)
 					{
 				<div class="col-sm">
-					<span class="panel @LoadingCSS">
-						<img src="/panel/@_Panel.Id?@CacheBreaker" @onload="HandleOnLoad" />
-						<span class="overlay">
-							<i class="oi oi-reload" title="Loading image" alt="Loading image"></i>
-						</span>
-					</span>
+                    <ImageWithProgress src="@($"/panel/{_Panel.Id}?{CacheBreaker}")" />
 				</div>
 					}
 				</div>
