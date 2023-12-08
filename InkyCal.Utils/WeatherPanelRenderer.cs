@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -162,9 +163,9 @@ namespace InkyCal.Utils
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x))));
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct()));
 			foreach(var color in colors)
-				Console.WriteLine($"Color: {color}");
+				Trace.WriteLine($"Color: {color}");
 
-			Console.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
+			Trace.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
 
 			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = antiAlias }, new TextOptions()
 			{

@@ -72,18 +72,8 @@ namespace InkyCal.Server.Pages
 			newPanelId = selectablePanels.FirstOrDefault()?.Id;
 		}
 
-		//private void RemovePanel(byte index)
-		//{
-		//	Console.WriteLine($"Removing by index {index}");
-		//	//Urls are case-sensitive
-		//	Panel.Panels.RemoveWhere(x => x.SortIndex.Equals(index));
-
-		//	StateHasChanged();
-		//}
-
 		private void RemovePanel()
 		{
-			Console.WriteLine($"Removing by index {currentIndex}");
 			var victim = Panel.Panels.OrderBy(x => x.SortIndex).ToList()[currentIndex];
 			//Urls are case-sensitive
 			Panel.Panels.Remove(victim);
@@ -93,11 +83,8 @@ namespace InkyCal.Server.Pages
 
 		private int currentIndex;
 
-		void StartDrag(SubPanel item)
-		{
-			currentIndex = Panel.Panels.OrderBy(x=>x.SortIndex).ToList().IndexOf(item);
-			Console.WriteLine($"DragStart for {item.Panel.Name} index {currentIndex}");
-		}
+		void StartDrag(SubPanel item) 
+			=> currentIndex = Panel.Panels.OrderBy(x => x.SortIndex).ToList().IndexOf(item);
 
 		void Drop(SubPanel item)
 		{

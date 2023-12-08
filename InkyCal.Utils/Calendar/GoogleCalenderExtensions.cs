@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -169,7 +170,6 @@ namespace InkyCal.Utils.Calendar
 
 			// List calendars.
 			var calendars = await request.ExecuteAsync();
-			Console.WriteLine("Calendars:");
 			if (calendars.Items != null && calendars.Items.Count > 0)
 				foreach (var calendar in calendars.Items)
 					yield return calendar;
@@ -313,7 +313,7 @@ namespace InkyCal.Utils.Calendar
 				Summary = item.Summary
 			});
 
-			Console.WriteLine($"\t{item.Id} [{item.Start?.DateTimeDateTimeOffset} - {item.End?.DateTimeDateTimeOffset}]{item.Summary}");
+			Trace.WriteLine($"\t{item.Id} [{item.Start?.DateTimeDateTimeOffset} - {item.End?.DateTimeDateTimeOffset}]{item.Summary}");
 		}
 
 		/// <summary>

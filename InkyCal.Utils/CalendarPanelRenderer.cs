@@ -462,8 +462,8 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 				var imagePrompt = response.FirstChoice.Message;
 
-				Console.WriteLine(prompt);
-				Console.WriteLine(imagePrompt);
+				Trace.WriteLine(prompt);
+				Trace.WriteLine(imagePrompt);
 
 				//var imageResult = await api.ImageGenerations.CreateImageAsync(
 				//	new ImageGenerationRequest(
@@ -504,10 +504,10 @@ The image should be in a style of 19th century litograph or metal plate print as
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				Console.WriteLine(ex.StackTrace);
-				Console.WriteLine(ex.InnerException?.Message);
-				Console.WriteLine(ex.InnerException?.StackTrace);
+				Console.Error.WriteLine(ex.Message);
+				Console.Error.WriteLine(ex.StackTrace);
+				Console.Error.WriteLine(ex.InnerException?.Message);
+				Console.Error.WriteLine(ex.InnerException?.StackTrace);
 				throw;
 			}
 

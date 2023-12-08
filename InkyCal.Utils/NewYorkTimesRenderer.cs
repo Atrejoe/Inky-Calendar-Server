@@ -1,6 +1,7 @@
 ﻿// Ignore Spelling: Utils
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -71,7 +72,7 @@ namespace InkyCal.Utils
 				{
 					tries += 1;
 					var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
-					Console.WriteLine($"Downloading: {url}");
+					Trace.WriteLine($"Downloading: {url}");
 					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
 				catch (HttpRequestException ex) when (

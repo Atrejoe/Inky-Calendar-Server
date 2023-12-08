@@ -41,14 +41,12 @@ namespace InkyCal.Server.Pages
 
 		private void SetAsLoading()
 		{
-			Console.WriteLine("Setting image as \"Loading\"");
 			LoadingCSS = "loading";
 		}
 
 		private void HandleOnLoad()
 		{
 			LoadingCSS = string.Empty;
-			Console.WriteLine("Image loading complete");
 		}
 	}
 }
