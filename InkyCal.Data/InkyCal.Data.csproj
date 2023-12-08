@@ -33,7 +33,7 @@
 	</PackageReference>
 	<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0-preview3.23201.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.15.0.81779">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>

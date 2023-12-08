@@ -45,7 +45,7 @@
 	<PackageReference Include="Sentry" Version="3.41.3" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 	<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.15.0.81779">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 
