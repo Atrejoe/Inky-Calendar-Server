@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/demo/{modelAsString}"
 
 <h1>What's this?</h1>
 
@@ -13,6 +14,7 @@
 
 <h2>But why?</h2>
 These panels is easier to configure, maintain, extend and debug when available on a centralized application.
+<a id="demo"></a><!-- hack to make the demo scroll into view-->
 Inky-Cal panels already have a dependency on the web (for obtaining data), so no new dependencies there.
 It also allows to reduce power-consumption, making a battery-operated panel a more viable option.
 
@@ -21,10 +23,10 @@ It also allows to reduce power-consumption, making a battery-operated panel a mo
 Given a selected display panel:
 
 <EditForm Model="@this">
-    <InputSelect class="form-control" id="@nameof(model)" @bind-Value="@model">
+    <InputSelect class="form-control" id="@nameof(model)" @bind-Value="@model" @onselectionchange="UpdateRoute" @onselect="UpdateRoute" @onchange="UpdateRoute">
         @foreach (DisplayModel displayModel in Enum.GetValues(typeof(DisplayModel)))
         {
-            <option value="@displayModel">@displayModel</option>
+            <option value="@displayModel" @onselect="UpdateRoute">@displayModel</option>
         }
     </InputSelect> 
     @(specs.Width)px x @(specs.Height)px, @(specs.Colors.Count) colors:
