@@ -22,10 +22,10 @@ namespace InkyCal.Utils.Tests
 			//arrang
 
 			//act
-			var actual = DisplayModelHelper.GetSpecs(model);
+			var specs = DisplayModelHelper.GetSpecs(model);
 
 			//assert
-			Assert.NotNull(actual);
+			Assert.NotEmpty(specs.Colors);
 		}
 
 		public static IEnumerable<object[]> DisplayModels()

@@ -1,4 +1,4 @@
-﻿@page "/panel"
+@page "/panel"
 @page "/panel/{PanelId:guid}/edit"
 @using System.Linq
 @using Humanizer
@@ -90,31 +90,7 @@
 								</InputSelect>
 							</div>
 
-							@if ((@Specs.Colors?.Any()).GetValueOrDefault())
-							{
-								<div class="form-group">
-									<label>
-										Colors
-									</label><br />
-									@foreach (var color in @Specs.Colors)
-									{
-										var tooltip = string.Empty;
-										switch (@Specs.Colors.IndexOf(color))
-										{
-											case 0:
-												tooltip = "Primary foreground color";
-												break;
-											case 1:
-												tooltip = "Background color";
-												break;
-											case 2:
-												tooltip = "First support color";
-												break;
-										}
-										<div title="@tooltip" style="background-color: @($"#{color.ToHex()}"); width:20px; height:20px; border:1px solid grey; display:inline-block" />
-									}
-								</div>
-							}
+                            <PanelColors Specs="@Specs"/>
 
 							@switch (@_Panel)
 							{

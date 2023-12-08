@@ -21,8 +21,17 @@ namespace InkyCal.Utils
 		{
 			if (!model.HasValue)
 				return null;
+			return model.Value.GetSpecs();
+		}
 
-			model.Value.GetSpecs(out var width, out var height, out var colors);
+		/// <summary>
+		/// Gets the specs for the <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		public static DisplayModelSpecs GetSpecs(this DisplayModel model)
+		{
+
+			model.GetSpecs(out var width, out var height, out var colors);
 
 			return new DisplayModelSpecs()
 			{
