@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
@@ -399,6 +400,9 @@ namespace InkyCal.Utils
 			return result;
 		}
 
+
+		private static readonly SemaphoreSlim semaphoreOpenAIAPI = new(initialCount: 1, maxCount: 1); //Make rate limits configurable
+
 		/// <summary>
 		/// AI-powered image describing events, ported from https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/
 		/// </summary>
@@ -410,8 +414,11 @@ namespace InkyCal.Utils
 			Color[] colors,
 			List<Event> events,
 			string calenderParseErrors,
-			IPanelRenderer.Log log)
+			IPanelRenderer.Log log,
+			CancellationToken token = default)
 		{
+
+
 			colors ??= [Color.Black, Color.White];
 
 			var key = Server.Config.Config.OpenAIAPIKey;
@@ -442,42 +449,50 @@ The image should be in a style of 19th century litograph or metal plate print as
 				new Message(Role.User, prompt)
 			});
 
+			ImageResult imageResult;
 
-			var chatRequest = new ChatRequest(messages);
+			await semaphoreOpenAIAPI.WaitAsync(token); //Respect rate limits for concurrent access
+			try
+			{
+				var chatRequest = new ChatRequest(messages);
 
-			ChatResponse response;
-			using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
-				response = await api.ChatEndpoint.GetCompletionAsync(chatRequest);
+				ChatResponse response;
+				using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
+					response = await api.ChatEndpoint.GetCompletionAsync(chatRequest, token);
 
-			var imagePrompt = response.FirstChoice.Message;
+				var imagePrompt = response.FirstChoice.Message;
 
-			Console.WriteLine(prompt);
-			Console.WriteLine(imagePrompt);
+				Console.WriteLine(prompt);
+				Console.WriteLine(imagePrompt);
 
-			//var imageResult = await api.ImageGenerations.CreateImageAsync(
-			//	new ImageGenerationRequest(
-			//		prompt: imagePrompt,
-			//		numOfImages: 1,
-			//		size: ImageSize._1024,
-			//		responseFormat: ImageResponseFormat.B64_json));
+				//var imageResult = await api.ImageGenerations.CreateImageAsync(
+				//	new ImageGenerationRequest(
+				//		prompt: imagePrompt,
+				//		numOfImages: 1,
+				//		size: ImageSize._1024,
+				//		responseFormat: ImageResponseFormat.B64_json));
 
-			var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
+				var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
 
+				using (MiniProfiler.Current.Step($"Generating image"))
+					imageResult = (await api.ImagesEndPoint.GenerateImageAsync(request, token))[0];
 
-			IReadOnlyList<ImageResult> imageResults;
-			using (MiniProfiler.Current.Step($"Generating image"))
-				imageResults = await api.ImagesEndPoint.GenerateImageAsync(request);
+			}
+			finally
+			{
+				semaphoreOpenAIAPI.Release();
+			}
 
 			Image<Rgba32> result;
 			try
 			{
 				using var client = new System.Net.Http.HttpClient();
-				var url = imageResults[0].Url;
+				var url = imageResult.Url;
 				using var ms = new MemoryStream();
 				using (MiniProfiler.Current.Step($"Downloading image url: {url}"))
 				{
-					using var s = await client.GetStreamAsync(url);
-					await s.CopyToAsync(ms);
+					using var s = await client.GetStreamAsync(url, token);
+					await s.CopyToAsync(ms, token);
 				}
 
 
@@ -497,11 +512,11 @@ The image should be in a style of 19th century litograph or metal plate print as
 			}
 
 			result.Mutate(x => x
-					.EntropyCrop()
-					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.Center })
-					.BackgroundColor(Color.Transparent)
-					.Quantize(new PaletteQuantizer(colors))
-					);
+						.EntropyCrop()
+						.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.Center })
+						.BackgroundColor(Color.Transparent)
+						.Quantize(new PaletteQuantizer(colors))
+						);
 
 			return result;
 		}
