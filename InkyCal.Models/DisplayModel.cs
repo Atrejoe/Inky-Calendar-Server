@@ -92,5 +92,12 @@ namespace InkyCal.Models
 		/// <remarks>Like <a href="https://www.waveshare.com/9.7inch-e-paper.htm">Waveshare &gt; 9.7inch e-Paper HAT</a></remarks>
 		[DisplayResolution(1200, 825, 16)]
 		epd_9_7_in_16_grayscale,
+
+		/// <summary>
+		/// The 13.3" 16 gray scale, red support color
+		/// </summary>
+		/// <remarks>Like <a href="https://www.good-display.com/product/481.html">GooDisplay 13.3 inch SPI E Ink screen black white red three color 960x680 e-paper display screen, GDEM133Z91</a></remarks>
+		[DisplayResolution(960, 680, 16, KnownColor.Red)]
+		epd_13_3_in_16_grayscale_color,
 	}
 }
