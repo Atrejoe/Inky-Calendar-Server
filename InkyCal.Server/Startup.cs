@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -232,6 +232,14 @@ namespace InkyCal.Server
 				// ...or only save views that take over a certain millisecond duration (including their children)
 				// (defaults to null, and all views are profiled)
 				// options.MvcViewMinimumSaveMs = 1.0m;
+
+				options.IgnoredPaths.Add("/health");
+				options.IgnoredPaths.Add("/_blazor");
+				options.IgnoredPaths.Add("/_Host");
+				options.IgnoredPaths.Add("/_host");
+				options.IgnoredPaths.Add("/css");
+				options.IgnoredPaths.Add(".js");
+				options.IgnoredPaths.Add(".css");
 
 				// (Optional) listen to any errors that occur within MiniProfiler itself
 				// options.OnInternalError = e => MyExceptionLogger(e);
