@@ -76,9 +76,10 @@ Given a selected display panel:
                         Configure one or more (iCal / Google) calenders for display:
                         <p><ImageWithProgress src="@($"/panel/test/{model}/calendar")" style="@panelStyle" /></p>
                         <small><em>Public holiday calender, obtained from: <a href="@Utils.TestCalendarPanelRenderer.PublicHolidayCalenderUrl">@Utils.TestCalendarPanelRenderer.PublicHolidayCalenderUrl</a>.</em></small>
-
+@* 
                         <p><ImageWithProgress src="@($"/panel/calendar/{model}/url?calendar={System.Web.HttpUtility.UrlEncode(Utils.TestCalendarPanelRenderer.DebugCalenderUrl)}")" style="@panelStyle" /></p>
                         <small><em>Public debug/demo calender, obtained from: <a href="@Utils.TestCalendarPanelRenderer.DebugCalenderUrl">@Utils.TestCalendarPanelRenderer.DebugCalenderUrl</a>.</em></small>
+*@
                     </div>
                     <div class="tab-pane" id="calendar-image" role="tabpanel" aria-labelledby="calendar-image-tab">
                         AI-powered illustration of your calender. Original idea from : <a href="https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/" target="_blank">Kuvastin: Unhinged AI e-ink display</a>
