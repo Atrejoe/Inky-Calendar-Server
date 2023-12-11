@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/web-manifest.json",
+  "short_name": "E-Ink panel config",
+  "name": "Easy E-ink panel configuration",
+  "description": "A web-based configuration tool for E-ink panels",
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "background_color": "#0a2363",
+  "display": "minimal-ui",
+  "scope": "/",
+  "theme_color": "#0a2363",
+  "shortcuts": [
+    {
+      "name": "Panel overview",
+      "short_name": "Panels",
+      "description": "View all your panels",
+      "url": "/fetchdata?source=pwa"
+    }
+  ]
+}
