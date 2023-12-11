@@ -1,20 +1,66 @@
 {
-  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/web-manifest.json",
-  "short_name": "E-Ink panel config",
-  "name": "Easy E-ink panel configuration",
-  "description": "A web-based configuration tool for E-ink panels",
-  "id": "/?source=pwa",
-  "start_url": "/?source=pwa",
-  "background_color": "#0a2363",
-  "display": "minimal-ui",
-  "scope": "/",
-  "theme_color": "#0a2363",
-  "shortcuts": [
-    {
-      "name": "Panel overview",
-      "short_name": "Panels",
-      "description": "View all your panels",
-      "url": "/fetchdata?source=pwa"
-    }
-  ]
+	"$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/web-manifest.json",
+	"short_name": "E-Ink panel config",
+	"name": "Easy E-ink panel configuration",
+	"description": "A web-based configuration tool for E-ink panels",
+	"icons": [
+		{
+			"src": "/manifest/512.png",
+			"sizes": "512x512",
+			"purpose": "any",
+			"type": "image/png"
+		},
+		{
+			"src": "/manifest/96.png",
+			"sizes": "96x96",
+			"purpose": "any",
+			"type": "image/png"
+		}
+	],
+	"id": "/?source=pwa",
+	"start_url": "/?source=pwa",
+	"background_color": "#0a2363",
+	"display": "minimal-ui",
+	"scope": "/",
+	"theme_color": "#0a2363",
+	"shortcuts": [
+		{
+			"name": "Panel overview",
+			"icons": [
+				{
+					"src": "/manifest/96.png",
+					"sizes": "96x96"
+				}
+			],
+			"short_name": "Panels",
+			"description": "View all your panels",
+			"url": "/fetchdata?source=pwa"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "/panel/test/epd_7_in_5_v3_colour/calendar?width=528&height=880",
+			"type": "image/png",
+			"sizes": "528x880",
+			"form_factor": "narrow"
+		},
+		{
+			"src": "/panel/test/epd_7_in_5_v3_colour/panel-of-panels?width=528&height=880",
+			"type": "image/png",
+			"sizes": "528x880",
+			"form_factor": "narrow"
+		},
+		{
+			"src": "/panel/test/epd_7_in_5_v3_colour/calendar",
+			"type": "image/png",
+			"sizes": "880x528",
+			"form_factor": "wide"
+		},
+		{
+			"src": "/panel/test/epd_7_in_5_v3_colour/image",
+			"type": "image/png",
+			"sizes": "880x528",
+			"form_factor": "wide"
+		}
+	]
 }
