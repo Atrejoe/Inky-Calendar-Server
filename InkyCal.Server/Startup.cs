@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -232,6 +232,8 @@ namespace InkyCal.Server
 				// ...or only save views that take over a certain millisecond duration (including their children)
 				// (defaults to null, and all views are profiled)
 				// options.MvcViewMinimumSaveMs = 1.0m;
+
+				options.EnableServerTimingHeader = true;
 
 				options.IgnoredPaths.Add("/health");
 				options.IgnoredPaths.Add("/_blazor");
