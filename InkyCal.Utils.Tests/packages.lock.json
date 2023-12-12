@@ -1411,6 +1411,11 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
+      "System.Threading.RateLimiting": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q=="
+      },
       "System.Threading.Tasks": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1579,7 +1584,8 @@
           "Sentry": "[3.41.3, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
-          "System.Reflection.TypeExtensions": "[4.7.0, )"
+          "System.Reflection.TypeExtensions": "[4.7.0, )",
+          "System.Threading.RateLimiting": "[8.0.0, )"
         }
       }
     }

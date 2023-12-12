@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.RateLimiting;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
@@ -403,6 +405,26 @@ namespace InkyCal.Utils
 
 		private static readonly SemaphoreSlim semaphoreOpenAIAPI = new(initialCount: 1, maxCount: 1); //Make rate limits configurable
 
+		[SuppressMessage("Major Code Smell", "S112:General or reserved exceptions should never be thrown", Justification = "<Pending>")]
+		private static async Task WaitForImageGenerationSlot()
+		{
+			var lease = await limiter.AcquireAsync();
+			if (!lease.IsAcquired)
+				throw new Exception("Could not acquire slot");
+		}
+
+		private static readonly RateLimiter limiter =
+			new SlidingWindowRateLimiter(
+				new SlidingWindowRateLimiterOptions()
+				{
+					Window = TimeSpan.FromSeconds(30),
+					PermitLimit = 2,
+					QueueLimit = 100,
+					QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+					SegmentsPerWindow = 60
+				});
+
+
 		/// <summary>
 		/// AI-powered image describing events, ported from https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/
 		/// </summary>
@@ -474,8 +496,11 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 				var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
 
+				using (MiniProfiler.Current.Step($"Waiting for image generation slot"))
+					await WaitForImageGenerationSlot();
 				using (MiniProfiler.Current.Step($"Generating image"))
 					imageResult = (await api.ImagesEndPoint.GenerateImageAsync(request, token))[0];
+
 
 			}
 			finally

@@ -53,6 +53,7 @@
 
 	</PackageReference>
 	<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+	<PackageReference Include="System.Threading.RateLimiting" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
