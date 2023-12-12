@@ -42,7 +42,7 @@ namespace InkyCal.Server
 		{
 			services.AddControllers();
 			services.AddHealthChecks()
-				.AddSqlServer(Config.Config.ConnectionString,failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
+				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
 
 			//services.AddMvc().AddJsonOptions(options =>
 			//{
@@ -318,7 +318,44 @@ namespace InkyCal.Server
 							[HealthStatus.Healthy] = StatusCodes.Status200OK,
 							[HealthStatus.Degraded] = StatusCodes.Status417ExpectationFailed,
 							[HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+						},
+					// In time an improved dashboard could be added instead:
+					// https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks#HealthCheckUI
+					ResponseWriter = async (context, health) =>
+					{
+						await context.Response.WriteAsync($"[{health.Status}] - ");
+						switch (health.Status)
+						{
+							case HealthStatus.Unhealthy:
+								await context.Response.WriteAsync("I don't feel too well, please restart me.");
+								break;
+							case HealthStatus.Degraded:
+								await context.Response.WriteAsync("I don't feel too well, but it's not my fault. Do not restart me.");
+								break;
+							case HealthStatus.Healthy:
+								await context.Response.WriteAsync("I'm super, thanks for asking!");
+								break;
 						}
+
+						// Authenticated users see more details
+						if (context.User != null && (context.User.Identity?.IsAuthenticated).GetValueOrDefault())
+						{
+							foreach (var check in health.Entries)
+								//Show duration of check, name/key and status
+								await context.Response.WriteAsync($"\n - [{check.Value.Duration:c}] \"{check.Key}\" : {check.Value.Status} {(
+									//Show description
+									string.IsNullOrWhiteSpace(check.Value.Description) || string.Equals(check.Value.Description, check.Value.ToString())
+										? ""
+										: $"- {check.Value.Description} "
+										)}{(
+									//Show tags
+									check.Value.Tags.Any() 
+										? $"[{string.Join(",", check.Value.Tags)}] " 
+										: "")}{
+									// Error message, but no stack trace
+									check.Value.Exception?.Message}");
+						}
+					}
 				});
 			});
 		}
