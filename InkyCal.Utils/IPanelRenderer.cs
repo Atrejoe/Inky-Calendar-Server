@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -150,7 +151,6 @@ namespace InkyCal.Utils
 			return _cache.Count;
 		}
 
-
 		/// <summary>
 		/// Gets the cached image.
 		/// </summary>
@@ -170,7 +170,7 @@ namespace InkyCal.Utils
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
 
-				if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
+				byte[]result = await _cache.GetOrCreateAsync(cachekey, async (entry) =>
 				{
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Image not in cache, generating"))
@@ -183,16 +183,39 @@ namespace InkyCal.Utils
 
 					}
 
-					var cacheEntryOptions = new MemoryCacheEntryOptions()
-						.SetSize(result.Length)
-						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-
 					// Save data in cache.
 					using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-						_cache.Set(cachekey, result, cacheEntryOptions);
+					{
+						entry.SetSize(result.Length);
+						entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
+					}
 
-				}
+					return result;
+				});
+
+				//if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
+				//{
+				//	// Key not in cache, so get data.
+				//	using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+				//	{
+
+				//		var image = await renderer.GetImage(width, height, colors, log);
+				//		using var stream = new MemoryStream();
+				//		image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
+				//		result = stream.ToArray();
+
+				//	}
+
+				//	var cacheEntryOptions = new MemoryCacheEntryOptions()
+				//		.SetSize(result.Length)
+				//		// Remove from cache after this time, regardless of sliding expiration
+				//		.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
+
+				//	// Save data in cache.
+				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
+				//		_cache.Set(cachekey, result, cacheEntryOptions);
+
+				//}
 				return result;
 			}
 		}
