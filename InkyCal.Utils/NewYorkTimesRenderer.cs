@@ -68,10 +68,11 @@ namespace InkyCal.Utils
 				if (d.DayOfWeek == DayOfWeek.Sunday)
 					d = d.AddDays(-1);
 
+
+				tries += 1;
+				var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
 				try
 				{
-					tries += 1;
-					var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
 					Trace.WriteLine($"Downloading: {url}");
 					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
@@ -83,7 +84,7 @@ namespace InkyCal.Utils
 							 , System.Net.HttpStatusCode.Forbidden
 					}.Contains(ex.StatusCode.Value)))
 				{
-					Console.Error.WriteLine($"Failed to downloading: status code {ex.StatusCode}, error message: {ex.Message}");
+					Console.Error.WriteLine($"Failed ({tries:n0}/{maxTries:n0}) to download from {url}: status code {ex.StatusCode}, error message: {ex.Message}");
 					d = d.AddDays(-1);
 				}
 			}
