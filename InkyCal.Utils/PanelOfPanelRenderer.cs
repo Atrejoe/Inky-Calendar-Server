@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -187,7 +187,7 @@ namespace InkyCal.Utils
 								ex.Message, 
 								new Font(FontHelper.NotoSans, 16), 
 								errorColor, 
-								new Point(0, y));
+								new Point(0, parameter.y));
 						});
 					}
 				}
