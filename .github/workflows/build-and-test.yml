@@ -18,9 +18,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          7.0.x
+          8.0.x
           
     # See also DockerFile
+    - name: Update apt-get package index
+      run: sudo apt-get update -y
+
     - name: Install Ghostscript (for rendering PDFs)
       run: sudo apt-get install -y ghostscript
     

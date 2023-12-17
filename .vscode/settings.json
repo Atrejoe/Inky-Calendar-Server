@@ -1,0 +1,9 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": [
+            ".github/workflows/build-and-test.yml",
+            ".github/workflows/build-docker-image.yml",
+            ".github/workflows/publish.yml"
+        ]
+    }
+}
