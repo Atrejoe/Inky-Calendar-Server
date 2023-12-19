@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -121,8 +120,9 @@ namespace InkyCal.Utils
 
 			var cacheExpiration = drawMode switch
 			{
-				// Cache more aggressively for AI images
-				CalenderDrawMode.AIImage => TimeSpan.FromMinutes(30),
+				// Cache (way) more aggressively for AI images
+				// Next up: OpenAI keys should be personal and not global
+				CalenderDrawMode.AIImage => TimeSpan.FromHours(7),
 				_ => TimeSpan.FromMinutes(1)
 			};
 
