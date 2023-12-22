@@ -148,6 +148,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		public CalenderDrawMode DrawMode { get; private set; }
 
+
 		/// <summary>
 		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
 		/// </summary>
@@ -156,14 +157,25 @@ namespace InkyCal.Utils
 		/// <param name="colors">The number of color to render in.</param>
 		/// <param name="log">A callback method for logging errors to</param>
 		/// <returns></returns>
-		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log) 
+			=> await GetImage(width, height, colors, log, default);
+		/// <summary>
+		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
+		/// </summary>
+		/// <param name="width">The height of the panel (in landscape mode).</param>
+		/// <param name="height">The width of the panel (in landscape mode).</param>
+		/// <param name="colors">The number of color to render in.</param>
+		/// <param name="log">A callback method for logging errors to</param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log, CancellationToken cancellationToken)
 		{
 
 			var sbErrors = new StringBuilder();
 
 			List<Event> events;
 			using (MiniProfiler.Current.Step("Gather events"))
-				events = await GetEvents(sbErrors, SaveToken);
+				events = await GetEvents(sbErrors, SaveToken, cancellationToken);
 
 			if (!(events?.Any()).GetValueOrDefault())
 				sbErrors.AppendLine($"No events listed");
@@ -551,8 +563,9 @@ The image should be in a style of 19th century litograph or metal plate print as
 		/// </summary>
 		/// <param name="sbErrors">The sb errors.</param>
 		/// <param name="saveToken"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, Task> saveToken)
+		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, Task> saveToken, CancellationToken cancellationToken)
 		{
 			if (sbErrors is null)
 				throw new ArgumentNullException(nameof(sbErrors));
@@ -569,7 +582,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 				&& (Calendars?.Any()).GetValueOrDefault())
 				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
 				{
-					var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken)).ToList();
+					var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken, cancellationToken)).ToList();
 					result.AddRange(events);
 				}
 
