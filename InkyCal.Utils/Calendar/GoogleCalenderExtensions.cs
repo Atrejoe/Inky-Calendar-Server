@@ -42,9 +42,14 @@ namespace InkyCal.Utils.Calendar
 					// When using parallel foreach stuff broke, method appeared to exit beforre results were complete ... or so
 
 					Parallel.ForEach(
-						calendars.Where(x => x.IdAccessToken == token.Id).Select(x => x.Calender),
-						calenderId =>
-							result.AddRange(GetEvents(sbErrors, token.AccessToken, calenderId).Result)
+						calendars
+						.Where(x => x.IdAccessToken == token.Id)
+						.Select(x => x.Calender),
+						async calenderId =>
+						{
+							var events = await GetEvents(sbErrors, token.AccessToken, calenderId);
+							result.AddRange(events);
+							}
 						);
 				}
 				else
