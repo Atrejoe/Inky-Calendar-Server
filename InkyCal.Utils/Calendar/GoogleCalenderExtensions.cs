@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Google;
 using Google.Apis.Calendar.v3;
@@ -14,7 +15,6 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Services;
 using InkyCal.Models;
-using InkyCal.Server.Config;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -24,7 +24,7 @@ namespace InkyCal.Utils.Calendar
 	/// </summary>
 	public static class GoogleCalenderExtensions
 	{
-		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars, Func<GoogleOAuthAccess, Task> saveToken)
+		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars, Func<GoogleOAuthAccess, Task> saveToken, CancellationToken cancellationToken)
 		{
 			var result = new List<Event>();
 
@@ -41,16 +41,16 @@ namespace InkyCal.Utils.Calendar
 
 					// When using parallel foreach stuff broke, method appeared to exit beforre results were complete ... or so
 
-					Parallel.ForEach(
+					await Parallel.ForEachAsync(
 						calendars
 						.Where(x => x.IdAccessToken == token.Id)
 						.Select(x => x.Calender),
-						async calenderId =>
+						cancellationToken,
+						async (calenderId, cancellationToken) =>
 						{
-							var events = await GetEvents(sbErrors, token.AccessToken, calenderId);
+							var events = await GetEvents(sbErrors, token.AccessToken, calenderId, cancellationToken);
 							result.AddRange(events);
-							}
-						);
+						});
 				}
 				else
 					sbErrors.Append("No access token");
@@ -185,8 +185,9 @@ namespace InkyCal.Utils.Calendar
 		/// </summary>
 		/// <param name="accessToken"></param>
 		/// <param name="calenderId"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<CalendarListEntry> GetGoogleCalendar(string accessToken, string calenderId)
+		public static async Task<CalendarListEntry> GetGoogleCalendar(string accessToken, string calenderId, CancellationToken cancellationToken = default)
 		{
 			var request = CalendarService.Value.CalendarList.Get(calenderId);
 			request.OauthToken = accessToken;
@@ -194,7 +195,7 @@ namespace InkyCal.Utils.Calendar
 			// List calendars
 			try
 			{
-				return await request.ExecuteAsync();
+				return await request.ExecuteAsync(cancellationToken);
 			}
 			catch (GoogleApiException ex) when (ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound)
 			{
@@ -202,7 +203,7 @@ namespace InkyCal.Utils.Calendar
 			}
 		}
 
-		private static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, string accessToken, string calendarId)
+		private static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, string accessToken, string calendarId, CancellationToken cancellationToken)
 		{
 			var result = new List<Event>();
 			using (MiniProfiler.Current.Step($"Gather events for calendar {calendarId}"))
@@ -210,7 +211,7 @@ namespace InkyCal.Utils.Calendar
 				{
 					CalendarListEntry calendar;
 					using (MiniProfiler.Current.Step($"Gathering calendar details"))
-						calendar = await GetGoogleCalendar(accessToken, calendarId);
+						calendar = await GetGoogleCalendar(accessToken, calendarId, cancellationToken);
 
 					if (calendar == null)
 						return result;
