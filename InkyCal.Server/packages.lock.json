@@ -61,12 +61,12 @@
       },
       "Google.Apis.Oauth2.v2": {
         "type": "Direct",
-        "requested": "[1.64.0.1869, )",
-        "resolved": "1.64.0.1869",
-        "contentHash": "8SKAzcY5KFFuJ6PzCYoKZhN+loIIRduQ6EY9aQph3QAjhwYHdz3fkkbMfH4YZ8JiFpWKNJM8NFuTLezOPkwGQg==",
+        "requested": "[1.65.0.1869, )",
+        "resolved": "1.65.0.1869",
+        "contentHash": "ArDVdzCl9rQe15zijonNm8V8oJsTnaGBjb6adc3CGRgZzUiVIzdaWEaQsj9GVEIZF/KR++A2qW9jUQS+3Sz/mw==",
         "dependencies": {
-          "Google.Apis": "1.64.0",
-          "Google.Apis.Auth": "1.64.0"
+          "Google.Apis": "1.65.0",
+          "Google.Apis.Auth": "1.65.0"
         }
       },
       "Humanizer": {
@@ -378,35 +378,35 @@
       },
       "Google.Apis": {
         "type": "Transitive",
-        "resolved": "1.64.0",
-        "contentHash": "0ki3AJDiTuV5Cb7NUyq+0DDGDLWcPCKbZC1HgyvAW+o/I0rY/HXMvv6IAF65hhfbQB/Scfm8nuAW3weNEXYkxw==",
+        "resolved": "1.65.0",
+        "contentHash": "TTnTAuRL236ikkpXdAFtkrZoZTSstuO4JQohWAko1cxOpN3Y1DeBC5Y4f7nXyD6wCQwa+tpE1Au8eqx14Hr+yA==",
         "dependencies": {
-          "Google.Apis.Core": "1.64.0"
+          "Google.Apis.Core": "1.65.0"
         }
       },
       "Google.Apis.Auth": {
         "type": "Transitive",
-        "resolved": "1.64.0",
-        "contentHash": "u3cwX0E3IpAkROzRPgZtohFSS2DUblkSmwMfh3/2Qwbi/QXHd8ebq2JuCNqmfpJyfgW5AG0+fO0UrrLsYtglMQ==",
+        "resolved": "1.65.0",
+        "contentHash": "6yDd5sT6RkY6GH6gLvpdK5Fmp4jS+Bnxmospt/kRos7DyUoAvJNiRVEmpWMYOLwKLk0dq1ZTLoehtSH1b+sBdQ==",
         "dependencies": {
-          "Google.Apis": "1.64.0",
-          "Google.Apis.Core": "1.64.0",
+          "Google.Apis": "1.65.0",
+          "Google.Apis.Core": "1.65.0",
           "System.Management": "7.0.2"
         }
       },
       "Google.Apis.Calendar.v3": {
         "type": "Transitive",
-        "resolved": "1.64.0.3248",
-        "contentHash": "0H6qPBx4INPhrwyNd0qfVnwqx4pQ6QX5YhDNsqL9d0PQovwBnqLoCDQhJ2YSl9yiHWysTRfQ6OlRD9kxSDdyow==",
+        "resolved": "1.65.0.3270",
+        "contentHash": "w9iAufx8+ajB5z+nq+HyWeZzrW/EDbzSH8VfvN3Cz47R5CxKWTwOzZou8HPlWv/E8KMXrhrbKPNBtPtl+3QTbA==",
         "dependencies": {
-          "Google.Apis": "1.64.0",
-          "Google.Apis.Auth": "1.64.0"
+          "Google.Apis": "1.65.0",
+          "Google.Apis.Auth": "1.65.0"
         }
       },
       "Google.Apis.Core": {
         "type": "Transitive",
-        "resolved": "1.64.0",
-        "contentHash": "bqrUhDeMFeMdjtv4QT4Z99WDPSEbS6EKnp1bYvqyc/VpEu4oFNMqw8/bk/7SS7Ko+bodDgum8fkvDwCMZtdWDg==",
+        "resolved": "1.65.0",
+        "contentHash": "qxOBkSZxqk9Ei6PElvyut4aOJBBwK438LO/n50gBxqsVjuJCJNZcSAli0sf0AX22bY/RqdzKK47rPGoEfRba/w==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3"
         }
@@ -3009,8 +3009,8 @@
         "type": "Project",
         "dependencies": {
           "Bugsnag": "[3.1.0, )",
-          "Google.Apis.Calendar.v3": "[1.64.0.3248, )",
-          "Google.Apis.Oauth2.v2": "[1.64.0.1869, )",
+          "Google.Apis.Calendar.v3": "[1.65.0.3270, )",
+          "Google.Apis.Oauth2.v2": "[1.65.0.1869, )",
           "Google.Apis.ServiceUser.v1": "[1.36.0.1373, )",
           "Ical.Net": "[4.2.0, )",
           "InkyCal.Models": "[1.0.0, )",
