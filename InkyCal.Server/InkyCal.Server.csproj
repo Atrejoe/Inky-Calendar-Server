@@ -52,7 +52,7 @@
 	<PackageReference Include="NuGet.Common" Version="6.8.0" />
 	<PackageReference Include="NuGet.Protocol" Version="6.8.0" />
 	<PackageReference Include="Sentry.AspNetCore" Version="3.41.3" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.15.0.81779">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.16.0.82469">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
