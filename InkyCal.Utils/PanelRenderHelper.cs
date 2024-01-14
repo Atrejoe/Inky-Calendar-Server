@@ -2,6 +2,8 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -121,14 +123,18 @@ namespace InkyCal.Utils
 		private static readonly Lazy<Type[]> Renderers = new Lazy<Type[]>(GetRenderers);
 		private readonly Func<GoogleOAuthAccess, Task> saveToken;
 
-		private static Type[] GetRenderers()
+		internal static Type[] GetRenderers()
 		{
+			var topLevelNamespace = typeof(PanelRenderHelper).Assembly.FullName[
+						..typeof(PanelRenderHelper).Assembly.FullName.IndexOf(".")];
+
 			return AppDomain.CurrentDomain.GetAssemblies()
-														.SelectMany(x => x.GetTypes())
-														.Where(x => typeof(IPanelRenderer).IsAssignableFrom(x)
-																	&& !x.IsInterface
-																	&& !x.IsAbstract)
-														.ToArray();
+				.Where(x => x.GetName().FullName.StartsWith(topLevelNamespace))
+				.SelectMany(x => x.GetTypes())
+				.Where(x => typeof(IPanelRenderer).IsAssignableFrom(x)
+							&& !x.IsInterface
+							&& !x.IsAbstract)
+				.ToArray();
 		}
 	}
 
