@@ -14,6 +14,18 @@
         "resolved": "8.0.0",
         "contentHash": "DxiTgkCl3CGq1rYmBX2wjY7XGbxiBdL4J+/AJIAFLKy5z70NxhnVRnPghnicXZ8oF6JKVXlW3xwznRbI3ioEKg=="
       },
+      "Microsoft.Extensions.Configuration.UserSecrets": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "ihDHu2dJYQird9pl2CbdwuNDfvCZdOS0S7SPlNfhPt0B81UTT+yyZKz2pimFZGUp3AfuBRnqUCxB2SjsZKHVUw==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Configuration.Json": "8.0.0",
+          "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
+          "Microsoft.Extensions.FileProviders.Physical": "8.0.0"
+        }
+      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.8.0, )",
@@ -29,6 +41,12 @@
         "requested": "[3.1.1, )",
         "resolved": "3.1.1",
         "contentHash": "kMvdO5dhrUR3o1qk0fzS0St0prlKyMQAfz1ChVAUdGGobTU5ehR60szOFto0+Q7rFG5iXMvTlVIthXM9EcNYnw=="
+      },
+      "MSTest.TestFramework": {
+        "type": "Direct",
+        "requested": "[3.1.1, )",
+        "resolved": "3.1.1",
+        "contentHash": "3rjkGxciNHHmPW8cl1/QVIYjOpfptjmAH5JrLBw+dnMTYDoweg3I579N7OIbar3Zd3q9dfWFrCy2LEV/AmPn3A=="
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
@@ -138,6 +156,15 @@
           "Google.Apis.Auth": "1.65.0"
         }
       },
+      "Google.Apis.ServiceUser.v1": {
+        "type": "Transitive",
+        "resolved": "1.36.0.1373",
+        "contentHash": "150MK99Nr6W0c0nksptXABjh/P0FgSLx9J0PYb87xA12bo9qsYpKdDzjgXQge8Qs2d36cnQrgNObXgVQB3szKg==",
+        "dependencies": {
+          "Google.Apis": "1.36.0",
+          "Google.Apis.Auth": "1.36.0"
+        }
+      },
       "Ical.Net": {
         "type": "Transitive",
         "resolved": "4.2.0",
@@ -240,17 +267,6 @@
           "Microsoft.Extensions.Configuration.FileExtensions": "8.0.0",
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
           "System.Text.Json": "8.0.0"
-        }
-      },
-      "Microsoft.Extensions.Configuration.UserSecrets": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "ihDHu2dJYQird9pl2CbdwuNDfvCZdOS0S7SPlNfhPt0B81UTT+yyZKz2pimFZGUp3AfuBRnqUCxB2SjsZKHVUw==",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Configuration.Json": "8.0.0",
-          "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
-          "Microsoft.Extensions.FileProviders.Physical": "8.0.0"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -1542,6 +1558,7 @@
       "inkycal.server.config": {
         "type": "Project",
         "dependencies": {
+          "Microsoft.Extensions.Configuration": "[8.0.0, )",
           "Microsoft.Extensions.Configuration.Binder": "[8.0.1, )",
           "Microsoft.Extensions.Configuration.EnvironmentVariables": "[8.0.0, )",
           "Microsoft.Extensions.Configuration.Json": "[8.0.0, )",
@@ -1554,6 +1571,7 @@
           "Bugsnag": "[3.1.0, )",
           "Google.Apis.Calendar.v3": "[1.65.0.3270, )",
           "Google.Apis.Oauth2.v2": "[1.65.0.1869, )",
+          "Google.Apis.ServiceUser.v1": "[1.36.0.1373, )",
           "Ical.Net": "[4.2.0, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
@@ -1561,6 +1579,7 @@
           "Magick.NET.Core": "[13.5.0, )",
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
+          "Newtonsoft.Json": "[13.0.3, )",
           "OpenAI-DotNet": "[7.6.1, )",
           "Sentry": "[3.41.3, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
