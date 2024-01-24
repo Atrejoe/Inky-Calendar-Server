@@ -39,7 +39,7 @@
 	</PackageReference>
 	<PackageReference Include="MiniProfiler.Shared" Version="4.3.8" />
 	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
-	<PackageReference Include="OpenAI-DotNet" Version="7.6.1" />
+	<PackageReference Include="OpenAI-DotNet" Version="7.6.2" />
 	<PackageReference Include="Sentry" Version="3.41.4" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
 	<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
