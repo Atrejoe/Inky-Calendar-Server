@@ -165,11 +165,11 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[3.41.3, )",
-        "resolved": "3.41.3",
-        "contentHash": "t1KDDQ7wVSXi2+WHicy7yf9IpkD5c7yTVdPeWt9qmIATu/sKXGvw/kHXdSWHZZYLQqQP+SkMoUzuko5JGxpO9g==",
+        "requested": "[3.41.4, )",
+        "resolved": "3.41.4",
+        "contentHash": "kP4KbSSZU6WL+AUw0VNxOzNXRWBiBfAFDKFnn/5y7MdejluoagZYuczI6h/yj2k8y+OmCHFDy4oJ7BCD4S1xTw==",
         "dependencies": {
-          "Sentry.Extensions.Logging": "3.41.3"
+          "Sentry.Extensions.Logging": "3.41.4"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1534,17 +1534,17 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "3.41.3",
-        "contentHash": "4vYXsUIaLhqwNE+g6Q/MYcgrLl2ZVbUPMt1bzFSqlCOBngNZOQ05O4SZveszPzGv/mBc/yelA4Ekr8SVFF8RfA=="
+        "resolved": "3.41.4",
+        "contentHash": "GYYaim7t8+1utYHHSvwISinaPWMGf1aIJjBpIw+6+YEs65t7i5D21WNWeEH67gS4A8tGsfJaXa7/ytfIBVIZrA=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "3.41.3",
-        "contentHash": "L2eQVTe3iLZZi5PPIV8dHgcLOfykH29o5PlCrJUTl5XSekkVWapYbk6Fcly+ZWcGKD+TMmzB0lekG7vqpTxg/Q==",
+        "resolved": "3.41.4",
+        "contentHash": "Qq9dRK/BOI71DDIgc6PZyRpoe/zP5ny9Jnpg2bXBs++6+nCxcNtWlKzWqUl8+PrjcjQcb0lXD+lDqFi4sU56YQ==",
         "dependencies": {
           "Microsoft.Extensions.Http": "6.0.0",
           "Microsoft.Extensions.Logging.Configuration": "6.0.0",
-          "Sentry": "3.41.3"
+          "Sentry": "3.41.4"
         }
       },
       "SixLabors.Fonts": {
@@ -2692,7 +2692,7 @@
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "OpenAI-DotNet": "[7.6.1, )",
-          "Sentry": "[3.41.3, )",
+          "Sentry": "[3.41.4, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",

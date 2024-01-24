@@ -156,15 +156,6 @@
           "Google.Apis.Auth": "1.65.0"
         }
       },
-      "Google.Apis.ServiceUser.v1": {
-        "type": "Transitive",
-        "resolved": "1.36.0.1373",
-        "contentHash": "150MK99Nr6W0c0nksptXABjh/P0FgSLx9J0PYb87xA12bo9qsYpKdDzjgXQge8Qs2d36cnQrgNObXgVQB3szKg==",
-        "dependencies": {
-          "Google.Apis": "1.36.0",
-          "Google.Apis.Auth": "1.36.0"
-        }
-      },
       "Ical.Net": {
         "type": "Transitive",
         "resolved": "4.2.0",
@@ -558,8 +549,8 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "3.41.3",
-        "contentHash": "4vYXsUIaLhqwNE+g6Q/MYcgrLl2ZVbUPMt1bzFSqlCOBngNZOQ05O4SZveszPzGv/mBc/yelA4Ekr8SVFF8RfA=="
+        "resolved": "3.41.4",
+        "contentHash": "GYYaim7t8+1utYHHSvwISinaPWMGf1aIJjBpIw+6+YEs65t7i5D21WNWeEH67gS4A8tGsfJaXa7/ytfIBVIZrA=="
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
@@ -1558,7 +1549,6 @@
       "inkycal.server.config": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.Configuration": "[8.0.0, )",
           "Microsoft.Extensions.Configuration.Binder": "[8.0.1, )",
           "Microsoft.Extensions.Configuration.EnvironmentVariables": "[8.0.0, )",
           "Microsoft.Extensions.Configuration.Json": "[8.0.0, )",
@@ -1571,7 +1561,6 @@
           "Bugsnag": "[3.1.0, )",
           "Google.Apis.Calendar.v3": "[1.65.0.3270, )",
           "Google.Apis.Oauth2.v2": "[1.65.0.1869, )",
-          "Google.Apis.ServiceUser.v1": "[1.36.0.1373, )",
           "Ical.Net": "[4.2.0, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
@@ -1579,9 +1568,8 @@
           "Magick.NET.Core": "[13.5.0, )",
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
-          "Newtonsoft.Json": "[13.0.3, )",
           "OpenAI-DotNet": "[7.6.1, )",
-          "Sentry": "[3.41.3, )",
+          "Sentry": "[3.41.4, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
 	<TargetFramework>net8.0</TargetFramework>
@@ -41,7 +41,7 @@
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
-	<PackageReference Include="Sentry.AspNetCore" Version="3.41.3" />
+	<PackageReference Include="Sentry.AspNetCore" Version="3.41.4" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.16.0.82469">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
