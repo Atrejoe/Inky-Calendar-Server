@@ -1,9 +1,14 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+ARG USER=nonroot
 WORKDIR /app
-# EXPOSE 80
-# EXPOSE 443
+
+# add new user
+RUN adduser -D $USER \
+        && mkdir -p /etc/sudoers.d \
+        && echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+        && chmod 0440 /etc/sudoers.d/$USER
+
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
@@ -43,4 +48,5 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 # Used configured Asp Net Core url
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 CMD wget --no-verbose --tries=1 --spider "$(echo $ASPNETCORE_URLS | cut -d ';' -f 1)health" || exit 1
 
+USER $USER
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
