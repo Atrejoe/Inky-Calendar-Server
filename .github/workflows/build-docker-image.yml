@@ -18,16 +18,18 @@ jobs:
     steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+    
     - name: Extract metadata
+      id: meta
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.IMAGE_NAME }}
+
     - name: Build Docker image
       # You may pin to the exact commit or the version.
-      # uses: docker/build-push-action@ab83648e2e224cfeeab899e23b639660765c3a89
       uses: docker/build-push-action@v5
       with:
         context: .
-        push: false
         sbom: true
+        push: false
         tags: atreyu/inkycal.server:latest
