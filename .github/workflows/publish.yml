@@ -46,7 +46,8 @@ jobs:
       # You may pin to the exact commit or the version.
       uses: docker/build-push-action@v5
       with:
-        context: .
+        # context: .
+        # file: ../Dockerfile
         sbom: true
         push: true
         tags: atreyu/inkycal.server:latest
