@@ -165,12 +165,12 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[4.1.1, )",
-        "resolved": "4.1.1",
-        "contentHash": "tQ8HPTaNzQv0mnO140xFYxfbatrPuFmBBpFFTkfmk6q6iM5BYTpPqCLmHRq5R68g1xHO0Cf7k/mjEJy0vOoqMQ==",
+        "requested": "[4.1.2, )",
+        "resolved": "4.1.2",
+        "contentHash": "VWGuAq9QePkB30wn+Z2CIYAxkZdtBSWvsuKRrTxHAScO4Xt+q1ziGxwiN/Fm2RjedblMxfattyf5xFR1PNxuIA==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
-          "Sentry.Extensions.Logging": "4.1.1"
+          "Sentry.Extensions.Logging": "4.1.2"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1548,18 +1548,18 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "4.1.1",
-        "contentHash": "jjjQvp5I3e5mOX5cPkxR8Swib3KmoD87GbrQPWeX42b5N6Bxy6XoB5q0ZZcwrzX52g6nPJv+M1P+mDNKlsvznA=="
+        "resolved": "4.1.2",
+        "contentHash": "OVCUz+Mw8P5L8K9VJdeewo4hdB4v+z7zC50tFXu1Sq6+FDBd+/DcFHBWlnn/cNLct2hZEAAn7hS9eqVc097wMg=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "4.1.1",
-        "contentHash": "SgBsx+N4XI5RtIZ9BYpWWtQ3j922B3hOu/MkYync5khQuivvtyOZwzuzB1HRAM+/iy1F35V8ONkv9TPECmFzxg==",
+        "resolved": "4.1.2",
+        "contentHash": "g2DbmDlK3LbYvnlM1n2Wf5/LTfuzUh5JrVgZiMUbtRFViIGU5RdqydABOL3q1vdv2YTd/Xc4L7x527vKK0ElYg==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
           "Microsoft.Extensions.Http": "8.0.0",
           "Microsoft.Extensions.Logging.Configuration": "8.0.0",
-          "Sentry": "4.1.1"
+          "Sentry": "4.1.2"
         }
       },
       "SixLabors.Fonts": {
@@ -2716,7 +2716,7 @@
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "OpenAI-DotNet": "[7.6.5, )",
-          "Sentry": "[4.1.1, )",
+          "Sentry": "[4.1.2, )",
           "SixLabors.ImageSharp": "[1.0.4, )",
           "SixLabors.ImageSharp.Drawing": "[1.0.0-beta0010, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
