@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
-  <Class Name="InkyCal.Utils.Calendar.iCalExtensions">
+  <Class Name="InkyCal.Utils.Calendar.ICalExtensions">
     <Position X="1.75" Y="4.5" Width="2.5" />
     <Compartments>
       <Compartment Name="Public" Collapsed="true" />
@@ -26,7 +26,7 @@
       <Compartment Name="Public" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAgEAAAAAAhAAgAAAAAAAAAAAABAAAACAA=</HashCode>
+      <HashCode>IAAAAAAAAACgEAAAAAAhAAgAAAAAAAAAAAABAAAACAA=</HashCode>
       <FileName>Calendar\GoogleCalenderExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
