@@ -267,14 +267,6 @@ namespace InkyCal.Server
 			app.UseStaticFiles();
 			app.UseRouting();
 
-			if (!string.IsNullOrEmpty(Config.Config.SentryDSN))
-			{
-				// Enable automatic tracing integration.
-				// If running with .NET 5 or below, make sure to put this middleware
-				// right after `UseRouting()`.
-				app.UseSentryTracing();
-			}
-
 			app.UseForwardedHeaders(new ForwardedHeadersOptions
 			{
 				ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
