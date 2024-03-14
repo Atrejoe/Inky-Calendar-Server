@@ -12,7 +12,7 @@ namespace InkyCal.Utils.Tests
 	/// <summary>
 	/// Tests <see creaf="NewYorkTimesRenderer"/>
 	/// </summary>
-	public sealed class NewsPaperRendererTest : IPanelTests<NewsPaperRenderer>
+	public sealed class NewsPaperRendererTest(ITestOutputHelper output) : IPanelTests<NewsPaperRenderer>(output)
 	{
 		protected override NewsPaperRenderer GetRenderer()
 		{

@@ -1,9 +1,6 @@
 ﻿// Ignore Spelling: Utils
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.NewPaperRenderer.FreedomForum;
@@ -94,7 +91,8 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		/// <param name="newsPaperId"></param>
-		public NewsPaperRenderer(string newsPaperId) : base() { 
+		public NewsPaperRenderer(string newsPaperId) : base()
+		{
 			NewsPaperId = newsPaperId;
 		}
 
@@ -107,49 +105,26 @@ namespace InkyCal.Utils
 		/// Returns url, based from (cached version of) <see cref="NewsPaperPanel.NewsPaperId"/>.
 		/// </summary>
 		/// <returns></returns>
+		/// <exception cref="NewsPaperRenderException">When newspaper failed to download for multiple days.</exception>
 		protected override async Task<byte[]> GetPDF()
 		{
 			var c = new ApiClient();
-			if(!(await c.GetNewsPapers()).TryGetValue(NewsPaperId, out var newsPaper))
+			if (!(await c.GetNewsPapers()).TryGetValue(NewsPaperId, out var newsPaper))
 				throw new NewsPaperRenderException($"Newspaper with id '{NewsPaperId}' is unknown.");
 
-			var d = DateTime.UtcNow;
-
-
-			byte[] pdf = null;
-
-			var tries = 0;
-			const int maxTries = 5;
-
-			while (tries <= maxTries
-				&& !(pdf?.Any()).GetValueOrDefault())
-
+			byte[] pdf;
+			try
 			{
-				tries += 1;
-				var url = newsPaper.PDFUrl(d);
-				try
-				{
-					Trace.WriteLine($"Downloading: {url}");
-					pdf = await url.LoadCachedContent(TimeSpan.FromHours(1));
-				}
-				catch (HttpRequestException ex) when (
-					tries <= maxTries
-					&& (!ex.StatusCode.HasValue
-					//On some days newspapers may not be available is not available.
-					|| new[] { System.Net.HttpStatusCode.NotFound
-							 , System.Net.HttpStatusCode.Forbidden
-					}.Contains(ex.StatusCode.Value)))
-				{
-					Console.Error.WriteLine($"Failed ({tries:n0}/{maxTries:n0}) to download from {url}: status code {ex.StatusCode}, error message: {ex.Message}");
-					d = d.AddDays(-1);
-				}
+				pdf = await DownloadHelper.DownloadFileByDay(newsPaper.PDFUrl);
 			}
-
-			if (!(pdf?.Any()).GetValueOrDefault())
-				throw new NewYorkTimeRenderException($"Failed to download {newsPaper.PaperId} ('{newsPaper.Title}') homepage in {tries:n0} tries.");
+			catch (DownloadException ex)
+			{
+				throw new NewsPaperRenderException($"Failed to download {newsPaper.PaperId} ('{newsPaper.Title}') homepage.", ex);
+			}
 
 			return pdf;
 		}
+
 		/// <summary>
 		/// Reads <see cref="NewsPaperPanel.NewsPaperId"/>.
 		/// </summary>

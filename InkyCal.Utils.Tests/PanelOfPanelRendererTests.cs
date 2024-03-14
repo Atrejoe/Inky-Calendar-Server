@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using InkyCal.Models;
+using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
 	/// <summary>
 	/// Tests <see creaf="PanelOfPanelRenderer"/>, using <see cref="PanelOfPanels"/> with smae parameters as <see cref="TestCalendarPanelRenderer"/> and <see cref="TestImagePanelRenderer"/>
 	/// </summary>
-	public sealed class PanelOfPanelRendererTests : IPanelTests<PanelOfPanelRenderer>
+	public sealed class PanelOfPanelRendererTests(ITestOutputHelper output) : IPanelTests<PanelOfPanelRenderer>(output)
 	{
 		protected override PanelOfPanelRenderer GetRenderer()
 		{

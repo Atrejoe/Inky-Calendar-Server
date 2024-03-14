@@ -1,9 +1,6 @@
 ﻿// Ignore Spelling: Utils
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using InkyCal.Models;
 
@@ -90,46 +87,23 @@ namespace InkyCal.Utils
 		/// <exception cref="NewYorkTimeRenderException"/>
 		protected override async Task<byte[]> GetPDF()
 		{
-			var d = Date;
 
-
-			byte[] pdf = null;
-
-			var tries = 0;
-			const int maxTries = 5;
-
-			while (tries <= maxTries
-				&& !(pdf?.Any()).GetValueOrDefault())
-
+			byte[] pdf;
+			try
 			{
-
-				//No news, just ads on sunday?
-				if (d.DayOfWeek == DayOfWeek.Sunday)
-					d = d.AddDays(-1);
-
-
-				tries += 1;
-				var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
-				try
+				pdf = await DownloadHelper.DownloadFileByDay((DateTime d) =>
 				{
-					Trace.TraceInformation($"Downloading: {url}");
-					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
-				}
-				catch (HttpRequestException ex) when (
-					tries <= maxTries
-					&& (!ex.StatusCode.HasValue
-					//On some days (sundays) NYT is not available.
-					|| new[] { System.Net.HttpStatusCode.NotFound
-							 , System.Net.HttpStatusCode.Forbidden
-					}.Contains(ex.StatusCode.Value)))
-				{
-					Console.Error.WriteLine($"Failed ({tries:n0}/{maxTries:n0}) to download from {url}: status code {ex.StatusCode}, error message: {ex.Message}");
-					d = d.AddDays(-1);
-				}
+					//No news, just ads on sunday, skip to saturday?
+					if (d.DayOfWeek == DayOfWeek.Sunday)
+						d = d.AddDays(-1);
+
+					return new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
+				});
 			}
-
-			if (!(pdf?.Any()).GetValueOrDefault())
-				throw new NewYorkTimeRenderException($"Failed to download NYT homepage (in {tries} tries)");
+			catch (DownloadException ex)
+			{
+				throw new NewYorkTimeRenderException($"Failed to download NYT homepage", ex);
+			}
 
 			return pdf;
 		}

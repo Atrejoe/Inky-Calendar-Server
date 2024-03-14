@@ -7,6 +7,7 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
 	/// <summary>
 	/// 
 	/// </summary>

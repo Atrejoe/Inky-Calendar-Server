@@ -37,7 +37,7 @@ namespace InkyCal.Utils.Tests
 	/// <summary>
 	/// Tests <see creaf="TestCalendarPanel"/> / <see cref="CalendarPanelRenderer"/>
 	/// </summary>
-	public sealed class TestCalendarPanelTests : IPanelTests<TestCalendarPanelRenderer>
+	public sealed class TestCalendarPanelTests(ITestOutputHelper output) : IPanelTests<TestCalendarPanelRenderer>(output)
 	{
 		protected override TestCalendarPanelRenderer GetRenderer()
 		{
