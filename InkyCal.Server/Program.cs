@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -24,7 +24,7 @@ namespace InkyCal.Server
 							o.Dsn = Config.Config.SentryDSN;
 							// Set TracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
 							// We recommend adjusting this value in production.
-							o.TracesSampleRate = 0.01;;
+							o.TracesSampleRate = 0.01;
 						});
 					}
 
