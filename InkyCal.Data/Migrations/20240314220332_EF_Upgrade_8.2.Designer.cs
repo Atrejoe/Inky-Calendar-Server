@@ -13,7 +13,7 @@ namespace InkyCal.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240314220332_EF_Upgrade_8.2")]
-    partial class EF_Upgrade_82
+    partial class EFUpgrade82
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

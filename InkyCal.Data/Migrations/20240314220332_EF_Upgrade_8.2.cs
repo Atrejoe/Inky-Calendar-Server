@@ -5,7 +5,7 @@
 namespace InkyCal.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class EF_Upgrade_82 : Migration
+    public partial class EFUpgrade82 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
