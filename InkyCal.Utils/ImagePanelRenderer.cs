@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
@@ -161,10 +162,10 @@ namespace InkyCal.Utils
 				if (colors is null)
 					colors = new[] { Color.White, Color.Black };
 
-				Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image;
+				Image<Rgba32> image;
 				try
 				{
-					image = Image.Load(await imageUrl.LoadCachedContent(TimeSpan.FromMinutes(10)));
+					image = Image.Load<Rgba32>(await imageUrl.LoadCachedContent(TimeSpan.FromMinutes(10)));
 				}
 				catch (UnknownImageFormatException ex)
 				{
@@ -176,7 +177,7 @@ namespace InkyCal.Utils
 					image.Mutate(x => x
 					.Rotate(rotateImage)
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height) })
-					.BackgroundColor(Color.Transparent)
+					//.BackgroundColor(Color.White)
 					.Quantize(new PaletteQuantizer(colors))
 					);
 

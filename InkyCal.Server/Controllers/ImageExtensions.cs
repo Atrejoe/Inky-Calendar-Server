@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 
 namespace InkyCal.Server.Controllers
 {
@@ -23,17 +24,16 @@ namespace InkyCal.Server.Controllers
 		/// </summary>
 		/// <param name="controller"></param>
 		/// <param name="image"></param>
+		/// <param name="colors"></param>
 		/// <returns></returns>
-		public static ActionResult Image(this ControllerBase controller, Image image)
+		public static ActionResult Image(this ControllerBase controller, Image image, ReadOnlyMemory<Color> colors)
 		{
-			if (controller is null)
-				throw new ArgumentNullException(nameof(controller));
-			if (image is null)
-				throw new ArgumentNullException(nameof(image));
-
+			ArgumentNullException.ThrowIfNull(controller);
+			ArgumentNullException.ThrowIfNull(image);
 
 			using var stream = new MemoryStream();
-			image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
+			image.SaveAsGif(stream, new (){ Quantizer = new PaletteQuantizer(colors) });
+
 			return controller.File(
 				fileContents: stream.ToArray(),
 				contentType: "image/gif");
@@ -115,9 +115,9 @@ namespace InkyCal.Server.Controllers
 
 				if (flip)
 				{
-					using var image = SixLabors.ImageSharp.Image.Load(bytes);
+					using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(bytes);
 					image.Mutate(x => x.Rotate(RotateMode.Rotate180));
-					return controller.Image(image);
+					return controller.Image(image, colors);
 				}
 				else
 					return controller.Gif(bytes);
@@ -139,31 +139,25 @@ namespace InkyCal.Server.Controllers
 				image.Mutate(x =>
 					{
 						var messageFont = FontHelper.NotoSans.CreateFont(16);
-						var errorTextOptions =
-						new TextGraphicsOptions(
-							new GraphicsOptions() { Antialias = false },
-							new TextOptions() { WrapTextWidth = width }
-							);
-						var errorMessageRenderOptions = errorTextOptions.ToRendererOptions(messageFont);
+						var textOption = new RichTextOptions(messageFont)
+						{
+							WrappingLength = width,
+							Font = messageFont
+						};
+						//var errorMessageRenderOptions = errorTextOptions.ToRendererOptions(messageFont);
 						var errorMessage = ex.Message.ToSafeChars(FontHelper.NotoSans).Trim();
 
-						x.DrawText(
-							errorTextOptions,
-							errorMessage,
-							messageFont,
-							errorColor, new Point(0, 0));
+						x.DrawText(textOption, errorMessage, errorColor);
 
-						var start = (int)TextMeasurer.MeasureBounds(errorMessage, errorMessageRenderOptions).Height
+						var start = (int)TextMeasurer.MeasureBounds(errorMessage, textOption).Height
 						+ 10;
 
 						x.DrawText(
-							errorTextOptions,
-							ex.StackTrace,
-							FontHelper.NotoSans.CreateFont(14),
-							primaryColor,
-							new Point(0, start));
+							textOptions: new(textOption) { Origin = new(x: 0, y: start) },
+							text: ex.StackTrace,
+							color: primaryColor);
 					});
-				return controller.Image(image);
+				return controller.Image(image, colors);
 			}
 		}
 
@@ -175,10 +169,8 @@ namespace InkyCal.Server.Controllers
 		/// <returns></returns>
 		public static ActionResult Gif(this ControllerBase controller, byte[] image)
 		{
-			if (controller is null)
-				throw new ArgumentNullException(nameof(controller));
-			if (image is null)
-				throw new ArgumentNullException(nameof(image));
+			ArgumentNullException.ThrowIfNull(controller);
+			ArgumentNullException.ThrowIfNull(image);
 
 			return controller.File(
 				fileContents: image,

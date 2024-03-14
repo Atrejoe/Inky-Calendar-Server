@@ -1,6 +1,5 @@
 ﻿namespace InkyCal.Utils.Tests
 {
-
 	/// <summary>
 	/// Tests <see creaf="ImagePanelDemo"/>
 	/// </summary>

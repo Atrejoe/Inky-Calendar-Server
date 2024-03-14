@@ -157,7 +157,7 @@ namespace InkyCal.Utils
 		/// <param name="colors">The number of color to render in.</param>
 		/// <param name="log">A callback method for logging errors to</param>
 		/// <returns></returns>
-		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log) 
+		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 			=> await GetImage(width, height, colors, log, default);
 		/// <summary>
 		/// Renders the calendars in portrait mode (flipping <paramref name="width"/> and <paramref name="height"/>)
@@ -211,7 +211,7 @@ namespace InkyCal.Utils
 			var backgroundColor = colors.Skip(1).First();
 
 
-			//var font = MonteCarlo.CreateFont(12); //Font that works well anti-aliassed
+			//var font = MonteCarlo.CreateFont(15); //Font that works well anti-aliassed
 			var font = ProFont.CreateFont(15);
 
 			var characterWidth = font.GetCharacterWidth(); //Works only for some known fixed-width fonts
@@ -221,20 +221,19 @@ namespace InkyCal.Utils
 								: width / 7; //For now fall back to 100 characters width, which is nonsense
 
 
-
-
-			var options_Date = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
+			var textOptions_Date = new RichTextOptions(font)
 			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
-				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
-			});
+				WrappingLength = width,
+				Dpi = 96
+				//DpiX = 96,
+				//DpiY = 96
+			};
 
-			var textRendererOptions_Date = options_Date.ToRendererOptions(font);
+			//var textRendererOptions_Date = options_Date.ToRendererOptions(font);
 
-			var result = new Image<Rgba32>(new Configuration() { }, width, height, backgroundColor);
+			var result = new Image<Rgba32>(width, height, backgroundColor);
 
 			//Keep track of vertical position
 			var y = 0;
@@ -247,19 +246,18 @@ namespace InkyCal.Utils
 				{
 					var errorMessage = calenderParseErrors;
 
-					var errorRenderOptions = textRendererOptions_Date.Clone();
-
 					canvas.RenderErrorMessage(
 						errorMessage,
 						errorColor,
 						backgroundColor,
 						ref y,
-						width, errorRenderOptions);
+						width, textOptions_Date);
 				}
 			});
 
 			result.Mutate(canvas =>
 			{
+				canvas.GetDrawingOptions().GraphicsOptions.Antialias = false;
 
 				//This previously was the source for rendering
 				var text = DescribeCalender(characterPerLine, events);
@@ -288,13 +286,12 @@ namespace InkyCal.Utils
 
 							//var indentSize = day.Length;
 
-							int indent = (int)TextMeasurer.MeasureBounds(day, textRendererOptions_Date).Width
-									   + 10; //Space of 10 pixels
+							int indent = (int)TextMeasurer.MeasureBounds(day, textOptions_Date).Width
+									   + 5; //Space of 10 pixels
 
-							var options = options_Date.Clone();
-							options.TextOptions.WrapTextWidth = width - indent;
+							var textOptions = new RichTextOptions(textOptions_Date) { WrappingLength = width - indent };
 
-							var textMeasureOptions = options.ToRendererOptions(font);
+							//var textMeasureOptions = options.ToRendererOptions(font);
 
 							using (MiniProfiler.Current.Step($"Drawing {x.Count():n0} events for {x.Key:d}"))
 
@@ -318,7 +315,7 @@ namespace InkyCal.Utils
 
 									try
 									{
-										var textHeight = (int)TextMeasurer.MeasureBounds(line, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+										var textHeight = (int)TextMeasurer.MeasureBounds(line, textOptions).Height - 4 + font.FontMetrics.VerticalMetrics.LineHeight / 200;
 
 										if (textHeight + y > height)
 											return;
@@ -332,29 +329,36 @@ namespace InkyCal.Utils
 											else
 											{
 												//Draw a red line for each day
-												y += 4;
+												y += textHeight + 2;
 
-												canvas.DrawLines(supportColor, 2, new PointF(2, y), new PointF(width - 2, y));
+												canvas.DrawLine(supportColor, 2, new PointF(2, y), new PointF(width - 2, y));
 
 												firstEntry = false;
 											}
 
+											y += 2;
+
+											if (textHeight + y > height)
+												return;
+
 											canvas.DrawText(
-												options_Date,
-												day.ToSafeChars(font),
-												font,
-												primaryColor,
-												new PointF(0, y));
+												textOptions: new RichTextOptions(textOptions_Date) { Origin = new PointF(0, y) },
+												text: day.ToSafeChars(font),
+												color: primaryColor);
 
 											lineDrawn = true;
 										}
+										else
+											y += textHeight;
 
+										if (textHeight + y > height)
+											return;
+
+										var dateOptions = new RichTextOptions(textOptions_Date) { Origin = new PointF(indent, y) };
 										canvas.DrawText(
-												options: options,
+												textOptions: dateOptions,
 												text: line.Trim().ToSafeChars(font),
-												font: font,
-												color: primaryColor,
-												location: new PointF(indent, y)
+												color: primaryColor
 												);
 
 										//Hilight special segments
@@ -364,28 +368,27 @@ namespace InkyCal.Utils
 										{
 											//Fill the boundary of the time indication
 											var period = DescribePeriod(item);
-											var periodBounds = TextMeasurer.MeasureBounds(period, textMeasureOptions);
+											var periodBounds = TextMeasurer.MeasureBounds(period, dateOptions);
 
 											var rectangle = new Rectangle(
-												indent - 2,
-												y + 5,
-												(int)periodBounds.Width + 4,
-												(int)periodBounds.Height + 2
-												);
+												new Point((int)periodBounds.X - 1, (int)periodBounds.Y - 1),
+												new(
+													width: (int)periodBounds.Width + 2,
+													height: (int)periodBounds.Height + 5
+												));
 
-											canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle);
+											canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle)
 
-											// Write the time indication again, but in the background color (this is part of line (== DescribeEvent))
-											canvas.DrawText(
-													options: options,
+												// Write the time indication again, but in the background color (this is part of line (== DescribeEvent))
+												.DrawText(
+													textOptions: dateOptions,
 													text: period.ToSafeChars(font),
-													font: font,
-													color: backgroundColor,
-													location: new PointF(indent, y)
+													color: backgroundColor
 													);
-										}
 
-										y += textHeight;
+											// The wrapper around 
+											y += 2;
+										}
 									}
 									catch (Exception ex)
 									{
@@ -398,8 +401,8 @@ namespace InkyCal.Utils
 										try
 										{
 											var error = $"Error: ({ex.GetType().Name}) {(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}".Limit(150);
-											canvas.DrawText(options, error.ToSafeChars(font), font, errorColor, new PointF(indent, y));
-											y += (int)TextMeasurer.MeasureBounds(error, textMeasureOptions).Height - 4 + font.LineHeight / 200;
+											canvas.DrawText(error.ToSafeChars(font), font, errorColor, new PointF(indent, y));
+											y += (int)TextMeasurer.MeasureBounds(error, textOptions).Height - 4 + font.FontMetrics.VerticalMetrics.LineHeight / 200;
 										}
 										catch (Exception errorDisplayException)
 										{

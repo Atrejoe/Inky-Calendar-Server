@@ -96,9 +96,7 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		protected override void ReadConfig(WeatherPanel panel)
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
-
+			ArgumentNullException.ThrowIfNull(panel);
 
 			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), panel.Token, panel.Location);
 		}
@@ -162,29 +160,26 @@ namespace InkyCal.Utils
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Select(x => new string(x))));
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x))));
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct()));
-			foreach(var color in colors)
+			foreach (var color in colors)
 				Trace.WriteLine($"Color: {color}");
 
 			Trace.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
 
-			var textGraphicsOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = antiAlias }, new TextOptions()
+
+			var textOptions = new RichTextOptions(textFont)
+			{
+				WrappingLength = width,
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96
+			};
+			var weatherTextOptions = new RichTextOptions(weatherFont)
 			{
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
-				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
-			});
-			var weatherGraphicOptions = new TextGraphicsOptions(new GraphicsOptions() { Antialias = false }, new TextOptions()
-			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				WrapTextWidth = width,
-				DpiX = 96,
-				DpiY = 96
-			});
-			var rendererOptions = textGraphicsOptions.ToRendererOptions(textFont);
-			var weatherRendererOptions = weatherGraphicOptions.ToRendererOptions(weatherFont);
+				WrappingLength = width,
+				Dpi=96
+			};
 
 			Weather.RootObject weather;
 
@@ -205,7 +200,7 @@ namespace InkyCal.Utils
 						context
 							.RenderErrorMessage(
 								explanation,
-								errorColor, backgroundColor, ref y, width, rendererOptions);
+								errorColor, backgroundColor, ref y, width, textOptions);
 					});
 					return result;
 				}
@@ -219,7 +214,7 @@ namespace InkyCal.Utils
 						context
 							.RenderErrorMessage(
 								ex.Message.ToString(),
-								errorColor, backgroundColor, ref y, width, rendererOptions);
+								errorColor, backgroundColor, ref y, width, textOptions);
 					});
 					return result;
 				}
@@ -229,22 +224,28 @@ namespace InkyCal.Utils
 			using (MiniProfiler.Current.Step("Draw weather panel"))
 				result.Mutate(context =>
 			{
+				context.GetGraphicsOptions().Antialias = false;
+
 				var y = 0;
 				var locationInfo = $"{station?.name},{station?.country}";
 				context.DrawText(
-					textGraphicsOptions, locationInfo.ToSafeChars(textFont), textFont, primaryColor, new PointF(5, y));
-				y += (int)Math.Ceiling(TextMeasurer.Measure(locationInfo, rendererOptions).Height);
+					new(textOptions) { Origin = new PointF(5, y) }, locationInfo.ToSafeChars(textFont), primaryColor);
+				y += (int)Math.Ceiling(TextMeasurer.MeasureSize(locationInfo, textOptions).Height);
 
 				try
 				{
 					if (weather is null)
-						context.DrawText(textGraphicsOptions, $"No weather found for {station?.name}", textFont, primaryColor, new PointF(0, y));
+						context.DrawText(new(textOptions) { Origin = new PointF(0, y) }, $"No weather found for {station?.name}", primaryColor);
 					else
 					{
 						var firstIcon = (weather.list.OrderBy(l => l.dt).FirstOrDefault()?.weather.FirstOrDefault())?.icon;
-						var weatherIconDimensions = TextMeasurer.Measure(firstIcon, weatherRendererOptions);
+						var weatherIconDimensions = TextMeasurer.MeasureSize(firstIcon, weatherTextOptions);
+
+						var allIcons = string.Join("", FontHelper.WeatherIconsMap.Values);
+						var weatherIconLineDimensions = TextMeasurer.MeasureSize(allIcons, weatherTextOptions);
+
 						var widthPerIcon = (int)Math.Ceiling(weatherIconDimensions.Width);
-						var heightPerIcon = (int)Math.Ceiling(weatherIconDimensions.Height);
+						var heightPerIcon = (int)Math.Ceiling(weatherIconLineDimensions.Height);
 						var iconPadding = 5;
 						var icons = (int)Math.Floor((decimal)width / (widthPerIcon + 2 * iconPadding));
 
@@ -256,24 +257,21 @@ namespace InkyCal.Utils
 
 							if (FontHelper.WeatherIconsMap.TryGetValue(forecast.weather.FirstOrDefault()?.icon, out var icon))
 								context.DrawText(
-									textGraphicsOptions,
+									new (weatherTextOptions) { Origin = new PointF(x + iconPadding, y) },
 									icon,
-									weatherFont,
-									supportColor,
-									new PointF(x + iconPadding, y));
+									supportColor
+									);
 							else
 								context.DrawText(
-									textGraphicsOptions,
+									new(textOptions) { Origin= new PointF(x, y) },
 									$"{forecast.weather.FirstOrDefault()?.icon} has no icon mapping",
-									textFont,
-									errorColor,
-									new PointF(x, y));
+									errorColor);
 
 							context.DrawText(
-								textGraphicsOptions,
+								new(textOptions) { Origin = new PointF(x + iconPadding, y + heightPerIcon + iconPadding) },
 								$@"{forecast.Date.ToLocalTime():HH:mm}
 {forecast.weather.FirstOrDefault()?.main}",
-								textFont, primaryColor, new PointF(x + iconPadding, y + heightPerIcon + iconPadding));
+								primaryColor);
 
 							x += indentPerIcon;
 
@@ -292,7 +290,7 @@ namespace InkyCal.Utils
 					y = 100;
 					context.RenderErrorMessage(
 						ex.Message.ToString(),
-						errorColor, backgroundColor, ref y, width, rendererOptions);
+						errorColor, backgroundColor, ref y, width, textOptions);
 				}
 			});
 

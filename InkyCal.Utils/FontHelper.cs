@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using SixLabors.Fonts;
 
@@ -40,9 +39,6 @@ namespace InkyCal.Utils
 		{
 			if (string.IsNullOrWhiteSpace(text))
 				return text;
-
-			if (fontFamily is null)
-				throw new System.ArgumentNullException(nameof(fontFamily));
 
 			if (fontFamily.Equals(ProFont))
 				return replaceRingelS(text);
@@ -85,7 +81,7 @@ namespace InkyCal.Utils
 			}
 		}
 
-		private static readonly FontCollection fonts = new FontCollection();
+		private static readonly FontCollection fonts = new ();
 
 		/// <summary>
 		/// Font family NotoSans-SemiCondensed
@@ -130,16 +126,16 @@ namespace InkyCal.Utils
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
-				NotoSans = fonts.Install(resource,new CultureInfo("de-DE"));
+				NotoSans = fonts.Add(resource,new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
-				MonteCarlo = fonts.Install(resource, new CultureInfo("de-DE"));
+				MonteCarlo = fonts.Add(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
-				WeatherIcons = fonts.Install(resource, new CultureInfo("de-DE"));
+				WeatherIcons = fonts.Add(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
-				ProFont = fonts.Install(resource, new CultureInfo("de-DE"));
+				ProFont = fonts.Add(resource, new CultureInfo("de-DE"));
 		}
 
 		/// <summary>

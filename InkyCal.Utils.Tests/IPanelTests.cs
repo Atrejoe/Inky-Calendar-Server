@@ -6,7 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
-using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using Xunit;
 
 namespace InkyCal.Utils.Tests
@@ -30,7 +33,7 @@ namespace InkyCal.Utils.Tests
 		{
 			//arrange
 			var panel = GetRenderer();
-			var filename = $"GetImageTest_{typeof(T).Name}_{displayModel}.png";
+			var filename = $"GetImageTest_{typeof(T).Name}_{displayModel}.gif";
 			displayModel.GetSpecs(out var width, out var height, out var colors);
 
 			IPanelRenderer.Log assertHandledOnly = (Exception ex, bool handled, string explanation) =>
@@ -51,7 +54,7 @@ namespace InkyCal.Utils.Tests
 
 			//act
 
-			SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> bitmap;
+			Image<Rgba32> bitmap;
 
 			using (var image = await panel.GetImage(
 								width: width,
@@ -59,15 +62,39 @@ namespace InkyCal.Utils.Tests
 								colors: colors,
 								assertHandledOnly))
 			{
-				bitmap = image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
 
 				//assert
 				Assert.NotNull(image);
 
+				if (image is Image<Rgba32> transparentImage)
+				{
+					var actualColors = Enumerable.Range(0, transparentImage.Width - 1)
+						.SelectMany(x =>
+						{
+							return Enumerable.Range(0, image.Height - 1).Select(y => transparentImage[x, y]);
+						})
+						.Select(x => x.ToHex())
+						.GroupBy(x => x)
+						.ToDictionary(x => x.Key, x => x.Count());
+
+					var extraActualColors = actualColors
+									.Where(x => !colors.Select(x => x.ToHex()).Contains(x.Key));
+
+					Trace.WriteLine($"{actualColors.Count:n0} distinct colors in the image \n - {string.Join("\n - ", actualColors.Select(x => $"{x.Key} ({x.Value:n0})"))}), a palette of {colors.Length:n0} colors ({string.Join(",", colors.Select(x => x.ToString()))}) was specified.");
+					Assert.False(extraActualColors.Any(), $"More or different colors than were requested were present in the image before saving: \n - {string.Join("\n - ", extraActualColors.Select(x => $"{x.Key:n0} ({x.Value:n0})"))}");
+				}
+				else if (image.GetType().IsGenericType)
+					Trace.WriteLine($"Image type is {image.GetType().Name}<{string.Join(",", image.GetType().GetGenericTypeDefinition().GenericTypeArguments.Select(x => x.Name))}>");
+				else
+					Trace.WriteLine($"Image type is {image.GetType().Name}");
+
 
 				using var fileStream = File.Create(filename);
-				image.Save(fileStream, new PngEncoder());
+				image.SaveAsGif(fileStream, new GifEncoder() {  Quantizer = new PaletteQuantizer(colors) });
+
 			}
+
+			bitmap = Image.Load<Rgba32>(filename);
 
 			var fi = new FileInfo(filename);
 			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");
@@ -78,14 +105,18 @@ namespace InkyCal.Utils.Tests
 				.SelectMany(x =>
 				{
 					return Enumerable.Range(0, bitmap.Height - 1).Select(y => bitmap[x, y]);
-				}).ToHashSet();
+				})
+				.Select(x => x.ToHex())
+				.GroupBy(x => x)
+				.ToDictionary(x => x.Key, x => x.Count());
 
-			var extraColors = pixels.Select(x => x.ToHex()).Where(x => !colors.Select(x => x.ToHex()).Contains(x));
+			var extraColors = pixels
+								.Where(x => !colors.Select(x => x.ToHex()).Contains(x.Key));
 
-			var message = $"{pixels.Count:n0} distinct colors in the image ({string.Join(",", pixels.Select(x => x.ToHex().ToString()))}), a palette of {colors.Length:n0} colors ({string.Join(",", colors.Select(x => x.ToString()))}) was specified.Extra colors : {string.Join(",", extraColors)}";
+			var message = $"{pixels.Count:n0} distinct colors in the image \n - {string.Join("\n - ", pixels.Select(x => $"{x.Key} ({x.Value:n0})"))}), a palette of {colors.Length:n0} colors ({string.Join(",", colors.Select(x => x.ToString()))}) was specified.";
 			Trace.WriteLine(message);
 			Assert.False(pixels.Count > colors.Length, message);
-
+			Assert.False(extraColors.Any(), $"More or different colors than were requested were present in the saved image: \n - {string.Join("\n - ", extraColors.Select(x => $"{x.Key:n0} ({x.Value:n0})"))}");
 
 		}
 	}

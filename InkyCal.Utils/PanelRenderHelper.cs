@@ -2,8 +2,6 @@
 
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -16,20 +14,6 @@ using Type = System.Type;
 
 namespace InkyCal.Utils
 {
-
-	/// <summary>
-	/// A failure when a panel renderer could not be obtained.
-	/// </summary>
-	public class GetRendererException : Exception
-	{
-		/// <inheritdoc/>
-		public GetRendererException() { }
-		/// <inheritdoc/>
-		public GetRendererException(string message) : base(message) { }
-		/// <inheritdoc/>
-		public GetRendererException(string message, Exception inner) : base(message, inner) { }
-	}
-
 	/// <summary>
 	/// A helper class for mapping a <see cref="Panel"/> to a <see cref="IPanelRenderer"/>.
 	/// </summary>
@@ -159,9 +143,7 @@ namespace InkyCal.Utils
 			out Color errorColor,
 			out Color backgroundColor)
 		{
-			if (colors is null)
-				throw new ArgumentNullException(nameof(colors));
-
+			ArgumentNullException.ThrowIfNull(colors);
 
 			primaryColor = colors.FirstOrDefault();
 			supportColor = (colors.Length > 2) ? colors[2] : primaryColor;
@@ -176,9 +158,9 @@ namespace InkyCal.Utils
 		/// <param name="height"></param>
 		/// <param name="backgroundColor"></param>
 		/// <returns></returns>
-		public static Image CreateImage(int width, int height, Color? backgroundColor = null)
+		public static Image<Rgba32> CreateImage(int width, int height, Color? backgroundColor = null)
 		{
-			return new Image<Rgba32>(new Configuration() { }, width, height, backgroundColor.GetValueOrDefault(Color.White));
+			return new Image<Rgba32>(width, height, backgroundColor.GetValueOrDefault(Color.White));
 		}
 
 		internal static void RenderErrorMessage(
@@ -190,19 +172,15 @@ namespace InkyCal.Utils
 			int width,
 			Font font)
 		{
-			var rendererOptions = new TextGraphicsOptions(
-				new GraphicsOptions() { Antialias = false },
-				new TextOptions()
+			var textOptions = new RichTextOptions(font)
 				{
 					HorizontalAlignment = HorizontalAlignment.Left,
 					VerticalAlignment = VerticalAlignment.Top,
-					WrapTextWidth = width,
-					DpiX = 96,
-					DpiY = 96
-				}
-				).ToRendererOptions(font);
+					WrappingLength = width,
+					Dpi = 96
+				};
 
-			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, rendererOptions);
+			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, textOptions);
 		}
 
 		internal static IImageProcessingContext RenderErrorMessage(
@@ -212,29 +190,36 @@ namespace InkyCal.Utils
 		Color backgroundColor,
 		ref int y,
 		int width,
-		RendererOptions renderOptions)
+		RichTextOptions renderOptions)
 		{
 
-			renderOptions.WrappingWidth = width - 4;
-			var textDrawOptions_Error = renderOptions.ToTextGraphicsOptions(false);
+			var errorTextOptions = new RichTextOptions(renderOptions)
+			{
+				WrappingLength = width - 4
+			};
 
-			var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, renderOptions);
+			var errorMessageHeight = TextMeasurer.MeasureBounds(errorMessage, errorTextOptions);
 
 			canvas.Fill(errorColor,
 				new Rectangle(
 					(int)errorMessageHeight.X,
 					(int)errorMessageHeight.Y,
 					(int)errorMessageHeight.Width,
-					(int)errorMessageHeight.Height + 4)//Pad 2 px on all sides
+					(int)errorMessageHeight.Height + 4) //Pad 2 px on all sides
 				);
 
-			var pError = new PointF(2, 2);//Adhere to padding
+			PointF pError = new(errorMessageHeight.X + 2, errorMessageHeight.Y + 2);//Adhere to padding
 
 			var trimmedErrorMessage = new StringBuilder();
 			foreach (var line in errorMessage.Split(Environment.NewLine))
 				trimmedErrorMessage.AppendLine(line.Limit(width, "..."));
 
-			canvas.DrawText(textDrawOptions_Error, trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font), renderOptions.Font, backgroundColor, pError);
+			canvas.DrawText(
+				textOptions: new RichTextOptions(errorTextOptions) 
+					{ Origin = pError
+					},
+				text: trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font),
+				color: backgroundColor);
 
 			y += (int)errorMessageHeight.Height;
 
