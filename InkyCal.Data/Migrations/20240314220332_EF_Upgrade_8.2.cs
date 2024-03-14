@@ -10,7 +10,9 @@ namespace InkyCal.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
+			migrationBuilder.DropPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens");
+
+			migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "AspNetUserTokens",
                 type: "nvarchar(128)",
@@ -28,7 +30,11 @@ namespace InkyCal.Data.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)");
 
-            migrationBuilder.AlterColumn<string>(
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens", new string[] { "UserId", "LoginProvider", "Name" });
+
+			migrationBuilder.DropPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins");
+
+			migrationBuilder.AlterColumn<string>(
                 name: "ProviderKey",
                 table: "AspNetUserLogins",
                 type: "nvarchar(128)",
@@ -45,10 +51,13 @@ namespace InkyCal.Data.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)");
-        }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins", new string[] { "LoginProvider", "ProviderKey" });
+
+		}
+
+		/// <inheritdoc />
+		protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
