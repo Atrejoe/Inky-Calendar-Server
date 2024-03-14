@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using InkyCal.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
@@ -45,7 +46,7 @@ namespace InkyCal.Utils
 		/// </returns>
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(base.GetHashCode(),Id);
+			return HashCode.Combine(base.GetHashCode(), Id);
 		}
 
 		/// <summary>
@@ -127,23 +128,23 @@ namespace InkyCal.Utils
 										.OrderBy(x => x.SortIndex)
 										.Select(panel =>
 											{
-											//Gather render parameters
-											var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
-																					? height / panels.Count
-																					: height * ((float)panel.Ratio / totalPanelRatio));
+												//Gather render parameters
+												var subPanelHeight = (int)Math.Round((totalPanelRatio == 0)
+																						? height / panels.Count
+																						: height * ((float)panel.Ratio / totalPanelRatio));
 
-															if (subPanelHeight == 0)
-																return null; //Don't render
+												if (subPanelHeight == 0)
+													return null; //Don't render
 
-											var result = new
-															{
-																y,
-																subPanelHeight,
-																panel.Panel
-															};
+												var result = new
+												{
+													y,
+													subPanelHeight,
+													panel.Panel
+												};
 
-											//Keep track of start of next panel
-											y += subPanelHeight;
+												//Keep track of start of next panel
+												y += subPanelHeight;
 
 												return result;
 											})
@@ -152,20 +153,22 @@ namespace InkyCal.Utils
 
 				var quantizer = new PaletteQuantizer(colors);
 
-				foreach (var parameter in renderParameters.AsParallel()){
+				foreach (var parameter in renderParameters.AsParallel())
+				{
 
 					var panel = parameter.Panel;
 					var renderer = panelRenderHelper.GetRenderer(panel);
 
 					try
 					{
-						using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})")) {
+						using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})"))
+						{
 
 							var bytes = await renderer.GetCachedImage(width, parameter.subPanelHeight, colors, log);
-							var subImage = Image.Load(bytes);
+							var subImage = Image.Load<Rgba32>(bytes);
 
 							result.Mutate(
-								operation => 
+								operation =>
 									operation
 										.DrawImage(subImage, new Point(0, parameter.y), opacity: 1)
 										.Quantize(quantizer) //when overlaying there is a slight color degradation even when opacity = 1, quantizing corrects it.
@@ -180,14 +183,13 @@ namespace InkyCal.Utils
 						result.Mutate(x =>
 						{
 							x.DrawText(
-								new TextGraphicsOptions(new GraphicsOptions() { Antialias = false },
-								new TextOptions() { 
-									WrapTextWidth = width 
-								}), 
-								ex.Message, 
-								new Font(FontHelper.NotoSans, 16), 
-								errorColor, 
-								new Point(0, parameter.y));
+								textOptions: new RichTextOptions(new Font(FontHelper.NotoSans, 16))
+								{
+									WrappingLength = width,
+									Origin = new(0, y)
+								},
+								ex.Message,
+								errorColor);
 						});
 					}
 				}

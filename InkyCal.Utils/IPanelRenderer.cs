@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -175,12 +174,10 @@ namespace InkyCal.Utils
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Image not in cache, generating"))
 					{
-
 						var image = await renderer.GetImage(width, height, colors, log);
 						using var stream = new MemoryStream();
-						image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
+						image.SaveAsGif(stream, new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
 						result = stream.ToArray();
-
 					}
 
 					// Save data in cache.

@@ -7,7 +7,7 @@ using ImageMagick;
 using InkyCal.Models;
 using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
@@ -54,12 +54,12 @@ namespace InkyCal.Utils
 			//Get pdf as byte array
 			var pdf = await GetPDF();
 
-			Image image;
+			Image<Rgba32> image;
 
 			using (MiniProfiler.Current.Step($"Loading converted Pdf from cache"))
 
 				if (_cache.TryGetValue(CacheKey, out byte[] bytes))
-					image = Image.Load(bytes, new PngDecoder());
+					image = Image.Load<Rgba32>(bytes);
 
 				else
 				{
@@ -91,7 +91,7 @@ namespace InkyCal.Utils
 						ms.Position = 0;
 
 						//Load PNG
-						image = Image.Load(ms, new PngDecoder());
+						image = Image.Load<Rgba32>(ms);
 
 						var cacheEntryOptions = new MemoryCacheEntryOptions()
 							.SetSize(ms.Length)
@@ -108,7 +108,7 @@ namespace InkyCal.Utils
 				image.Mutate(x => x
 					.EntropyCrop()
 					.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.TopLeft })
-					.BackgroundColor(Color.Transparent)
+					//.BackgroundColor(Color.Transparent)
 					.Quantize(new PaletteQuantizer(colors)));
 
 
