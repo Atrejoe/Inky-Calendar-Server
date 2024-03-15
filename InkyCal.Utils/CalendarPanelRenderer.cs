@@ -263,9 +263,6 @@ namespace InkyCal.Utils
 				var text = DescribeCalender(characterPerLine, events);
 				Trace.WriteLine(text);
 
-				//Group by day, then show events
-				var firstEntry = true;
-
 				using (MiniProfiler.Current.Step("Drawing events"))
 				{
 					events.ToHashSet()
@@ -274,10 +271,10 @@ namespace InkyCal.Utils
 						.ToList()
 						.ForEach(x =>
 						{
-							if (y > height)
+							if (y > height || !x.Any())
 								return;
 
-							var lineDrawn = false;
+							var dayWritten = false;
 
 							//Write the day part only once for all events within a day
 							var day = x.Key.Year == DateTime.Now.Year
@@ -287,7 +284,7 @@ namespace InkyCal.Utils
 							//var indentSize = day.Length;
 
 							int indent = (int)TextMeasurer.MeasureBounds(day, textOptions_Date).Width
-									   + 5; //Space of 10 pixels
+									   + 5; //Padding of 5 pixels
 
 							var textOptions = new RichTextOptions(textOptions_Date) { WrappingLength = width - indent };
 
@@ -315,51 +312,32 @@ namespace InkyCal.Utils
 
 									try
 									{
-										var textHeight = (int)TextMeasurer.MeasureBounds(line, textOptions).Height - 4 + font.FontMetrics.VerticalMetrics.LineHeight / 200;
+										var textHeight = (int)TextMeasurer.MeasureBounds(line, textOptions).Height;// - 4 + font.FontMetrics.VerticalMetrics.LineHeight / 200;
 
 										if (textHeight + y > height)
 											return;
 
-
-										if (!lineDrawn)
+										if (!dayWritten)
 										{
-
-											if (firstEntry)
-												firstEntry = false;
-											else
-											{
-												//Draw a red line for each day
-												y += textHeight + 2;
-
-												canvas.DrawLine(supportColor, 2, new PointF(2, y), new PointF(width - 2, y));
-
-												firstEntry = false;
-											}
-
-											y += 2;
-
-											if (textHeight + y > height)
-												return;
-
 											canvas.DrawText(
 												textOptions: new RichTextOptions(textOptions_Date) { Origin = new PointF(0, y) },
 												text: day.ToSafeChars(font),
 												color: primaryColor);
 
-											lineDrawn = true;
+											dayWritten = true;
 										}
-										else
-											y += textHeight;
 
 										if (textHeight + y > height)
 											return;
 
-										var dateOptions = new RichTextOptions(textOptions_Date) { Origin = new PointF(indent, y) };
+										var dateOptions = new RichTextOptions(textOptions_Date) { Origin = new PointF(indent, y), WrappingLength = width - indent };
 										canvas.DrawText(
 												textOptions: dateOptions,
 												text: line.Trim().ToSafeChars(font),
 												color: primaryColor
 												);
+
+										y += textHeight;
 
 										//Hilight special segments
 										if (item.IsAllDay
@@ -374,7 +352,7 @@ namespace InkyCal.Utils
 												new Point((int)periodBounds.X - 1, (int)periodBounds.Y - 1),
 												new(
 													width: (int)periodBounds.Width + 2,
-													height: (int)periodBounds.Height + 5
+													height: (int)periodBounds.Height + 3
 												));
 
 											canvas.Fill(item.IsAllDay ? primaryColor : supportColor, rectangle)
@@ -387,7 +365,7 @@ namespace InkyCal.Utils
 													);
 
 											// The wrapper around 
-											y += 2;
+											//y += 2;
 										}
 									}
 									catch (Exception ex)
@@ -410,6 +388,14 @@ namespace InkyCal.Utils
 										}
 									}
 								});
+
+							if (dayWritten // Indicated anyhting happened in the day
+							&& (y + 3 + 2 + TextMeasurer.MeasureBounds("A", textOptions).Height) < height) // When a date would fit on the new line
+							{
+								y += 3;
+								canvas.DrawLine(supportColor, 2, new PointF(2, y), new PointF(width - 2, y));
+								y += 2;
+							}
 						});
 				}
 

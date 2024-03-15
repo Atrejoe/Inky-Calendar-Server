@@ -162,15 +162,16 @@ namespace InkyCal.Utils
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 
-			var cachekey = new ImageCacheKey(
-									panelCacheKey: renderer.CacheKey,
-									imageSettings: new ImageSettings(width, height, colors));
+			//var cachekey = new ImageCacheKey(
+			//						panelCacheKey: renderer.CacheKey,
+			//						imageSettings: new ImageSettings(width, height, colors));
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
 
-				byte[]result = await _cache.GetOrCreateAsync(cachekey, async (entry) =>
-				{
+				byte[] result; 
+				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
+				//{
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Image not in cache, generating"))
 					{
@@ -180,15 +181,15 @@ namespace InkyCal.Utils
 						result = stream.ToArray();
 					}
 
-					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-					{
-						entry.SetSize(result.Length);
-						entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-					}
+				//	// Save data in cache.
+				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
+				//	{
+				//		entry.SetSize(result.Length);
+				//		entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
+				//	}
 
-					return result;
-				});
+				//	return result;
+				//});
 
 				//if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
 				//{
