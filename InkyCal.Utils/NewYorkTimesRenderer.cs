@@ -73,7 +73,7 @@ namespace InkyCal.Utils
 				var url = new Uri($"https://static01.nyt.com/images/{d:yyyy}/{d:MM}/{d:dd}/nytfrontpage/scan.pdf");
 				try
 				{
-					Trace.WriteLine($"Downloading: {url}");
+					Trace.TraceInformation($"Downloading: {url}");
 					pdf = await url.LoadCachedContent(TimeSpan.FromMinutes(60));
 				}
 				catch (HttpRequestException ex) when (

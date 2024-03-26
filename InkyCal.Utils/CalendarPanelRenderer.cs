@@ -261,7 +261,7 @@ namespace InkyCal.Utils
 
 				//This previously was the source for rendering
 				var text = DescribeCalender(characterPerLine, events);
-				Trace.WriteLine(text);
+				Trace.TraceInformation(text);
 
 				using (MiniProfiler.Current.Step("Drawing events"))
 				{
@@ -485,8 +485,8 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 				var imagePrompt = response.FirstChoice.Message;
 
-				Trace.WriteLine(prompt);
-				Trace.WriteLine(imagePrompt);
+				Trace.TraceInformation(prompt);
+				Trace.TraceInformation(imagePrompt);
 
 				//var imageResult = await api.ImageGenerations.CreateImageAsync(
 				//	new ImageGenerationRequest(

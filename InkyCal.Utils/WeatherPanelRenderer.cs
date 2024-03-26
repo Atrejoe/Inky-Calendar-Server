@@ -161,7 +161,7 @@ namespace InkyCal.Utils
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x))));
 			//Console.WriteLine(string.Join("-", supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct()));
 			foreach (var color in colors)
-				Trace.WriteLine($"Color: {color}");
+				Trace.TraceInformation($"Color: {color}");
 
 			Trace.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
 

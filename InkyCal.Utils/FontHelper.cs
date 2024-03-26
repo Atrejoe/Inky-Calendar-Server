@@ -66,7 +66,7 @@ namespace InkyCal.Utils
 			var tempBytes = Encoding.ASCII.GetBytes(result);
 			result = Encoding.ASCII.GetString(tempBytes);
 
-			Trace.WriteLine($"{text} => {result}");
+			Trace.TraceInformation($"{text} => {result}");
 
 			return result;
 

@@ -319,7 +319,7 @@ namespace InkyCal.Utils.Calendar
 				Summary = item.Summary
 			});
 
-			Trace.WriteLine($"\t{item.Id} [{item.Start?.DateTimeDateTimeOffset} - {item.End?.DateTimeDateTimeOffset}]{item.Summary}");
+			Trace.TraceInformation($"\t{item.Id} [{item.Start?.DateTimeDateTimeOffset} - {item.End?.DateTimeDateTimeOffset}]{item.Summary}");
 		}
 
 		/// <summary>
