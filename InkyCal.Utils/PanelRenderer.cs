@@ -23,19 +23,13 @@ namespace InkyCal.Utils
 		/// Initializes a new instance of the <see cref="PanelRenderer{TPanel}"/> class.
 		/// </summary>
 		/// <param name="panel">The panel to pass to <see cref="Configure(TPanel)"/>.</param>
-		protected PanelRenderer(TPanel panel)
-		{
-			Configure(panel);
-		}
+		protected PanelRenderer(TPanel panel) => Configure(panel);
 
 		/// <summary>
 		/// Configures the specified panel.
 		/// </summary>
 		/// <param name="panel">The panel.</param>
-		public void Configure(TPanel panel)
-		{
-			ReadConfig(panel);
-		}
+		public void Configure(TPanel panel) => ReadConfig(panel);
 
 		/// <summary>
 		/// Allow reading panel config

@@ -31,21 +31,15 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public class CalendarPanelCacheKey : PanelCacheKey
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="CalendarPanelCacheKey"/> class.
+	/// </remarks>
+	/// <param name="expiration">The expiration.</param>
+	/// <param name="iCalUrls">The i cal urls.</param>
+	/// <param name="subscribedCalenders"></param>
+	/// <param name="drawMode"></param>
+	public class CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders, CalenderDrawMode drawMode) : PanelCacheKey(expiration)
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CalendarPanelCacheKey"/> class.
-		/// </summary>
-		/// <param name="expiration">The expiration.</param>
-		/// <param name="iCalUrls">The i cal urls.</param>
-		/// <param name="subscribedCalenders"></param>
-		/// <param name="drawMode"></param>
-		public CalendarPanelCacheKey(TimeSpan expiration, Uri[] iCalUrls, SubscribedGoogleCalender[] subscribedCalenders, CalenderDrawMode drawMode) : base(expiration)
-		{
-			ICalUrls = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
-			SubscribedGoogleCalenders = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
-			DrawMode = drawMode;
-		}
 
 		/// <summary>
 		/// Gets the iCal urls.
@@ -53,17 +47,17 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The i cal urls.
 		/// </value>
-		public ReadOnlyCollection<Uri> ICalUrls { get; }
+		public ReadOnlyCollection<Uri> ICalUrls { get; } = iCalUrls.OrderBy(x => x.ToString()).ToList().AsReadOnly();
 
 		/// <summary>
 		/// Get the subscribed Google calenders
 		/// </summary>
-		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; }
+		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; } = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
 
 		/// <summary>
 		/// Draw mode
 		/// </summary>
-		public CalenderDrawMode DrawMode { get; }
+		public CalenderDrawMode DrawMode { get; } = drawMode;
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another <see cref="T:InkyCal.Models.PanelCacheKey" /> (or derived class))
@@ -72,13 +66,10 @@ namespace InkyCal.Utils
 		/// <returns>
 		/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		protected override bool Equals(PanelCacheKey other)
-		{
-			return other is CalendarPanelCacheKey cpc
+		protected override bool Equals(PanelCacheKey other) => other is CalendarPanelCacheKey cpc
 				&& DrawMode.Equals(cpc.DrawMode)
 				&& ICalUrls.SequenceEqual(cpc.ICalUrls)
 				&& SubscribedGoogleCalenders.SequenceEqual(cpc.SubscribedGoogleCalenders);
-		}
 	}
 
 	/// <summary>
@@ -92,10 +83,7 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		/// <param name="saveToken"></param>
-		private CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken)
-		{
-			SaveToken = saveToken;
-		}
+		private CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken) => SaveToken = saveToken;
 
 		/// <summary>
 		/// Shows a single calendar
@@ -103,10 +91,9 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode)
-		{
-			ArgumentNullException.ThrowIfNull(iCalUrl);
-		}
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode) 
+			=> ArgumentNullException.ThrowIfNull(iCalUrl);
+
 		/// <summary>
 		/// Show one or more calendars
 		/// </summary>
@@ -556,8 +543,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 		/// <returns></returns>
 		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, Task> saveToken, CancellationToken cancellationToken)
 		{
-			if (sbErrors is null)
-				throw new ArgumentNullException(nameof(sbErrors));
+			ArgumentNullException.ThrowIfNull(sbErrors);
 
 			var result = new List<Event>();
 
@@ -586,29 +572,27 @@ The image should be in a style of 19th century litograph or metal plate print as
 		}
 
 		private static string DescribeCalender(int characterPerLine, IEnumerable<Event> items)
-		{
-			return string.Join(
-							Environment.NewLine,
-							items
-								.Where(x => x != null)
-								.GroupBy(x => x.Date)
-								.OrderBy(x => x.Key)
-								.Select(x =>
-								{
-									var dayEvents = new StringBuilder($"{x.Key:ddd dd MMM} ");
+			=> string.Join(
+						Environment.NewLine,
+						items
+							.Where(x => x != null)
+							.GroupBy(x => x.Date)
+							.OrderBy(x => x.Key)
+							.Select(x =>
+							{
+								var dayEvents = new StringBuilder($"{x.Key:ddd dd MMM} ");
 
-									var indentSize = dayEvents.Length;
+								var indentSize = dayEvents.Length;
 
-									dayEvents.Append(
-										string.Join(
-										Environment.NewLine + "".PadLeft(indentSize), x.Select(item =>
-										{
-											return DescribeEvent(item, characterPerLine, indentSize);
+								dayEvents.Append(
+									string.Join(
+									Environment.NewLine + "".PadLeft(indentSize), x.Select(item =>
+									{
+										return DescribeEvent(item, characterPerLine, indentSize);
 
-										})));
-									return dayEvents.ToString();
-								}));
-		}
+									})));
+								return dayEvents.ToString();
+							}));
 
 		/// <summary>
 		/// 
@@ -659,12 +643,10 @@ The image should be in a style of 19th century litograph or metal plate print as
 		/// <returns></returns>
 		[SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Reads just fine")]
 		public static string DescribePeriod(TimeSpan? start, TimeSpan? end)
-		{
-			return start.HasValue
+			=> start.HasValue
 					? end.HasValue
 						? @$"{start.Value:hh\:mm} - {end.Value:hh\:mm}"
 						: @$"{start.Value:hh\:mm}"
 					: $"All day";
-		}
 	}
 }

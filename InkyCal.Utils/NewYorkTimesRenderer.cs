@@ -11,14 +11,11 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public sealed class NewYorkTimePanelCacheKey : PanelCacheKey
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="NewYorkTimePanelCacheKey"/> class.
+	/// </remarks>
+	public sealed class NewYorkTimePanelCacheKey(TimeSpan expiration) : PanelCacheKey(expiration)
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NewYorkTimePanelCacheKey"/> class.
-		/// </summary>
-		public NewYorkTimePanelCacheKey(TimeSpan expiration ) : base(expiration)
-		{
-		}
 
 		/// <summary>
 		/// Uses base gethashcode
@@ -114,8 +111,7 @@ namespace InkyCal.Utils
 		/// <param name="panel">The panel.</param>
 		protected override void ReadConfig(NewYorkTimesPanel panel)
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
+			ArgumentNullException.ThrowIfNull(panel);
 
 			Date = panel.Date;
 		}

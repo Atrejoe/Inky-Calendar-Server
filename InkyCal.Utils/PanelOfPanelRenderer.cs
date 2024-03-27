@@ -18,17 +18,13 @@ namespace InkyCal.Utils
 	/// A simpel cache entry per stored panel, regardless of parameters
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public class PerPanelCacheKey : PanelCacheKey
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="PerPanelCacheKey"/> class.
+	/// </remarks>
+	/// <param name="expiration">The expiration.</param>
+	/// <param name="id">The identifier.</param>
+	public class PerPanelCacheKey(TimeSpan expiration, Guid id) : PanelCacheKey(expiration)
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PerPanelCacheKey"/> class.
-		/// </summary>
-		/// <param name="expiration">The expiration.</param>
-		/// <param name="id">The identifier.</param>
-		public PerPanelCacheKey(TimeSpan expiration, Guid id) : base(expiration)
-		{
-			Id = id;
-		}
 
 		/// <summary>
 		/// Gets the identifier of the <see cref="Panel"/> (<see cref="Panel.Id"/>)
@@ -36,7 +32,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The identifier.
 		/// </value>
-		public Guid Id { get; }
+		public Guid Id { get; } = id;
 
 		/// <summary>
 		/// Returns a hash code for this instance.
@@ -44,10 +40,7 @@ namespace InkyCal.Utils
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(base.GetHashCode(), Id);
-		}
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Id);
 
 		/// <summary>
 		/// Refers to <see cref="Equals(PanelCacheKey)"/>.
@@ -62,38 +55,27 @@ namespace InkyCal.Utils
 		/// <returns>
 		/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		protected override bool Equals(PanelCacheKey other)
-		{
-			return other is PerPanelCacheKey ppc
+		protected override bool Equals(PanelCacheKey other) => other is PerPanelCacheKey ppc
 				&& ppc.Id == Id;
-		}
 	}
 
 	/// <summary>
 	/// An image panel, assumes a landscape image, resizes and flips it to portait.
 	/// </summary>
-	public class PanelOfPanelRenderer : IPanelRenderer
+	/// <remarks>
+	/// 
+	/// </remarks>
+	/// <param name="pp"></param>
+	/// <param name="panelRenderHelper"></param>
+	public class PanelOfPanelRenderer(PanelOfPanels pp, PanelRenderHelper panelRenderHelper) : IPanelRenderer
 	{
-		private readonly PanelOfPanels pp;
-		private readonly PanelRenderHelper panelRenderHelper;
+		private readonly PanelOfPanels pp = pp ?? throw new ArgumentNullException(nameof(pp));
+		private readonly PanelRenderHelper panelRenderHelper = panelRenderHelper ?? throw new ArgumentNullException(nameof(panelRenderHelper));
 
 		/// <summary>
 		/// Gets the cache key. By default returns <see cref="PanelInstanceCacheKey" />, with default <see cref="PanelCacheKey.Expiration" /> (<see cref="PanelInstanceCacheKey.DefaultExpirationInSeconds" /> seconds)
 		/// </summary>
-		public PanelCacheKey CacheKey { get; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pp"></param>
-		/// <param name="panelRenderHelper"></param>
-		public PanelOfPanelRenderer(PanelOfPanels pp, PanelRenderHelper panelRenderHelper)
-		{
-			this.pp = pp ?? throw new ArgumentNullException(nameof(pp));
-			this.panelRenderHelper = panelRenderHelper ?? throw new ArgumentNullException(nameof(panelRenderHelper));
-
-			CacheKey = new PerPanelCacheKey(TimeSpan.FromSeconds(30), pp.Id);
-		}
+		public PanelCacheKey CacheKey { get; } = new PerPanelCacheKey(TimeSpan.FromSeconds(30), pp.Id);
 
 
 		/// <inheritdoc/>

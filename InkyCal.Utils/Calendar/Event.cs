@@ -62,10 +62,7 @@ namespace InkyCal.Utils.Calendar
 		/// <returns>
 		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		public override bool Equals(object obj)
-		{
-			return Equals(obj as Event);
-		}
+		public override bool Equals(object obj) => Equals(obj as Event);
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.
@@ -74,9 +71,7 @@ namespace InkyCal.Utils.Calendar
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		public virtual bool Equals(Event other)
-		{
-			return other != null &&
+		public virtual bool Equals(Event other) => other != null &&
 				   Date.Date == other.Date.Date &&
 				   Date.Hour == other.Date.Hour &&
 				   Date.Minute == other.Date.Minute &&
@@ -84,7 +79,6 @@ namespace InkyCal.Utils.Calendar
 				   EqualityComparer<TimeSpan?>.Default.Equals(End, other.End) &&
 				   //CalendarName == other.CalendarName &&
 				   string.Equals(Summary?.Trim(), other.Summary?.Trim(), StringComparison.InvariantCultureIgnoreCase);
-		}
 
 		/// <summary>
 		/// Returns a hash code for this instance.
@@ -92,9 +86,7 @@ namespace InkyCal.Utils.Calendar
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(
+		public override int GetHashCode() => HashCode.Combine(
 			 Date.Date
 			, Date.Hour
 			, Date.Minute
@@ -102,7 +94,6 @@ namespace InkyCal.Utils.Calendar
 			, End
 			, Summary
 			);
-		}
 
 		/// <summary>
 		/// Implements the operator ==.
@@ -134,10 +125,7 @@ namespace InkyCal.Utils.Calendar
 		/// Indicated if the event is now.
 		/// </summary>
 		/// <returns></returns>
-		public bool IsNow()
-		{
-			return Date.Add(Start.GetValueOrDefault()) <= DateTime.Now
-				&& Date.Add(End.GetValueOrDefault())   >= DateTime.Now;
-		}
+		public bool IsNow() => Date.Add(Start.GetValueOrDefault()) <= DateTime.Now
+				&& Date.Add(End.GetValueOrDefault()) >= DateTime.Now;
 	}
 }

@@ -12,19 +12,14 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public class NewsPaperPanelCacheKey : PanelCacheKey
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
+	/// </remarks>
+	/// <param name="expiration"></param>
+	/// <param name="newspaperId">The newspaper identifier.</param>
+	public class NewsPaperPanelCacheKey(TimeSpan expiration, string newspaperId) : PanelCacheKey(expiration)
 	{
-		internal readonly string NewspaperId;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
-		/// </summary>
-		/// <param name="expiration"></param>
-		/// <param name="newspaperId">The newspaper identifier.</param>
-		public NewsPaperPanelCacheKey(TimeSpan expiration, string newspaperId) : base(expiration)
-		{
-			this.NewspaperId = newspaperId;
-		}
+		internal readonly string NewspaperId = newspaperId;
 
 		/// <summary>
 		/// Included <see cref="NewspaperId"/> in hashcode
@@ -39,22 +34,16 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			return Equals(obj as NewsPaperPanelCacheKey);
-		}
+		public override bool Equals(object obj) => Equals(obj as NewsPaperPanelCacheKey);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		protected override bool Equals(PanelCacheKey other)
-		{
-			return other is NewsPaperPanelCacheKey wpc
+		protected override bool Equals(PanelCacheKey other) => other is NewsPaperPanelCacheKey wpc
 				&& base.Equals(other)
 				&& NewspaperId == wpc.NewspaperId;
-		}
 	}
 
 	/// <summary>
@@ -91,10 +80,7 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		/// <param name="newsPaperId"></param>
-		public NewsPaperRenderer(string newsPaperId) : base()
-		{
-			NewsPaperId = newsPaperId;
-		}
+		public NewsPaperRenderer(string newsPaperId) : base() => NewsPaperId = newsPaperId;
 
 		/// <summary>
 		/// Indicated resulting image can be cached for one hour.
@@ -129,9 +115,6 @@ namespace InkyCal.Utils
 		/// Reads <see cref="NewsPaperPanel.NewsPaperId"/>.
 		/// </summary>
 		/// <param name="panel"></param>
-		protected override void ReadConfig(NewsPaperPanel panel)
-		{
-			NewsPaperId = panel.NewsPaperId;
-		}
+		protected override void ReadConfig(NewsPaperPanel panel) => NewsPaperId = panel.NewsPaperId;
 	}
 }

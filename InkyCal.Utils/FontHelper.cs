@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -21,8 +22,7 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, FontFamily)"/>
 		public static string ToSafeChars(this string text, Font font) {
-			if (font is null)
-				throw new System.ArgumentNullException(nameof(font));
+			ArgumentNullException.ThrowIfNull(font);
 
 			return text.ToSafeChars(font.Family);
 		}
@@ -145,8 +145,7 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static ushort? GetCharacterWidth(this Font font)
 		{
-			if (font is null)
-				throw new System.ArgumentNullException(nameof(font));
+			ArgumentNullException.ThrowIfNull(font);
 
 
 			if (font.Family.Equals(NotoSans))

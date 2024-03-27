@@ -19,13 +19,11 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="color">The color to set to the foreground.</param>
 		/// <returns></returns>
-		public static AutoRevertConsoleColor Foreground(ConsoleColor color)
-		{
-			return new AutoRevertConsoleColor(
-				color,
-				() => Console.ForegroundColor,
-				(ConsoleColor c) => Console.ForegroundColor = c);
-		}
+		public static AutoRevertConsoleColor Foreground(ConsoleColor color) => 
+			new(
+				color: color,
+				getter: () => Console.ForegroundColor,
+				setter: (ConsoleColor c) => Console.ForegroundColor = c);
 
 		/// <summary>
 		/// Sets and auto-reverts <see cref="Console.BackgroundColor"/>
@@ -33,10 +31,10 @@ namespace InkyCal.Utils
 		/// <param name="color">The color to set to the background.</param>
 		/// <returns></returns>
 		public static AutoRevertConsoleColor Background(ConsoleColor color) => 
-			new AutoRevertConsoleColor(
-				color,
-				() => Console.BackgroundColor,
-				(ConsoleColor c) => Console.BackgroundColor = c);
+			new(
+				color: color,
+				getter: () => Console.BackgroundColor,
+				setter: (ConsoleColor c) => Console.BackgroundColor = c);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AutoRevertConsoleColor"/> class.
@@ -46,11 +44,8 @@ namespace InkyCal.Utils
 		/// <param name="setter">The p2.</param>
 		public AutoRevertConsoleColor(ConsoleColor color, Func<ConsoleColor> getter, Action<ConsoleColor> setter)
 		{
-			if (getter is null)
-				throw new ArgumentNullException(nameof(getter));
-
-			if (setter is null)
-				throw new ArgumentNullException(nameof(setter));
+			ArgumentNullException.ThrowIfNull(getter);
+			ArgumentNullException.ThrowIfNull(setter);
 
 			_originalColor = getter.Invoke();
 			setter.Invoke(color);

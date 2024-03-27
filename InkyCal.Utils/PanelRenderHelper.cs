@@ -17,16 +17,11 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// A helper class for mapping a <see cref="Panel"/> to a <see cref="IPanelRenderer"/>.
 	/// </summary>
-	public class PanelRenderHelper
+	/// <remarks>
+	/// 
+	/// </remarks>
+	public class PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken)
 	{
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken)
-		{
-			this.saveToken = saveToken;
-		}
 
 		/// <summary>
 		/// Gets a <see cref="IPanelRenderer"/> for the spcified <paramref name="panel"/>.
@@ -36,8 +31,7 @@ namespace InkyCal.Utils
 		/// <exception cref="GetRendererException"/>
 		public IPanelRenderer GetRenderer(Panel panel)
 		{
-			if (panel is null)
-				throw new ArgumentNullException(nameof(panel));
+			ArgumentNullException.ThrowIfNull(panel);
 
 			IPanelRenderer renderer;
 
@@ -105,7 +99,7 @@ namespace InkyCal.Utils
 		}
 
 		private static readonly Lazy<Type[]> Renderers = new Lazy<Type[]>(GetRenderers);
-		private readonly Func<GoogleOAuthAccess, Task> saveToken;
+		private readonly Func<GoogleOAuthAccess, Task> saveToken = saveToken;
 
 		internal static Type[] GetRenderers()
 		{
@@ -158,10 +152,7 @@ namespace InkyCal.Utils
 		/// <param name="height"></param>
 		/// <param name="backgroundColor"></param>
 		/// <returns></returns>
-		public static Image<Rgba32> CreateImage(int width, int height, Color? backgroundColor = null)
-		{
-			return new Image<Rgba32>(width, height, backgroundColor.GetValueOrDefault(Color.White));
-		}
+		public static Image<Rgba32> CreateImage(int width, int height, Color? backgroundColor = null) => new Image<Rgba32>(width, height, backgroundColor.GetValueOrDefault(Color.White));
 
 		internal static void RenderErrorMessage(
 			this IImageProcessingContext canvas,

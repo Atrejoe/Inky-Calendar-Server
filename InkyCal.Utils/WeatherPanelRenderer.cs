@@ -18,22 +18,16 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
-	public class WeatherPanelCacheKey : PanelCacheKey
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
+	/// </remarks>
+	/// <param name="expiration"></param>
+	/// <param name="token">The token.</param>
+	/// <param name="city">The city.</param>
+	public class WeatherPanelCacheKey(TimeSpan expiration, string token, string city) : PanelCacheKey(expiration)
 	{
-		internal readonly string Token;
-		internal readonly string City;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherPanelCacheKey"/> class.
-		/// </summary>
-		/// <param name="expiration"></param>
-		/// <param name="token">The token.</param>
-		/// <param name="city">The city.</param>
-		public WeatherPanelCacheKey(TimeSpan expiration, string token, string city) : base(expiration)
-		{
-			this.Token = token;
-			this.City = city;
-		}
+		internal readonly string Token = token;
+		internal readonly string City = city;
 
 		/// <summary>
 		/// Included <see cref="Token"/> and <see cref="City"/>in hashcode
@@ -48,23 +42,17 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			return Equals(obj as WeatherPanelCacheKey);
-		}
+		public override bool Equals(object obj) => Equals(obj as WeatherPanelCacheKey);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		protected override bool Equals(PanelCacheKey other)
-		{
-			return other is WeatherPanelCacheKey wpc
+		protected override bool Equals(PanelCacheKey other) => other is WeatherPanelCacheKey wpc
 				&& base.Equals(other)
 				&& Token == wpc.Token
 				&& City == wpc.City;
-		}
 	}
 
 	/// <summary>
@@ -79,26 +67,20 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="token"></param>
 		/// <param name="city"></param>
-		public WeatherPanelRenderer(string token, string city)
-		{
-			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), token, city);
-		}
+		public WeatherPanelRenderer(string token, string city) => cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), token, city);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WeatherPanelRenderer"/> class.
 		/// </summary>
 		/// <param name="panel">The panel.</param>
-		public WeatherPanelRenderer(WeatherPanel panel)
-		{
-			Configure(panel);
-		}
+		public WeatherPanelRenderer(WeatherPanel panel) => Configure(panel);
 
 		/// <inheritdoc/>
 		protected override void ReadConfig(WeatherPanel panel)
 		{
 			ArgumentNullException.ThrowIfNull(panel);
 
-			this.cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), panel.Token, panel.Location);
+			cacheKey = new WeatherPanelCacheKey(TimeSpan.FromMinutes(1), panel.Token, panel.Location);
 		}
 
 
