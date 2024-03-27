@@ -56,6 +56,9 @@ Given a selected display panel:
                         <a class="nav-link" id="nyt-tab" data-toggle="tab" href="#nyt" role="tab" aria-controls="nyt" aria-selected="false">New York Times</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" id="newspaper-tab" data-toggle="tab" href="#newspaper" role="tab" aria-controls="newspaper" aria-selected="false">Newspaper cover page</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="weather-tab" data-toggle="tab" href="#weather" role="tab" aria-controls="weather" aria-selected="false">Weather</a>
                     </li>
                     <li class="nav-item">
@@ -89,7 +92,14 @@ Given a selected display panel:
                     <div class="tab-pane" id="nyt" role="tabpanel" aria-labelledby="nyt-tab">
                         Inspired by (not saying ripped off from) <a href="https://alexanderklopping.medium.com/an-updated-daily-front-page-of-the-new-york-times-as-artwork-on-your-wall-3b28c3261478">Alexander Klöppings' "An updated daily front page of The New York Times as artwork on your wall"</a>
                         <p><ImageWithProgress src="@($"panel/nyt/{model}")" style="@panelStyle" /></p>
-                        <small><em>The front page of the New York times, with better panels (grayscale, larger resolution) this image will make more sense.</em></small>
+                        <small><em>The front page of the New York times, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
+                    </div>
+                    <div class="tab-pane" id="newspaper" role="tabpanel" aria-labelledby="newspaper-tab">
+                        <div class="alert alert-warning" role="alert">
+                            This is an experimental panel which heavily relies on the unofficial API of <a href="https://www.freedomforum.org/todaysfrontpages">Freedom Forum &gt; Today's front pages</a>.
+                        </div>
+                        <p><ImageWithProgress src="@($"panel/test/{model}/newspaper")" style="@panelStyle" /></p>
+                        <small><em>The front page of your newspaper of choice, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
                     </div>
                     <div class="tab-pane" id="weather" role="tabpanel" aria-labelledby="weather-tab">
                         <p><ImageWithProgress src="@($"/panel/test/{model}/weather")" style="@panelStyle" /></p>
@@ -106,13 +116,15 @@ Given a selected display panel:
 </div>
 <hr />
 
-<h2>What's more?</h2>
+<h2>What's to come</h2>
 <p>
     <ol>
         <li>Improved panel management</li>
         <li>
             More panel types
             <ol>
+
+                <li>✔️ Combined - combine two or more panel types into one panel.</li>
                 <li>
                     Image panel config UI
                     <ol>
@@ -121,19 +133,35 @@ Given a selected display panel:
                         <li>Browse local images? (when hosting this service yourself)</li>
                     </ol>
                 </li>
+                <li>
+                    Alternative calendar sources
+                    <ol>
+                        <li>✔️ iCal urls</li>
+                        <li>✔️ Google</li>
+                        <li>Outlook 365</li>
+                    </ol>
+                </li>
+                <li>
+                    Alternative calendar views
+                    <ol>
+                        <li>Calender view</li>
+                        <li>✔️ AI illustration of your next day 🌟</li>
+                        <li>✔️ Schedule view</li>
+                    </ol>
+                </li>
+                <li>✔️ Weather</li>
+                <li>✔️ More newspapers (In beta 🌟)</li>
                 <li>RSS feed</li>
-                <li>Alternative calendar view</li>
-                <li>Weather</li>
                 <li>...</li>
             </ol>
         </li>
         <li>
-            Improved display config
+            Improved display config:
             <ol>
-                <li>Rotation</li>
+                <li>✔️ Rotation</li>
                 <li>Color configuration overriding</li>
-                <li>Fonts &amp; font sizes</li>
-                <li>Enable/display grayscale images (instead of hard black &amp; white).</li>
+                <li>Configurable fonts &amp; font sizes</li>
+                <li>✔️ Enable/display grayscale images (instead of hard black &amp; white).</li>
             </ol>
         </li>
     </ol>

@@ -87,10 +87,16 @@
 											break;
 										case Models.WeatherPanel wp:
 											<span>@wp.Location</span>
-											break;
-										default:
-											<span>Panel type @panel.GetType().Name not yet described.</span>
-											break;
+                                            break;
+                                        case Models.NewsPaperPanel wp:
+                                            <span>Todays' homepage of "@wp.NewsPaperId"</span>
+                                            break;
+                                        case Models.NewYorkTimesPanel:
+                                            <span>Todays' homepage of New York Times</span>
+                                            break;
+                                        default:
+                                            <span>Panel type @panel.GetType().Name not yet described.</span>
+                                            break;
 									}
 								</td>
 								<td>

@@ -7,7 +7,17 @@ namespace InkyCal.Utils
 	/// 
 	/// </summary>
 	/// <seealso cref="IEquatable{ImageCacheKey}" />
-	public sealed class ImageCacheKey : IEquatable<ImageCacheKey>
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="ImageCacheKey"/> class.
+	/// </remarks>
+	/// <param name="panelCacheKey">The panel cache key.</param>
+	/// <param name="imageSettings">The image settings.</param>
+	/// <exception cref="ArgumentNullException">
+	/// panelCacheKey
+	/// or
+	/// imageSettings
+	/// </exception>
+	public sealed class ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings) : IEquatable<ImageCacheKey>
 	{
 		/// <summary>
 		/// Gets the image settings.
@@ -15,30 +25,14 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The image settings.
 		/// </value>
-		public ImageSettings ImageSettings { get; }
+		public ImageSettings ImageSettings { get; } = imageSettings ?? throw new ArgumentNullException(nameof(imageSettings));
 		/// <summary>
 		/// Gets the panel cache key.
 		/// </summary>
 		/// <value>
 		/// The panel cache key.
 		/// </value>
-		public PanelCacheKey PanelCacheKey { get; }
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageCacheKey"/> class.
-		/// </summary>
-		/// <param name="panelCacheKey">The panel cache key.</param>
-		/// <param name="imageSettings">The image settings.</param>
-		/// <exception cref="ArgumentNullException">
-		/// panelCacheKey
-		/// or
-		/// imageSettings
-		/// </exception>
-		public ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings)
-		{
-			PanelCacheKey = panelCacheKey ?? throw new ArgumentNullException(nameof(panelCacheKey));
-			ImageSettings = imageSettings ?? throw new ArgumentNullException(nameof(imageSettings));
-		}
+		public PanelCacheKey PanelCacheKey { get; } = panelCacheKey ?? throw new ArgumentNullException(nameof(panelCacheKey));
 
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -47,11 +41,8 @@ namespace InkyCal.Utils
 		/// <returns>
 		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		public override bool Equals(object obj)
-		{
-			return obj is ImageCacheKey ick
+		public override bool Equals(object obj) => obj is ImageCacheKey ick
 				&& Equals(ick);
-		}
 
 
 		/// <summary>

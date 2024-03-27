@@ -25,10 +25,7 @@ namespace InkyCal.Utils
 		/// <param name="obj">The object.</param>
 		/// <returns></returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-		public static Dictionary<string, string> SerializeToDictionary<T>(this T obj)
-		{
-
-			return typeof(T)
+		public static Dictionary<string, string> SerializeToDictionary<T>(this T obj) => typeof(T)
 					.GetProperties()
 					.Where(x => x.CanRead)
 					.ToDictionary(
@@ -44,7 +41,6 @@ namespace InkyCal.Utils
 								return $"Failed to obtaiConsole.Writen value: {ex.Message}";
 							}
 						});
-		}
 
 		private static  Client __bugsnag;
 		

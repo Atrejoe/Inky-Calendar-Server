@@ -14,7 +14,14 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
-	public sealed class ImageSettings : IEquatable<ImageSettings>
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="ImageSettings"/> class.
+	/// </remarks>
+	/// <param name="width">The width.</param>
+	/// <param name="height">The height.</param>
+	/// <param name="colors">The colors.</param>
+	/// <exception cref="ArgumentNullException">colors</exception>
+	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>
 	{
 		/// <summary>
 		/// Gets the width of an image
@@ -22,21 +29,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The width.
 		/// </value>
-		public int Width { get; }
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImageSettings"/> class.
-		/// </summary>
-		/// <param name="width">The width.</param>
-		/// <param name="height">The height.</param>
-		/// <param name="colors">The colors.</param>
-		/// <exception cref="ArgumentNullException">colors</exception>
-		public ImageSettings(int width, int height, Color[] colors)
-		{
-			Width = width;
-			Height = height;
-			Colors = colors ?? throw new ArgumentNullException(nameof(colors));
-		}
+		public int Width { get; } = width;
 
 		/// <summary>
 		/// Gets the height of an image
@@ -44,7 +37,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The height.
 		/// </value>
-		public int Height { get; }
+		public int Height { get; } = height;
 
 		/// <summary>
 		/// Gets the color palette of an image
@@ -52,7 +45,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The colors.
 		/// </value>
-		public Color[] Colors { get; }
+		public Color[] Colors { get; } = colors ?? throw new ArgumentNullException(nameof(colors));
 
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -61,11 +54,8 @@ namespace InkyCal.Utils
 		/// <returns>
 		///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		public override bool Equals(object obj)
-		{
-			return obj is ImageSettings other
+		public override bool Equals(object obj) => obj is ImageSettings other
 				&& Equals(other);
-		}
 
 		/// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.
@@ -74,14 +64,11 @@ namespace InkyCal.Utils
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		public bool Equals(ImageSettings other)
-		{
-			return other != null
+		public bool Equals(ImageSettings other) => other != null
 				&& Width.Equals(other.Width)
 				&& Height.Equals(other.Height)
 				&& Colors.SequenceEqual(other.Colors)
 				;
-		}
 
 
 		/// <summary>
@@ -146,9 +133,7 @@ namespace InkyCal.Utils
 		/// Returns the number of cached images
 		/// </summary>
 		/// <returns></returns>
-		public static int CacheEntries() {
-			return _cache.Count;
-		}
+		public static int CacheEntries() => _cache.Count;
 
 		/// <summary>
 		/// Gets the cached image.

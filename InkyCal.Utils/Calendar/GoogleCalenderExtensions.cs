@@ -99,11 +99,8 @@ namespace InkyCal.Utils.Calendar
 
 		private static void Validate([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
 		{
-			if (tokens is null)
-				throw new ArgumentNullException(nameof(tokens));
-
-			if (saveToken is null)
-				throw new ArgumentNullException(nameof(saveToken));
+			ArgumentNullException.ThrowIfNull(tokens);
+			ArgumentNullException.ThrowIfNull(saveToken);
 		}
 
 		/// <summary>

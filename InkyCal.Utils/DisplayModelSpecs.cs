@@ -39,10 +39,7 @@ namespace InkyCal.Utils
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(Width, Height, Colors);
-		}
+		public override int GetHashCode() => HashCode.Combine(Width, Height, Colors);
 
 		/// <summary>
 		/// Implements the operator ==.
@@ -86,14 +83,11 @@ namespace InkyCal.Utils
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		public bool Equals(DisplayModelSpecs other)
-		{
-			return Width == other.Width
+		public bool Equals(DisplayModelSpecs other) => Width == other.Width
 				&& Height == other.Height
 				&& (
 					((Colors is null) && (other.Colors is null))
 					|| (Colors?.SequenceEqual(other.Colors)).GetValueOrDefault()
 				);
-		}
 	}
 }

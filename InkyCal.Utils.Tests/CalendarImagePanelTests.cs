@@ -1,13 +1,14 @@
 ﻿using Ical.Net;
 using InkyCal.Server.Config;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
 	/// <summary>
 	/// Tests <see creaf="TestCalendarPanel"/> / <see cref="CalendarPanelRenderer"/>
 	/// </summary>
-	public sealed class CalendarImagePanelTests : IPanelTests<CalendarPanelRenderer>
+	public sealed class CalendarImagePanelTests(ITestOutputHelper output) : IPanelTests<CalendarPanelRenderer>(output)
 	{
 		protected override TestCalendarImagePanelRenderer GetRenderer()
 		{

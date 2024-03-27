@@ -30,7 +30,13 @@ namespace InkyCal.Utils.Weather
 	/// <see cref="WeatherApiRequestFailureException" /> is thrown when....
 	/// </summary>
 	/// <remarks></remarks>
-	public class WeatherApiRequestFailureException : Exception
+	/// <remarks>
+	/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
+	/// </remarks>
+	/// <param name="message">The message that describes the error</param>
+	/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
+	/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
+	public class WeatherApiRequestFailureException(string message, Exception innerException) : Exception(message, innerException)
 	{
 
 		/// <summary>
@@ -64,20 +70,8 @@ namespace InkyCal.Utils.Weather
 		/// <param name="message">The message that describes the error</param>
 		/// <param name="reason">The reason of failure</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherApiRequestFailureException(string message, FailureReason reason) : this(message, null)
-		{
-			Reason = reason;
-		}
+		public WeatherApiRequestFailureException(string message, FailureReason reason) : this(message, null) => Reason = reason;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
-		/// </summary>
-		/// <param name="message">The message that describes the error</param>
-		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
-		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherApiRequestFailureException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WeatherApiRequestFailureException" /> class.
 		/// </summary>
@@ -85,23 +79,15 @@ namespace InkyCal.Utils.Weather
 		/// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) is not inner exception is specified.</param>
 		/// <param name="reason">The reason of failure</param>
 		/// <remarks>Adhering to coding guideline: http://msdn.microsoft.com/library/ms182151(VS.100).aspx</remarks>
-		public WeatherApiRequestFailureException(string message, Exception innerException, FailureReason reason) : this(message, innerException)
-		{
-			Reason = reason;
-		}
+		public WeatherApiRequestFailureException(string message, Exception innerException, FailureReason reason) : this(message, innerException) => Reason = reason;
 
 	}
 
-	internal class Util : IDisposable
+	internal class Util(string apiKey) : IDisposable
 	{
 		private readonly HttpClient client = new HttpClient();
 
-		private readonly string apiKey;
-
-		public Util(string apiKey)
-		{
-			this.apiKey = apiKey;
-		}
+		private readonly string apiKey = apiKey;
 
 		public async Task<RootObject> GetForeCast(int cityId) => await getForeCast($"https://api.openweathermap.org/data/2.5/forecast?id={cityId}&appid={apiKey}");
 		public async Task<RootObject> GetForeCast(string cityName) => await getForeCast($"https://api.openweathermap.org/data/2.5/forecast?q={cityName}&appid={apiKey}");

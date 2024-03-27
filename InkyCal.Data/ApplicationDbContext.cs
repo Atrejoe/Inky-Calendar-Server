@@ -120,6 +120,8 @@ namespace InkyCal.Data
 				.WithMany(x => x.SubscribedGoogleCalenders)
 				.HasForeignKey(x => x.Panel)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.Entity<NewsPaperPanel>();
 		}
 
 		public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
