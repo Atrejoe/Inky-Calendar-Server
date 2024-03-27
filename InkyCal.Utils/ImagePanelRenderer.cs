@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net.Http;
+using System;
 using System.Threading.Tasks;
 using InkyCal.Models;
-using Microsoft.Extensions.Caching.Memory;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -70,58 +68,6 @@ namespace InkyCal.Utils
 			return other is ImagePanelCacheKey ipc
 				&& ipc.ImageUrl.Equals(ImageUrl)
 				&& ipc.RotateImage.Equals(RotateImage);
-		}
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public static class DownloadCache
-	{
-
-		private static readonly HttpClient client = new HttpClient();
-
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
-		{
-			SizeLimit = 1024 * 1024 * 500,
-		});
-
-
-		/// <summary>
-		/// Returns a cached image
-		/// </summary>
-		/// <returns></returns>
-		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl) 
-			=> await LoadCachedContent(imageUrl, TimeSpan.FromMinutes(10));
-
-		/// <summary>
-		/// Returns a cached image
-		/// </summary>
-		/// <returns></returns>
-		/// <exception cref="HttpRequestException">When download failed (non-200 response was returned))</exception>
-		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration)
-		{
-
-			using (MiniProfiler.Current.Step($"Loading url results from cache"))
-			{
-				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
-				{
-					// Key not in cache, so get data.
-					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))
-						cacheEntry = await client.GetByteArrayAsync(imageUrl.ToString());
-
-					var cacheEntryOptions = new MemoryCacheEntryOptions()
-						.SetSize(cacheEntry.Length)
-						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(expiration);
-
-					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
-						_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
-				}
-
-				return cacheEntry;
-			}
 		}
 	}
 

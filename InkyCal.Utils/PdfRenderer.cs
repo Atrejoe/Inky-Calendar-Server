@@ -36,7 +36,18 @@ namespace InkyCal.Utils
 	public abstract class PdfRenderer<T> : PanelRenderer<T> where T : Panel
 	{
 
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
+		/// <summary>
+		/// 
+		/// </summary>
+		protected PdfRenderer():base() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="panel"></param>
+		protected PdfRenderer(T panel) : base(panel) { }
+
+		private static readonly MemoryCache _cache = new (new MemoryCacheOptions()
 		{
 			SizeLimit = 1024 * 1024 * 500,
 		});

@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @page "/demo/{modelAsString}"
 
 <h1>What's this?</h1>
@@ -56,6 +56,9 @@ Given a selected display panel:
                         <a class="nav-link" id="nyt-tab" data-toggle="tab" href="#nyt" role="tab" aria-controls="nyt" aria-selected="false">New York Times</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" id="newspaper-tab" data-toggle="tab" href="#newspaper" role="tab" aria-controls="newspaper" aria-selected="false">Newspaper cover page</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="weather-tab" data-toggle="tab" href="#weather" role="tab" aria-controls="weather" aria-selected="false">Weather</a>
                     </li>
                     <li class="nav-item">
@@ -89,7 +92,14 @@ Given a selected display panel:
                     <div class="tab-pane" id="nyt" role="tabpanel" aria-labelledby="nyt-tab">
                         Inspired by (not saying ripped off from) <a href="https://alexanderklopping.medium.com/an-updated-daily-front-page-of-the-new-york-times-as-artwork-on-your-wall-3b28c3261478">Alexander Klöppings' "An updated daily front page of The New York Times as artwork on your wall"</a>
                         <p><ImageWithProgress src="@($"panel/nyt/{model}")" style="@panelStyle" /></p>
-                        <small><em>The front page of the New York times, with better panels (grayscale, larger resolution) this image will make more sense.</em></small>
+                        <small><em>The front page of the New York times, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
+                    </div>
+                    <div class="tab-pane" id="newspaper" role="tabpanel" aria-labelledby="newspaper-tab">
+                        <div class="alert alert-warning" role="alert">
+                            This is an experimental panel which heavily relies on the unofficial API of <a href="https://www.freedomforum.org/todaysfrontpages">Freedom Forum &gt; Today's front pages</a>.
+                        </div>
+                        <p><ImageWithProgress src="@($"panel/test/{model}/newspaper")" style="@panelStyle" /></p>
+                        <small><em>The front page of your newspaper of choice, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
                     </div>
                     <div class="tab-pane" id="weather" role="tabpanel" aria-labelledby="weather-tab">
                         <p><ImageWithProgress src="@($"/panel/test/{model}/weather")" style="@panelStyle" /></p>

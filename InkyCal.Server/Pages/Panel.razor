@@ -33,7 +33,8 @@
 											 typeof(Models.ImagePanel),
 											 typeof(Models.PanelOfPanels),
 											 typeof(Models.WeatherPanel),
-											 typeof(Models.NewYorkTimesPanel) })
+											 typeof(Models.NewYorkTimesPanel),
+											 typeof(Models.NewsPaperPanel) })
 										{
 											@if (type.IsAssignableFrom(_Panel?.GetType()))
 											{
@@ -105,12 +106,17 @@
 									break;
 								case Models.WeatherPanel wp:
 									<WeatherPanel Panel="wp"></WeatherPanel>
-									break;
+                                    break;
+                                case Models.NewsPaperPanel npp:
+                                    <NewspaperPanel Panel="npp"></NewspaperPanel>
+                                    break;
+                                case Models.NewYorkTimesPanel:
+                                    @* No input needed. *@
+                                    break;
 								default:
 									<em>Unknown or generic panel type @(_Panel.GetType().Name).</em>
 									break;
 							}
-
 
 							<button class="btn btn-primary" type="submit">@(PanelId.HasValue ? "Save" : "Create")</button>
 							@if (PanelId.HasValue)

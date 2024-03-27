@@ -137,7 +137,7 @@ namespace InkyCal.Models
 	/// 
 	/// </summary>
 	/// <seealso cref="IEquatable{PanelCacheKey}" />
-	public class PanelCacheKey : IEquatable<PanelCacheKey>
+	public abstract class PanelCacheKey : IEquatable<PanelCacheKey>
 	{
 		/// <summary>
 		/// Gets the expiration.
@@ -151,7 +151,7 @@ namespace InkyCal.Models
 		/// Initializes a new instance of the <see cref="PanelCacheKey"/> class.
 		/// </summary>
 		/// <param name="expiration">The expiration.</param>
-		public PanelCacheKey(TimeSpan expiration)
+		protected PanelCacheKey(TimeSpan expiration)
 		{
 			Expiration = expiration;
 		}

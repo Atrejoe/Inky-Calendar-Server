@@ -13,6 +13,44 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// 
 	/// </summary>
+	/// <seealso cref="PanelCacheKey" />
+	public sealed class NewYorkTimePanelCacheKey : PanelCacheKey
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="NewYorkTimePanelCacheKey"/> class.
+		/// </summary>
+		public NewYorkTimePanelCacheKey(TimeSpan expiration ) : base(expiration)
+		{
+		}
+
+		/// <summary>
+		/// Uses base gethashcode
+		/// </summary>
+		/// <returns>
+		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+		/// </returns>
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), GetType());
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj) => Equals(obj as NewYorkTimePanelCacheKey);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		protected override bool Equals(PanelCacheKey other) 
+			=> other is NewYorkTimePanelCacheKey
+				&& base.Equals(other);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
 	public class NewYorkTimeRenderException : Exception
 	{
 		/// <inheritdoc/>
@@ -22,6 +60,7 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		public NewYorkTimeRenderException(string message, Exception inner) : base(message, inner) { }
 	}
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -42,7 +81,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The cache key.
 		/// </value>
-		public override PanelCacheKey CacheKey => new PanelCacheKey(TimeSpan.FromMinutes(60));
+		public override PanelCacheKey CacheKey => new NewYorkTimePanelCacheKey(TimeSpan.FromMinutes(60));
 
 		/// <summary>
 		/// Gets the Pdf file from <c>https://static01.nyt.com/images/{Date:yyyy}/{Date:MM}/{Date:dd}/nytfrontpage/scan.pdf</c>
@@ -90,7 +129,7 @@ namespace InkyCal.Utils
 			}
 
 			if (!(pdf?.Any()).GetValueOrDefault())
-				throw new NewYorkTimeRenderException("Failed to download NYT homepage");
+				throw new NewYorkTimeRenderException($"Failed to download NYT homepage (in {tries} tries)");
 
 			return pdf;
 		}

@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils;
+using InkyCal.Utils.NewPaperRenderer;
+using InkyCal.Utils.NewPaperRenderer.FreedomForum.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp.Processing;
@@ -104,6 +106,29 @@ namespace InkyCal.Server.Controllers
 		/// <remarks>
 		/// </remarks>
 		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("test/{model}/newspaper")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(NoStore = true)]
+		public async Task<ActionResult> TestNewsPaper(DisplayModel model, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		{
+			var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.ToArray();
+
+			var r = new Random().Next(0, newsPapers.Length);
+			var randomNewsPaper = newsPapers[r];
+			return await this.Image(new NewsPaperRenderer(randomNewsPaper.PaperId), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a demo weather panel, mapped for <paramref name="model"/>.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>A demo weather panel (for the city of Rotterdam)</returns>
+		/// <remarks>
+		/// </remarks>
+		/// <response code="200">Returns the panel as a PNG image</response>
 		[HttpGet("test/{model}/panel-of-panels")]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -169,6 +194,42 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> GetNewYorkTime(DisplayModel model, int? width = null, int? height = null)
 		{
 			return await this.Image(new NewYorkTimesRenderer(), model, width, height);
+		}
+
+		/// <summary>
+		/// Returns a rasterized version of today's Newspaper
+		/// </summary>
+		/// <param name="newspaperid"></param>
+		/// <param name="model"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>Returns a rasterized version of today's newspaper</returns>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("newspaper/{newspaperid}/{model}")]
+		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60)]
+		public async Task<ActionResult> GetNewspaper(string newspaperid, DisplayModel model, int? width = null, int? height = null)
+		{
+			return await this.Image(new NewsPaperRenderer(newspaperid), model, width, height);
+		}
+
+
+		/// <summary>
+		/// Returns a list of available newspapers.
+		/// TODO: debug: fow now only shows newspapers that are available now, not in the near future or recent past.
+		/// </summary>
+		/// <returns>Returns a rasterized version of today's newspaper</returns>
+		/// <response code="200">Returns the panel as a PNG image</response>
+		[HttpGet("newspaper/list")]
+		[ProducesResponseType(typeof(NewsPaper[]), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60)]
+		public async Task<ActionResult> ListNewspapers()
+		{
+			var client = new Utils.NewPaperRenderer.FreedomForum.ApiClient();
+
+			return Ok(await client.GetNewsPapers());
 		}
 
 		/// <summary>

@@ -441,6 +441,18 @@ namespace InkyCal.Data.Migrations
                     b.HasDiscriminator().HasValue("NewYorkTimesPanel");
                 });
 
+            modelBuilder.Entity("InkyCal.Models.NewsPaperPanel", b =>
+                {
+                    b.HasBaseType("InkyCal.Models.Panel");
+
+                    b.Property<string>("NewsPaperId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Panel", "InkyCal");
+
+                    b.HasDiscriminator().HasValue("NewsPaperPanel");
+                });
+
             modelBuilder.Entity("InkyCal.Models.PanelOfPanels", b =>
                 {
                     b.HasBaseType("InkyCal.Models.Panel");
