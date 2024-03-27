@@ -163,8 +163,7 @@ namespace InkyCal.Utils
 			foreach (var color in colors)
 				Trace.TraceInformation($"Color: {color}");
 
-			Trace.WriteLine($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
-
+			Trace.TraceInformation($"Multiple colors palette ({colors.Length}), but support color is a gray scale (consists of {supportColor.ToHex().Chunk(2).Take(3).Select(x => new string(x)).Distinct().Count()} the same component(s)), anti-aliassing: {antiAlias}");
 
 			var textOptions = new RichTextOptions(textFont)
 			{
