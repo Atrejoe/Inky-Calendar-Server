@@ -33,3 +33,23 @@ jobs:
         sbom: true
         push: false
         tags: atreyu/inkycal.server:latest
+
+    - name: Container Scan
+      # You may pin to the exact commit or the version.
+      # uses: crazy-max/ghaction-container-scan@3e9c23f89cd6b0bda949ffe14f28a3ce282323b7
+      uses: crazy-max/ghaction-container-scan@v3.0.0
+      with:
+        # Container image to scan (eg. alpine:3.7)
+        image: atreyu/inkycal.server:latest
+        # Dockerfile required to generate a sarif report
+        dockerfile: ./Dockerfile
+        # Defines threshold for severity
+        severity_threshold: CRITICAL
+        # Create GitHub annotations in your workflow for vulnerabilities discovered
+        annotations: true # optional, default is false
+
+    - name: Upload SARIF file
+      if: ${{ steps.scan.outputs.sarif != '' }}
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
