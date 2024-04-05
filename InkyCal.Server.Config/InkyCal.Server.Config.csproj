@@ -16,7 +16,7 @@
 	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
 	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.23.0.88079">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.23.1.88495">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
