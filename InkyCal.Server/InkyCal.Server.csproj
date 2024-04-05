@@ -28,6 +28,7 @@
 	<PackageReference Include="Humanizer" Version="2.14.1" />
 	<PackageReference Include="Markdig.Signed" Version="0.36.2" />
 	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.3" />
+	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.3" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>
@@ -48,6 +49,8 @@
 	</PackageReference>
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	<PackageReference Include="System.Linq.Async" Version="6.0.1" />
+	<PackageReference Include="System.Net.Http" Version="4.3.4" />
+	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
