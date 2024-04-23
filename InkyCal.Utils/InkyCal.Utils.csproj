@@ -28,8 +28,8 @@
 
   <ItemGroup>
 	<PackageReference Include="Bugsnag" Version="3.1.0" />
-	<PackageReference Include="Google.Apis.Calendar.v3" Version="1.67.0.3374" />
-	<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.67.0.1869" />
+	<PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3374" />
+	<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.68.0.1869" />
 	<PackageReference Include="Ical.Net" Version="4.2.0" />
 	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.6.0" />
 	<PackageReference Include="Magick.NET.Core" Version="13.6.0" />
