@@ -77,9 +77,9 @@
       },
       "xunit.runner.console": {
         "type": "Direct",
-        "requested": "[2.7.0, )",
-        "resolved": "2.7.0",
-        "contentHash": "/9+Vp+mR34pJs6psVIGKhtpJJJ5ED8CBuwOgRMR3vkDKzPBvJYVuiVbPv40G/s09InDBQW9PC4+j8704Nl8HGw=="
+        "requested": "[2.7.1, )",
+        "resolved": "2.7.1",
+        "contentHash": "c0TJoh2ZdSdLJgIvI1pF9YHyF7OZwDxqyriBTQvnpd4/PlhKPacGQVIER43mIIROGOuilcpiRWg05NBE0gDaMQ=="
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
