@@ -555,7 +555,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 			//Get Google Calender-based events
 			if (InkyCal.Server.Config.GoogleOAuth.Enabled
 				&& (Calendars?.Any()).GetValueOrDefault())
-				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} Google calendars"))
+				using (MiniProfiler.Current.Step($"Gather events for {Calendars.Length} Google calendars"))
 				{
 					var events = (await GoogleCalenderExtensions.GetEvents(sbErrors, Calendars, saveToken, cancellationToken)).ToList();
 					result.AddRange(events);
