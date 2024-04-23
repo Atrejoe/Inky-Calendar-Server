@@ -42,7 +42,7 @@
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
-	<PackageReference Include="Sentry.AspNetCore" Version="4.2.1" />
+	<PackageReference Include="Sentry.AspNetCore" Version="4.4.0" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.23.1.88495">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
