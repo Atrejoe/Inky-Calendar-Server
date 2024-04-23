@@ -71,9 +71,9 @@
       },
       "xunit.analyzers": {
         "type": "Direct",
-        "requested": "[1.11.0, )",
-        "resolved": "1.11.0",
-        "contentHash": "SCv+Ihxv+fCqotGeM8sVwLhw8nzAJ2aFRN5lcoKn9QtGdbVJ79JqDc+4u8/Ddnp2udxtmv+xYFWkHNlb/sk01w=="
+        "requested": "[1.12.0, )",
+        "resolved": "1.12.0",
+        "contentHash": "w23LH3aXade2WXKvXi0oA/uV15fpgUMjsPq1x91iQckzgWApgAiijNHmfFQtqNPm41wfrdbRl7nSJRd0yux/dw=="
       },
       "xunit.runner.console": {
         "type": "Direct",
