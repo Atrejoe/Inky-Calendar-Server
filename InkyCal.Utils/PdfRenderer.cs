@@ -97,12 +97,12 @@ namespace InkyCal.Utils
 						using var vertical = images.AppendVertically();
 
 						// Save result as a png
-						vertical.Write(ms, MagickFormat.Png);
+						await vertical.WriteAsync(ms, MagickFormat.Png);
 
 						ms.Position = 0;
 
 						//Load PNG
-						image = Image.Load<Rgba32>(ms);
+						image = await Image.LoadAsync<Rgba32>(ms);
 
 						var cacheEntryOptions = new MemoryCacheEntryOptions()
 							.SetSize(ms.Length)

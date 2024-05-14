@@ -97,11 +97,11 @@ namespace InkyCal.Utils.Tests
 
 
 				using var fileStream = File.Create(filename);
-				image.SaveAsGif(fileStream, new GifEncoder() {  Quantizer = new PaletteQuantizer(colors) });
+				await image.SaveAsGifAsync(fileStream, encoder: new () {  Quantizer = new PaletteQuantizer(colors) });
 
 			}
 
-			bitmap = Image.Load<Rgba32>(filename);
+			bitmap = await Image.LoadAsync<Rgba32>(filename);
 
 			var fi = new FileInfo(filename);
 			Assert.True(fi.Exists, $"File {fi.FullName} does not exist");

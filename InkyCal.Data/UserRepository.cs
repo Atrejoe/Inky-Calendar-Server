@@ -43,7 +43,7 @@ namespace InkyCal.Data
 			if (result is null)
 			{
 				result = new User() { IdentityUserId = identityUserId };
-				c.Add(result);
+				await c.AddAsync(result);
 				await c.SaveChangesAsync();
 			}
 

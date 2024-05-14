@@ -279,7 +279,7 @@ namespace InkyCal.Utils.Calendar
 				}
 				catch (Exception ex)
 				{
-					Console.Error.WriteLine(ex.ToString());
+					await Console.Error.WriteLineAsync(ex.ToString());
 					sbErrors.AppendLine(ex.ToString());
 					throw;
 				}

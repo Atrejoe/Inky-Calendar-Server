@@ -46,7 +46,7 @@ namespace InkyCal.Utils
 							 , System.Net.HttpStatusCode.Forbidden
 					}.Contains(ex.StatusCode.Value)))
 				{
-					Console.Error.WriteLine($"Failed ({tries:n0}/{maxDaysToLookBack:n0}) to download from {url}: status code {ex.StatusCode}, error message: {ex.Message}");
+					await Console.Error.WriteLineAsync($"Failed ({tries:n0}/{maxDaysToLookBack:n0}) to download from {url}: status code {ex.StatusCode}, error message: {ex.Message}");
 					d = d.AddDays(-1);
 				}
 			}

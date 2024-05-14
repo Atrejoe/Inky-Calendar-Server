@@ -35,7 +35,7 @@ namespace InkyCal.Data
 
 			//Add new items to DB
 			foreach (var item in calenders.Where(x => !set.Exists(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
-				c.Add(new SubscribedGoogleCalender()
+				await c.AddAsync(new SubscribedGoogleCalender()
 				{
 					Panel = panel.Id,
 					IdAccessToken = item.IdAccessToken,

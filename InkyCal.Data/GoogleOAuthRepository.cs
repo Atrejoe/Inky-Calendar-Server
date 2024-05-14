@@ -26,7 +26,7 @@ namespace InkyCal.Data
 			using var c = new ApplicationDbContext();
 			token.User = new User() { Id = token.User.Id };
 			c.Entry(token.User).State = EntityState.Unchanged;
-			c.Add(token);
+			await c.AddAsync(token);
 			await c.SaveChangesAsync();
 		}
 

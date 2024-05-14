@@ -162,7 +162,7 @@ namespace InkyCal.Utils
 					{
 						var image = await renderer.GetImage(width, height, colors, log);
 						using var stream = new MemoryStream();
-						image.SaveAsGif(stream, new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
+						await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
 						result = stream.ToArray();
 					}
 

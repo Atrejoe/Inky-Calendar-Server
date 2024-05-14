@@ -513,14 +513,14 @@ The image should be in a style of 19th century litograph or metal plate print as
 				//Console.WriteLine(i.Metadata.ToString());
 				//byte[] data = Convert.FromBase64String(imageResult);
 				ms.Position = 0;
-				result = Image.Load<Rgba32>(ms);
+				result = await Image.LoadAsync<Rgba32>(ms);
 			}
 			catch (Exception ex)
 			{
-				Console.Error.WriteLine(ex.Message);
-				Console.Error.WriteLine(ex.StackTrace);
-				Console.Error.WriteLine(ex.InnerException?.Message);
-				Console.Error.WriteLine(ex.InnerException?.StackTrace);
+				await Console.Error.WriteLineAsync(ex.Message)
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.StackTrace))
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.Message))
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.StackTrace));
 				throw;
 			}
 
