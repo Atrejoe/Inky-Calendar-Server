@@ -14,9 +14,9 @@ namespace InkyCal.Utils
 		public const string PublicHolidayCalenderUrl = @"https://calendar.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics";
 
 		/// <summary>
-		/// A public iCal calendar with debug events for demo/test purposes
+		/// A public iCal calendar with phases of the moon, for demo/test purposes
 		/// </summary>
-		public const string DebugCalenderUrl = @"https://calendar.google.com/calendar/ical/6nqv871neid5l0t7hgk6jgr24c%40group.calendar.google.com/private-c9ab692c99fb55360cbbc28bf8dedb3a/basic.ics";
+		public const string PhasesOfTheMoonCalenderUrl = @"https://calendar.google.com/calendar/ical/ht3jlfaac5lfd6263ulfh4tql8%40group.calendar.google.com/public/basic.ics";
 
 		/// <summary>
 		/// 
@@ -28,7 +28,7 @@ namespace InkyCal.Utils
 			},
 			iCalUrls: [
 				new Uri(PublicHolidayCalenderUrl),
-				new Uri(DebugCalenderUrl)
+				new Uri(PhasesOfTheMoonCalenderUrl)
 			],
 			[],
 			drawMode: CalenderDrawMode.AIImage)
