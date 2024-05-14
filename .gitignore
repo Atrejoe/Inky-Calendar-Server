@@ -12,7 +12,7 @@ tools/
 documentation/Help/
 
 nCrunchTemp_*.csproj
+.NCrunch_InkyCal/
+InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject
 
 *.trx
-
-InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject
