@@ -1,5 +1,4 @@
-﻿using Ical.Net;
-using InkyCal.Server.Config;
+﻿using InkyCal.Server.Config;
 using Xunit;
 using Xunit.Abstractions;
 
