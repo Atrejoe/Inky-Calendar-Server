@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using InkyCal.Models;
 using InkyCal.Utils;
@@ -13,6 +13,7 @@ namespace InkyCal.Server.Pages
 	public partial class Index : ComponentBase
 	{
 		private DisplayModel model1;
+		private string NewsPaperId;
 
 		/// <summary>
 		/// The selected display panel

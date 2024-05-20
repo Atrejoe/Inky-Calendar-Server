@@ -1,0 +1,23 @@
+﻿@inherits ComponentBase
+@using InkyCal.Models.Helpers
+
+<InputSelect class="form-control" @bind-Value="@NewsPaperId">
+	@if (!(NewsPapers?.Any()).GetValueOrDefault(false))
+	{
+		<option label="No newspapers available" value="" title="No newspapers available">No newspapers available</option>
+	}
+	else
+	{
+		<option label="Select a newspaper" value="" title="Select a newspaper">Select a newspaper</option>
+
+		@foreach (var country in NewsPapers.OrderBy(x => x.Key))
+		{
+			<optgroup label="@country.Key">
+				@foreach (var newspaper in country.OrderBy(x => x.Title))
+				{
+					<option value="@newspaper.PaperId" title="@newspaper.Title">@newspaper.Title (@newspaper.City)</option>
+				}
+			</optgroup>
+		}
+	}
+</InputSelect>
