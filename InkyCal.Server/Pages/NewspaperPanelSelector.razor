@@ -1,0 +1,28 @@
+﻿@inherits AuthenticatedComponentBase
+@using InkyCal.Models.Helpers
+
+<span>
+NewsPaperId : <p>@NewsPaperId / @(NewsPaperId)</p
+</span>
+<InputSelect class="form-control" id="@nameof(@NewsPaperId)" @bind-Value="@NewsPaperId" @onselectionchange="SelectionChanged" @onchange="SelectionChanged" @onselect="SelectionChanged">
+    @if (!(NewsPapers?.Any()).GetValueOrDefault(false))
+    {
+        <option label="No newspapers available" value="" title="No newspapers available">No newspapers available</option>
+    }
+    else
+    {
+        <option label="Select a newspaper" value="" title="Select a newspaper">Select a newspaper</option>
+
+        @foreach (var country in NewsPapers.OrderBy(x => x.Key))
+        {
+            <optgroup label="@country.Key">
+                @foreach (var newspaper in country.OrderBy(x => x.Title))
+                {
+                    <option value="@newspaper.PaperId" title="@newspaper.Title">@newspaper.Title (@newspaper.City)</option>
+                    @* <a href="@newspaper.Website" target="_blank">Website</a>
+        <a href="@newspaper.PDFUrl(DateTime.UtcNow)" target="_blank">Link</a> *@
+                }
+            </optgroup>
+        }
+    }
+</InputSelect>

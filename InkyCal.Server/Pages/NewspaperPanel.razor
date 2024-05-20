@@ -5,6 +5,10 @@
     This is an experimental panel which heavily relies on the unofficial API of <a href="https://www.freedomforum.org/todaysfrontpages">Freedom Forum &gt; Today's front pages'</a>
 </div>
 
+<span>
+Panel.NewsPaperId : <p>@Panel.NewsPaperId / @(Panel.NewsPaperId)</p
+</span>
+
 <EditForm Model="@Panel">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -14,28 +18,7 @@
             <span>Newspaper:</span>
         </label>
         <div class="input-group">
-            <InputSelect class="form-control" id="@nameof(@Panel.NewsPaperId)" @bind-Value="@Panel.NewsPaperId">
-                @if (!(NewsPapers?.Any()).GetValueOrDefault(false))
-                {
-                    <option label="No newspapers available" value="" title="No newspapers available">No newspapers available</option>
-                }
-                else
-                {
-                    <option label="Select a newspaper" value="" title="Select a newspaper">Select a newspaper</option>
-
-                    @foreach (var country in NewsPapers.OrderBy(x=>x.Key))
-                    {
-                        <optgroup label="@country.Key">
-                            @foreach (var newspaper in country.OrderBy(x=>x.Title))
-                            {
-                                <option value="@newspaper.PaperId" title="@newspaper.Title">@newspaper.Title (@newspaper.City)</option>
-                                @* <a href="@newspaper.Website" target="_blank">Website</a>
-                                <a href="@newspaper.PDFUrl(DateTime.UtcNow)" target="_blank">Link</a> *@
-                            }
-                        </optgroup>
-                    }
-                }
-            </InputSelect>
+            <NewspaperPanelSelector @bind-NewsPaperId=Panel.NewsPaperId/>
         </div>
         <ValidationMessage For="@(() => Panel.NewsPaperId)" />
     </div>

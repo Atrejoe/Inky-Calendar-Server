@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Utils.NewPaperRenderer.FreedomForum.Models;
 using Microsoft.AspNetCore.Components;
@@ -10,25 +9,19 @@ namespace InkyCal.Server.Pages
 	/// Displays a calendar panel
 	/// </summary>
 	/// <seealso cref="ComponentBase" />
-	public partial class NewspaperPanel : AuthenticatedComponentBase
+	public partial class NewspaperPanelSelector
 	{
 		/// <summary>
-		/// Gets or sets the selected panel.
+		/// 
 		/// </summary>
-		/// <value>
-		/// The panel.
-		/// </value>
 		[Parameter]
-		public Models.NewsPaperPanel Panel { get; set; }
+		public string NewsPaperId { get; set; } 
 
 		/// <summary>
-		/// Gets or sets the navigation manager.
+		/// 
 		/// </summary>
-		/// <value>
-		/// The navigation manager.
-		/// </value>
-		[Inject]
-		public NavigationManager NavigationManager { get; set; }
+		[Parameter]
+		public EventCallback<string> NewsPaperIdChanged { get; set; }
 
 		/// <summary>
 		/// 
@@ -41,6 +34,10 @@ namespace InkyCal.Server.Pages
 		protected override async Task OnInitializedAsync()
 		{
 			NewsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.GroupBy(x => x.Country).ToArray();
+		}
+        private void SelectionChanged(System.EventArgs e)
+        {
+			NewsPaperIdChanged.InvokeAsync(NewsPaperId).Wait();
 		}
 	}
 }

@@ -110,23 +110,28 @@ namespace InkyCal.Server.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="cancellationToken"></param>
+		/// <param name="newsPaperId"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns>A demo weather panel (for the city of Rotterdam)</returns>
 		/// <remarks>
 		/// </remarks>
 		/// <response code="200">Returns the panel as a PNG image</response>
-		[HttpGet("test/{model}/newspaper")]
+		[HttpGet("test/{model}/newspaper/{newsPaperId?}")]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ResponseCache(NoStore = true)]
-		public async Task<ActionResult> TestNewsPaper(DisplayModel model, CancellationToken cancellationToken, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
+		public async Task<ActionResult> TestNewsPaper(DisplayModel model, CancellationToken cancellationToken, string newsPaperId = null, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
-			var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.ToArray();
+			if (string.IsNullOrEmpty(newsPaperId)) {
+				var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.ToArray();
 
-			var r = new Random().Next(0, newsPapers.Length);
-			var randomNewsPaper = newsPapers[r];
-			return await this.Image(new NewsPaperRenderer(randomNewsPaper.PaperId), model, cancellationToken, width, height);
+				var r = new Random().Next(0, newsPapers.Length);
+				var randomNewsPaper = newsPapers[r];
+				newsPaperId = randomNewsPaper.PaperId;
+			}
+
+			return await this.Image(new NewsPaperRenderer(newsPaperId), model, cancellationToken, width, height);
 		}
 
 		/// <summary>

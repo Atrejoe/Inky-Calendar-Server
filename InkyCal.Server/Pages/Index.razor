@@ -1,6 +1,10 @@
 ﻿@page "/"
 @page "/demo/{modelAsString}"
 
+@{
+    var npp = new InkyCal.Models.NewsPaperPanel();
+}
+
 <h1>What's this?</h1>
 
 <p>
@@ -95,10 +99,9 @@ Given a selected display panel:
                         <small><em>The front page of the New York times, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
                     </div>
                     <div class="tab-pane" id="newspaper" role="tabpanel" aria-labelledby="newspaper-tab">
-                        <div class="alert alert-warning" role="alert">
-                            This is an experimental panel which heavily relies on the unofficial API of <a href="https://www.freedomforum.org/todaysfrontpages">Freedom Forum &gt; Today's front pages</a>.
-                        </div>
-                        <p><ImageWithProgress src="@($"panel/test/{model}/newspaper")" style="@panelStyle" /></p>
+                        <p>NewpaperId: @(npp.NewsPaperId)</p>
+                        <NewspaperPanelSelector @bind-NewsPaperId="@npp.NewsPaperId"/>
+                        <p><ImageWithProgress src="@($"panel/test/{model}/newspaper/{npp.NewsPaperId}")" style="@panelStyle" /></p>
                         <small><em>The front page of your newspaper of choice, with a high quality panel (grayscale, larger resolution) this image will make more sense.</em></small>
                     </div>
                     <div class="tab-pane" id="weather" role="tabpanel" aria-labelledby="weather-tab">
