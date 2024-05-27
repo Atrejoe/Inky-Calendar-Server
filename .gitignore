@@ -16,3 +16,5 @@ nCrunchTemp_*.csproj
 InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject
 
 *.trx
+
+k8s/.monokle

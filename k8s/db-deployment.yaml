@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    io.portainer.accesscontrol.teams: admins
+    io.portainer.accesscontrol.users: admin
+    kompose.version: 1.31.2 (a92241f79)
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        io.portainer.accesscontrol.teams: admins
+        io.portainer.accesscontrol.users: admin
+        kompose.version: 1.31.2 (a92241f79)
+      labels:
+        io.kompose.network/inkycalserver-default: "true"
+        io.kompose.service: db
+    spec:
+      containers:
+        - ports:
+            - containerPort: 1433
+              protocol: TCP
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_AGENT_ENABLED
+              value: "true"
+            - name: MSSQL_PID
+              value: Express
+            - name: SA_PASSWORD
+              value: SECRET
+          volumeMounts:
+            - mountPath: /var/opt/mssql/data
+              name: db-storage
+            - mountPath: /backup_host
+              name: db-backup
+          command: []
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          name: db
+          resources:
+            requests:
+              cpu: 100m
+              memory: "4294967296"
+            limits:
+              cpu: 500m
+              memory: "4294967296"
+      restartPolicy: Always
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: db-storage
+        - name: db-backup
+          persistentVolumeClaim:
+            claimName: db-backup
+status: {}

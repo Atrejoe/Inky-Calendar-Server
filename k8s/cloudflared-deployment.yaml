@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.version: 1.31.2 (a92241f79)
+  labels:
+    io.kompose.service: cloudflared
+  name: cloudflared
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: cloudflared
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.version: 1.31.2 (a92241f79)
+      labels:
+        io.kompose.network/inkycalserver-default: "true"
+        io.kompose.service: cloudflared
+    spec:
+      containers:
+        - ports: []
+          env:
+            - valueFrom:
+                secretKeyRef:
+                  key: cloudflare_tunnel_token
+              name: TUNNEL_TOKEN
+          volumeMounts: []
+          command: []
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+          image: cloudflare/cloudflared:latest
+          name: cloudflared
+          resources:
+            requests:
+              cpu: 250m
+              memory: "1073741824"
+            limits:
+              cpu: 250m
+              memory: "1073741824"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      restartPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+status: {}

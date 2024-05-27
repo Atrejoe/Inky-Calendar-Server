@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.version: 1.31.2 (a92241f79)
+  labels:
+    io.kompose.service: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.version: 1.31.2 (a92241f79)
+      labels:
+        io.kompose.network/inkycalserver-default: "true"
+        io.kompose.service: web
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Release
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "5000"
+            - name: ASPNETCORE_URLS
+              value: http://0.0.0.0:5000/
+            - name: BugSnagAPIKey
+              value: SECRET
+            - name: ConnectionStrings__DefaultConnection
+              value: SECRET
+            - name: GoogleOAuth:ClientId
+              value: SECRET
+            - name: GoogleOAuth:ClientSecret
+              value: SECRET
+            - name: GoogleOAuth:Enabled
+              value: "true"
+            - name: GoogleOAuth:InkyCalRoot
+              value: /
+            - name: GoogleOAuth:ProjectId
+              value: inkycalendarserver
+            - name: GoogleOAuth:Website
+              value: https://inkycal.robertsirre.nl
+            - name: OpenAIAPIKey
+              value: SECRET
+            - name: OpenWeatherAPIKey
+              value: SECRET
+            - name: SentryDSN
+              value: SECRET
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: TraceQueries
+              value: "false"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+          - mountPath: /app/wwwroot/SECRET.html
+            name: web-google-site-validation
+          - mountPath: /playground
+            name: web-playground
+          - mountPath: /home/nonroot/.aspnet/DataProtection-Keys
+            name: web-dataprotection-keys
+          image: atreyu/inkycal.server:latest
+          name: web
+          resources:
+            requests:
+              cpu: 900m
+              memory: 4294967296
+            limits:
+              cpu: 900m
+              memory: 4294967296
+      restartPolicy: Always
+      volumes:
+        - name: web-google-site-validation
+          persistentVolumeClaim:
+            claimName: web-google-site-validation
+        - name: web-playground
+          persistentVolumeClaim:
+            claimName: web-playground
+        - name: web-claim2
+          persistentVolumeClaim:
+            claimName: web-dataprotection-keys
+status: {}

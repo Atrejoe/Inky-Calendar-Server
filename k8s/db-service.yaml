@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.version: 1.31.2 (a92241f79)
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  ports:
+    - name: "Connection port"
+      port: 1433
+      targetPort: 1433
+  selector:
+    io.kompose.service: db
+status:
+  loadBalancer: {}
