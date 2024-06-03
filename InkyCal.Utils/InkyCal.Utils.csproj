@@ -31,8 +31,8 @@
 	<PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3430" />
 	<PackageReference Include="Google.Apis.Oauth2.v2" Version="1.68.0.1869" />
 	<PackageReference Include="Ical.Net" Version="4.2.0" />
-	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.8.0" />
-	<PackageReference Include="Magick.NET.Core" Version="13.8.0" />
+	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.9.0" />
+	<PackageReference Include="Magick.NET.Core" Version="13.9.0" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
