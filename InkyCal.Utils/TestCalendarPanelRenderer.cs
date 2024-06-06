@@ -21,7 +21,8 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		public TestCalendarPanelRenderer() : base(
-			async (token) => {
+			async (_, _) =>
+			{
 				await System.Threading.Tasks.Task.CompletedTask;
 			},
 			iCalUrls: [

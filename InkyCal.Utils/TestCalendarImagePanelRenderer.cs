@@ -22,7 +22,7 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		public TestCalendarImagePanelRenderer() : base(
-			async (token) =>
+			async (token, cancellationToken) =>
 			{
 				await System.Threading.Tasks.Task.CompletedTask;
 			},

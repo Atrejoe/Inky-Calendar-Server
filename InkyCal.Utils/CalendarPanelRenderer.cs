@@ -83,7 +83,7 @@ namespace InkyCal.Utils
 		/// 
 		/// </summary>
 		/// <param name="saveToken"></param>
-		private CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken) => SaveToken = saveToken;
+		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken) => SaveToken = saveToken;
 
 		/// <summary>
 		/// Shows a single calendar
@@ -91,7 +91,7 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode) 
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode) 
 			=> ArgumentNullException.ThrowIfNull(iCalUrl);
 
 		/// <summary>
@@ -101,7 +101,7 @@ namespace InkyCal.Utils
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode) : this(saveToken)
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode) : this(saveToken)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
 
@@ -179,7 +179,7 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// 
 		/// </summary>
-		protected internal readonly Func<GoogleOAuthAccess, Task> SaveToken;
+		protected internal readonly Func<GoogleOAuthAccess, CancellationToken, Task> SaveToken;
 
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		internal static Image<Rgba32> DrawImage(
@@ -541,7 +541,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 		/// <param name="saveToken"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, Task> saveToken, CancellationToken cancellationToken)
+		protected virtual async Task<List<Event>> GetEvents(StringBuilder sbErrors, Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(sbErrors);
 

@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.Fonts;
@@ -20,7 +21,7 @@ namespace InkyCal.Utils
 	/// <remarks>
 	/// 
 	/// </remarks>
-	public class PanelRenderHelper(Func<GoogleOAuthAccess, Task> saveToken)
+	public class PanelRenderHelper(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken)
 	{
 
 		/// <summary>
@@ -99,7 +100,7 @@ namespace InkyCal.Utils
 		}
 
 		private static readonly Lazy<Type[]> Renderers = new Lazy<Type[]>(GetRenderers);
-		private readonly Func<GoogleOAuthAccess, Task> saveToken = saveToken;
+		private readonly Func<GoogleOAuthAccess, CancellationToken, Task> saveToken = saveToken;
 
 		internal static Type[] GetRenderers()
 		{

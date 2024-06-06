@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.EntityFrameworkCore;
@@ -61,16 +62,17 @@ namespace InkyCal.Data
 		/// Updates the tokens access token
 		/// </summary>
 		/// <param name="refreshedToken"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken)
+		public async Task UpdateAccessToken(GoogleOAuthAccess refreshedToken, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(refreshedToken);
 
 			using var c = new ApplicationDbContext();
-			var token = await c.Set<GoogleOAuthAccess>().SingleAsync(x => x.Id == refreshedToken.Id);
+			var token = await c.Set<GoogleOAuthAccess>().SingleAsync(x => x.Id == refreshedToken.Id, cancellationToken);
 			token.AccessToken = refreshedToken.AccessToken;
 			token.AccessTokenExpiry = refreshedToken.AccessTokenExpiry;
-			await c.SaveChangesAsync();
+			await c.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using InkyCal.Models;
 using Xunit;
 using System.Reflection;
+using System.Threading;
 
 namespace InkyCal.Utils.Tests
 {
@@ -15,7 +16,7 @@ namespace InkyCal.Utils.Tests
 		{
 			//Arrange
 			//Get instance of all types inheriting from panel
-			var helper = new PanelRenderHelper(async (token) => await System.Threading.Tasks.Task.CompletedTask);
+			var helper = new PanelRenderHelper(async (token, _) => await System.Threading.Tasks.Task.CompletedTask);
 			var panels = AppDomain.CurrentDomain.GetAssemblies()
 											.SelectMany(x => x.GetTypes())
 											.Where(x => typeof(Panel).IsAssignableFrom(x)

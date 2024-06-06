@@ -19,11 +19,11 @@ namespace InkyCal.Utils.Tests
 						 new SubPanel() {
 						Panel = new CalendarPanel() {
 										CalenderUrls = new HashSet<CalendarPanelUrl>(
-														new []{
+														[
 															new CalendarPanelUrl(){
 																Url = TestCalendarPanelRenderer.PublicHolidayCalenderUrl
 															}
-														})
+														])
 													}
 						}
 						,
@@ -33,7 +33,7 @@ namespace InkyCal.Utils.Tests
 					 })
 			};
 
-			return new PanelOfPanelRenderer(pp, new PanelRenderHelper(async (token) => await Task.CompletedTask));
+			return new PanelOfPanelRenderer(pp, new PanelRenderHelper(async (_,_) => await Task.CompletedTask));
 		}
 	}
 }

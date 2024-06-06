@@ -4,6 +4,8 @@ using InkyCal.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.Threading;
+using System;
 
 namespace InkyCal.Server.Pages
 {
@@ -11,8 +13,13 @@ namespace InkyCal.Server.Pages
 	/// A base class for panels that need authentication information
 	/// </summary>
 	/// <seealso cref="ComponentBase" />
-	public class AuthenticatedComponentBase: ComponentBase
+	public class AuthenticatedComponentBase: ComponentBase, IDisposable
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		protected readonly CancellationTokenSource cancellationTokenSource = new();
+
 		/// <summary>
 		/// Gets or sets the authentication state task.
 		/// </summary>
@@ -32,6 +39,7 @@ namespace InkyCal.Server.Pages
 		protected UserManager<IdentityUser> userManager { get; set; }
 
 		private User _authenticatedUser;
+		private bool disposedValue;
 
 		/// <summary>
 		/// Gets the authenticated user.
@@ -52,5 +60,41 @@ namespace InkyCal.Server.Pages
 			_authenticatedUser = await identityUser.GetUser();
 			return _authenticatedUser;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					cancellationTokenSource.Cancel();
+					cancellationTokenSource.Dispose();
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		// override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+		// ~AuthenticatedComponentBase()
+		// {
+		//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		//     Dispose(disposing: false);
+		// }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
+		}
+
 	}
 }
