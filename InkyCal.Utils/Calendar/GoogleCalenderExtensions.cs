@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,11 +25,11 @@ namespace InkyCal.Utils.Calendar
 	/// </summary>
 	public static class GoogleCalenderExtensions
 	{
-		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars, Func<GoogleOAuthAccess, Task> saveToken, CancellationToken cancellationToken)
+		internal static async Task<IEnumerable<Event>> GetEvents(StringBuilder sbErrors, SubscribedGoogleCalender[] calendars, Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, CancellationToken cancellationToken)
 		{
 			var result = new List<Event>();
 
-			var tokens = GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken);
+			var tokens = GetAccessTokens(calendars.Select(x => x.AccessToken).Distinct(), saveToken, cancellationToken);
 
 			await foreach (var token in tokens)
 				if (token != default)
@@ -64,8 +65,9 @@ namespace InkyCal.Utils.Calendar
 		/// </summary>
 		/// <param name="tokens"></param>
 		/// <param name="saveToken"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens([NotNull] IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, Task> saveToken)
+		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens([NotNull] IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation]CancellationToken cancellationToken)
 		{
 			Validate(tokens, saveToken);
 
@@ -77,7 +79,7 @@ namespace InkyCal.Utils.Calendar
 					(string AccessToken, DateTimeOffset? AccessTokenExpiry) refreshed;
 
 					using (MiniProfiler.Current.Step($"Refreshing access token"))
-						refreshed = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
+						refreshed = await GoogleOAuth.RefreshAccessToken(token.RefreshToken, cancellationToken);
 
 					if (refreshed == default)
 					{
@@ -89,7 +91,7 @@ namespace InkyCal.Utils.Calendar
 					token.AccessTokenExpiry = refreshed.AccessTokenExpiry.GetValueOrDefault(DateTime.UtcNow);
 
 					using (MiniProfiler.Current.Step($"Saving updated access token"))
-						await saveToken(token);
+						await saveToken(token, cancellationToken);
 				}
 				var result = (token.Id, token.AccessToken);
 
@@ -97,7 +99,7 @@ namespace InkyCal.Utils.Calendar
 			}
 		}
 
-		private static void Validate([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
+		private static void Validate([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, CancellationToken, Task> saveToken)
 		{
 			ArgumentNullException.ThrowIfNull(tokens);
 			ArgumentNullException.ThrowIfNull(saveToken);
@@ -107,13 +109,14 @@ namespace InkyCal.Utils.Calendar
 		/// Converts refresh tokens into usable access tokens
 		/// </summary>
 		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<(int Id, string AccessToken, bool Refreshed)> GetAccessToken(this GoogleOAuthAccess token)
+		public static async Task<(int Id, string AccessToken, bool Refreshed)> GetAccessToken(this GoogleOAuthAccess token, CancellationToken cancellationToken)
 		{
 			var refreshed = false;
 			if (token.AccessTokenExpiry <= DateTime.UtcNow.AddSeconds(-100))
 			{
-				var refreshedToken = await GoogleOAuth.RefreshAccessToken(token.RefreshToken);
+				var refreshedToken = await GoogleOAuth.RefreshAccessToken(token.RefreshToken, cancellationToken);
 
 				if (refreshedToken == default)
 					return default;
@@ -141,14 +144,14 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull]IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, Task> saveToken)
+		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation]CancellationToken cancellationToken)
 		{
 			if (!Server.Config.GoogleOAuth.Enabled)
 				yield break;
 
 			Validate(tokens, saveToken);
 
-			await foreach (var token in GetAccessTokens(tokens, saveToken))
+			await foreach (var token in GetAccessTokens(tokens, saveToken, cancellationToken))
 				if (token != default)
 				{
 					var profile = await GoogleOAuth.GetProfile(token.AccessToken);
@@ -235,11 +238,10 @@ namespace InkyCal.Utils.Calendar
 
 					itemRequest.SingleEvents = true;
 
-
 					// List events.
 					Events events;
 					using (MiniProfiler.Current.Step($"Gathering events"))
-						events = await itemRequest.ExecuteAsync();
+						events = await itemRequest.ExecuteAsync(cancellationToken);
 
 					foreach (var item in events.Items
 						.Where(x => x.Status != "cancelled"
@@ -248,8 +250,10 @@ namespace InkyCal.Utils.Calendar
 						)
 						.Take(50))
 					{
-						if (item.Recurrence == null)
+						if (cancellationToken.IsCancellationRequested)
+							break;
 
+						if (item.Recurrence == null)
 							ConvertEvent(result, item, calendar);
 
 						else
@@ -262,7 +266,7 @@ namespace InkyCal.Utils.Calendar
 
 							Events instances;
 							using (MiniProfiler.Current.Step($"Gathering instances of recurring event '{item.Summary}'"))
-								instances = await instancesRequest.ExecuteAsync();
+								instances = await instancesRequest.ExecuteAsync(cancellationToken);
 
 							foreach (var instance in instances.Items
 										.Where(x => x.Status != "cancelled"
@@ -296,7 +300,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			else if (!DateTime.TryParseExact(item.Start.Date, "yyyy-MM-dd",
 					   CultureInfo.InvariantCulture,
-					   DateTimeStyles.None, 
+					   DateTimeStyles.None,
 					   out date))
 				return;
 

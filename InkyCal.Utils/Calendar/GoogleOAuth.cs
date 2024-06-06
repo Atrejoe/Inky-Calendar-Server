@@ -33,14 +33,15 @@ namespace InkyCal.Utils.Calendar
 		/// Refreshes an access tokjen
 		/// </summary>
 		/// <param name="refreshToken"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<(string AccessToken, DateTimeOffset? AccessTokenExpiry)> RefreshAccessToken(string refreshToken)
+		public static async Task<(string AccessToken, DateTimeOffset? AccessTokenExpiry)> RefreshAccessToken(string refreshToken, CancellationToken cancellationToken)
 		{
 			var flow = GoogleAuthorizationCodeFlow.Value;
 
 			try
 			{
-				var tokenResponse = await flow.RefreshTokenAsync("", refreshToken, CancellationToken.None);
+				var tokenResponse = await flow.RefreshTokenAsync("", refreshToken, cancellationToken);
 
 				return (
 					tokenResponse.AccessToken,
@@ -59,14 +60,15 @@ namespace InkyCal.Utils.Calendar
 		/// Disconnects a users' access token.
 		/// </summary>
 		/// <param name="refreshToken"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<bool> RevokeAccessToken(string refreshToken)
+		public static async Task<bool> RevokeAccessToken(string refreshToken, CancellationToken cancellationToken)
 		{
 			var flow = GoogleAuthorizationCodeFlow.Value;
 
 			try
 			{
-				await flow.RevokeTokenAsync("", refreshToken, CancellationToken.None);
+				await flow.RevokeTokenAsync("", refreshToken, cancellationToken);
 
 				return true;
 			}
@@ -111,9 +113,9 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async Task<(Userinfo, bool Refreshed)> GetProfile(this GoogleOAuthAccess token)
+		public static async Task<(Userinfo, bool Refreshed)> GetProfile(this GoogleOAuthAccess token, CancellationToken cancellationToken)
 		{
-			var accessToken = await token.GetAccessToken();
+			var accessToken = await token.GetAccessToken(cancellationToken);
 			return (accessToken == default)
 					? default
 					: (await GetProfile(accessToken.AccessToken), accessToken.Refreshed);

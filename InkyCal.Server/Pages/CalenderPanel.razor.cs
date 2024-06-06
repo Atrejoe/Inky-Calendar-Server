@@ -75,7 +75,7 @@ namespace InkyCal.Server.Pages
 
 			var tokens = await new GoogleOAuthRepository().GetTokens(user.Id);
 
-			AvailableCalendars = (await GoogleCalenderExtensions.ListGoogleCalendars(tokens, new GoogleOAuthRepository().UpdateAccessToken).ToListAsync())
+			AvailableCalendars = (await GoogleCalenderExtensions.ListGoogleCalendars(tokens, new GoogleOAuthRepository().UpdateAccessToken, base.cancellationTokenSource.Token).ToListAsync())
 									.GroupBy(x => (x.IdToken, x.profile))
 									.ToDictionary(
 										x => x.Key, x => x.Select(y => y.Calender).ToList());

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils;
@@ -25,14 +26,15 @@ namespace InkyCal.Server.Controllers
 		/// <param name="controller"></param>
 		/// <param name="image"></param>
 		/// <param name="colors"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static ActionResult Image(this ControllerBase controller, Image image, ReadOnlyMemory<Color> colors)
+		public static async Task<ActionResult> Image(this ControllerBase controller, Image image, ReadOnlyMemory<Color> colors, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(controller);
 			ArgumentNullException.ThrowIfNull(image);
 
 			using var stream = new MemoryStream();
-			image.SaveAsGif(stream, new (){ Quantizer = new PaletteQuantizer(colors) });
+			await image.SaveAsGifAsync(stream, new (){ Quantizer = new PaletteQuantizer(colors) }, cancellationToken);
 
 			return controller.File(
 				fileContents: stream.ToArray(),
@@ -45,12 +47,18 @@ namespace InkyCal.Server.Controllers
 		/// <param name="controller"></param>
 		/// <param name="renderer"></param>
 		/// <param name="model"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="requestedWidth"></param>
 		/// <param name="requestedHeight"></param>
 		/// <param name="rotateMode"></param>
 		/// <returns></returns>
-		public static async Task<ActionResult> Image(this ControllerBase controller, IPanelRenderer renderer, DisplayModel model, int? requestedWidth = null, int? requestedHeight = null,
-			RotateMode rotateMode = RotateMode.None)
+		public static async Task<ActionResult> Image(this ControllerBase controller,
+											   IPanelRenderer renderer,
+											   DisplayModel model,
+											   CancellationToken cancellationToken,
+											   int? requestedWidth = null,
+											   int? requestedHeight = null,
+											   RotateMode rotateMode = RotateMode.None)
 		{
 			model.GetSpecs(out var defaultWidth, out var defaultHeight, out var colors);
 
@@ -83,7 +91,7 @@ namespace InkyCal.Server.Controllers
 			//NB: Web-based requests will specify portrait oriented dimensions.
 			//    GetSpecs get landscape-oriented dimensions
 			//    Therefore flip-em!
-			return await controller.Image(renderer, width, height, colors, flip);
+			return await controller.Image(renderer, width, height, colors, flip, cancellationToken);
 		}
 
 
@@ -96,6 +104,7 @@ namespace InkyCal.Server.Controllers
 		/// <param name="height"></param>
 		/// <param name="colors"></param>
 		/// <param name="flip"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
 		public static async Task<ActionResult> Image(
@@ -104,7 +113,8 @@ namespace InkyCal.Server.Controllers
 			int width,
 			int height,
 			Color[] colors,
-			bool flip)
+			bool flip,
+			CancellationToken cancellationToken)
 		{
 			if (panelRenderer is null)
 				throw new ArgumentNullException(nameof(panelRenderer));
@@ -117,7 +127,7 @@ namespace InkyCal.Server.Controllers
 				{
 					using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(bytes);
 					image.Mutate(x => x.Rotate(RotateMode.Rotate180));
-					return controller.Image(image, colors);
+					return await controller.Image(image, colors, cancellationToken);
 				}
 				else
 					return controller.Gif(bytes);
@@ -157,7 +167,7 @@ namespace InkyCal.Server.Controllers
 							text: ex.StackTrace,
 							color: primaryColor);
 					});
-				return controller.Image(image, colors);
+				return await controller.Image(image, colors, cancellationToken);
 			}
 		}
 

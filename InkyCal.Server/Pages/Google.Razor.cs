@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google;
 using Google.Apis.Oauth2.v2.Data;
@@ -81,10 +82,10 @@ namespace InkyCal.Server.Pages
 							(Userinfo User, bool Refreshed) p = default;
 							try
 							{
-								p = await GoogleOAuth.GetProfile(x);
+								p = await GoogleOAuth.GetProfile(x, base.cancellationTokenSource.Token);
 
 								if (p.Refreshed)
-									await new GoogleOAuthRepository().UpdateAccessToken(x);
+									await new GoogleOAuthRepository().UpdateAccessToken(x, base.cancellationTokenSource.Token);
 							}
 							catch (GoogleApiException ex)
 							{
@@ -97,13 +98,13 @@ namespace InkyCal.Server.Pages
 			Tokens = nizzle.ToList();
 		}
 
-		private async Task DeleteToken(int idToken)
+		private async Task DeleteToken(int idToken, CancellationToken cancellationToken)
 		{
 			Console.WriteLine($"Removing token {idToken}");
 
 			//Urls are case-sensitive
 			var token = (Tokens.SingleOrDefault(x => x.Token.Id == idToken));
-			await GoogleOAuth.RevokeAccessToken(token.Token?.RefreshToken);
+			await GoogleOAuth.RevokeAccessToken(token.Token?.RefreshToken, cancellationToken);
 
 			await new GoogleOAuthRepository().DeleteToken(idToken);
 			Tokens.Remove(token);
