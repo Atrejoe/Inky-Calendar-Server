@@ -25,6 +25,7 @@ spec:
           env:
             - valueFrom:
                 secretKeyRef:
+                  name: secrets
                   key: cloudflare_tunnel_token
               name: TUNNEL_TOKEN
           volumeMounts: []

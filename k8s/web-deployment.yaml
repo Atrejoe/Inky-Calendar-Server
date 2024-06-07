@@ -33,17 +33,17 @@ spec:
               value: SECRET
             - name: ConnectionStrings__DefaultConnection
               value: SECRET
-            - name: GoogleOAuth:ClientId
+            - name: GoogleOAuth__ClientId
               value: SECRET
-            - name: GoogleOAuth:ClientSecret
+            - name: GoogleOAuth__ClientSecret
               value: SECRET
-            - name: GoogleOAuth:Enabled
+            - name: GoogleOAuth__Enabled
               value: "true"
-            - name: GoogleOAuth:InkyCalRoot
+            - name: GoogleOAuth__InkyCalRoot
               value: /
-            - name: GoogleOAuth:ProjectId
+            - name: GoogleOAuth__ProjectId
               value: inkycalendarserver
-            - name: GoogleOAuth:Website
+            - name: GoogleOAuth__Website
               value: https://inkycal.robertsirre.nl
             - name: OpenAIAPIKey
               value: SECRET
@@ -69,8 +69,8 @@ spec:
             name: web-google-site-validation
           - mountPath: /playground
             name: web-playground
-          - mountPath: /home/nonroot/.aspnet/DataProtection-Keys
-            name: web-dataprotection-keys
+          # - mountPath: /home/nonroot/.aspnet/DataProtection-Keys
+          #   name: web-dataprotection-keys
           image: atreyu/inkycal.server:latest
           name: web
           resources:

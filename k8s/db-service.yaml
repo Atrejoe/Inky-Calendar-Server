@@ -8,7 +8,7 @@ metadata:
   name: db
 spec:
   ports:
-    - name: "Connection port"
+    - name: connection-port
       port: 1433
       targetPort: 1433
   selector:
