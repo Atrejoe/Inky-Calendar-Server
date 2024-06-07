@@ -38,9 +38,9 @@
       },
       "MSTest.TestAdapter": {
         "type": "Direct",
-        "requested": "[3.4.1, )",
-        "resolved": "3.4.1",
-        "contentHash": "9Pd3Sa5lktcLHQVuvFoUvjPiicfuuxJUL5q62jyHLNNAy1MmsiJNF1k2IaY9LVkh1Fg+N3Lf4QjOwz8luuU1gQ==",
+        "requested": "[3.4.3, )",
+        "resolved": "3.4.3",
+        "contentHash": "5ul31wYr17590gDumPxWMiBLPREfPF/ggtdPGfaKoYSsO0EW6H1GWY+7xnVCKa2SB4I/dSEZLDYSwRLDjA0LEQ==",
         "dependencies": {
           "Microsoft.Testing.Extensions.VSTestBridge": "1.2.1",
           "Microsoft.Testing.Platform.MSBuild": "1.2.1"
