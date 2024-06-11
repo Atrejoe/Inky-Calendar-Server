@@ -735,8 +735,8 @@
       },
       "Magick.NET.Core": {
         "type": "Transitive",
-        "resolved": "13.9.0",
-        "contentHash": "7NF8Ntd/68WQucvU46vCrbBdZDOkEWjCtCiqKj3bijrj/oaKeKxILgD7iTsaUVQm8E3EgotyQw9b12xuvA6fWA=="
+        "resolved": "13.9.1",
+        "contentHash": "zZUl649l0AtS8VqR2NAe4Jmxd8ibY3QyYpe1RSNW33qPdmpI5RWkyUrheJ2HgMviNbUBG5IbhU3m/Oj+yPfimA=="
       },
       "Microsoft.AspNetCore.Cryptography.Internal": {
         "type": "Transitive",
@@ -2677,7 +2677,7 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[13.9.0, )",
-          "Magick.NET.Core": "[13.9.0, )",
+          "Magick.NET.Core": "[13.9.1, )",
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "OpenAI-DotNet": "[7.7.8, )",
