@@ -482,7 +482,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 				//		size: ImageSize._1024,
 				//		responseFormat: ImageResponseFormat.B64_json));
 
-				var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: OpenAI.Images.ResponseFormat.Url);
+				var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: ImageResponseFormat.Url);
 
 				using (MiniProfiler.Current.Step($"Waiting for image generation slot"))
 					await WaitForImageGenerationSlot();
@@ -507,7 +507,6 @@ The image should be in a style of 19th century litograph or metal plate print as
 					using var s = await client.GetStreamAsync(url, token);
 					await s.CopyToAsync(ms, token);
 				}
-
 
 				//var i = Image.Load(ms);
 				//Console.WriteLine(i.Metadata.ToString());
