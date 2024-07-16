@@ -124,8 +124,12 @@ namespace InkyCal.Utils.Calendar
 			}
 
 
-			if (!items.Any())
+#pragma warning disable S2583 // Conditionally executed code should be reachable
+			// Below condition should mostly be true, but it is possible that all calendars are empty
+			// I do not yet have looked into the SonarQube rule to see if it is applicable here
+			if (items.Count == 0)
 				sbErrors.AppendLine($"No events in {urls.Length:n0} calendars");
+#pragma warning restore S2583 // Conditionally executed code should be reachable
 
 			return items.Distinct().ToList();
 		}
