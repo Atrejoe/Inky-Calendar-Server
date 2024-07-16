@@ -527,8 +527,8 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "4.8.1",
-        "contentHash": "jtdbOvRkRQhe8mUBsHo5SBGVLE6aiNLwG4KTshG5exRWV0g1Sr0EpfKy7NJPiDB9vPwIDaBxQx/ceCjKYV8PNQ=="
+        "resolved": "4.9.0",
+        "contentHash": "dvafAJjs1nyv/sXPjHjMiIq/XN1jjRCvTvn6BDdkeavjZXi0eX6JMpAKwGU5C8IlHY6Xhh13nk2u5e8AHQwwrw=="
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
@@ -1357,7 +1357,7 @@
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
           "OpenAI-DotNet": "[8.1.1, )",
-          "Sentry": "[4.8.1, )",
+          "Sentry": "[4.9.0, )",
           "SixLabors.ImageSharp": "[3.1.4, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.3, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
