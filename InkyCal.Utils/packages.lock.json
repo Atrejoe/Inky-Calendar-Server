@@ -112,18 +112,18 @@
       },
       "SixLabors.ImageSharp": {
         "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "lFIdxgGDA5iYkUMRFOze7BGLcdpoLFbR+a20kc1W7NepvzU7ejtxtWOg9RvgG7kb9tBoJ3ONYOK6kLil/dgF1w=="
+        "requested": "[3.1.5, )",
+        "resolved": "3.1.5",
+        "contentHash": "lNtlq7dSI/QEbYey+A0xn48z5w4XHSffF8222cC4F4YwTXfEImuiBavQcWjr49LThT/pRmtWJRcqA/PlL+eJ6g=="
       },
       "SixLabors.ImageSharp.Drawing": {
         "type": "Direct",
-        "requested": "[2.1.3, )",
-        "resolved": "2.1.3",
-        "contentHash": "Bo8MeLEhKlZTSV29lh1iZmKVnLFvp+lNPVIo6X1Nu/G3xVwYuhPBjTuxUNhO6bxsVR9tLDuWZULxHSJAXu6LFw==",
+        "requested": "[2.1.4, )",
+        "resolved": "2.1.4",
+        "contentHash": "p4VwtAABggDUhUS5zXldCZHVGfjJl76+SrBHY4biNQ8+890igFK6RL87qIv9GqvEjMcYOar1sPkf2iMQ6uq9/g==",
         "dependencies": {
-          "SixLabors.Fonts": "2.0.3",
-          "SixLabors.ImageSharp": "3.1.4"
+          "SixLabors.Fonts": "2.0.4",
+          "SixLabors.ImageSharp": "3.1.5"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -429,8 +429,8 @@
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
-        "resolved": "2.0.3",
-        "contentHash": "IY+i5JsUoFTyLvNOlLFUak4nJajSZdfxYqCbDCSYeGDGwHNBtJo0ICduAFGaYaqdL41+YHn7LMrp1AwIU/29Ag=="
+        "resolved": "2.0.4",
+        "contentHash": "4+NKz8W36injp98lmmM07ncp08HAK8c6FZz8vLoKxRPfJeEVWpBHlLYEbQa5rcqKKYqxUv/RVCrb8XcPhfMKUQ=="
       },
       "System.Buffers": {
         "type": "Transitive",
