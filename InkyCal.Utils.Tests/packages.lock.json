@@ -532,8 +532,8 @@
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
-        "resolved": "2.0.3",
-        "contentHash": "IY+i5JsUoFTyLvNOlLFUak4nJajSZdfxYqCbDCSYeGDGwHNBtJo0ICduAFGaYaqdL41+YHn7LMrp1AwIU/29Ag=="
+        "resolved": "2.0.4",
+        "contentHash": "4+NKz8W36injp98lmmM07ncp08HAK8c6FZz8vLoKxRPfJeEVWpBHlLYEbQa5rcqKKYqxUv/RVCrb8XcPhfMKUQ=="
       },
       "SixLabors.ImageSharp": {
         "type": "Transitive",
@@ -542,11 +542,11 @@
       },
       "SixLabors.ImageSharp.Drawing": {
         "type": "Transitive",
-        "resolved": "2.1.3",
-        "contentHash": "Bo8MeLEhKlZTSV29lh1iZmKVnLFvp+lNPVIo6X1Nu/G3xVwYuhPBjTuxUNhO6bxsVR9tLDuWZULxHSJAXu6LFw==",
+        "resolved": "2.1.4",
+        "contentHash": "p4VwtAABggDUhUS5zXldCZHVGfjJl76+SrBHY4biNQ8+890igFK6RL87qIv9GqvEjMcYOar1sPkf2iMQ6uq9/g==",
         "dependencies": {
-          "SixLabors.Fonts": "2.0.3",
-          "SixLabors.ImageSharp": "3.1.4"
+          "SixLabors.Fonts": "2.0.4",
+          "SixLabors.ImageSharp": "3.1.5"
         }
       },
       "System.CodeDom": {
@@ -1359,7 +1359,7 @@
           "OpenAI-DotNet": "[8.1.1, )",
           "Sentry": "[4.9.0, )",
           "SixLabors.ImageSharp": "[3.1.5, )",
-          "SixLabors.ImageSharp.Drawing": "[2.1.3, )",
+          "SixLabors.ImageSharp.Drawing": "[2.1.4, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Threading.RateLimiting": "[8.0.0, )"
         }
