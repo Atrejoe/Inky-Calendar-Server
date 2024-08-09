@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.RateLimiting;
@@ -467,8 +468,15 @@ The image should be in a style of 19th century litograph or metal plate print as
 				var chatRequest = new ChatRequest(messages);
 
 				ChatResponse response;
-				using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
-					response = await api.ChatEndpoint.GetCompletionAsync(chatRequest, token);
+				try
+				{
+					using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
+						response = await api.ChatEndpoint.GetCompletionAsync(chatRequest, token);
+				} catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+				{
+					Trace.TraceError("Too many requests to OpenAI");
+					throw;
+				}
 
 				var imagePrompt = response.FirstChoice.Message;
 
