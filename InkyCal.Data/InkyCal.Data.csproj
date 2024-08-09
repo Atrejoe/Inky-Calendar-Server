@@ -32,7 +32,7 @@
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
 	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.30.0.95878">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.31.0.96804">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
