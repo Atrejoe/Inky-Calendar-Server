@@ -424,8 +424,8 @@
       },
       "OpenAI-DotNet": {
         "type": "Transitive",
-        "resolved": "8.1.1",
-        "contentHash": "FHYIsWbiN7LxuasABsXGF+BNaw5d6hrKghHHoN0f5qdQ+pwaXkS3dezX305itt8WtDV4ceFrgtTSlGFMeNqO9A=="
+        "resolved": "8.1.2",
+        "contentHash": "FjYw16Fe3JprTctws+hBL/JXV9ILhCdnBWq6FSUAsHO5NZ86u/dECHyFy1Z9LPdD+GXZpG9xoPEZhCkTjzOeGg=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
@@ -1356,7 +1356,7 @@
           "Magick.NET.Core": "[13.10.0, )",
           "Microsoft.Extensions.Caching.Memory": "[8.0.0, )",
           "MiniProfiler.Shared": "[4.3.8, )",
-          "OpenAI-DotNet": "[8.1.1, )",
+          "OpenAI-DotNet": "[8.1.2, )",
           "Sentry": "[4.9.0, )",
           "SixLabors.ImageSharp": "[3.1.5, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.4, )",
