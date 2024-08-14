@@ -7,6 +7,7 @@ namespace InkyCal.Models.Validation
 	/// Validates that the value is a defined enum value.
 	/// </summary>
 	/// <seealso cref="ValidationAttribute" />
+	[AttributeUsage(AttributeTargets.Property)]
 	public class DefinedEnumAttribute : ValidationAttribute {
 
 		/// <summary>

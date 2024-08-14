@@ -8,6 +8,7 @@ namespace InkyCal.Models.Validation
 	/// Validates a url, also validated if the ulr adheres to <see cref="UriKind"/>
 	/// </summary>
 	/// <seealso cref="ValidationAttribute" />
+	[AttributeUsage(AttributeTargets.Property)]
 	public class UrlAttribute : ValidationAttribute
 	{
 		/// <summary>

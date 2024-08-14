@@ -11,3 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Preparing for injectable repository pattern.", Scope = "type", Target = "~T:InkyCal.Data.GoogleOAuthRepository")]
 [assembly: SuppressMessage("Compiler", "CS1591:Missing XML comment for publicly visible type or member", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
 [assembly: SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Not a true performance issue here", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
+
+[assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.GetTokens(System.Int32)~System.Threading.Tasks.Task{InkyCal.Models.GoogleOAuthAccess[]}")]
+[assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.UpdateAccessToken(InkyCal.Models.GoogleOAuthAccess,System.Threading.CancellationToken)~System.Threading.Tasks.Task")]

@@ -38,7 +38,7 @@ namespace InkyCal.Utils.NewPaperRenderer.FreedomForum
 		/// <returns></returns>
 		public async Task<byte[]> DownloadAsPDF(NewsPaper newsPaper, DateTime? date = null, CancellationToken token = default)
 		{
-			var response = await _client.GetAsync(newsPaper.PDFUrl(date.GetValueOrDefault(DateTime.UtcNow)));
+			var response = await _client.GetAsync(newsPaper.PDFUrl(date.GetValueOrDefault(DateTime.UtcNow)), token);
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsByteArrayAsync(token);
 		}
