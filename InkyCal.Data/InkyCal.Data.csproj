@@ -26,12 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.31.0.96804">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
