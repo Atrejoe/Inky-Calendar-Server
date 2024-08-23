@@ -1049,8 +1049,8 @@
       },
       "System.Text.Json": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "OdrZO2WjkiEG6ajEFRABTRCi/wuXQPxeV6g8xvUJqdxMvvuCCEk86zPla8UiIQJz3durtUEbNyY/3lIhS0yZvQ==",
+        "resolved": "8.0.4",
+        "contentHash": "bAkhgDJ88XTsqczoxEMliSrpijKZHhbJQldhAmObj/RbrN3sU5dcokuXmWJWsdQAhiMJ9bTayWsL1C9fbbCRhw==",
         "dependencies": {
           "System.Text.Encodings.Web": "8.0.0"
         }
@@ -1162,7 +1162,8 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "[8.0.8, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.8, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[8.0.8, )",
+          "System.Text.Json": "[8.0.4, )"
         }
       },
       "inkycal.models": {
