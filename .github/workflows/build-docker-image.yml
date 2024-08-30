@@ -24,6 +24,9 @@ jobs:
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.IMAGE_NAME }}
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
 
     - name: Build Docker image
       # You may pin to the exact commit or the version.
@@ -32,7 +35,9 @@ jobs:
         # context: .
         sbom: true
         push: false
+        platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8
         tags: atreyu/inkycal.server:latest
+        provenance: true
 
     - name: Container Scan
       id: scan
