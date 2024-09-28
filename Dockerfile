@@ -1,5 +1,5 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 
 RUN apk -v update      && \
 	apk -v upgrade
@@ -14,7 +14,7 @@ RUN adduser -D $USER \
         && chmod 0440 /etc/sudoers.d/$USER
 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["InkyCal.Models/."       , "InkyCal.Models/."       ]
 COPY ["InkyCal.Server/."       , "InkyCal.Server/."       ]
