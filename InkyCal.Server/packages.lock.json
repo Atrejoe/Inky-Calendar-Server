@@ -165,12 +165,12 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[4.10.2, )",
-        "resolved": "4.10.2",
-        "contentHash": "5q3xMURp9jCu8jRhnlfgchvpoz4WfPLDkabJ7tubO5Y0R/N2OmYejusyefHTYyCjE4Qa0ScjEktcWVDTLwDTIA==",
+        "requested": "[4.11.0, )",
+        "resolved": "4.11.0",
+        "contentHash": "8wp3BqXYb7AXVM2Km8ANk4l1SDVJaz3f68Bu/ZOX7tv0HX+HkeRQr+HJOjLl1ERfn72iCggXco1vfiMq4/PJEA==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
-          "Sentry.Extensions.Logging": "4.10.2"
+          "Sentry.Extensions.Logging": "4.11.0"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1588,13 +1588,13 @@
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "4.10.2",
-        "contentHash": "1F86+Ly1+9I7WSCdwAWg14GCuBwYgCGOf4x2BiDMxEsYw7FCAmCjfjA+AVEEim4efVtdMuldvH7Ux1K9tRvH8w==",
+        "resolved": "4.11.0",
+        "contentHash": "bM9SoSAwfIHqTxnbE6iuX5iO4Xj/KXcaEoc33r8D8ZmXUI5UaO1dnz6XsQDOO7bgPnIZ7R4+LQmNO4C8C2YjiA==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
           "Microsoft.Extensions.Http": "8.0.0",
           "Microsoft.Extensions.Logging.Configuration": "8.0.0",
-          "Sentry": "4.10.2"
+          "Sentry": "4.11.0"
         }
       },
       "SixLabors.Fonts": {
