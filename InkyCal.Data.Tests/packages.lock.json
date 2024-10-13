@@ -110,9 +110,9 @@
       },
       "XunitXml.TestLogger": {
         "type": "Direct",
-        "requested": "[4.0.254, )",
-        "resolved": "4.0.254",
-        "contentHash": "gjtk7W+HDZqnN2okDzAgTXIVlikpfstyCMRTLHC0pBJ1GcestMjQwUpQNfrqSbHzfkUL502aPSj/IPrfPvAGWg=="
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "cXnWPsaHkDh9Nw2SDqtVSD6NUIvV6pqoDvjaQte+jS57zdq0il4Ahgu2NF13VHT1jUPS09facofXIolVY9ZfxA=="
       },
       "Azure.Core": {
         "type": "Transitive",
