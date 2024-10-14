@@ -38,11 +38,13 @@
       },
       "Ical.Net": {
         "type": "Direct",
-        "requested": "[4.2.0, )",
-        "resolved": "4.2.0",
-        "contentHash": "Dz6cp/EuESEUKtAeP0lHs8vGFKz9fOpiY3gFZSVb2lTpnmI14NtBgcBsUxuFwtIlucJ8Q0hyi+7Ri5bqoWyr8w==",
+        "requested": "[4.3.0, )",
+        "resolved": "4.3.0",
+        "contentHash": "Zw5HL3wWT8d/uSJ/aIKO8HgHsGurKosOxkLsWnpsIU+gcq2oYoT47iHDT7QIdk9acVxfCtWt7l3AiQ4GMwHFEw==",
         "dependencies": {
-          "NodaTime": "3.0.0"
+          "NodaTime": "3.1.10",
+          "System.Reflection.TypeExtensions": "4.1.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0"
         }
       },
       "Magick.NET-Q16-AnyCPU": {
@@ -362,8 +364,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "ZauY6Ihs+abkPCpgIafCj92sl+cDqFbvwrJj9Ga0dteWIYg+A5FeoteBzgzez/cyBeukl2kbDTt4qtpTbHvqOw==",
+        "resolved": "3.1.10",
+        "contentHash": "56V8ELg9Az1S0Nij44xILAtfUQs3WTLIwbTQTuWZxL8EagsfUkkPAoWxv/HyZccmfaUEqFHfHiAuqfj/NfbfrA==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "4.7.1"
         }
