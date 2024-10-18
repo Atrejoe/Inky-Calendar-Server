@@ -40,6 +40,10 @@ namespace InkyCal.Server
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public static void ConfigureServices(IServiceCollection services)
 		{
+
+			Console.WriteLine($@"Process archiytecturre: ${System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture}");
+			Console.WriteLine($@"IntPtr.Size: ${IntPtr.Size}");
+
 			services.AddControllers();
 			services.AddHealthChecks()
 				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
