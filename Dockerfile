@@ -46,6 +46,9 @@ RUN apk -v add tzdata
 # https://github.com/dotnet/SqlClient/issues/220#issue-498595465
 RUN apk -v add icu-libs
 
+# Upgrade dependencies
+RUN apk upgrade --no-cache
+
 # Remove cache from image, making it smaller
 RUN apk cache clean
 
