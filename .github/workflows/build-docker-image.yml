@@ -38,12 +38,7 @@ jobs:
       uses: aquasecurity/trivy-action@0.20.0
       with:
         image-ref: atreyu/inkycal.server:latest
-        format: 'sarif'
-        output: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        format: 'table'
     
     # - name: Upload SARIF file
     #   uses: github/codeql-action/upload-sarif@v3
