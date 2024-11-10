@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using Xunit;
@@ -14,15 +13,10 @@ using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
-	public abstract class IPanelTests<T> where T : IPanelRenderer
+	public abstract class IPanelTests<T>(ITestOutputHelper output) where T : IPanelRenderer
 	{
 
-		protected readonly ITestOutputHelper output;
-
-		protected IPanelTests(ITestOutputHelper output)
-		{
-			this.output = output;
-		}
+		protected readonly ITestOutputHelper output = output;
 
 		protected abstract T GetRenderer();
 
@@ -36,7 +30,7 @@ namespace InkyCal.Utils.Tests
 
 		[SkippableTheory]
 		[MemberData(nameof(DisplayModels))]
-		public async virtual Task GetImageTest(DisplayModel displayModel)
+		public virtual async Task GetImageTest(DisplayModel displayModel)
 		{
 			//arrange
 			var panel = GetRenderer();
