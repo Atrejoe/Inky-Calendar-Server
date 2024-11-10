@@ -33,13 +33,13 @@ jobs:
     - name: Sets env vars for release
       run: |
           echo "DOCKER_IMAGE_NAME=latest >> $GITHUB_ENV
-      if: ${{ steps.extract_branch.branch == 'develop' }}
+      if: ${{ steps.extract_branch.outputs.branch == 'develop' }}
 
     # This step is run when the tag is staging-XXX
     - name: Sets env vars for staging
       run: |
-          echo "DOCKER_IMAGE_NAME=${{ steps.extract_branch.branch }}" >> $GITHUB_ENV
-      if: ${{ steps.extract_branch.branch != 'develop' }}
+          echo "DOCKER_IMAGE_NAME=${{ steps.extract_branch.outputs.branch }}" >> $GITHUB_ENV
+      if: ${{ steps.extract_branch.outputs.branch != 'develop' }}
 
     - name: Build Docker image
       # You may pin to the exact commit or the version.
