@@ -25,6 +25,22 @@ jobs:
       with:
         images: ${{ env.IMAGE_NAME }}
 
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
+
+    - name: Sets env vars for release
+      run: |
+          echo "DOCKER_IMAGE_NAME=latest >> $GITHUB_ENV
+      if: ${{ steps.extract_branch.branch == 'develop' }}
+
+    # This step is run when the tag is staging-XXX
+    - name: Sets env vars for staging
+      run: |
+          echo "DOCKER_IMAGE_NAME=${{ steps.extract_branch.branch }}" >> $GITHUB_ENV
+      if: ${{ steps.extract_branch.branch != 'develop' }}
+
     - name: Build Docker image
       # You may pin to the exact commit or the version.
       uses: docker/build-push-action@v6
@@ -32,12 +48,12 @@ jobs:
         # context: .
         sbom: true
         push: false
-        tags: inkycal.server:local
+        tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
 
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@0.20.0
       with:
-        image-ref: inkycal.server:local
+        image-ref: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
         format: 'table'
     
     # - name: Upload SARIF file
