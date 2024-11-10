@@ -1,5 +1,5 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine AS base
 
 RUN apk -v update      && \
 	apk -v upgrade
@@ -45,7 +45,7 @@ COPY ["InkyCal.Data/."         , "InkyCal.Data/."         ]
 RUN dotnet restore "InkyCal.Server/InkyCal.Server.csproj"
 COPY . .
 WORKDIR "/src/InkyCal.Server"
-RUN dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish --no-self-contained -r linux-musl-x64
+RUN dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish --self-contained true -r linux-musl-x64
 
 FROM base AS final
 COPY --from=build /app/publish .
