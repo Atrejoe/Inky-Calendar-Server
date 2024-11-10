@@ -32,12 +32,12 @@ jobs:
         # context: .
         sbom: true
         push: false
-        tags: atreyu/inkycal.server:latest
+        tags: inkycal.server:local
 
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@0.20.0
       with:
-        image-ref: atreyu/inkycal.server:latest
+        image-ref: inkycal.server:local
         format: 'table'
     
     # - name: Upload SARIF file
