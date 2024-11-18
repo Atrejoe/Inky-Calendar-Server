@@ -30,7 +30,7 @@
 	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.10" />
 	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>

@@ -33,7 +33,7 @@
 	<PackageReference Include="Ical.Net" Version="4.3.1" />
 	<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.0.0" />
 	<PackageReference Include="Magick.NET.Core" Version="14.0.0" />
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
