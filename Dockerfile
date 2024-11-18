@@ -14,7 +14,7 @@ RUN adduser -D $USER \
         && chmod 0440 /etc/sudoers.d/$USER
 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["InkyCal.Models/."       , "InkyCal.Models/."       ]
 COPY ["InkyCal.Server/."       , "InkyCal.Server/."       ]
