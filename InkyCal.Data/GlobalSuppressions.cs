@@ -1,18 +1,12 @@
-﻿// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+﻿[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "I don't know what to do yet", Scope = "module")]
 
-using System.Diagnostics.CodeAnalysis;
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Migrations pass in builders.", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Preparing for injectable repository pattern.", Scope = "type", Target = "~T:InkyCal.Data.GoogleOAuthRepository")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS1591:Missing XML comment for publicly visible type or member", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Not a true performance issue here", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
 
-[assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "I don't know what to do yet", Scope = "module")]
-
-[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Migrations pass in builders.", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
-[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Preparing for injectable repository pattern.", Scope = "type", Target = "~T:InkyCal.Data.GoogleOAuthRepository")]
-[assembly: SuppressMessage("Compiler", "CS1591:Missing XML comment for publicly visible type or member", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
-[assembly: SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Not a true performance issue here", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data.Migrations")]
-
-[assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.GetTokens(System.Int32)~System.Threading.Tasks.Task{InkyCal.Models.GoogleOAuthAccess[]}")]
-[assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.UpdateAccessToken(InkyCal.Models.GoogleOAuthAccess,System.Threading.CancellationToken)~System.Threading.Tasks.Task")]
-[assembly: SuppressMessage("Style", "IDE0011:Add braces", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
-[assembly: SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Code analysis does not detect ThrowIfNull", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.GetTokens(System.Int32)~System.Threading.Tasks.Task{InkyCal.Models.GoogleOAuthAccess[]}")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.UpdateAccessToken(InkyCal.Models.GoogleOAuthAccess,System.Threading.CancellationToken)~System.Threading.Tasks.Task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0011:Add braces", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Code analysis does not detect ThrowIfNull", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0055:Fix formatting", Justification = "Formatting issues not found locally", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
