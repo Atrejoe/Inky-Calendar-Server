@@ -2675,6 +2675,7 @@
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "[9.0.0, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[9.0.0, )",
           "System.Formats.Asn1": "[9.0.0, )",
+          "System.Private.Uri": "[4.3.2, )",
           "System.Text.Json": "[9.0.0, )"
         }
       },
@@ -2709,6 +2710,7 @@
           "SixLabors.ImageSharp": "[3.1.5, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.4, )",
           "System.Net.Http": "[4.3.4, )",
+          "System.Private.Uri": "[4.3.2, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Text.Json": "[9.0.0, )",
           "System.Text.RegularExpressions": "[4.3.1, )",
