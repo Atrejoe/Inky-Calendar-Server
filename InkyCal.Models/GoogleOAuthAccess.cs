@@ -81,7 +81,7 @@ namespace InkyCal.Models
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) 
+		public override bool Equals(object obj)
 			=> Equals(obj as SubscribedGoogleCalender);
 
 		/// <summary>
@@ -89,7 +89,7 @@ namespace InkyCal.Models
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(SubscribedGoogleCalender other) 
+		public bool Equals(SubscribedGoogleCalender other)
 			=> other != null
 				&& IdAccessToken.Equals(other.IdAccessToken)
 				&& Calender.Equals(other.Calender);
@@ -98,7 +98,7 @@ namespace InkyCal.Models
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() 
+		public override int GetHashCode()
 			=> HashCode.Combine(Calender, IdAccessToken);
 	}
 }

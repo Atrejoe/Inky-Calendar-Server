@@ -15,7 +15,7 @@ namespace InkyCal.Utils.Tests
 				throw new SkipException("OpenWeather API keys has not been configured, skipping tests.");
 
 			return new WeatherPanelRenderer(
-				InkyCal.Server.Config.Config.OpenWeatherAPIKey, 
+				InkyCal.Server.Config.Config.OpenWeatherAPIKey,
 				"Rotterdam,NL");
 		}
 	}

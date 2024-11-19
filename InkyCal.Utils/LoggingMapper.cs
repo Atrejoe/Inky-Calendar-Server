@@ -1,7 +1,8 @@
 ﻿namespace InkyCal.Utils
 {
-	internal static class LoggingMapper { 
-		public static Bugsnag.Severity MapToBugSnag(this Severity severity) 
+	internal static class LoggingMapper
+	{
+		public static Bugsnag.Severity MapToBugSnag(this Severity severity)
 		=> severity switch
 		{
 			Severity.Info => Bugsnag.Severity.Info,

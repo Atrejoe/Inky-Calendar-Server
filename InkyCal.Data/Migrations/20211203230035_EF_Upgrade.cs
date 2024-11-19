@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace InkyCal.Data.Migrations
 {
 	[SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Historical name, renaming would cause re-execution.")]
@@ -32,7 +30,7 @@ namespace InkyCal.Data.Migrations
 				oldClrType: typeof(string),
 				oldType: "nvarchar(450)");
 
-			migrationBuilder.AddPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens", new string[] { "UserId", "LoginProvider", "Name" });
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens", ["UserId", "LoginProvider", "Name"]);
 
 			migrationBuilder.DropPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins");
 
@@ -54,7 +52,7 @@ namespace InkyCal.Data.Migrations
 				oldClrType: typeof(string),
 				oldType: "nvarchar(450)");
 
-			migrationBuilder.AddPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins", new string[] { "LoginProvider", "ProviderKey" });
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins", ["LoginProvider", "ProviderKey"]);
 
 
 		}
@@ -82,7 +80,7 @@ namespace InkyCal.Data.Migrations
 				oldType: "nvarchar(128)",
 				oldMaxLength: 128);
 
-			migrationBuilder.AddPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens", new string[] { "UserId", "LoginProvider", "Name" });
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserTokens", "AspNetUserTokens", ["UserId", "LoginProvider", "Name"]);
 
 			migrationBuilder.DropPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins");
 
@@ -104,7 +102,7 @@ namespace InkyCal.Data.Migrations
 				oldType: "nvarchar(128)",
 				oldMaxLength: 128);
 
-			migrationBuilder.AddPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins", new string[] { "LoginProvider", "ProviderKey" });
+			migrationBuilder.AddPrimaryKey("PK_AspNetUserLogins", "AspNetUserLogins", ["LoginProvider", "ProviderKey"]);
 		}
 	}
 }

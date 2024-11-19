@@ -10,10 +10,10 @@ namespace InkyCal.Server.Config
 
 		public override bool IsValid(object value)
 		{
-			if(value is null)
+			if (value is null)
 				return true;
 
-			return value is string strValue 
+			return value is string strValue
 				&& Uri.TryCreate(strValue, UriKind, out var _);
 		}
 

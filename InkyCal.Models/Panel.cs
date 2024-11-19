@@ -74,7 +74,7 @@ namespace InkyCal.Models
 		/// <summary>
 		/// The number of times the panel has been read
 		/// </summary>
-		public uint AccessCount{ get; set; }
+		public uint AccessCount { get; set; }
 
 		/// <summary>
 		/// The date and time at which the calendar was last accessed
@@ -120,15 +120,15 @@ namespace InkyCal.Models
 		public Guid Guid { get; }
 
 		/// <inhgeritdoc/>
-		public override int GetHashCode() 
+		public override int GetHashCode()
 			=> HashCode.Combine(Guid, base.GetHashCode());
 
 		/// <inhgeritdoc/>
-		public override bool Equals(object obj) 
+		public override bool Equals(object obj)
 			=> Equals(obj as PanelCacheKey);
 
 		/// <inhgeritdoc/>
-		protected override bool Equals(PanelCacheKey other) 
+		protected override bool Equals(PanelCacheKey other)
 			=> other is PanelInstanceCacheKey pic
 				&& pic.Guid.Equals(Guid);
 	}
@@ -178,8 +178,8 @@ namespace InkyCal.Models
 		/// <returns>
 		///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
 		/// </returns>
-		protected virtual bool Equals(PanelCacheKey other) 
-			=> other!=null
+		protected virtual bool Equals(PanelCacheKey other)
+			=> other != null
 				&& other.GetType().Equals(GetType())//On when matching exact type
 				&& other.Expiration.Equals(Expiration);
 

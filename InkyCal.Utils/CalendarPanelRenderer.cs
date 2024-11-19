@@ -92,7 +92,7 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode) 
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode)
 			=> ArgumentNullException.ThrowIfNull(iCalUrl);
 
 		/// <summary>
@@ -472,7 +472,8 @@ The image should be in a style of 19th century litograph or metal plate print as
 				{
 					using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
 						response = await api.ChatEndpoint.GetCompletionAsync(chatRequest, token);
-				} catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+				}
+				catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
 				{
 					Trace.TraceError("Too many requests to OpenAI");
 					throw;

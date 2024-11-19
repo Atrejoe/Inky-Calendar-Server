@@ -19,7 +19,7 @@ namespace InkyCal.Data.Tests
 			{
 				throw new SkipException("Connection timeout", ex);
 			}
-			catch (Xunit.Sdk.ThrowsException ex) when (ex .InnerException is SqlException sqlEx && sqlEx.IsMissingSQLServerException())
+			catch (Xunit.Sdk.ThrowsException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.IsMissingSQLServerException())
 			{
 				throw new SkipException("Connection timeout (handled ThrowsException)", ex);
 			}

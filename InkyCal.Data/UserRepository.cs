@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.AspNetCore.Identity;
@@ -22,10 +21,9 @@ namespace InkyCal.Data
 		/// <returns></returns>
 		public static async Task<User> GetUser(this IdentityUser identityUser)
 		{
-			if (identityUser is null)
-				return null;
-
-			return await GetUser(identityUser.Id);
+			return identityUser is null
+					? null
+					: await GetUser(identityUser.Id);
 		}
 
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -34,12 +33,12 @@ namespace InkyCal.Data
 				c.Remove(item);
 
 			//Add new items to DB
-			foreach (var item in calenders.Where(x => !set.Exists(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
+			foreach (var (IdAccessToken, Calender) in calenders.Where(x => !set.Exists(y => y.Calender == x.Calender && y.Panel == panel.Id && y.IdAccessToken == x.IdAccessToken)))
 				await c.AddAsync(new SubscribedGoogleCalender()
 				{
 					Panel = panel.Id,
-					IdAccessToken = item.IdAccessToken,
-					Calender = item.Calender
+					IdAccessToken = IdAccessToken,
+					Calender = Calender
 				});
 
 			return await c.SaveChangesAsync();

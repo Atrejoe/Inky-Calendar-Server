@@ -73,7 +73,7 @@ namespace InkyCal.Models
 		/// The width of the display, in pixels
 		/// </summary>
 		public ushort Width { get; }
-		
+
 		/// <summary>
 		/// The height of the display, in pixels
 		/// </summary>

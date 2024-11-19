@@ -39,7 +39,7 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// 
 		/// </summary>
-		protected PdfRenderer():base() { }
+		protected PdfRenderer() : base() { }
 
 		/// <summary>
 		/// 
@@ -47,7 +47,7 @@ namespace InkyCal.Utils
 		/// <param name="panel"></param>
 		protected PdfRenderer(T panel) : base(panel) { }
 
-		private static readonly MemoryCache _cache = new (new MemoryCacheOptions()
+		private static readonly MemoryCache _cache = new(new MemoryCacheOptions()
 		{
 			SizeLimit = 1024 * 1024 * 500,
 		});

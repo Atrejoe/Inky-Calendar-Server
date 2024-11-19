@@ -129,7 +129,8 @@ END:VCALENDAR
 ";
 
 		[Fact]
-		public void TestCalender() {
+		public void TestCalender()
+		{
 
 			//arrange
 			var calendars = new CalendarCollection();

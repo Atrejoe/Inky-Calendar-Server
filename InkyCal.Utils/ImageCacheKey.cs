@@ -64,7 +64,7 @@ namespace InkyCal.Utils
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
 		public override int GetHashCode() => HashCode.Combine(
-												ImageSettings.GetHashCode(), 
+												ImageSettings.GetHashCode(),
 												PanelCacheKey.GetHashCode()
 											);
 	}

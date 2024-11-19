@@ -341,8 +341,8 @@ namespace InkyCal.Server
 										: $"- {check.Value.Description} "
 										)}{(
 									//Show tags
-									check.Value.Tags.Any() 
-										? $"[{string.Join(",", check.Value.Tags)}] " 
+									check.Value.Tags.Any()
+										? $"[{string.Join(",", check.Value.Tags)}] "
 										: "")}{
 									// Error message, but no stack trace
 									check.Value.Exception?.Message}");

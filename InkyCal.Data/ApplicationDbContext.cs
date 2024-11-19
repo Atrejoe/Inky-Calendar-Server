@@ -35,12 +35,14 @@ namespace InkyCal.Data
 				options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 
 			if (Server.Config.Config.TraceQueries)
+			{
 
 				optionsBuilder.LogTo(msg =>
 					{
 						Console.WriteLine(msg);
 						Debug.WriteLine(msg);
 					});
+			}
 
 			base.OnConfiguring(optionsBuilder);
 		}
@@ -146,6 +148,14 @@ namespace InkyCal.Data
 							if (!entity.SkipModificationTimestamp)
 								entity.Modified = now;
 
+							break;
+						case EntityState.Detached:
+							break;
+						case EntityState.Unchanged:
+							break;
+						case EntityState.Deleted:
+							break;
+						default:
 							break;
 					}
 				}

@@ -19,7 +19,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="color">The color to set to the foreground.</param>
 		/// <returns></returns>
-		public static AutoRevertConsoleColor Foreground(ConsoleColor color) => 
+		public static AutoRevertConsoleColor Foreground(ConsoleColor color) =>
 			new(
 				color: color,
 				getter: () => Console.ForegroundColor,
@@ -30,7 +30,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="color">The color to set to the background.</param>
 		/// <returns></returns>
-		public static AutoRevertConsoleColor Background(ConsoleColor color) => 
+		public static AutoRevertConsoleColor Background(ConsoleColor color) =>
 			new(
 				color: color,
 				getter: () => Console.BackgroundColor,

@@ -34,12 +34,13 @@ namespace InkyCal.Utils.NewPaperRenderer.FreedomForum.Models
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
-	public partial class NewsPaper {
+	public partial class NewsPaper
+	{
 
 		/// <summary>
 		/// The url for the Pdf to be downloaded
 		/// </summary>
-		public Uri PDFUrl(DateTime date) 
+		public Uri PDFUrl(DateTime date)
 			=> new($"https://cdn.freedomforum.org/dfp/pdf{date.Day}/{PaperId}.pdf");
 	}
 }

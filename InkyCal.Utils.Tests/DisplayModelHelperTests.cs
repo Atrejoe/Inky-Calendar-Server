@@ -30,10 +30,10 @@ namespace InkyCal.Utils.Tests
 
 		public static IEnumerable<object[]> DisplayModels()
 		{
-			foreach(var value in Enum.GetValues<DisplayModel>())
+			foreach (var value in Enum.GetValues<DisplayModel>())
 				yield return new object[] { value };
 
-			
+
 		}
 	}
 }

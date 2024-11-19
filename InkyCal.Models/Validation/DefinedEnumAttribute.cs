@@ -8,7 +8,8 @@ namespace InkyCal.Models.Validation
 	/// </summary>
 	/// <seealso cref="ValidationAttribute" />
 	[AttributeUsage(AttributeTargets.Property)]
-	public class DefinedEnumAttribute : ValidationAttribute {
+	public class DefinedEnumAttribute : ValidationAttribute
+	{
 
 		/// <summary>
 		/// Validates if <paramref name="value"/> is a defined enum value.
@@ -22,7 +23,7 @@ namespace InkyCal.Models.Validation
 
 			var type = value.GetType();
 
-			if(!type.IsEnum)
+			if (!type.IsEnum)
 				throw new ArgumentException($"The value for {nameof(value)} should be an enum.");
 
 			return Enum.IsDefined(value.GetType(), value);

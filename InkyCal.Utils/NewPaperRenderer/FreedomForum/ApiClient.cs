@@ -15,7 +15,7 @@ namespace InkyCal.Utils.NewPaperRenderer.FreedomForum
 	/// </summary>
 	public class ApiClient
 	{
-		private static readonly HttpClient _client = new ();
+		private static readonly HttpClient _client = new();
 
 		/// <summary>
 		/// Obtains all newspapers
@@ -23,10 +23,11 @@ namespace InkyCal.Utils.NewPaperRenderer.FreedomForum
 		/// <param name="token"></param>
 		/// <returns></returns>
 		[SuppressMessage("Minor Code Smell", "S1075:URIs should not be hard coded", Justification = "API url is hardcoded (just like the contents of the response)")]
-		public async Task<Dictionary<string,NewsPaper>> GetNewsPapers(CancellationToken token = default) {
+		public async Task<Dictionary<string, NewsPaper>> GetNewsPapers(CancellationToken token = default)
+		{
 			var response = await _client.GetAsync("https://api.freedomforum.org/cache/papers.js");
 			response.EnsureSuccessStatusCode();
-			return (await response.Content.ReadFromJsonAsync<NewsPaper[]>(token)).ToDictionary(x=>x.PaperId);
+			return (await response.Content.ReadFromJsonAsync<NewsPaper[]>(token)).ToDictionary(x => x.PaperId);
 		}
 
 		/// <summary>

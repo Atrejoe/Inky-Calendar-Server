@@ -76,7 +76,7 @@ namespace InkyCal.Utils
 								throw new NotImplementedException($"Rendering of {panel.GetType().Name} has not yet been implemented");
 
 							var paneltype = rendererType.BaseType.GetGenericArguments()[0];
-							var c = rendererType.GetConstructor(new[] { paneltype });
+							var c = rendererType.GetConstructor([paneltype]);
 							if (c is null)
 							{
 								c = rendererType.GetConstructor(Type.EmptyTypes);
@@ -165,12 +165,12 @@ namespace InkyCal.Utils
 			Font font)
 		{
 			var textOptions = new RichTextOptions(font)
-				{
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Top,
-					WrappingLength = width,
-					Dpi = 96
-				};
+			{
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				WrappingLength = width,
+				Dpi = 96
+			};
 
 			canvas.RenderErrorMessage(errorMessage, errorColor, backgroundColor, ref y, width, textOptions);
 		}
@@ -207,9 +207,10 @@ namespace InkyCal.Utils
 				trimmedErrorMessage.AppendLine(line.Limit(width, "..."));
 
 			canvas.DrawText(
-				textOptions: new RichTextOptions(errorTextOptions) 
-					{ Origin = pError
-					},
+				textOptions: new RichTextOptions(errorTextOptions)
+				{
+					Origin = pError
+				},
 				text: trimmedErrorMessage.ToString().ToSafeChars(renderOptions.Font),
 				color: backgroundColor);
 

@@ -18,7 +18,7 @@ namespace InkyCal.Server.Config
 		[Url]
 		public static Uri InkyCalRoot { get; set; }
 
-		[Url(UriKind= UriKind.Absolute)]
+		[Url(UriKind = UriKind.Absolute)]
 		public static Uri Website { get; set; }
 	}
 }

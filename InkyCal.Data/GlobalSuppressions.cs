@@ -14,3 +14,5 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.GetTokens(System.Int32)~System.Threading.Tasks.Task{InkyCal.Models.GoogleOAuthAccess[]}")]
 [assembly: SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static", Justification = "Candidate for dependency injection", Scope = "member", Target = "~M:InkyCal.Data.GoogleOAuthRepository.UpdateAccessToken(InkyCal.Models.GoogleOAuthAccess,System.Threading.CancellationToken)~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Style", "IDE0011:Add braces", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]
+[assembly: SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Code analysis does not detect ThrowIfNull", Scope = "namespaceanddescendants", Target = "~N:InkyCal.Data")]

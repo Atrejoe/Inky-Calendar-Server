@@ -42,9 +42,12 @@ namespace InkyCal.Utils
 							}
 						});
 
-		private static  Client __bugsnag;
-		
-		private static Client BugsnagClient { get {
+		private static Client __bugsnag;
+
+		private static Client BugsnagClient
+		{
+			get
+			{
 				if (string.IsNullOrWhiteSpace(Server.Config.Config.BugSnagAPIKey))
 					return null;
 
@@ -163,7 +166,8 @@ namespace InkyCal.Utils
 					{
 						report.Event.Metadata.AddToPayload(p.Name, $"Failure to obtain value: {pv.Message}");
 					}
-					catch (System.Exception) { 
+					catch (System.Exception)
+					{
 						//ignore
 					}
 				}
