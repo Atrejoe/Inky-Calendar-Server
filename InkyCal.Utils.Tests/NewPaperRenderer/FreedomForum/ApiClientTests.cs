@@ -19,7 +19,7 @@ namespace InkyCal.Utils.Tests.NewPaperRenderer.FreedomForum
 
 			var client = new ApiClient();
 			var actual = await client.GetNewsPapers();
-			
+
 			Assert.NotNull(actual);
 			Assert.NotEmpty(actual);
 
@@ -48,7 +48,7 @@ namespace InkyCal.Utils.Tests.NewPaperRenderer.FreedomForum
 				.ThenBy(x => x.State)
 				.ThenBy(x => x.City)
 				.ThenBy(x => x.Title)
-				.Select(x => $"{x.Country}{(string.IsNullOrEmpty(x.State)?"":$" - {x.State}")} - {x.City} - {x.Title} ({x.Website})")));
+				.Select(x => $"{x.Country}{(string.IsNullOrEmpty(x.State) ? "" : $" - {x.State}")} - {x.City} - {x.Title} ({x.Website})")));
 		}
 	}
 }

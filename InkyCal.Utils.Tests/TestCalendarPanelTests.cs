@@ -66,7 +66,7 @@ namespace InkyCal.Utils.Tests
 				{
 					events.ToList().ForEach(e =>
 						{
-							result.Add(new object[] { m, e });
+							result.Add([m, e]);
 						});
 				});
 

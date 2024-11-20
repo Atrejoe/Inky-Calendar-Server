@@ -9,7 +9,8 @@ namespace InkyCal.Utils
 	/// <summary>
 	/// A helper class for downloading files
 	/// </summary>
-	public static class DownloadHelper {
+	public static class DownloadHelper
+	{
 
 		/// <summary>
 		/// Downloads a date-specific file

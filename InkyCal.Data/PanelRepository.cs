@@ -22,18 +22,16 @@ namespace InkyCal.Data
 		/// <returns></returns>
 		public static async Task<bool> ToggleStar(this Panel panel)
 		{
-			using (var c = new ApplicationDbContext())
-			{
-				var p = await c.Set<Panel>().SingleAsync(x => x.Id == panel.Id);
+			using var c = new ApplicationDbContext();
+			var p = await c.Set<Panel>().SingleAsync(x => x.Id == panel.Id);
 
-				p.Starred = !p.Starred;
+			p.Starred = !p.Starred;
 
-				c.Update(p);
+			c.Update(p);
 
-				await c.SaveChangesAsync();
+			await c.SaveChangesAsync();
 
-				return p.Starred;
-			}
+			return p.Starred;
 		}
 
 

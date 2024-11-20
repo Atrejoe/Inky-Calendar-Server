@@ -8,7 +8,7 @@ namespace InkyCal.Models
 	/// <summary>
 	/// A URL for a <see cref="CalendarPanel"/>"/>
 	/// </summary>
-	[Table("CalendarPanelUrl",Schema = "InkyCal")]
+	[Table("CalendarPanelUrl", Schema = "InkyCal")]
 	public class CalendarPanelUrl
 	{
 		/// <summary>

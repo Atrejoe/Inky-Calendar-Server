@@ -21,7 +21,7 @@ namespace InkyCal.Utils.Tests
 
 			output.WriteLine($"Returning renderer for newspaper : {newsPaper.PaperId} (url: \"{newsPaper.PDFUrl(DateTime.UtcNow)}\")");
 
-			return new (newsPaper.PaperId);
+			return new(newsPaper.PaperId);
 		}
 
 		public override async Task GetImageTest(DisplayModel displayModel)
@@ -30,7 +30,8 @@ namespace InkyCal.Utils.Tests
 			{
 				await base.GetImageTest(displayModel);
 			}
-			catch (HttpRequestException ex) {
+			catch (HttpRequestException ex)
+			{
 				throw new SkipException($"Http request failed, result inconclusive: {ex.Message}", ex);
 			}
 		}

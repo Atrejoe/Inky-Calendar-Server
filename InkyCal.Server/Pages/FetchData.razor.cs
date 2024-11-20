@@ -39,7 +39,7 @@ namespace InkyCal.Server.Pages
 
 			if (user is null)
 				return;
-			
+
 			_panels = (await PanelRepository.List<Models.Panel>(user)).ToList();
 
 			if (_panels.Any())

@@ -26,7 +26,7 @@ namespace InkyCal.Utils
 		/// Returns a (10-minute) cached image
 		/// </summary>
 		/// <returns></returns>
-		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, CancellationToken cancellationToken = default) 
+		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, CancellationToken cancellationToken = default)
 			=> await LoadCachedContent(imageUrl, TimeSpan.FromMinutes(10), cancellationToken);
 
 		/// <summary>

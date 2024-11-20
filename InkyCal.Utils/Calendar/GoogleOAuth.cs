@@ -51,7 +51,7 @@ namespace InkyCal.Utils.Calendar
 			}
 			catch (TokenResponseException ex) when (ex.Error.Error == "invalid_grant")
 			{
-				ex.Log(severity:Severity.Warning);
+				ex.Log(severity: Severity.Warning);
 				return default;
 			}
 		}
@@ -142,11 +142,11 @@ namespace InkyCal.Utils.Calendar
 
 		private static GoogleAuthorizationCodeFlow GetFlow()
 		{
-			string[] Scopes = {
+			string[] Scopes = [
 				CalendarService.Scope.CalendarReadonly,					  //Reading calendar
 				Google.Apis.Oauth2.v2.Oauth2Service.Scope.UserinfoEmail,  //Displaying email address
 				Google.Apis.Oauth2.v2.Oauth2Service.Scope.UserinfoProfile //Displaying profile information
-			};
+			];
 
 
 			var secret = GetSecret();

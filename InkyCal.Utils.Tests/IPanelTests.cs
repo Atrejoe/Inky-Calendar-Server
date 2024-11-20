@@ -91,7 +91,7 @@ namespace InkyCal.Utils.Tests
 
 
 				using var fileStream = File.Create(filename);
-				await image.SaveAsGifAsync(fileStream, encoder: new () {  Quantizer = new PaletteQuantizer(colors) });
+				await image.SaveAsGifAsync(fileStream, encoder: new() { Quantizer = new PaletteQuantizer(colors) });
 
 			}
 

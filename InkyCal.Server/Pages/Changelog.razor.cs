@@ -10,7 +10,7 @@ namespace InkyCal.Server.Pages
 	/// Display the change log
 	/// </summary>
 	/// <seealso cref="ComponentBase" />
-	public partial class Changelog: ComponentBase
+	public partial class Changelog : ComponentBase
 	{
 		/// <summary>
 		/// Gets the content of the changelog.
@@ -36,7 +36,7 @@ namespace InkyCal.Server.Pages
 			var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 			var markdown = await System.IO.File.ReadAllTextAsync(fileName);
 			ChangelogContent = new MarkupString(Markdown.ToHtml(markdown, pipeline));
-			
+
 		}
 	}
 }

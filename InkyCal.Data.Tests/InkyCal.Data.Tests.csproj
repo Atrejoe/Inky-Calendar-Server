@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net8.0</TargetFramework>
+	<TargetFramework>net9.0</TargetFramework>
 	<IsPackable>false</IsPackable>
 	<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
@@ -31,6 +31,7 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	<PackageReference Include="xunit" Version="2.9.2" />
 	<PackageReference Include="xunit.analyzers" Version="1.17.0">
 	  <PrivateAssets>all</PrivateAssets>

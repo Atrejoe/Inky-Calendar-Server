@@ -34,7 +34,7 @@ namespace InkyCal.Server.Pages
 		/// The style of the display component, is passed to the wrapper of the image.
 		/// </summary>
 		[Parameter]
-		public string style {get;set;}
+		public string style { get; set; }
 
 		private string LoadingCSS = "loading";
 		private string _src;

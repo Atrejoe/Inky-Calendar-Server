@@ -67,7 +67,7 @@ namespace InkyCal.Utils.Calendar
 		/// <param name="saveToken"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens([NotNull] IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation]CancellationToken cancellationToken)
+		public static async IAsyncEnumerable<(int Id, string AccessToken)> GetAccessTokens([NotNull] IEnumerable<GoogleOAuthAccess> tokens, Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation] CancellationToken cancellationToken)
 		{
 			Validate(tokens, saveToken);
 
@@ -144,7 +144,7 @@ namespace InkyCal.Utils.Calendar
 		/// 
 		/// </summary>>
 		/// <returns></returns>
-		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation]CancellationToken cancellationToken)
+		public static async IAsyncEnumerable<(int IdToken, Userinfo profile, CalendarListEntry Calender)> ListGoogleCalendars([NotNull] IEnumerable<GoogleOAuthAccess> tokens, [NotNull] Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, [EnumeratorCancellation] CancellationToken cancellationToken)
 		{
 			if (!Server.Config.GoogleOAuth.Enabled)
 				yield break;

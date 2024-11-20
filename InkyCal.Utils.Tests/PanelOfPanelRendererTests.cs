@@ -33,7 +33,7 @@ namespace InkyCal.Utils.Tests
 					 })
 			};
 
-			return new PanelOfPanelRenderer(pp, new PanelRenderHelper(async (_,_) => await Task.CompletedTask));
+			return new PanelOfPanelRenderer(pp, new PanelRenderHelper(async (_, _) => await Task.CompletedTask));
 		}
 	}
 }

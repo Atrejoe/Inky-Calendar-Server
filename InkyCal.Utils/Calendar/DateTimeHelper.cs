@@ -5,7 +5,7 @@ namespace InkyCal.Utils.Calendar
 	/// <summary>
 	/// 
 	/// </summary>
-	public static class DateTimeHelper	
+	public static class DateTimeHelper
 	{
 
 		/// <summary>

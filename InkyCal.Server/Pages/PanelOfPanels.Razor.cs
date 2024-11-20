@@ -49,7 +49,7 @@ namespace InkyCal.Server.Pages
 		{
 			var user = await GetAuthenticatedUser();
 			selectablePanels = (await PanelRepository.List<Models.Panel>(user))
-								.Where(x=>!(x is Models.PanelOfPanels))
+								.Where(x => !(x is Models.PanelOfPanels))
 								.ToList();
 
 			newPanelId = selectablePanels.FirstOrDefault()?.Id;
@@ -59,7 +59,7 @@ namespace InkyCal.Server.Pages
 		{
 			if (!newPanelId.HasValue)
 				return;
-			if(Panel.Panels is null)
+			if (Panel.Panels is null)
 				Panel.Panels = new HashSet<SubPanel>();
 
 			Panel.Panels.Add(new SubPanel()
@@ -83,14 +83,14 @@ namespace InkyCal.Server.Pages
 
 		private int currentIndex;
 
-		void StartDrag(SubPanel item) 
+		void StartDrag(SubPanel item)
 			=> currentIndex = Panel.Panels.OrderBy(x => x.SortIndex).ToList().IndexOf(item);
 
 		void Drop(SubPanel item)
 		{
 			if (item == null)
 				return;
-			
+
 			var intermediate = Panel.Panels.OrderBy(x => x.SortIndex).ToList();
 			var index = intermediate.IndexOf(item);
 

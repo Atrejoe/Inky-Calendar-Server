@@ -23,7 +23,7 @@ namespace InkyCal.Models
 			if (levels <= 2)
 				yield break;
 
-			int step = 256 / (levels-1);
+			int step = 256 / (levels - 1);
 			foreach (var color in Enumerable
 				.Range(1, levels - 2)
 				.Select(x => (step * x) > byte.MaxValue ? byte.MaxValue : (byte)(step * x))

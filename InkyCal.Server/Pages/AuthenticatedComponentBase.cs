@@ -13,7 +13,7 @@ namespace InkyCal.Server.Pages
 	/// A base class for panels that need authentication information
 	/// </summary>
 	/// <seealso cref="ComponentBase" />
-	public class AuthenticatedComponentBase: ComponentBase, IDisposable
+	public class AuthenticatedComponentBase : ComponentBase, IDisposable
 	{
 		/// <summary>
 		/// 
@@ -56,7 +56,7 @@ namespace InkyCal.Server.Pages
 				return null;
 
 			var identityUser = await userManager.GetUserAsync(principal.User);
-			
+
 			_authenticatedUser = await identityUser.GetUser();
 			return _authenticatedUser;
 		}

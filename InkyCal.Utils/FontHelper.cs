@@ -21,7 +21,8 @@ namespace InkyCal.Utils
 		/// <param name="font">The font.</param>
 		/// <returns></returns>
 		/// <seealso cref="ToSafeChars(string, FontFamily)"/>
-		public static string ToSafeChars(this string text, Font font) {
+		public static string ToSafeChars(this string text, Font font)
+		{
 			ArgumentNullException.ThrowIfNull(font);
 
 			return text.ToSafeChars(font.Family);
@@ -81,7 +82,7 @@ namespace InkyCal.Utils
 			}
 		}
 
-		private static readonly FontCollection fonts = new ();
+		private static readonly FontCollection fonts = new();
 
 		/// <summary>
 		/// Font family NotoSans-SemiCondensed
@@ -126,7 +127,7 @@ namespace InkyCal.Utils
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
-				NotoSans = fonts.Add(resource,new CultureInfo("de-DE"));
+				NotoSans = fonts.Add(resource, new CultureInfo("de-DE"));
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
 				MonteCarlo = fonts.Add(resource, new CultureInfo("de-DE"));

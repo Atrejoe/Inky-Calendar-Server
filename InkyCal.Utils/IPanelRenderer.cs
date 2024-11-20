@@ -78,7 +78,7 @@ namespace InkyCal.Utils
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
 		public override int GetHashCode() => HashCode.Combine(
-												Width.GetHashCode(), 
+												Width.GetHashCode(),
 												Height.GetHashCode(),
 												// Array itself cannot be used in HashCoodde.Combin,nor can it return a sensible hashcode
 												// Use reproducible attributes
@@ -154,17 +154,17 @@ namespace InkyCal.Utils
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
 
-				byte[] result; 
+				byte[] result;
 				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
 				//{
-					// Key not in cache, so get data.
-					using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-					{
-						var image = await renderer.GetImage(width, height, colors, log);
-						using var stream = new MemoryStream();
-						await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
-						result = stream.ToArray();
-					}
+				// Key not in cache, so get data.
+				using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+				{
+					var image = await renderer.GetImage(width, height, colors, log);
+					using var stream = new MemoryStream();
+					await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
+					result = stream.ToArray();
+				}
 
 				//	// Save data in cache.
 				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))

@@ -37,7 +37,7 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		protected override bool Equals(PanelCacheKey other) 
+		protected override bool Equals(PanelCacheKey other)
 			=> other is NewYorkTimePanelCacheKey
 				&& base.Equals(other);
 	}

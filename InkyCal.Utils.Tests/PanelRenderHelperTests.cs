@@ -51,5 +51,5 @@ namespace InkyCal.Utils.Tests
 				Trace.WriteLine($"Renderer: {item.Name}");
 			}
 		}
-    }
+	}
 }

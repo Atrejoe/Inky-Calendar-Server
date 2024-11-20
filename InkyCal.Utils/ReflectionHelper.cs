@@ -2,7 +2,8 @@
 
 namespace InkyCal.Utils
 {
-	internal static class ReflectionHelper {
+	internal static class ReflectionHelper
+	{
 		public static bool IsSubclassOfRawGeneric(this Type generic, Type toCheck)
 		{
 			while (toCheck != null && toCheck != typeof(object))

@@ -34,7 +34,7 @@ namespace InkyCal.Server.Controllers
 			ArgumentNullException.ThrowIfNull(image);
 
 			using var stream = new MemoryStream();
-			await image.SaveAsGifAsync(stream, new (){ Quantizer = new PaletteQuantizer(colors) }, cancellationToken);
+			await image.SaveAsGifAsync(stream, new() { Quantizer = new PaletteQuantizer(colors) }, cancellationToken);
 
 			return controller.File(
 				fileContents: stream.ToArray(),

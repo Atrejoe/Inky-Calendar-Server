@@ -159,7 +159,7 @@ namespace InkyCal.Utils
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Top,
 				WrappingLength = width,
-				Dpi=96
+				Dpi = 96
 			};
 
 			Weather.RootObject weather;
@@ -238,13 +238,13 @@ namespace InkyCal.Utils
 
 							if (FontHelper.WeatherIconsMap.TryGetValue(forecast.weather.FirstOrDefault()?.icon, out var icon))
 								context.DrawText(
-									new (weatherTextOptions) { Origin = new PointF(x + iconPadding, y) },
+									new(weatherTextOptions) { Origin = new PointF(x + iconPadding, y) },
 									icon,
 									supportColor
 									);
 							else
 								context.DrawText(
-									new(textOptions) { Origin= new PointF(x, y) },
+									new(textOptions) { Origin = new PointF(x, y) },
 									$"{forecast.weather.FirstOrDefault()?.icon} has no icon mapping",
 									errorColor);
 

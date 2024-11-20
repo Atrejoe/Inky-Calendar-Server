@@ -48,7 +48,7 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Refers to <see cref="Equals(PanelCacheKey)"/>.
 		/// </summary>
-		public override bool Equals(object obj) 
+		public override bool Equals(object obj)
 			=> Equals(obj as ImagePanelCacheKey);
 
 		/// <summary>
@@ -88,7 +88,7 @@ namespace InkyCal.Utils
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log) => await Task.Run(async () =>
 																													 {
 																														 if (colors is null)
-																															 colors = new[] { Color.White, Color.Black };
+																															 colors = [Color.White, Color.Black];
 
 																														 Image<Rgba32> image;
 																														 try
