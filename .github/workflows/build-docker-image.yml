@@ -41,6 +41,18 @@ jobs:
           echo "DOCKER_IMAGE_NAME=${{ steps.extract_branch.outputs.branch }}" >> $GITHUB_ENV
       if: ${{ steps.extract_branch.outputs.branch != 'develop' }}
 
+    - name: Replace slashes with underscores in DOCKER_IMAGE_NAME
+      id: findandreplace_branchname
+      uses: mad9000/actions-find-and-replace-string@5
+      with:
+          source: ${{env.DOCKER_IMAGE_NAME}} # this translates to ref/heads/main on the main branch, but can be any arbitrary string 
+          find: '/'        # we want to remove ref/heads/ from source 
+          replace: '_'     # and replace it with an underscore
+
+    - name: Update DOCKER_IMAGE_NAME
+      run: |
+          echo "DOCKER_IMAGE_NAME=${{ steps.findandreplace_branchname.outputs.value }}" >> $GITHUB_ENV
+ 
     - name: Build Docker image
       # You may pin to the exact commit or the version.
       uses: docker/build-push-action@v6
