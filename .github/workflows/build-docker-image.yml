@@ -58,6 +58,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         # context: .
+        load: true # Load the image in Docker, for scanning and pushing
         sbom: true
         push: false
         tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
