@@ -2,6 +2,12 @@ name: Publish Docker image
 
 on:
   workflow_call:
+    inputs:
+      docker_image_name:
+        description: 'The name of the Docker image'
+        required: true
+        type: string
+        default: 'atreyu/inkycal.server:latest'
   # workflow_dispatch:
   # workflow_run:
   #   workflows: [Build Docker image]
@@ -10,18 +16,13 @@ on:
   #   branches: [develop, main, master]
 
 jobs:
-  on-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'Build and/or test failed, not deploying'
 
   publish:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Publish to docker.io
     runs-on: ubuntu-latest
     steps:
-      
+
     - name: List local Docker images
       run: docker images
 
@@ -45,7 +46,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.IMAGE_NAME }}
+        images: ${{ inputs.docker_image_name }}
 
     - name: Push Docker image
       # You may pin to the exact commit or the version.
@@ -55,4 +56,4 @@ jobs:
         # file: ../Dockerfile
         sbom: true
         push: true
-        tags: atreyu/inkycal.server:latest
+        tags: ${{ inputs.docker_image_name }}

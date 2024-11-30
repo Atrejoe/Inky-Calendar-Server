@@ -9,3 +9,7 @@ on:
 jobs:
   build-docker:
     uses: ./.github/workflows/build-docker-image-reusable.yml
+  publish:
+    uses: ./.github/workflows/publish.yml
+    with:
+      docker_image_name: ${{ needs.build-docker.outputs.docker_image_name }}
