@@ -8,8 +8,11 @@ on:
 
 jobs:
   build-docker:
+    name: Build and scan Docker image
     uses: ./.github/workflows/build-docker-image-reusable.yml
   publish:
+    name: Publish Docker image
     uses: ./.github/workflows/publish.yml
+    if: success()
     with:
       docker_image_name: ${{ needs.build-docker.outputs.docker_image_name }}
