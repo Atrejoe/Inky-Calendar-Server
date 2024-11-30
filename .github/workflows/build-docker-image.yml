@@ -63,7 +63,7 @@ jobs:
         tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
 
     - name: Scan Docker image with Trivy
-      uses: aquasecurity/trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@0.29.0
       with:
         image-ref: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
         format: 'table'
