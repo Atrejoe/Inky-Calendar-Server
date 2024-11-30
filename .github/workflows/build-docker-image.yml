@@ -45,9 +45,9 @@ jobs:
       id: findandreplace_branchname
       uses: mad9000/actions-find-and-replace-string@5
       with:
-          source: ${{env.DOCKER_IMAGE_NAME}} # this translates to ref/heads/main on the main branch, but can be any arbitrary string 
-          find: '/'        # we want to remove ref/heads/ from source 
-          replace: '_'     # and replace it with an underscore
+        source: ${{env.DOCKER_IMAGE_NAME}} # this translates to ref/heads/main on the main branch, but can be any arbitrary string 
+        find: '/'        # we want to remove ref/heads/ from source 
+        replace: '_'     # and replace it with an underscore
 
     - name: Update DOCKER_IMAGE_NAME
       run: |
@@ -61,6 +61,9 @@ jobs:
         sbom: true
         push: false
         tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
+
+    - name: List local Docker images
+      run: docker images
 
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@0.29.0
