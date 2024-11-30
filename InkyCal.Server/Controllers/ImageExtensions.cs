@@ -116,8 +116,7 @@ namespace InkyCal.Server.Controllers
 			bool flip,
 			CancellationToken cancellationToken)
 		{
-			if (panelRenderer is null)
-				throw new ArgumentNullException(nameof(panelRenderer));
+			ArgumentNullException.ThrowIfNull(panelRenderer);
 
 			try
 			{
@@ -140,7 +139,7 @@ namespace InkyCal.Server.Controllers
 
 				colors.ExtractMeaningFullColors(
 					 out var primaryColor
-					, out var supportColor
+					, supportColor: out _ // Support color is not used in error rendering
 					, out var errorColor
 					, out var backgroundColor
 					);

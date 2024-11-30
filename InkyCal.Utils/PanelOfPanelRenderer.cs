@@ -84,8 +84,8 @@ namespace InkyCal.Utils
 		public async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
 			colors.ExtractMeaningFullColors(
-				out var primaryColor
-				, out var supportColor
+				primaryColor: out _ // Image generation is pass to sub-panels, primary color is not used
+				, supportColor: out _ //Image generation is pass to sub-panels, support color is not used
 				, out var errorColor
 				, out var backgroundColor
 				);

@@ -35,10 +35,7 @@ namespace InkyCal.Models.Validation
 			if (value is not string strUrl || string.IsNullOrWhiteSpace(strUrl))
 				return true;//This is not a required field attribute
 
-			if (!Uri.TryCreate(strUrl, UriKind, out var url))
-				return false;
-
-			return true;
+			return Uri.TryCreate(strUrl, UriKind, out _);
 		}
 
 		/// <summary>
