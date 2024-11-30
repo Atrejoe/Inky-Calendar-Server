@@ -67,6 +67,7 @@ jobs:
       with:
         image-ref: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
         format: 'table'
+        cache: 'false' # Prevents hitting rate limit: https://github.com/aquasecurity/trivy-action?tab=readme-ov-file#cache
     
     # - name: Upload SARIF file
     #   uses: github/codeql-action/upload-sarif@v3
