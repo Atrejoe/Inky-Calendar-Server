@@ -18,7 +18,6 @@ on:
 jobs:
 
   publish:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Publish to docker.io
     runs-on: ubuntu-latest
     steps:
