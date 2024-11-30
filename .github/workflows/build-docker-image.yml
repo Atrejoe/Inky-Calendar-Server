@@ -53,15 +53,18 @@ jobs:
       run: |
           echo "DOCKER_IMAGE_NAME=${{ steps.findandreplace_branchname.outputs.value }}" >> $GITHUB_ENV
  
-    - name: Build Docker image
-      # You may pin to the exact commit or the version.
-      uses: docker/build-push-action@v6
-      with:
-        # context: .
-        load: true # Load the image in Docker, for scanning and pushing
-        sbom: true
-        push: false
-        tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
+    # - name: Build Docker image
+    #   # You may pin to the exact commit or the version.
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     # context: .
+    #     load: true # Load the image in Docker, for scanning and pushing
+    #     sbom: true
+    #     push: false
+    #     tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
+
+    - name: Build and store local image
+      run: docker build -t atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}} .
 
     - name: List local Docker images
       run: docker images
