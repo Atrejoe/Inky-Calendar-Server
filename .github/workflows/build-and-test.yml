@@ -70,3 +70,8 @@ jobs:
   
   build-docker:
     uses: ./.github/workflows/build-docker-image-reusable.yml
+
+
+  publish:
+    depends-on: [build-docker, build]
+    uses: ./.github/workflows/publish.yml

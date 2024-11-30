@@ -1,8 +1,11 @@
 name: Build Docker image
 
 on:
-  # Nightly build - pull base image
   workflow_call:
+    outputs:
+      docker_image_name:
+        description: 'The name of the Docker image'
+        value: ${{ steps.findandreplace_branchname.outputs.value }}
 
 jobs:
   build-docker:
@@ -38,7 +41,7 @@ jobs:
       id: findandreplace_branchname
       uses: mad9000/actions-find-and-replace-string@5
       with:
-        source: ${{env.DOCKER_IMAGE_NAME}} # this translates to ref/heads/main on the main branch, but can be any arbitrary string 
+        source: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}} # this translates to ref/heads/main on the main branch, but can be any arbitrary string 
         find: '/'        # we want to remove ref/heads/ from source 
         replace: '_'     # and replace it with an underscore
 
@@ -61,7 +64,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build and store local image
-      run: docker build -t atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}} .
+      run: docker build -t ${{env.DOCKER_IMAGE_NAME}} .
 
     - name: List local Docker images
       run: docker images
@@ -69,7 +72,7 @@ jobs:
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@0.29.0
       with:
-        image-ref: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
+        image-ref: ${{env.DOCKER_IMAGE_NAME}}
         format: 'sarif'
         output: 'trivy-results.sarif'
         cache: 'false' # Prevents hitting rate limit: https://github.com/aquasecurity/trivy-action?tab=readme-ov-file#cache
