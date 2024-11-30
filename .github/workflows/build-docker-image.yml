@@ -16,3 +16,4 @@ jobs:
     if: success()
     with:
       docker_image_name: ${{ needs.build-docker.outputs.docker_image_name }}
+    secrets: inherit
