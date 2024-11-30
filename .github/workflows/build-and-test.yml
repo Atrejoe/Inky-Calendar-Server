@@ -67,3 +67,6 @@ jobs:
           name: Dotnet testresult # Name of the check run which will be created
           path: '**/*.trx'        # All test results
           reporter: dotnet-trx    # Format of test results
+  
+  build-docker:
+    uses: ./.github/workflows/build-docker-image-reusable.yml
