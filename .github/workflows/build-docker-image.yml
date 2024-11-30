@@ -63,6 +63,10 @@ jobs:
     #     push: false
     #     tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
 
+    
+    - name: checkout repo
+      uses: actions/checkout@v4
+
     - name: Build and store local image
       run: docker build -t atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}} .
 
