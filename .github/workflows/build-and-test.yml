@@ -73,5 +73,5 @@ jobs:
 
 
   publish:
-    depends-on: [build-docker, build]
+    needs: [build-docker, build]
     uses: ./.github/workflows/publish.yml
