@@ -69,8 +69,11 @@ jobs:
     - name: checkout repo
       uses: actions/checkout@v4
 
-    - name: Build and store local image
-      run: docker build -t ${{env.DOCKER_IMAGE_NAME}} .
+    - name: Inspect buildx
+      run: docker buildx inspect
+
+    - name: Build and store local multi-platform image
+      run: docker buildx build -t ${{env.DOCKER_IMAGE_NAME}} --platform=linux/amd64,linux/arm64,linux/arm/v7 .
 
     - name: List local Docker images
       run: docker images
