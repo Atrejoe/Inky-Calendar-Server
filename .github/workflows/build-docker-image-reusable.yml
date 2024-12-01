@@ -14,9 +14,6 @@ jobs:
     outputs:
       docker_image_name: ${{ steps.docker_image_name.outputs.value }}
     steps:
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    
     - name: Extract metadata
       id: meta
       uses: docker/metadata-action@v5
@@ -64,11 +61,18 @@ jobs:
     #     sbom: true
     #     push: false
     #     tags: atreyu/inkycal.server:${{env.DOCKER_IMAGE_NAME}}
-
     
     - name: checkout repo
       uses: actions/checkout@v4
-
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64,linux/arm/v7
+    
     - name: Inspect buildx
       run: docker buildx inspect
 
