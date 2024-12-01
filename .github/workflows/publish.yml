@@ -38,6 +38,10 @@ jobs:
         # Log out from the Docker registry at the end of a job
         # logout: # optional, default is true
 
+        
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       
