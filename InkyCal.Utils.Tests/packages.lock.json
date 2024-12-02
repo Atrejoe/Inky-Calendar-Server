@@ -89,11 +89,11 @@
       },
       "Xunit.SkippableFact": {
         "type": "Direct",
-        "requested": "[1.4.13, )",
-        "resolved": "1.4.13",
-        "contentHash": "IyzZNvJEtXGlXrzxDiSbtH5Lyxf4iJdRQADuyjGdDf00LjXRLJwIoezQNFhFGKTMtvk8IIgaSHxW4mAV4O7b8A==",
+        "requested": "[1.5.23, )",
+        "resolved": "1.5.23",
+        "contentHash": "JlKobLTlsGcuJ8OtoodxL63bUagHSVBnF+oQ2GgnkwNqK+XYjeYyhQasULi5Ebx1MNDGNbOMplQYr89mR+nItQ==",
         "dependencies": {
-          "Validation": "2.4.18",
+          "Validation": "2.5.51",
           "xunit.extensibility.execution": "2.4.0"
         }
       },
@@ -1126,8 +1126,8 @@
       },
       "Validation": {
         "type": "Transitive",
-        "resolved": "2.4.18",
-        "contentHash": "NfvWJ1QeuZ1FQCkqgXTu1cOkRkbNCfxs4Tat+abXLwom6OXbULVhRGp34BTvVB4XPxj6VIAl7KfLfStXMt/Ehw=="
+        "resolved": "2.5.51",
+        "contentHash": "g/Aug7PVWaenlJ0QUyt/mEetngkQNsMCuNeRVXbcJED1nZS7JcK+GTU4kz3jcQ7bFuKfi8PF4ExXH7XSFNuSLQ=="
       },
       "xunit.abstractions": {
         "type": "Transitive",
