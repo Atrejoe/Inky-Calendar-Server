@@ -46,7 +46,7 @@ jobs:
       run: dotnet test InkyCal.sln --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: testresults
         path: '**/*.trx'
