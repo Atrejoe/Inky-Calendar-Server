@@ -86,6 +86,12 @@
           "Humanizer.Core.zh-Hant": "2.14.1"
         }
       },
+      "Magick.NET.Core": {
+        "type": "Direct",
+        "requested": "[14.4.0, )",
+        "resolved": "14.4.0",
+        "contentHash": "nmSA3LWK77rZlQ085RBqFLr67GVFyz4mAcuiVGQ9LcNwbxUm4Zcte4D9N+TxAyew6CXzoyHAG3i7NeDgpuztWw=="
+      },
       "Markdig.Signed": {
         "type": "Direct",
         "requested": "[0.38.0, )",
@@ -759,16 +765,11 @@
       },
       "Magick.NET-Q16-AnyCPU": {
         "type": "Transitive",
-        "resolved": "14.2.0",
-        "contentHash": "dlC3F/jpJ7SoUYCPrNBny0NnBBqj6M0jstEDHmyh83zZHH9vSdOcRk3f/3E7Qdd4vRD4DAPfR+d6e6chNyRjiA==",
+        "resolved": "14.4.0",
+        "contentHash": "KHtlny0G9EyV8MBqI1tqd2p4dZdQdpb4iXmVOiEgNQlQXnuyQFDFUfDYQqplMxujF/Ol/V9IDiw+Hikbys1TDA==",
         "dependencies": {
-          "Magick.NET.Core": "14.2.0"
+          "Magick.NET.Core": "14.4.0"
         }
-      },
-      "Magick.NET.Core": {
-        "type": "Transitive",
-        "resolved": "14.2.0",
-        "contentHash": "1F0vtPJwmoVg9tvi59VEy6KdmpUXbzKYJOH+TL37DT6kXfqj4iFtOMqD7CXC3G6z2zMgFeF5LX9SSApn8Jhhqg=="
       },
       "Microsoft.AspNetCore.Cryptography.Internal": {
         "type": "Transitive",
@@ -2630,8 +2631,8 @@
           "Ical.Net": "[4.3.1, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
-          "Magick.NET-Q16-AnyCPU": "[14.2.0, )",
-          "Magick.NET.Core": "[14.2.0, )",
+          "Magick.NET-Q16-AnyCPU": "[14.4.0, )",
+          "Magick.NET.Core": "[14.4.0, )",
           "Microsoft.Extensions.Caching.Memory": "[9.0.0, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.4.1, )",
