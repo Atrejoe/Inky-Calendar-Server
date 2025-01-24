@@ -90,9 +90,9 @@
       },
       "OpenAI-DotNet": {
         "type": "Direct",
-        "requested": "[8.4.1, )",
-        "resolved": "8.4.1",
-        "contentHash": "G8YHtVE203NNKTESwQ5XzXWtoNXD+mDMjDMwXfp/MbQgmD8Mqp+CiFLEPV1Qy0iDC/ykFtl+ZP9ZyrXv48a8VA=="
+        "requested": "[8.4.2, )",
+        "resolved": "8.4.2",
+        "contentHash": "Hx8UoSy6CEjD8rgTth39mBuec7tOO2uWMtT5151BptC1qjkPzKMT+G1EE3P7yTFJooxrTZ7pw/sR55IrWdWR6g=="
       },
       "Sentry": {
         "type": "Direct",
