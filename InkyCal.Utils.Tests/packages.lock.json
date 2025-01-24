@@ -54,11 +54,11 @@
       },
       "MSTest.TestFramework": {
         "type": "Direct",
-        "requested": "[3.7.0, )",
-        "resolved": "3.7.0",
-        "contentHash": "CRHONroYbAaxhVILTNS84gIaI3uRRVmj8Qd3+Mpia1AVwSz2JiQy0LlTqtS8p+TYWgN+8zHG6j17OaTz/P/eHw==",
+        "requested": "[3.7.2, )",
+        "resolved": "3.7.2",
+        "contentHash": "sc31bOL0LkoetSMfzqe9vliIzLuKAfFD0AP2aeKcacOC105PYn7K70qOPGZWWeRYmlIM7GogXnuLbiw8rdaIig==",
         "dependencies": {
-          "MSTest.Analyzers": "3.7.0"
+          "MSTest.Analyzers": "3.7.2"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -404,8 +404,8 @@
       },
       "MSTest.Analyzers": {
         "type": "Transitive",
-        "resolved": "3.7.0",
-        "contentHash": "6cW8FWzz6gr5MArL8GDNrw5c+afJtOMRyntFEzAdbgPHgH8DuLGMAyz8g38k/LMquewk3tOmbXoDIL/IACLKjg=="
+        "resolved": "3.7.2",
+        "contentHash": "gBMQazU/j4NxfTC32bWXp6aNd0+nYQlWxzRogrtNZ0B0hIGLtE1K8i5gMvf7zZfA2bwfTT9U7WVxtOIgiGjOYA=="
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
