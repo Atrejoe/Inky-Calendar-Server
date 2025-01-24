@@ -29,7 +29,7 @@
 	<PackageReference Include="Magick.NET.Core" Version="14.4.0" />
 	<PackageReference Include="Markdig.Signed" Version="0.39.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.0" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
 	  <PrivateAssets>all</PrivateAssets>
