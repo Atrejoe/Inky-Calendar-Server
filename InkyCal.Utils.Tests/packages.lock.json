@@ -220,11 +220,11 @@
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
-        "resolved": "9.0.0",
-        "contentHash": "YIMO9T3JL8MeEXgVozKt2v79hquo/EFtnY0vgxmLnUvk1Rei/halI7kOWZL2RBeV9FMGzgM9LZA8CVaNwFMaNA==",
+        "resolved": "9.0.1",
+        "contentHash": "VuthqFS+ju6vT8W4wevdhEFiRi1trvQtkzWLonApfF5USVzzDcTBoY3F24WvN/tffLSrycArVfX1bThm/9xY2A==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.0",
-          "Microsoft.Extensions.Primitives": "9.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.1",
+          "Microsoft.Extensions.Primitives": "9.0.1"
         }
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
@@ -245,11 +245,11 @@
       },
       "Microsoft.Extensions.Configuration.EnvironmentVariables": {
         "type": "Transitive",
-        "resolved": "9.0.0",
-        "contentHash": "v5R638eNMxksfXb7MFnkPwLPp+Ym4W/SIGNuoe8qFVVyvygQD5DdLusybmYSJEr9zc1UzWzim/ATKeIOVvOFDg==",
+        "resolved": "9.0.1",
+        "contentHash": "5HShUdF8KFAUSzoEu0DOFbX09FlcFtHxEalowyjM7Kji0EjdF0DLjHajb2IBvoqsExAYox+Z2GfbfGF7dH7lKQ==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration": "9.0.0",
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.0"
+          "Microsoft.Extensions.Configuration": "9.0.1",
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.1"
         }
       },
       "Microsoft.Extensions.Configuration.FileExtensions": {
@@ -1180,7 +1180,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "[9.0.1, )",
-          "Microsoft.Extensions.Configuration.EnvironmentVariables": "[9.0.0, )",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "[9.0.1, )",
           "Microsoft.Extensions.Configuration.Json": "[9.0.0, )",
           "Microsoft.Extensions.Configuration.UserSecrets": "[9.0.0, )",
           "System.Text.Json": "[9.0.0, )"
