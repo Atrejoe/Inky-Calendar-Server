@@ -194,9 +194,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[10.4.0.108396, )",
-        "resolved": "10.4.0.108396",
-        "contentHash": "xGcLZ+dvkVuBbd3sjPur9X+1owSL/iDoxVFJLhMx3/vq1fmoKM2fwvrZ8ReAas6l715GJ/dWU2ckwlrRVopmbg=="
+        "requested": "[10.5.0.109200, )",
+        "resolved": "10.5.0.109200",
+        "contentHash": "yS8uepqf+HwSEZtkJR7O4siqfyGKX4Lu7mIB6TTppy59czq7qkFjZ+fB7NTRZg8a/Pu7tvwVhpEMcxUTiQZmSw=="
       },
       "Swashbuckle.AspNetCore": {
         "type": "Direct",

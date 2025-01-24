@@ -36,7 +36,7 @@
 		padding: 2px;
 		background-color: white;
 		margin: 5px;
-		display:block	;
+		display: block;
 	}
 
 	.panel {
@@ -48,7 +48,7 @@
 		display: block;
 		height: 33px;
 		line-height: 33px;
-		border-radius:4px;
+		border-radius: 4px;
 	}
 
 		.panel:nth-child(1) {
@@ -61,43 +61,42 @@
 			height: 34px;
 			line-height: 34px;
 		}
-		
+
 
 	.holder:nth-of-type(2) .panel {
 		height: 20px;
 		line-height: 20px;
 	}
 
-	.holder:nth-of-type(2) .panel:nth-child(1) {
-	}
+		.holder:nth-of-type(2) .panel:nth-child(1) {
+		}
 
-	.holder:nth-of-type(2) .panel:nth-child(2) {
-		
-	}
-		
-	.holder:nth-of-type(2) .panel:nth-child(3) {
-		height: 60px;
-		line-height: 60px;
-	}
+		.holder:nth-of-type(2) .panel:nth-child(2) {
+		}
+
+		.holder:nth-of-type(2) .panel:nth-child(3) {
+			height: 60px;
+			line-height: 60px;
+		}
 
 	.holder:nth-of-type(3) .panel {
 		height: 20px;
 		line-height: 20px;
 	}
 
-	.holder:nth-of-type(3) .panel:nth-child(1) {
-	}
+		.holder:nth-of-type(3) .panel:nth-child(1) {
+		}
 
-	.holder:nth-of-type(3) .panel:nth-child(2) {
-		height: 60px;
-		line-height: 60px;
-	}
+		.holder:nth-of-type(3) .panel:nth-child(2) {
+			height: 60px;
+			line-height: 60px;
+		}
 
-	.holder:nth-of-type(3) .panel:nth-child(3) {
-	}
+		.holder:nth-of-type(3) .panel:nth-child(3) {
+		}
 
 	.holder:last-child {
-		clear:both;
+		clear: both;
 	}
 </style>
 <EditForm Model="@Panel">
@@ -121,15 +120,16 @@
 		<div class="input-group">
 			<InputSelect class="form-control" id="@nameof(newPanelId)" @bind-Value="@newPanelIdAsString">
 				@if ((selectablePanels?.Any()).GetValueOrDefault())
+				{
 
 					@foreach (var panel in selectablePanels)
 					{
 						<option value="@panel.Id.ToString()">@panel.Name (@panel.GetType().Name)</option>
 					}
-
+				}
 			</InputSelect>
 			<span class="input-group-btn">
-				<button disabled="@(Panel.Panels.Count()>=5)" type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
+				<button disabled="@(Panel.Panels.Count>=5)" type="submit" class="btn btn-link"><span class="oi oi-plus" aria-hidden="true"></span></button>
 			</span>
 		</div>
 		<ValidationMessage For="@(() => @Panel.Panels)" />
@@ -139,13 +139,13 @@
 @if ((@Panel.Panels?.Any()).GetValueOrDefault())
 {
 	<div class="form-group" ondragover="event.preventDefault();">
-		@if (@Panel.Panels.Count() == 1)
+		@if (@Panel.Panels.Count == 1)
 		{
 			<span>A single panel, why don't you add some more?</span>
 		}
 		else
 		{
-			<span>@("Panels".ToQuantity(@Panel.Panels.Count())), drag to re-order.</span>
+			<span>@("Panels".ToQuantity(@Panel.Panels.Count)), drag to re-order.</span>
 		}
 
 		<ul class="list-group" style="padding-left: 0;">
@@ -160,7 +160,7 @@
 
 					<small style="float:right">
 
-					Heigth <sup class="oi oi-info badge badge-primary" data-toggle="tooltip" data-html="true" title="<strong>Relative sizes</strong><br/>
+						Heigth <sup class="oi oi-info badge badge-primary" data-toggle="tooltip" data-html="true" title="<strong>Relative sizes</strong><br/>
 	A default 1:1:1 ratio divides the space evently
 	<div class='holder' title='A default 1:1:1 ratio divides the space evenly'>
 		<div class='panel'>1</div>
@@ -179,8 +179,8 @@
 		<div class='panel'>528</div>
 		<div class='panel'>176</div>
 	</div>">&nbsp;</sup>:
-					<input type="number" step="1" min="1" max="@short.MaxValue" @bind="@panel.Ratio" />
-				</small>
+						<input type="number" step="1" min="1" max="@short.MaxValue" @bind="@panel.Ratio" />
+					</small>
 
 					<span class="badge badge-primary">@panel.Panel.GetType().Name</span>
 				</li>
