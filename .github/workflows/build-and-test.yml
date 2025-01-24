@@ -8,6 +8,14 @@ on:
   # pull_request:
   #   branches: [ develop ]
 
+# Adds permissions to upload test results
+permissions:
+  pull-requests: write
+  contents: write
+  statuses: write
+  checks: write
+  actions: write
+
 jobs:
   build:
     name: Builds and tests libraries & app
