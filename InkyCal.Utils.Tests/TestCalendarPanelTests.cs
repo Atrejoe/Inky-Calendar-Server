@@ -14,15 +14,18 @@ namespace InkyCal.Utils.Tests
 	[Serializable]
 	public class EventWrapper : Event, IXunitSerializable
 	{
-
 		public override string ToString()
 		{
-			return $"[{CalendarName}] {Start ?? (object)"No start"}-{End ?? (object)"No end"} \"{Summary}\"";
+			return $"[{CalendarName}] {Date} {Start ?? (object)"No start"}-{End ?? (object)"No end"} \"{Summary}\"";
 		}
 
 		void IXunitSerializable.Deserialize(IXunitSerializationInfo info)
 		{
 			CalendarName = info.GetValue<string>(nameof(CalendarName));
+			Summary = info.GetValue<string>(nameof(Summary));
+			Start = info.GetValue<TimeSpan?>(nameof(Start));
+			End = info.GetValue<TimeSpan?>(nameof(End));
+			Date = info.GetValue<DateTime>(nameof(Date));
 		}
 
 		void IXunitSerializable.Serialize(IXunitSerializationInfo info)
@@ -31,6 +34,7 @@ namespace InkyCal.Utils.Tests
 			info.AddValue(nameof(Summary), Summary);
 			info.AddValue(nameof(Start), Start);
 			info.AddValue(nameof(End), End);
+			info.AddValue(nameof(Date), Date);
 		}
 	}
 
@@ -44,21 +48,21 @@ namespace InkyCal.Utils.Tests
 			return new TestCalendarPanelRenderer();
 		}
 
-		public static IEnumerable<object[]> DisplayModelsAndEvents()
+		public static TheoryData<DisplayModel, EventWrapper> DisplayModelsAndEvents()
 		{
 
-			var result = new List<object[]>();
+			var result = new TheoryData<DisplayModel, EventWrapper>();
 
-			var models = Enum.GetValues(typeof(DisplayModel))
-				.Cast<DisplayModel>();
+			var models = Enum.GetValues<DisplayModel>();
+
 
 			var events = new[] {
-				new EventWrapper() {  CalendarName = "Regular calendar name", Summary="Regular Summary" },
-				new EventWrapper() {  CalendarName = "ẞpecial calendar", Summary="Regular Summary" },
-				new EventWrapper() {  CalendarName = "Regular calendar name", Summary="Specielles sümmary" },
-				new EventWrapper() {  CalendarName = "Regular calendar name", Summary="ẞpecielles ẞümmary" },
-				new EventWrapper() {  CalendarName = "Chinese event", Summary="我可以处理（但可能无法显示）汉字" },
-				new EventWrapper() {  CalendarName = "Arabic event", Summary="يمكنني التعامل مع الأحرف الصينية (ولكن ربما لا أعرضها)" }
+				new EventWrapper() {  CalendarName = "Regular calendar name", Date= DateTime.UtcNow, Summary="Regular Summary" },
+				new EventWrapper() {  CalendarName = "ẞpecial calendar", Date= DateTime.UtcNow, Summary="Regular Summary" },
+				new EventWrapper() {  CalendarName = "Regular calendar name", Date= DateTime.UtcNow, Summary="Specielles sümmary" },
+				new EventWrapper() {  CalendarName = "Regular calendar name", Date= DateTime.UtcNow, Summary="ẞpecielles ẞümmary" },
+				new EventWrapper() {  CalendarName = "Chinese event", Date= DateTime.UtcNow, Summary="我可以处理（但可能无法显示）汉字" },
+				new EventWrapper() {  CalendarName = "Arabic event", Date= DateTime.UtcNow, Summary="يمكنني التعامل مع الأحرف الصينية (ولكن ربما لا أعرضها)" }
 				};
 
 
@@ -66,7 +70,7 @@ namespace InkyCal.Utils.Tests
 				{
 					events.ToList().ForEach(e =>
 						{
-							result.Add([m, e]);
+							result.Add(m, e);
 						});
 				});
 
@@ -75,7 +79,7 @@ namespace InkyCal.Utils.Tests
 
 		[Theory]
 		[MemberData(nameof(DisplayModelsAndEvents))]
-		public void TestDiaCritics(DisplayModel displayModel, EventWrapper calenderEvent)
+		public void TestDiaCritics(DisplayModel displayModel, EventWrapper eventWrapper)
 		{
 			//arrange
 			var filename = $"GetImageTest_{typeof(CalendarPanelRenderer).Name}_{displayModel}_Diacritics_{Guid.NewGuid()}.png";
@@ -102,7 +106,7 @@ namespace InkyCal.Utils.Tests
 								width: width,
 								height: height,
 								colors: colors,
-								new List<Event> { calenderEvent },
+								new List<Event> { eventWrapper },
 								string.Empty,
 								assertNoError
 								);

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,12 +18,9 @@ namespace InkyCal.Utils.Tests
 
 		protected abstract T GetRenderer();
 
-		[SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Method for delivery test data")]
-		public static IEnumerable<object[]> DisplayModels()
+		public static TheoryData<DisplayModel> DisplayModels()
 		{
-			return Enum.GetValues(typeof(DisplayModel))
-				.Cast<DisplayModel>()
-				.Select(x => new object[] { x });
+			return new TheoryData<DisplayModel>(Enum.GetValues<DisplayModel>());
 		}
 
 		[SkippableTheory]
