@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
@@ -123,8 +124,7 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> TestNewsPaper(DisplayModel model, CancellationToken cancellationToken, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 			var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.ToArray();
-
-			var r = new Random().Next(0, newsPapers.Length);
+			var r = RandomNumberGenerator.GetInt32(0, newsPapers.Length);
 			var randomNewsPaper = newsPapers[r];
 			return await this.Image(new NewsPaperRenderer(randomNewsPaper.PaperId), model, cancellationToken, width, height);
 		}
