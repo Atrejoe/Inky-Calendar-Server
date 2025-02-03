@@ -184,12 +184,12 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[5.0.1, )",
-        "resolved": "5.0.1",
-        "contentHash": "09hQ0svg9D/gqoyvNTBquICQ0QaL49BKABU40Jneni/g96xSBsqudg4nAgkH0AC5vUkYrD5caRDyFggRIqA7uA==",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "dPHEZMx0vhuUc7X2onyXIhTbJw4CyG6iGqcIQw29Kgqvl6zn0IMI0+GemULSD/vZHig5DGqJGJYiPVj+v10Mgw==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "9.0.0",
-          "Sentry.Extensions.Logging": "5.0.1"
+          "Sentry.Extensions.Logging": "5.1.0"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1618,18 +1618,18 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "h1rKFYXx58dUtAcsWpTlJGHhG1bpy0JjGh8b2sRKw2wdk3NKCGd8KTLSWnzIqIjjZP2PNeUZFUyDeWVKs8Dk2A=="
+        "resolved": "5.1.0",
+        "contentHash": "G9ynQGBc937yO+TFda09WQfTHKiwqVN8pgtM7LU6o2ciu8WVAE8IceSW0olp6nI9nWj99DtV/KAS2OKGK4B+Vg=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "SBeyXmc7q2xX2FA2fJniMkHYtowdc6tCwtv9rHuW9e/NtazxIeRt5ltpSbBRn9UtodOvxB5bRLFOvFExuGeIag==",
+        "resolved": "5.1.0",
+        "contentHash": "DKluf6xiLHioUsaEMR85xyFNL+a3oPor2f1/9VOOGGQkxrcHIVUldoD2yCQ7SivVu4d1SgApOx0w8Y5D/dDeeA==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "9.0.0",
           "Microsoft.Extensions.Http": "9.0.0",
           "Microsoft.Extensions.Logging.Configuration": "9.0.0",
-          "Sentry": "5.0.1"
+          "Sentry": "5.1.0"
         }
       },
       "SixLabors.Fonts": {
