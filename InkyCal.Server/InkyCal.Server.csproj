@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
 	<TargetFramework>net9.0</TargetFramework>
@@ -44,7 +44,7 @@
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.5.4" />
 	<PackageReference Include="Sentry.AspNetCore" Version="5.1.0" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.5.0.109200">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.6.0.109712">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
