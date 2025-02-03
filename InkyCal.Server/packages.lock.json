@@ -2632,7 +2632,7 @@
           "Microsoft.Extensions.Caching.Memory": "[9.0.1, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.4.2, )",
-          "Sentry": "[5.0.1, )",
+          "Sentry": "[5.1.0, )",
           "SixLabors.ImageSharp": "[3.1.6, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.5, )",
           "System.Net.Http": "[4.3.4, )",
