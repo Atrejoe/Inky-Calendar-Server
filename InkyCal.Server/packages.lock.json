@@ -200,14 +200,14 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Direct",
-        "requested": "[7.2.0, )",
-        "resolved": "7.2.0",
-        "contentHash": "vJv19UpWm6OOgnS9QLDnWARNVasXUfj8SFvlG7UVALm4nBnfwRnEky7C0veSDqMUmBeMPC6Ec3d6G1ts/J04Uw==",
+        "requested": "[7.3.1, )",
+        "resolved": "7.3.1",
+        "contentHash": "6u8w+UXp/sF89xQjfydWw6znQrUpbpFOmEIs8ODE+S0bV+mCQ9dNP4mk+HRsGHylpDaP5KSYSCEfFSgluLXHsA==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
-          "Swashbuckle.AspNetCore.Swagger": "7.2.0",
-          "Swashbuckle.AspNetCore.SwaggerGen": "7.2.0",
-          "Swashbuckle.AspNetCore.SwaggerUI": "7.2.0"
+          "Swashbuckle.AspNetCore.Swagger": "7.3.1",
+          "Swashbuckle.AspNetCore.SwaggerGen": "7.3.1",
+          "Swashbuckle.AspNetCore.SwaggerUI": "7.3.1"
         }
       },
       "System.Linq.Async": {
@@ -1653,24 +1653,24 @@
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "y27fNDfIh1vGhJjXYynLcZjl7DLOW1bSO2MDsY9wB4Zm1fdxpPsuBSiR4U+0acWlAqLmnuOPKr/OeOgwRUkBlw==",
+        "resolved": "7.3.1",
+        "contentHash": "jQuJ8kVbq+YE8WsJE3RwWHlF1kasp0QkA9Gl6NeNLICrhcgN8IQIthMufYW6t/4hpcN5cBIdES5jCEV81WjHbA==",
         "dependencies": {
           "Microsoft.OpenApi": "1.6.22"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "pMrTxGVuXM7t4wqft5CNNU8A0++Yw5kTLmYhB6tbEcyBfO8xEF/Y8pkJhO6BZ/2MYONrRYoQTfPFJqu8fOf5WQ==",
+        "resolved": "7.3.1",
+        "contentHash": "xs7Pznb3SSjZy7HpThE0ILqECfQFsGDHOrRoIYD/j67ktdRR1juDG4AMyidXXCOipgzHanZoF+nFrc+Nmjqjyw==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "7.2.0"
+          "Swashbuckle.AspNetCore.Swagger": "7.3.1"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "hgrXeKzyp5OGN8qVvL7A+vhmU7mDJTfGpiMBRL66IcfLOyna8UTLtn3cC3CghamXpRDufcc9ciklTszUGEQK0w=="
+        "resolved": "7.3.1",
+        "contentHash": "hs6C+lmNEzipOA1WPQpIaGvvoXjUbnoevbv6l7o9ZQE8SNF8ggjOmK6NB6cYdMcEvk0uBeKl4Qq/BnRt5MFVqg=="
       },
       "System.AppContext": {
         "type": "Transitive",
