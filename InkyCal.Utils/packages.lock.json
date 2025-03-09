@@ -18,12 +18,12 @@
       },
       "Google.Apis.Calendar.v3": {
         "type": "Direct",
-        "requested": "[1.68.0.3592, )",
-        "resolved": "1.68.0.3592",
-        "contentHash": "tShR3doCd5aC0Xwc00S09SQuEzKqYnURRZwP1dY9DgQmKw2aFVCeKNDZ7ACMQaNnNk3JvI5vClpBnlYLwHrCPQ==",
+        "requested": "[1.69.0.3667, )",
+        "resolved": "1.69.0.3667",
+        "contentHash": "3+3UBkp0P+tMKzrU9OlirIwVLylpsAipLuwqvHXWiW4lhKd8SorXWXw9F4wlgPv2MrW3eISwZSJ/bIH9eClkwA==",
         "dependencies": {
-          "Google.Apis": "1.68.0",
-          "Google.Apis.Auth": "1.68.0"
+          "Google.Apis": "1.69.0",
+          "Google.Apis.Auth": "1.69.0"
         }
       },
       "Google.Apis.Oauth2.v2": {
@@ -195,26 +195,26 @@
       },
       "Google.Apis": {
         "type": "Transitive",
-        "resolved": "1.68.0",
-        "contentHash": "s2MymhdpH+ybZNBeZ2J5uFgFHApBp+QXf9FjZSdM1lk/vx5VqIknJwnaWiuAzXxPrLEkesX0Q+UsiWn39yZ9zw==",
+        "resolved": "1.69.0",
+        "contentHash": "1TfjsXFejwIf7iWaE7A0FbnOEsk8FPlbdFAt1r+I8aSMQfLLdSVWCLdZz6TzuWVwoCGEuJUHTZ/FXdptdU3qWw==",
         "dependencies": {
-          "Google.Apis.Core": "1.68.0"
+          "Google.Apis.Core": "1.69.0"
         }
       },
       "Google.Apis.Auth": {
         "type": "Transitive",
-        "resolved": "1.68.0",
-        "contentHash": "hFx8Qz5bZ4w0hpnn4tSmZaaFpjAMsgVElZ+ZgVLUZ2r9i+AKcoVgwiNfv1pruNS5cCvpXqhKECbruBCfRezPHA==",
+        "resolved": "1.69.0",
+        "contentHash": "ar07yxn/s41jdqQ3sMh8EAehiSvXQ9yE1MS4McmZINeSWvolnLHmIZ9Yxj4tHVIYYz0c7H/lpToVqm7C2aYx9g==",
         "dependencies": {
-          "Google.Apis": "1.68.0",
-          "Google.Apis.Core": "1.68.0",
+          "Google.Apis": "1.69.0",
+          "Google.Apis.Core": "1.69.0",
           "System.Management": "7.0.2"
         }
       },
       "Google.Apis.Core": {
         "type": "Transitive",
-        "resolved": "1.68.0",
-        "contentHash": "pAqwa6pfu53UXCR2b7A/PAPXeuVg6L1OFw38WckN27NU2+mf+KTjoEg2YGv/f0UyKxzz7DxF1urOTKg/6dTP9g==",
+        "resolved": "1.69.0",
+        "contentHash": "SXUcurNUPxYMtOnawvB2Av18VrPBC9W7So9q9ikmXIXLGiv4RX7Zbu4kc+8PbwTdd8wLt54r0PBGOT5RaKoTjQ==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.3"
         }
