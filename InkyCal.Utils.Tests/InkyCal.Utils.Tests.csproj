@@ -47,7 +47,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
-		<PackageReference Include="XunitXml.TestLogger" Version="5.0.0" />
+		<PackageReference Include="XunitXml.TestLogger" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
