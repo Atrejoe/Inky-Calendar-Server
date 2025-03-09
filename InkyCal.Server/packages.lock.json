@@ -159,9 +159,9 @@
       },
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
         "type": "Direct",
-        "requested": "[1.21.0, )",
-        "resolved": "1.21.0",
-        "contentHash": "8NudeHOE56YsY59HYY89akRMup8Ho+7Y3cADTGjajjWroXVU9RQai2nA6PfteB8AuzmRHZ5NZQB2BnWhQEul5g=="
+        "requested": "[1.21.2, )",
+        "resolved": "1.21.2",
+        "contentHash": "kN58RveGig9YjWAoYI3flDWC/jWCU0Xzzmp3f49fbnPwZLsVJu9qMt+VSrIz7I3Gn6jkeY1l7cVJopiRDOq3CQ=="
       },
       "MiniProfiler.AspNetCore.Mvc": {
         "type": "Direct",
