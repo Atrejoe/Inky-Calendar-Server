@@ -265,11 +265,11 @@
       },
       "System.Runtime.Caching": {
         "type": "Direct",
-        "requested": "[9.0.2, )",
-        "resolved": "9.0.2",
-        "contentHash": "ePGvHiW5gEcRck8X9qx18yAi91TekaM/64yyGDJBmge/GBkMbIiNRYcDSR3yw8ltE/I58xuzM1cghU8LsMlOyA==",
+        "requested": "[9.0.3, )",
+        "resolved": "9.0.3",
+        "contentHash": "mp4QRjXcuakbQJon7ZZOS/dUn61bWJzX7GSNkxngKwpa7Mt2CD/Lb2cX4kWniALEM0vzDpavsybq0XQvlqpgGg==",
         "dependencies": {
-          "System.Configuration.ConfigurationManager": "9.0.2"
+          "System.Configuration.ConfigurationManager": "9.0.3"
         }
       },
       "System.Text.RegularExpressions": {
@@ -1816,11 +1816,11 @@
       },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
-        "resolved": "9.0.2",
-        "contentHash": "pX5GhR4/mfYUbebRdINO6P4B8stIbVWaAWGgWzYO1eC30nUVpCQdzQjKwCPhtLdzjR3d/q+MQ0sRG3B1GLSyqw==",
+        "resolved": "9.0.3",
+        "contentHash": "0kw80ykL/iFhNtFbPpjxIavmCk7/l6MqQwNSNhEoSNuI9C82ZZ251thzQZ/btHut21Y2G9M+amQY1K5bhaAjKg==",
         "dependencies": {
-          "System.Diagnostics.EventLog": "9.0.2",
-          "System.Security.Cryptography.ProtectedData": "9.0.2"
+          "System.Diagnostics.EventLog": "9.0.3",
+          "System.Security.Cryptography.ProtectedData": "9.0.3"
         }
       },
       "System.Console": {
@@ -1855,8 +1855,8 @@
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
-        "resolved": "9.0.2",
-        "contentHash": "i+Fe6Fpst/onydFLBGilCr/Eh9OFdlaTU/c3alPp6IbLZXQJOgpIu3l4MOnmsN8fDYq5nAyHSqNIJesc74Yw3Q=="
+        "resolved": "9.0.3",
+        "contentHash": "0nDJBZ06DVdTG2vvCZ4XjazLVaFawdT0pnji23ISX8I8fEOlRJyzH2I0kWiAbCtFwry2Zir4qE4l/GStLATfFw=="
       },
       "System.Diagnostics.StackTrace": {
         "type": "Transitive",
@@ -2433,8 +2433,8 @@
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
-        "resolved": "9.0.2",
-        "contentHash": "+z9JWtU9di45tW/w6zpuJms4SnAAqKY2Usmmxs7MpOhxWoIeR2pKl1vEkaFbEx52ZfrMFcZXsFe+8WERMozzGg=="
+        "resolved": "9.0.3",
+        "contentHash": "4PAwR9l3rhAESfymptisnO2KWpHmiTnKxovnREqmiY4BEakXD2ahQU4/NO0vzEarMw8RGzwpmWoiHwvL/waHfQ=="
       },
       "System.Security.Cryptography.X509Certificates": {
         "type": "Transitive",
