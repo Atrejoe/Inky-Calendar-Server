@@ -108,9 +108,9 @@
       },
       "XunitXml.TestLogger": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "4Q0NGce8oCYTrJwxOAf9ya5Sf/2vVFPmSeVUxIFhtWGaEyC9iQ3WBMddU7F1xnWZ7Nh0FGmH7nLpkVXGe16ugQ=="
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "3TFN67Ao6GMyiI08F+eBRdkdiNxge1LqkSwE9+PNbHtO6CzRB6LMYhL/B2vsq61kfOlQ+YfapxpadxUsYCa9dw=="
       },
       "Bugsnag": {
         "type": "Transitive",
