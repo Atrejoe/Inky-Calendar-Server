@@ -189,9 +189,9 @@
       },
       "System.Threading.RateLimiting": {
         "type": "Direct",
-        "requested": "[9.0.2, )",
-        "resolved": "9.0.2",
-        "contentHash": "3DPSB8TAt+0xP4aGNzGICH2W0+9ham4iBYK2aqhdgLnt6gUgT9/WGKkd7NUJqlp7qXCwcZ6rUWOybidfgMhuvQ=="
+        "requested": "[9.0.3, )",
+        "resolved": "9.0.3",
+        "contentHash": "wP74ulPFlU+1QzMKm5o3BZdkULKRMBWYiwZiZkmUBlF0iyfh2DEV9oJfYc+CXcSa4508gqkMhPxSdwUcWhrMWQ=="
       },
       "Google.Apis": {
         "type": "Transitive",

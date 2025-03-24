@@ -1111,8 +1111,8 @@
       },
       "System.Threading.RateLimiting": {
         "type": "Transitive",
-        "resolved": "9.0.2",
-        "contentHash": "3DPSB8TAt+0xP4aGNzGICH2W0+9ham4iBYK2aqhdgLnt6gUgT9/WGKkd7NUJqlp7qXCwcZ6rUWOybidfgMhuvQ=="
+        "resolved": "9.0.3",
+        "contentHash": "wP74ulPFlU+1QzMKm5o3BZdkULKRMBWYiwZiZkmUBlF0iyfh2DEV9oJfYc+CXcSa4508gqkMhPxSdwUcWhrMWQ=="
       },
       "System.Threading.Tasks": {
         "type": "Transitive",
@@ -1207,7 +1207,7 @@
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Text.Json": "[9.0.2, )",
           "System.Text.RegularExpressions": "[4.3.1, )",
-          "System.Threading.RateLimiting": "[9.0.2, )"
+          "System.Threading.RateLimiting": "[9.0.3, )"
         }
       }
     }
