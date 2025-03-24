@@ -184,12 +184,12 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[5.3.0, )",
-        "resolved": "5.3.0",
-        "contentHash": "zC2yhwQB0laYWGXLYDCsiKSIqleaEK3fUH9Z5t8Bgvfs2nGX0mHmh9oPqNAAbkVGvni56mhgHHCBxN/kpfkawA==",
+        "requested": "[5.4.0, )",
+        "resolved": "5.4.0",
+        "contentHash": "NQuJsG97bNUlf6mKGe1bBEXP8izorsr5xDhIKvI7f6UBatYLuwoVX5vsEVypWIOqZw2wH3rFvJBt/FsqMq3e2A==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "9.0.0",
-          "Sentry.Extensions.Logging": "5.3.0"
+          "Sentry.Extensions.Logging": "5.4.0"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -1618,18 +1618,18 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "5.3.0",
-        "contentHash": "zlBIP7YmYxySwcgapLMj1gdxPEz9rwdrOa4Yjub/TzcAaMQXusRH9hY4CE6pu0EIibZ7C7Hhjhr6xOTlyK8gFQ=="
+        "resolved": "5.4.0",
+        "contentHash": "fXjF+bn7uOSPjrALfY+GQGhaeXFXfAX8XrSWeUJOek/hhIss1hhi/l2AJPefjVdaNWyb1muJAdUUZnBofZjlvw=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "5.3.0",
-        "contentHash": "DPN6NXvO4LTH21UM2gUFJwSwVa/fuT3B/UZmQyfSfecqViXrZO7WFuKz/h592YUoGNCumyt8x045bxbz6j9btg==",
+        "resolved": "5.4.0",
+        "contentHash": "SKEZS6Qo/BC8ttWVgVn4j9gxTHNADIl37yzk9E9znOeqBoymVNBeb5oIunjfJlq9EdNFPVpRV/ig/nFKHep2HQ==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "9.0.0",
           "Microsoft.Extensions.Http": "9.0.0",
           "Microsoft.Extensions.Logging.Configuration": "9.0.0",
-          "Sentry": "5.3.0"
+          "Sentry": "5.4.0"
         }
       },
       "SixLabors.Fonts": {
@@ -2632,7 +2632,7 @@
           "Microsoft.Extensions.Caching.Memory": "[9.0.3, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.6.2, )",
-          "Sentry": "[5.3.0, )",
+          "Sentry": "[5.4.0, )",
           "SixLabors.ImageSharp": "[3.1.7, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.5, )",
           "System.Net.Http": "[4.3.4, )",
