@@ -27,19 +27,19 @@
 
   <ItemGroup>
 	<PackageReference Include="Azure.Identity" Version="1.13.2" />
-	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.3" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="System.Formats.Asn1" Version="9.0.3" />
+	<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
 	<PackageReference Include="System.Private.Uri" Version="4.3.2" />
-	<PackageReference Include="System.Text.Json" Version="9.0.3" />
+	<PackageReference Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
