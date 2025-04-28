@@ -1509,8 +1509,8 @@
       },
       "SixLabors.ImageSharp": {
         "type": "Transitive",
-        "resolved": "3.1.7",
-        "contentHash": "9fIOOAsyLFid6qKypM2Iy0Z3Q9yoanV8VoYAHtI2sYGMNKzhvRTjgFDHonIiVe+ANtxIxM6SuqUzj0r91nItpA=="
+        "resolved": "3.1.8",
+        "contentHash": "8eJkROLGh6DBQLR666q2aOpAaean2puZaZ6Ur9YxoyGzjaZhv8OJSxtnDou54+OXMkXtLUdyQC0so47sOsqZjg=="
       },
       "SixLabors.ImageSharp.Drawing": {
         "type": "Transitive",
@@ -2156,7 +2156,7 @@
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.6.3, )",
           "Sentry": "[5.5.1, )",
-          "SixLabors.ImageSharp": "[3.1.7, )",
+          "SixLabors.ImageSharp": "[3.1.8, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.5, )",
           "System.Net.Http": "[4.3.4, )",
           "System.Private.Uri": "[4.3.2, )",
