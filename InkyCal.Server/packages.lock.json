@@ -1504,8 +1504,8 @@
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
-        "resolved": "2.0.8",
-        "contentHash": "psTLKJVKaD8PKm+Bz/mSSNo4m0VCTYoJ97TF/ynxEWkn4sFUipI0rzE2V/KBtfU0TOn/gF/+1XBOEvusGZZMhA=="
+        "resolved": "2.1.3",
+        "contentHash": "ORWbZ5BHrC/LZvo+Y09MnoJq5VUKD85LsYALk+YI7CHFra+m5arCkz00IntDM6SrAiB22bvSdKtKmuCyHOKlqg=="
       },
       "SixLabors.ImageSharp": {
         "type": "Transitive",
@@ -1514,11 +1514,11 @@
       },
       "SixLabors.ImageSharp.Drawing": {
         "type": "Transitive",
-        "resolved": "2.1.5",
-        "contentHash": "cER1JfvshYDmTxw+gUy/x5e1xoNWhrD6s3AFf8rRUx9hWSXYdOFreQfUrM/QooMj0rF7+hkVtvGnV3EdMx4dxA==",
+        "resolved": "2.1.6",
+        "contentHash": "/VeIBfAcaYcqqWMgVyF0nzdmWBkDQhppL8tltd8pFyUYanytCFnJG77bZYOGllk4LYLFdKduACvbpKGUpflp1w==",
         "dependencies": {
-          "SixLabors.Fonts": "2.0.8",
-          "SixLabors.ImageSharp": "3.1.6"
+          "SixLabors.Fonts": "2.1.3",
+          "SixLabors.ImageSharp": "3.1.8"
         }
       },
       "Swashbuckle.AspNetCore.Swagger": {
@@ -2157,7 +2157,7 @@
           "OpenAI-DotNet": "[8.6.4, )",
           "Sentry": "[5.7.0, )",
           "SixLabors.ImageSharp": "[3.1.8, )",
-          "SixLabors.ImageSharp.Drawing": "[2.1.5, )",
+          "SixLabors.ImageSharp.Drawing": "[2.1.6, )",
           "System.Net.Http": "[4.3.4, )",
           "System.Private.Uri": "[4.3.2, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
