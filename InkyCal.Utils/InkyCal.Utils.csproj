@@ -38,7 +38,7 @@
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
 	<PackageReference Include="MiniProfiler.Shared" Version="4.5.4" />
-	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
+	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.5" />
 	<PackageReference Include="OpenAI-DotNet" Version="8.6.4" />
 	<PackageReference Include="Sentry" Version="5.7.0" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
@@ -53,9 +53,9 @@
 	<PackageReference Include="System.Net.Http" Version="4.3.4" />
 	<PackageReference Include="System.Private.Uri" Version="4.3.2" />
 	<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-	<PackageReference Include="System.Text.Json" Version="9.0.4" />
+	<PackageReference Include="System.Text.Json" Version="9.0.5" />
 	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-	<PackageReference Include="System.Threading.RateLimiting" Version="9.0.4" />
+	<PackageReference Include="System.Threading.RateLimiting" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
