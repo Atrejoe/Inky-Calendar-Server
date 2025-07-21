@@ -10,9 +10,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[10.11.0.117924, )",
-        "resolved": "10.11.0.117924",
-        "contentHash": "C7eK46HEeZCptfuR2kGjLnBzdzBjx1F1fb6Ga8DFOsPPaz1sw7LNWdGh42+Ch5NJW/Iq39xcDds4lvww7i4BGw=="
+        "requested": "[10.14.0.120626, )",
+        "resolved": "10.14.0.120626",
+        "contentHash": "pQ2jRD4VxMGJKgUQhCcSyMh4N477QSn3iE+2tl64C4uhjINyyv+TtobCmwJ4CRlNcirZuV7hKQ2AVOht6TgTzA=="
       }
     }
   }
