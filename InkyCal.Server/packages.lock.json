@@ -86,9 +86,9 @@
       },
       "Markdig.Signed": {
         "type": "Direct",
-        "requested": "[0.41.2, )",
-        "resolved": "0.41.2",
-        "contentHash": "oso8cno80OzCgAQOygtJXT1UhlVr2eSjwzXLqSLHyfKmSJ+3OcwDbrpzNwMj3/1SgncvQxP7OsNQ3bRfE3HvjQ=="
+        "requested": "[0.41.3, )",
+        "resolved": "0.41.3",
+        "contentHash": "BB+2H62tQNcLU4depukiuok96UMqV4zOAtSGPM4UiO1OKbgEnpmIscHVJ4qir1LWjWzODLugfD8qs2RWxmA9JA=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
