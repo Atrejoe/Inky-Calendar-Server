@@ -88,9 +88,9 @@
       },
       "Sentry": {
         "type": "Direct",
-        "requested": "[5.10.0, )",
-        "resolved": "5.10.0",
-        "contentHash": "YArPx8bL+kU2htpoOI1k2W/n3gbuiA7TLchYIs4AcLbbB2MXmX1+Eo1IIiBf484eqVXRpO0Dm3bvQa4fg+ZhCw=="
+        "requested": "[5.12.0, )",
+        "resolved": "5.12.0",
+        "contentHash": "m3C9urnnPhvk+Ua+771NF6+qw4mLY9QKBwM9IaJFNvqslh6Yb+EBFckwP0V4jaMHdgyPBAjegcBE1lR9vJ6kAw=="
       },
       "SixLabors.ImageSharp": {
         "type": "Direct",
