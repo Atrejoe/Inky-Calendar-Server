@@ -146,7 +146,7 @@ END:VCALENDAR
 			calendars.Add(actual);
 
 			//assert
-			Assert.NotNull(calendars.GetOccurrences(DateTime.Now.Date));
+			Assert.NotNull(calendars.GetOccurrences(new (DateTime.Now.Date.ToUniversalTime())));
 		}
 
 	}

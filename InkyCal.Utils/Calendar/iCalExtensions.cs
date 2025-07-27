@@ -46,11 +46,11 @@ namespace InkyCal.Utils.Calendar
 				List<Occurrence> occurrences;
 				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and "))
 					occurrences = calendars.SelectMany(x =>
-							x.GetOccurrences(date, DateTime.Now.AddYears(2))).ToList();
+							x.GetOccurrences(new (date.ToUniversalTime())).TakeWhileBefore(new (DateTime.Now.ToUniversalTime().AddYears(2)))).ToList();
 
 				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, maxEvents):n0} events"))
 					items.AddRange(occurrences
-								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
+								.OrderBy(x => x.Period.StartTime.AsUtc)
 								.SelectMany(x =>
 								{
 									//For multi-day periods, list each day within the period separately
@@ -62,11 +62,12 @@ namespace InkyCal.Utils.Calendar
 									var result = new List<Event>();
 
 									while (result.Count < maxEvents
-									&& thisDate < x.Period.EndTime.AsSystemLocal)
+									&& thisDate.Subtract(date).TotalDays < 100
+									&& (x.Period.EndTime is null || thisDate < x.Period.EndTime.AsUtc.ToLocalTime()))
 									{
 
-										var hasOverlap = thisDate < x.Period.EndTime.AsSystemLocal
-										&& thisDate >= x.Period.StartTime.AsSystemLocal.Date;
+										var hasOverlap = (x.Period.EndTime is null && thisDate.Date == x.Period.StartTime.AsUtc.ToLocalTime().Date)
+										|| (x.Period.EndTime is not null && thisDate < x.Period.EndTime.AsUtc.ToLocalTime() && thisDate >= x.Period.StartTime.AsUtc.ToLocalTime().Date);
 
 										if (!hasOverlap)
 										{
@@ -75,27 +76,22 @@ namespace InkyCal.Utils.Calendar
 										}
 
 										var isAllDay = calendarEvent.IsAllDay
-										|| (x.Period.StartTime.AsSystemLocal <= thisDate
-										 && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+										|| (x.Period.StartTime.AsUtc.ToLocalTime() <= thisDate
+										 && (x.Period.EndTime is null || x.Period.EndTime.AsUtc.ToLocalTime() >= thisDate.AddDays(1))
 										 );
 
 										var start = isAllDay
 														? (TimeSpan?)null
-														: x.Period.StartTime.AsSystemLocal < thisDate
+														: x.Period.StartTime.AsUtc.ToLocalTime() < thisDate
 															? TimeSpan.FromHours(0)
-															: (x.Period.StartTime.IsUtc
-																? x.Period.StartTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.StartTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
-																)
+															: x.Period.StartTime.AsUtc.ToLocalTime() //Convert UTC to local, todo: make timezone of panel configurable?
 																.TimeOfDay;
 										var end = isAllDay
 														? (TimeSpan?)null
-														: x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+														: x.Period.EndTime.AsUtc.ToLocalTime() >= thisDate.AddDays(1)
 															? TimeSpan.FromHours(24)
-															: (x.Period.EndTime.IsUtc
-																? x.Period.EndTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.EndTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
-																).TimeOfDay;
+															: x.Period.EndTime.AsUtc.ToLocalTime() //Convert UTC to local, todo: make timezone of panel configurable?
+																.TimeOfDay;
 
 
 										result.Add(new Event()
