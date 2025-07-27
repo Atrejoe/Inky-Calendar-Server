@@ -4,9 +4,9 @@
     "net9.0": {
       "Bugsnag": {
         "type": "Direct",
-        "requested": "[4.0.0, )",
-        "resolved": "4.0.0",
-        "contentHash": "lLOMGzIMZG9K8Lr0y6UN4uHQBxQ9hzpz5rZm/8fMH1Qxcq5VocubCzjm84oneSi3OBDEMToghbZrNcaJNASCgQ=="
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "ILuC9EbEMRv+7p0Kf5BJp7smyKVerOlunRTlycUuzGrZM050jwSMpQIMlNo9THc6+Z68leJQuqXufcfDJ+K37g=="
       },
       "Google.Apis.Calendar.v3": {
         "type": "Direct",

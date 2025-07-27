@@ -14,11 +14,11 @@
       },
       "Bugsnag.AspNet.Core": {
         "type": "Direct",
-        "requested": "[4.0.0, )",
-        "resolved": "4.0.0",
-        "contentHash": "p8gtJ4395rd+heN/CDHVVxApltCyP411Xmoy1aub8FKd/g3wGm+4aN61kwKuOJoJ2hHe/vuhmAk+gk5RdJXgLw==",
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "nUp/kFNUC+rH7FHWm/d0Ft3zNdrB3F4QtgThFORhmNfsJrL/EroMQoCQo5MElbjxpKBuwwXmhyv4Oo1+n3oYZA==",
         "dependencies": {
-          "Bugsnag": "4.0.0",
+          "Bugsnag": "4.1.0",
           "Microsoft.Extensions.DiagnosticAdapter": "3.1.32"
         }
       },
@@ -296,8 +296,8 @@
       },
       "Bugsnag": {
         "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "lLOMGzIMZG9K8Lr0y6UN4uHQBxQ9hzpz5rZm/8fMH1Qxcq5VocubCzjm84oneSi3OBDEMToghbZrNcaJNASCgQ=="
+        "resolved": "4.1.0",
+        "contentHash": "ILuC9EbEMRv+7p0Kf5BJp7smyKVerOlunRTlycUuzGrZM050jwSMpQIMlNo9THc6+Z68leJQuqXufcfDJ+K37g=="
       },
       "Google.Apis": {
         "type": "Transitive",
@@ -2125,7 +2125,7 @@
       "inkycal.utils": {
         "type": "Project",
         "dependencies": {
-          "Bugsnag": "[4.0.0, )",
+          "Bugsnag": "[4.1.0, )",
           "Google.Apis.Calendar.v3": "[1.69.0.3746, )",
           "Google.Apis.Oauth2.v2": "[1.68.0.1869, )",
           "Ical.Net": "[4.3.1, )",
