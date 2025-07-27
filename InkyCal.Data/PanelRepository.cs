@@ -55,13 +55,10 @@ namespace InkyCal.Data
 				if (panel is PanelOfPanels pop)
 				{
 					var ids = new HashSet<Guid>();
-					foreach (var referencedPanel in pop.Panels.Select(x => x.Panel))
+					foreach (var referencedPanel in pop.Panels.Select(x => x.Panel).Where(x => !ids.Contains(x.Id)))
 					{
-						if (!ids.Contains(referencedPanel.Id))
-						{
-							c.Entry(referencedPanel).State = EntityState.Unchanged;
-							ids.Add(referencedPanel.Id);
-						}
+						c.Entry(referencedPanel).State = EntityState.Unchanged;
+						ids.Add(referencedPanel.Id);
 					}
 				}
 
