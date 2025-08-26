@@ -2129,7 +2129,7 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[14.7.0, )",
-          "Magick.NET.Core": "[14.7.0, )",
+          "Magick.NET.Core": "[14.8.0, )",
           "Microsoft.Extensions.Caching.Memory": "[9.0.8, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.1, )",
