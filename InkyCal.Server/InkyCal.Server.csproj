@@ -26,7 +26,7 @@
 	<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
 	<PackageReference Include="Bugsnag.AspNet.Core" Version="4.1.0" />
 	<PackageReference Include="Humanizer" Version="2.14.1" />
-	<PackageReference Include="Magick.NET.Core" Version="14.8.1" />
+	<PackageReference Include="Magick.NET.Core" Version="14.8.2" />
 	<PackageReference Include="Markdig.Signed" Version="0.41.3" />
 	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
 	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
