@@ -6,6 +6,7 @@
 	<Nullable>enable</Nullable>
 	<IsPackable>false</IsPackable>
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,9 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="MSTest.TestFramework" Version="3.10.4" />
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-	<PackageReference Include="MSTest.TestAdapter" Version="3.10.4" />
+	<PackageReference Include="MSTest.TestFramework" Version="4.0.1" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+	<PackageReference Include="MSTest.TestAdapter" Version="4.0.1" />
 	<PackageReference Include="coverlet.collector" Version="6.0.4">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
