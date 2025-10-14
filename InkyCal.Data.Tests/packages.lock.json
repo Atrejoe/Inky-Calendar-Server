@@ -97,9 +97,9 @@
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "5mj99LvCqrq3CNi06xYdyIAXOEh+5b33F2nErCzI5zWiDdLHXiPXEWFSUAF8zlIv0ZWqjZNCwHTQeAPYbF3pCg=="
+        "requested": "[3.1.5, )",
+        "resolved": "3.1.5",
+        "contentHash": "tKi7dSTwP4m5m9eXPM2Ime4Kn7xNf4x4zT9sdLO/G4hZVnQCRiMTWoSZqI/pYTVeI27oPPqHBKYI/DjJ9GsYgA=="
       },
       "Xunit.SkippableFact": {
         "type": "Direct",
@@ -113,9 +113,9 @@
       },
       "XunitXml.TestLogger": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "3TFN67Ao6GMyiI08F+eBRdkdiNxge1LqkSwE9+PNbHtO6CzRB6LMYhL/B2vsq61kfOlQ+YfapxpadxUsYCa9dw=="
+        "requested": "[7.0.2, )",
+        "resolved": "7.0.2",
+        "contentHash": "yU6fRVtllUmxrwJV3Z6sNrYmyz5ALU3qiOQEfBnGCfYguxuWct6LgqgYd+c+ESOGkYDdhJ8JADhFCp6ejn6qww=="
       },
       "Azure.Core": {
         "type": "Transitive",
