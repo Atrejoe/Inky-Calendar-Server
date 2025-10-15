@@ -1,24 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Auth.OAuth2.Requests;
-using Google.Apis.Auth.OAuth2.Responses;
-using Google.Apis.Calendar.v3;
-using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using InkyCal.Data;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace InkyCal.Server.Pages
 {
