@@ -17,5 +17,10 @@ InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject
 
 *.trx
 
+# documenatation
+_site/
+api/
+docs/
+
 # Kubernetes secrets
 *.env

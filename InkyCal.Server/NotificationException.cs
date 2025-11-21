@@ -14,4 +14,12 @@ namespace InkyCal.Server
 		/// <inheritdoc/>
 		public NotificationException(string message, Exception inner) : base(message, inner) { }
 	}
+
+	/// <summary>
+	/// These are the namespace comments for <c>Company.Product.Widgets</c>.
+	/// </summary>
+	[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+	class NamespaceDoc
+	{
+	}
 }
