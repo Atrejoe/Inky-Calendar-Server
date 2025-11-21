@@ -27,6 +27,6 @@ namespace InkyCal.Server.Config
 
 		public static string OpenAIAPIKey => configuration.Value.GetValue(nameof(OpenAIAPIKey), string.Empty);
 		public static string OpenWeatherAPIKey => configuration.Value.GetValue(nameof(OpenWeatherAPIKey), string.Empty);
-
+		public static bool DatabaseEnabled => configuration.Value.GetValue(nameof(DatabaseEnabled), true);
 	}
 }

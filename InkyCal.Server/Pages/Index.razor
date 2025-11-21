@@ -184,16 +184,30 @@ It also allows to reduce power-consumption, making a battery-operated panel a mo
 		</NavLink>
 	</Authorized>
 	<NotAuthorized>
-		Then: <LoginDisplay />, and head over to
-		<NavLink class="nav-link" href="fetchdata">
-			<span class="oi oi-list-rich" aria-hidden="true"></span> panel configuration.
-		</NavLink>.
-		<p>
-			Don't like to login? No problem, quite a bit of the panel configuration is available without creating an account, see:
-			<NavLink class="nav-link" href="swagger_frame">
-				<span class="oi oi-code" aria-hidden="true"></span> the API documentation,
-			</NavLink> (which contains endpoints for anonymous panels too).
-		</p>
+		@if (Config.Config.DatabaseEnabled)
+		{
+			<span>
+				Then: <LoginDisplay />, and head over to
+				<NavLink class="nav-link" href="fetchdata">
+					<span class="oi oi-list-rich" aria-hidden="true"></span> panel configuration.
+				</NavLink>.
+				<p>
+					Don't like to login? No problem, quite a bit of the panel configuration is available without creating an account, see:
+					<NavLink class="nav-link" href="swagger_frame">
+						<span class="oi oi-code" aria-hidden="true"></span> the API documentation,
+					</NavLink> (which contains endpoints for anonymous panels too).
+				</p>
+			</span>
+		}
+		else
+		{
+			<span>
+				panel configuration is available without creating an account, see:
+				<NavLink class="nav-link" href="swagger_frame">
+					<span class="oi oi-code" aria-hidden="true"></span> the API documentation,
+				</NavLink> (which contains endpoints for anonymous panels too).
+			</span>
+		}
 	</NotAuthorized>
 </AuthorizeView>
 <p>

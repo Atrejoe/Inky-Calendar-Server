@@ -11,10 +11,13 @@
     <DockerServiceUrl>https://localhost:5001</DockerServiceUrl>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="DATABASE_CONFIGURATION.md" />
+    <None Include="DATABASE_OPTIONAL_SUMMARY.md" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="QUICK_START_DATABASE_OPTIONAL.md" />
   </ItemGroup>
 </Project>

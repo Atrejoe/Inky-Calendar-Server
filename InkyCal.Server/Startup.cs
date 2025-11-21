@@ -28,27 +28,26 @@ namespace InkyCal.Server
 
 	public class Startup
 	{
-		//public Startup(IConfiguration configuration)
-		//{
-		//	Configuration = configuration;
-		//}
-
-		//public IConfiguration Configuration { get; }
-
 		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"" target=""github"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
-			services.AddHealthChecks()
-				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
+			
+			var databaseEnabled = Config.Config.DatabaseEnabled;
+			Console.WriteLine($"Database support: {(databaseEnabled ? "ENABLED" : "DISABLED")}");
 
-			//services.AddMvc().AddJsonOptions(options =>
-			//{
-			//    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-			//    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-			//});
+			// Configure health checks
+			if (databaseEnabled && !string.IsNullOrEmpty(Config.Config.ConnectionString))
+			{
+				services.AddHealthChecks()
+					.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded);
+			}
+			else
+			{
+				services.AddHealthChecks();
+			}
 
 			if (!string.IsNullOrEmpty(Config.Config.BugSnagAPIKey))
 			{
@@ -65,55 +64,90 @@ namespace InkyCal.Server
 					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
 				);
 
-
-			//Migrate on startup
-			using (var db = new ApplicationDbContext())
+			// Configure database and identity only if database is enabled
+			if (databaseEnabled)
 			{
-
-				Console.WriteLine($@"Applied migrations:");
-				foreach (var migration in db.Database.GetAppliedMigrations())
-					Console.WriteLine(migration);
-				Console.WriteLine();
-
-				Console.WriteLine(@"Available migrations:");
-				foreach (var migration in db.Database.GetMigrations())
-					Console.WriteLine(migration);
-				Console.WriteLine();
-
-				Console.WriteLine(@"Pending migrations:");
-				foreach (var migration in db.Database.GetPendingMigrations())
-					Console.WriteLine(migration);
-				Console.WriteLine();
-
-				bool isMigrationNeeded = db.Database.GetPendingMigrations().Any();
-				if (isMigrationNeeded)
-					db.Database.Migrate();
-				else
-					Console.WriteLine(@"No migrations required");
-			}
-
-			services.AddDatabaseDeveloperPageExceptionFilter();
-			services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseSqlServer(
-					Config.Config.ConnectionString,
-					options =>
-					{
-						options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
-					}));
-
-			services.AddDefaultIdentity<IdentityUser>(
-				options =>
+				if (string.IsNullOrEmpty(Config.Config.ConnectionString))
 				{
-					options.SignIn.RequireConfirmedAccount = false;
-					options.Password.RequiredLength = 10;
+					Console.WriteLine("WARNING: Database is enabled but no connection string is provided. Database features will not work.");
 				}
-				)
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+				else
+				{
+					// Migrate on startup
+					try
+					{
+						using (var db = new ApplicationDbContext())
+						{
+							Console.WriteLine($@"Applied migrations:");
+							foreach (var migration in db.Database.GetAppliedMigrations())
+								Console.WriteLine(migration);
+							Console.WriteLine();
+
+							Console.WriteLine(@"Available migrations:");
+							foreach (var migration in db.Database.GetMigrations())
+								Console.WriteLine(migration);
+							Console.WriteLine();
+
+							Console.WriteLine(@"Pending migrations:");
+							foreach (var migration in db.Database.GetPendingMigrations())
+								Console.WriteLine(migration);
+							Console.WriteLine();
+
+							bool isMigrationNeeded = db.Database.GetPendingMigrations().Any();
+							if (isMigrationNeeded)
+							{
+								Console.WriteLine(@"Running database migrations...");
+								db.Database.Migrate();
+								Console.WriteLine(@"Migrations completed successfully");
+							}
+							else
+								Console.WriteLine(@"No migrations required");
+						}
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"WARNING: Failed to connect to database or run migrations: {ex.Message}");
+						Console.WriteLine("The application will continue without database support.");
+					}
+
+					services.AddDatabaseDeveloperPageExceptionFilter();
+					services.AddDbContext<ApplicationDbContext>(options =>
+						options.UseSqlServer(
+							Config.Config.ConnectionString,
+							options =>
+							{
+								options.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name);
+							}));
+
+					services.AddDefaultIdentity<IdentityUser>(
+						options =>
+						{
+							options.SignIn.RequireConfirmedAccount = false;
+							options.Password.RequiredLength = 10;
+						}
+						)
+						.AddEntityFrameworkStores<ApplicationDbContext>();
+
+					// Register database-backed panel repository
+					services.AddScoped<IPanelRepository, DatabasePanelRepository>();
+				}
+			}
+			else
+			{
+				Console.WriteLine("Running in database-less mode with in-memory storage.");
+				Console.WriteLine("Note: User authentication and panel persistence are disabled.");
+				
+				// Register in-memory panel repository
+				services.AddSingleton<IPanelRepository, InMemoryPanelRepository>();
+			}
 
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-			//services.AddSingleton<WeatherForecastService>();
+			
+			if (databaseEnabled && !string.IsNullOrEmpty(Config.Config.ConnectionString))
+			{
+				services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+			}
 
 			// Register the Swagger generator, defining 1 or more Swagger documents
 			services.AddSwaggerGen(c =>
@@ -122,22 +156,18 @@ namespace InkyCal.Server
 				{
 					Title = $"InkyCal Server",
 					Version = "v1",
-					Description = Intro,
+					Description = Intro + (databaseEnabled ? "" : " (Running in database-less mode)"),
 					Contact = new OpenApiContact
 					{
 						Name = "Atrejoe",
-						//Email = "devlog@cs.nl",
 						Url = new Uri("https://github.com/Atrejoe")
 					}
 				});
-
-				//c.DescribeAllEnumsAsStrings();
 
 				Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList().ForEach(
 					xmlFile =>
 					c.IncludeXmlComments(xmlFile, includeControllerXmlComments: true)
 				);
-
 			});
 
 			try
@@ -149,8 +179,8 @@ namespace InkyCal.Server
 				ex.Log(severity: Severity.Info);
 			}
 
-			// Note .AddMiniProfiler() returns a IMiniProfilerBuilder for easy intellisense
-			services.AddMiniProfiler(options =>
+			// Configure MiniProfiler
+			var miniProfilerBuilder = services.AddMiniProfiler(options =>
 			{
 				// All of this is optional. You can simply call .AddMiniProfiler() for all defaults
 
@@ -171,6 +201,10 @@ namespace InkyCal.Server
 				//options.ResultsAuthorize = request => MyGetUserFunction(request).CanSeeMiniProfiler;
 				options.ResultsAuthorizeAsync = async request =>
 				{
+
+					if (!databaseEnabled)
+						return false;
+
 					var context = request.HttpContext;
 
 					var authResult = await context.AuthenticateAsync();
@@ -233,6 +267,39 @@ namespace InkyCal.Server
 				// (defaults to null, and all views are profiled)
 				// options.MvcViewMinimumSaveMs = 1.0m;
 
+				options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.VerboseSqlServerFormatter(includeMetaData: true);
+
+				options.ResultsAuthorizeAsync = async request =>
+				{
+					if (!databaseEnabled)
+						return false;
+
+					var context = request.HttpContext;
+					var authResult = await context.AuthenticateAsync();
+					if (!authResult.Succeeded)
+						return false;
+					var claimsPrincipal = authResult.Principal;
+					return claimsPrincipal.Identity.IsAuthenticated;
+				};
+
+				options.ResultsListAuthorizeAsync = async request =>
+				{
+
+					if (!databaseEnabled)
+						return false;
+
+					var context = request.HttpContext;
+					var authResult = await context.AuthenticateAsync();
+					if (!authResult.Succeeded)
+						return false;
+					var claimsPrincipal = authResult.Principal;
+					return claimsPrincipal.Identity.IsAuthenticated;
+				};
+
+				options.TrackConnectionOpenClose = true;
+				options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+				options.EnableMvcFilterProfiling = true;
+				options.EnableMvcViewProfiling = true;
 				options.EnableServerTimingHeader = true;
 
 				options.IgnoredPaths.Add("/health");
@@ -242,15 +309,13 @@ namespace InkyCal.Server
 				options.IgnoredPaths.Add("/css");
 				options.IgnoredPaths.Add(".js");
 				options.IgnoredPaths.Add(".css");
+			});
 
-				// (Optional) listen to any errors that occur within MiniProfiler itself
-				// options.OnInternalError = e => MyExceptionLogger(e);
-
-				// (Optional - not recommended) You can enable a heavy debug mode with stacks and tooltips when using memory storage
-				// It has a lot of overhead vs. normal profiling and should only be used with that in mind
-				// (defaults to false, debug/heavy mode is off)
-				//options.EnableDebugMode = true;
-			}).AddEntityFramework();
+			// Only add Entity Framework profiling if database is enabled
+			if (databaseEnabled && !string.IsNullOrEmpty(Config.Config.ConnectionString))
+			{
+				miniProfilerBuilder.AddEntityFramework();
+			}
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -272,14 +337,12 @@ namespace InkyCal.Server
 				ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 			});
 
+			if (Config.Config.DatabaseEnabled && !string.IsNullOrEmpty(Config.Config.ConnectionString))
+			{
+				app.UseAuthentication();
+			}
+			
 			app.UseAuthorization();
-			app.UseAuthentication();
-
-			//app.UseEndpoints(endpoints =>
-			//{
-			//	endpoints.MapControllers();
-			//	endpoints.MapBlazorHub();
-			//});
 
 			// Enable middleware to serve generated Swagger as a JSON endpoint.
 			app.UseSwagger(options => {
@@ -293,11 +356,6 @@ namespace InkyCal.Server
 				c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inky Calender service V1");
 				c.EnableDeepLinking();
 			});
-
-			//var option = new RewriteOptions();
-			//option.AddRedirect("^$", "swagger");
-
-			//app.UseRewriter(option);
 
 			app.UseEndpoints(endpoints =>
 			{
@@ -313,8 +371,6 @@ namespace InkyCal.Server
 							[HealthStatus.Degraded] = StatusCodes.Status417ExpectationFailed,
 							[HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
 						},
-					// In time an improved dashboard could be added instead:
-					// https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks#HealthCheckUI
 					ResponseWriter = async (context, health) =>
 					{
 						await context.Response.WriteAsync($"[{health.Status}] - ");
@@ -335,18 +391,14 @@ namespace InkyCal.Server
 						if (context.User != null && (context.User.Identity?.IsAuthenticated).GetValueOrDefault())
 						{
 							foreach (var check in health.Entries)
-								//Show duration of check, name/key and status
 								await context.Response.WriteAsync($"\n - [{check.Value.Duration:c}] \"{check.Key}\" : {check.Value.Status} {(
-									//Show description
 									string.IsNullOrWhiteSpace(check.Value.Description) || string.Equals(check.Value.Description, check.Value.ToString())
 										? ""
 										: $"- {check.Value.Description} "
 										)}{(
-									//Show tags
 									check.Value.Tags.Any()
 										? $"[{string.Join(",", check.Value.Tags)}] "
 										: "")}{
-									// Error message, but no stack trace
 									check.Value.Exception?.Message}");
 						}
 					}
