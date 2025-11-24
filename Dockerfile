@@ -34,7 +34,7 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 CMD wget
 USER $USER
 ENTRYPOINT ["dotnet", "InkyCal.Server.dll"]
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["InkyCal.Models/."       , "InkyCal.Models/."       ]
 COPY ["InkyCal.Server/."       , "InkyCal.Server/."       ]
