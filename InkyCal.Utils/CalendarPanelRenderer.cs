@@ -434,7 +434,7 @@ namespace InkyCal.Utils
 
 			var key = Server.Config.Config.OpenAIAPIKey;
 
-			var api = new OpenAIClient(key);
+			using var api = new OpenAIClient(key);
 
 			//events = new List<Event>(new[] {
 			//	new Event() { Summary = "All day : Work" },
