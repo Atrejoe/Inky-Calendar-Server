@@ -40,7 +40,7 @@
 	<PackageReference Include="MiniProfiler.Shared" Version="4.5.4" />
 	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
 	<PackageReference Include="OpenAI-DotNet" Version="8.8.7" />
-	<PackageReference Include="Sentry" Version="5.16.0" />
+	<PackageReference Include="Sentry" Version="5.16.2" />
 	<PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
 	<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.0.128591">
