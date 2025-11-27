@@ -19,10 +19,10 @@ spec:
       - env:
         # - name: ASPNETCORE_ENVIRONMENT
         #   value: Development
-        # - name: ASPNETCORE_URLS
-        #   value: http://0.0.0.0:5000/
-        # - name: ASPNETCORE_HTTP_PORTS
-        #   value: "5000"
+        - name: ASPNETCORE_URLS
+          value: http://0.0.0.0:5000/
+        - name: ASPNETCORE_HTTP_PORTS
+          value: "5000"
         # - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
         #   value: "false"
         - name: DatabaseEnabled
