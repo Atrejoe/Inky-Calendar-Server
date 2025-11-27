@@ -99,5 +99,10 @@ namespace InkyCal.Models
 		/// <remarks>Like <a href="https://www.good-display.com/product/481.html">GooDisplay 13.3 inch SPI E Ink screen black white red three color 960x680 e-paper display screen, GDEM133Z91</a></remarks>
 		[DisplayResolution(960, 680, 16, KnownColor.Red)]
 		epd_13_3_in_16_grayscale_color,
+
+		/// <summary>M5 Stack PaperS3 (540 x 960, 16 gray scale)</summary>
+		/// <remarks><a href="https://shop.m5stack.com/products/m5papers3-esp32s3-development-kit">M5 Stack PaperS3</a> is a touchable low-power e-ink display controller device launched by M5Stack, featuring the ESP32-S3 microcontroller. The front embeds a 540×960 resolution 4.7" (touch and screen integrated) e-ink display, supporting 16-level grayscale.</remarks>
+		[DisplayResolution(540, 960, 16)]
+		M5PaperS3
 	}
 }
