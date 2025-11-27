@@ -6,6 +6,11 @@
 [*]
 indent_style = tab
 
+[*.{yaml,yml}]
+indent_style = space
+indent_size = 2
+
+
 [*.razor]
 indent_style = tab
 
