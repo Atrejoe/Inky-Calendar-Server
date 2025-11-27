@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using StackExchange.Profiling.Storage;
 
 namespace InkyCal.Server
@@ -282,7 +282,9 @@ namespace InkyCal.Server
 			//});
 
 			// Enable middleware to serve generated Swagger as a JSON endpoint.
-			app.UseSwagger();
+			app.UseSwagger(options => {
+				options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+			});
 
 			// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
 			// specifying the Swagger JSON endpoint.
