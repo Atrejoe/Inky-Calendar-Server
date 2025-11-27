@@ -16,3 +16,6 @@ nCrunchTemp_*.csproj
 InkyCal.Utils.Tests/InkyCal.Utils.Tests.v3.ncrunchproject
 
 *.trx
+
+# Kubernetes secrets
+*.env

@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: inkycal
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: inkycal
+      component: web
+  template:
+    metadata:
+      labels:
+        app: inkycal
+        component: web
+    spec:
+      containers:
+      - env:
+        # - name: ASPNETCORE_ENVIRONMENT
+        #   value: Development
+        # - name: ASPNETCORE_URLS
+        #   value: http://0.0.0.0:5000/
+        # - name: ASPNETCORE_HTTP_PORTS
+        #   value: "5000"
+        # - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+        #   value: "false"
+        - name: DatabaseEnabled
+          value: "true"
+        - name: DB_Server
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: DB_Server
+        - name: DB_Database
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: DB_Database
+        - name: DB_User
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: DB_User
+        - name: DB_Password
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: db-password
+        - name: "ConnectionStrings__DefaultConnection"
+          value: "Server=$(DB_Server);Database=$(DB_Database);User=$(DB_User);Password=$(DB_Password);MultipleActiveResultSets=true;Connect Timeout=10;Encrypt=False;"
+        - name: BugSnagAPIKey
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: bugsnag-api-key
+        - name: SentryDSN
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: sentry-dsn
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: TZ
+        - name: "GoogleOAuth:Enabled"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: GoogleOAuth__Enabled
+        - name: "GoogleOAuth:ClientId"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: GoogleOAuth__ClientId
+        - name: "GoogleOAuth:ClientSecret"
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: google-oauth-client-secret
+        - name: "GoogleOAuth:ProjectId"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: GoogleOAuth__ProjectId
+        - name: "GoogleOAuth:Website"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: GoogleOAuth__Website
+        - name: "GoogleOAuth:InkyCalRoot"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: GoogleOAuth__InkyCalRoot
+        - name: TraceQueries
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: TraceQueries
+        - name: OpenWeatherAPIKey
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: openweather-api-key
+        - name: OpenAIAPIKey
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: openai-api-key
+        image: atreyu/inkycal.server:latest
+        name: web
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            memory: "512Mi"
+            cpu: "100m"
+        volumeMounts:
+        - name: dataprotection-keys
+          mountPath: /home/nonroot/.aspnet/DataProtection-Keys
+      volumes:
+      - name: dataprotection-keys
+        persistentVolumeClaim:
+          claimName: dataprotection-keys-pvc
+      restartPolicy: Always
