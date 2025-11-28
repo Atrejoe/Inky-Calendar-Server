@@ -48,8 +48,9 @@ namespace InkyCal.Server
 
 			services.AddControllers();
 			services.AddHealthChecks()
-				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
-
+				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded) // Some functions may work, non-user configured (or otherwise cached) methods
+				.AddCheck<HealthChecks.CacheHealthCheck>("Cache", failureStatus: HealthStatus.Degraded, tags: new[] { "cache" });
+			
 			// Register cache service based on configuration
 			var cacheType = Config.Config.CacheType;
 			Utils.Caching.IImageCacheService imageCacheService;
@@ -380,6 +381,7 @@ namespace InkyCal.Server
 						if (context.User != null && (context.User.Identity?.IsAuthenticated).GetValueOrDefault())
 						{
 							foreach (var check in health.Entries)
+							{
 								//Show duration of check, name/key and status
 								await context.Response.WriteAsync($"\n - [{check.Value.Duration:c}] \"{check.Key}\" : {check.Value.Status} {(
 									//Show description
@@ -393,6 +395,16 @@ namespace InkyCal.Server
 										: "")}{
 									// Error message, but no stack trace
 									check.Value.Exception?.Message}");
+
+								// Show additional data for cache health check
+								if (check.Key.Equals("Cache", StringComparison.OrdinalIgnoreCase) && check.Value.Data.Any())
+								{
+									foreach (var data in check.Value.Data)
+									{
+										await context.Response.WriteAsync($"\n   • {data.Key}: {data.Value}");
+									}
+								}
+							}
 						}
 					}
 				});
