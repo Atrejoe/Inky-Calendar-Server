@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: inkycal
+data:
+  redis.conf: |
+    # Redis configuration for InkyCal caching
+    maxmemory 512mb
+    maxmemory-policy allkeys-lru
+    save ""
+    appendonly no

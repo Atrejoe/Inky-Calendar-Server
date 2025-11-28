@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -12,6 +12,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Microsoft.Extensions.Caching.Memory;
 using Sentry;
+using InkyCal.Utils.Caching;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -23,6 +24,16 @@ namespace InkyCal.Utils.Calendar
 	public static partial class ICalExtensions
 	{
 		private static readonly HttpClient client = new HttpClient();
+		private static IStringCacheService _cache;
+
+		/// <summary>
+		/// Sets the cache service to use. Must be called before using GetCalendars.
+		/// </summary>
+		/// <param name="cacheService">The cache service to use.</param>
+		public static void SetCacheService(IStringCacheService cacheService)
+		{
+			_cache = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+		}
 
 		internal static async Task<List<Event>> GetEvents(IEnumerable<Uri> ICalUrls, StringBuilder sbErrors)
 		{
@@ -209,11 +220,6 @@ namespace InkyCal.Utils.Calendar
 			return calendars;
 		}
 
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
-		{
-			SizeLimit = 1024,
-		});
-
 		/// <summary>
 		/// Returns a cached calender, or loads it using <see cref="LoadCalendarContent"/> and caches it for one minute.
 		/// </summary>
@@ -221,24 +227,32 @@ namespace InkyCal.Utils.Calendar
 		/// <returns></returns>
 		private static async Task<Ical.Net.Calendar> LoadCachedCalendar(Uri iCalUrl)
 		{
+			if (_cache == null)
+			{
+				// Fallback to in-memory cache if not initialized
+				_cache = new MemoryStringCacheService();
+			}
 
 			string content;
 			//Cache http response, not the calendar
 			using (MiniProfiler.Current.Step($"Getting calendar content from cache"))
-				if (!_cache.TryGetValue(iCalUrl.ToString(), out content))// Look for cache key.
+			{
+				var (found, cachedContent) = await _cache.TryGetValueAsync(iCalUrl.ToString());
+				
+				if (!found)
 				{
-					var cacheEntryOptions = new MemoryCacheEntryOptions()
-						.SetSize(1)
-						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
-
 					using (MiniProfiler.Current.Step($"Calendar not in cache, getting from url"))
 						// Key not in cache, so get data.
 						content = await LoadCalendarContent(iCalUrl);
 
 					// Save data in cache.
-					_cache.Set(iCalUrl.ToString(), content, cacheEntryOptions);
+					await _cache.SetAsync(iCalUrl.ToString(), content, TimeSpan.FromMinutes(1));
 				}
+				else
+				{
+					content = cachedContent;
+				}
+			}
 
 			try
 			{
