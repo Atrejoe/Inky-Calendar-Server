@@ -42,6 +42,24 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
+		public async Task<string> GetOrCreateAsync(string key, Func<Task<string>> factory, TimeSpan expiration)
+		{
+			ArgumentNullException.ThrowIfNull(factory);
+
+			var (found, value) = await TryGetValueAsync(key);
+			if (found)
+				return value;
+
+			// Create the value
+			value = await factory();
+
+			// Cache it
+			await SetAsync(key, value, expiration);
+
+			return value;
+		}
+
+		/// <inheritdoc/>
 		public int Count() => _cache.Count;
 	}
 }

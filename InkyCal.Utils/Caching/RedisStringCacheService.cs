@@ -68,6 +68,34 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
+		public async Task<string> GetOrCreateAsync(string key, Func<Task<string>> factory, TimeSpan expiration)
+		{
+			ArgumentNullException.ThrowIfNull(factory);
+
+			try
+			{
+				var (found, value) = await TryGetValueAsync(key);
+				if (found)
+					return value;
+
+				// Create the value
+				value = await factory();
+
+				// Cache it
+				await SetAsync(key, value, expiration);
+
+				return value;
+			}
+			catch (Exception ex)
+			{
+				ex.Log(severity: Severity.Warning);
+				// If Redis fails, still return the generated value
+				return await factory();
+			}
+		}
+
+		/// <inheritdoc/>
 		public int Count() => -1; // Redis doesn't provide an efficient way to count keys
 	}
 }

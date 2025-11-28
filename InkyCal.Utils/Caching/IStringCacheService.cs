@@ -25,6 +25,15 @@ namespace InkyCal.Utils.Caching
 		Task SetAsync(string key, string value, TimeSpan expiration);
 
 		/// <summary>
+		/// Gets a cached value or creates it if it doesn't exist.
+		/// </summary>
+		/// <param name="key">The cache key.</param>
+		/// <param name="factory">A factory function to create the value if not found in cache.</param>
+		/// <param name="expiration">The expiration time for the cached value.</param>
+		/// <returns>The cached or newly created value.</returns>
+		Task<string> GetOrCreateAsync(string key, Func<Task<string>> factory, TimeSpan expiration);
+
+		/// <summary>
 		/// Gets the number of cached entries (if supported by the implementation).
 		/// </summary>
 		/// <returns>The number of cached entries, or -1 if not supported.</returns>
