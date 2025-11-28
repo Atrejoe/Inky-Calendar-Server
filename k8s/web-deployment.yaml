@@ -49,6 +49,24 @@ spec:
               key: db-password
         - name: "ConnectionStrings__DefaultConnection"
           value: "Server=$(DB_Server);Database=$(DB_Database);User=$(DB_User);Password=$(DB_Password);MultipleActiveResultSets=true;Connect Timeout=10;Encrypt=False;"
+        - name: "Cache:Type"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: Cache__Type
+              optional: true
+        - name: "Cache:Memory:SizeLimit"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: Cache__Memory__SizeLimit
+              optional: true
+        - name: "Cache:Redis:ConnectionString"
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: redis-connection-string
+              optional: true
         - name: BugSnagAPIKey
           valueFrom:
             secretKeyRef:
@@ -109,7 +127,7 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
-        image: atreyu/inkycal.server:latest
+        image: atreyu/inkycal.server:redis
         imagePullPolicy: Always
         name: web
         ports:
