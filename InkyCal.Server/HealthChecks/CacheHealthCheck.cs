@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Server.Config;
+using InkyCal.Utils;
 using InkyCal.Utils.Caching;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using StackExchange.Redis;
@@ -80,10 +81,31 @@ namespace InkyCal.Server.HealthChecks
 					// Memory cache
 					var imageCount = _imageCacheService.Count();
 					var stringCount = _stringCacheService.Count();
+					var cacheSize = _imageCacheService.GetApproximateSize();
+					var cacheSizeLimit = Config.Config.MemoryCacheSizeLimit;
 
 					data["ImageCacheEntries"] = imageCount;
 					data["StringCacheEntries"] = stringCount;
-					data["MemorySizeLimit"] = Config.Config.MemoryCacheSizeLimit;
+					data["TotalEntries"] = imageCount + stringCount;
+					
+					// Add human-readable sizes
+					if (cacheSize >= 0)
+					{
+						data["CacheSize"] = ByteSizeFormatter.FormatBytesAuto(cacheSize);
+						data["CacheSizeBytes"] = cacheSize;
+					}
+					
+					data["CacheSizeLimit"] = ByteSizeFormatter.FormatBytesAuto(cacheSizeLimit);
+					data["CacheSizeLimitBytes"] = cacheSizeLimit;
+
+					// Calculate utilization percentage
+					if (cacheSize >= 0 && cacheSizeLimit > 0)
+					{
+						var utilizationPercent = (double)cacheSize / cacheSizeLimit * 100;
+						data["CacheUtilization"] = $"{utilizationPercent:F1}%";
+						data["CacheUtilizationPercent"] = Math.Round(utilizationPercent, 1);
+					}
+
 					data["Status"] = "In-memory cache is operational";
 
 					return HealthCheckResult.Healthy("Memory cache is working correctly", data: data);
@@ -128,18 +150,38 @@ namespace InkyCal.Server.HealthChecks
 					{
 						var server = multiplexer.GetServer(endpoints[0]);
 						var info = server.Info("stats");
+						var memoryInfo = server.Info("memory");
 
+						// Process stats section
 						foreach (var section in info)
 						{
 							var relevantItems = section.Where(item =>
-								item.Key.Contains("keyspace") ||
-								item.Key.Contains("connections") ||
-								item.Key.Contains("memory") ||
-								item.Key.Contains("ops"));
+								item.Key.Contains("keyspace", StringComparison.OrdinalIgnoreCase) ||
+								item.Key.Contains("connections", StringComparison.OrdinalIgnoreCase) ||
+								item.Key.Contains("ops", StringComparison.OrdinalIgnoreCase));
 
 							foreach (var item in relevantItems)
 							{
 								stats[$"Redis_{item.Key}"] = item.Value;
+							}
+						}
+
+						// Process memory section with human-readable formatting
+						foreach (var section in memoryInfo)
+						{
+							foreach (var item in section.Where(i => 
+								i.Key.Contains("memory", StringComparison.OrdinalIgnoreCase) &&
+								i.Key.Contains("used", StringComparison.OrdinalIgnoreCase)))
+							{
+								if (long.TryParse(item.Value, out var bytes))
+								{
+									stats[$"Redis_{item.Key}"] = ByteSizeFormatter.FormatBytesAuto(bytes);
+									stats[$"Redis_{item.Key}_bytes"] = bytes;
+								}
+								else
+								{
+									stats[$"Redis_{item.Key}"] = item.Value;
+								}
 							}
 						}
 

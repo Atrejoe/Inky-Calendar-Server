@@ -55,5 +55,11 @@ namespace InkyCal.Utils.Caching
 		/// </summary>
 		/// <returns>The number of cached entries, or -1 if not supported.</returns>
 		int Count();
+
+		/// <summary>
+		/// Gets the approximate size of the cache in bytes (if supported by the implementation).
+		/// </summary>
+		/// <returns>The approximate cache size in bytes, or -1 if not supported.</returns>
+		long GetApproximateSize();
 	}
 }
