@@ -197,19 +197,22 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
-			var cacheKey = new ImageCacheKey(
-									panelCacheKey: renderer.CacheKey,
-									imageSettings: new ImageSettings(width, height, colors));
 			if (_cache == null)
 			{
 				// Fallback to in-memory cache if not initialized
 				_cache = new MemoryCacheService();
 			}
 
+			// Create cache key as string
+			var imageCacheKey = new ImageCacheKey(
+				panelCacheKey: renderer.CacheKey,
+				imageSettings: new ImageSettings(width, height, colors));
+			
+
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
 				var result = await _cache.GetOrCreateAsync(
-					key: cacheKey,
+					key: imageCacheKey,
 					factory: async () =>
 					{
 						// Key not in cache, so get data.
@@ -220,40 +223,10 @@ namespace InkyCal.Utils
 							await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are changed during saving as gif :|
 							return stream.ToArray();
 						}
-					}, expiration: cacheKey.PanelCacheKey.Expiration);
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//	{
-				//		entry.SetSize(result.Length);
-				//		entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-				//	}
+					},
+					expiration: imageCacheKey.PanelCacheKey.Expiration
+				);
 
-				//	return result;
-				//});
-
-				//if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
-				//{
-				//	// Key not in cache, so get data.
-				//	using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-				//	{
-
-				//		var image = await renderer.GetImage(width, height, colors, log);
-				//		using var stream = new MemoryStream();
-				//		image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
-				//		result = stream.ToArray();
-
-				//	}
-
-				//	var cacheEntryOptions = new MemoryCacheEntryOptions()
-				//		.SetSize(result.Length)
-				//		// Remove from cache after this time, regardless of sliding expiration
-				//		.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//		_cache.Set(cachekey, result, cacheEntryOptions);
-
-				//}
 				return result;
 			}
 		}
