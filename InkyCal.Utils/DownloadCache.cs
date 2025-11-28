@@ -49,7 +49,7 @@ namespace InkyCal.Utils
 
 			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
-				var (found, cacheEntry) = await _cache.TryGetValueAsync(imageUrl.ToString());
+				var (found, cacheEntry) = await _cache.TryGetValueAsync(imageUrl);
 				
 				if (!found)
 				{
@@ -63,7 +63,7 @@ namespace InkyCal.Utils
 
 					// Save data in cache.
 					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
-						await _cache.SetAsync(imageUrl.ToString(), cacheEntry, expiration, cacheEntry.Length);
+						await _cache.SetAsync(imageUrl, cacheEntry, expiration);
 				}
 
 				return cacheEntry;
