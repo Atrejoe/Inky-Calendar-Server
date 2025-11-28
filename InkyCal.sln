@@ -36,6 +36,17 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InkyCal.Models.Tests", "InkyCal.Models.Tests\InkyCal.Models.Tests.csproj", "{828C4C0A-7953-42B4-B219-3AB51CFA16E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{D53E263D-4942-49E2-8D8A-8010BD8BA5DA}"
+	ProjectSection(SolutionItems) = preProject
+		k8s\apply-config.ps1 = k8s\apply-config.ps1
+		k8s\apply-secrets.ps1 = k8s\apply-secrets.ps1
+		k8s\config.env.template = k8s\config.env.template
+		k8s\secrets.env.template = k8s\secrets.env.template
+		k8s\web-deployment.yaml = k8s\web-deployment.yaml
+		k8s\web-pvc.yaml = k8s\web-pvc.yaml
+		k8s\web-service.yaml = k8s\web-service.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

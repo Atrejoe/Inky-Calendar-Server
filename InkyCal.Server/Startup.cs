@@ -50,6 +50,45 @@ namespace InkyCal.Server
 			services.AddHealthChecks()
 				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods
 
+			// Register cache service based on configuration
+			var cacheType = Config.Config.CacheType;
+			Utils.Caching.IImageCacheService imageCacheService;
+			Utils.Caching.IStringCacheService stringCacheService;
+			
+			if (cacheType == Config.CacheType.Redis)
+			{
+				var redisConnectionString = Config.Config.RedisCacheConnectionString;
+				if (string.IsNullOrWhiteSpace(redisConnectionString))
+				{
+					Console.WriteLine("Redis cache type selected but no connection string provided. Falling back to memory cache.");
+					imageCacheService = new Utils.Caching.MemoryCacheService(Config.Config.MemoryCacheSizeLimit);
+					stringCacheService = new Utils.Caching.MemoryStringCacheService();
+				}
+				else
+				{
+					Console.WriteLine($"Using Redis cache with connection string: {redisConnectionString.Split(',')[0]}...");
+					var redis = StackExchange.Redis.ConnectionMultiplexer.Connect(redisConnectionString);
+					imageCacheService = new Utils.Caching.RedisCacheService(redis);
+					stringCacheService = new Utils.Caching.RedisStringCacheService(redis);
+				}
+			}
+			else
+			{
+				Console.WriteLine($"Using in-memory cache with size limit: {Config.Config.MemoryCacheSizeLimit:n0} bytes");
+				imageCacheService = new Utils.Caching.MemoryCacheService(Config.Config.MemoryCacheSizeLimit);
+				stringCacheService = new Utils.Caching.MemoryStringCacheService();
+			}
+
+			// Register as singletons
+			services.AddSingleton(imageCacheService);
+			services.AddSingleton(stringCacheService);
+
+			// Initialize static cache services for backward compatibility
+			Utils.IPanelRendererExtensions.SetCacheService(imageCacheService);
+			Utils.DownloadCache.SetCacheService(imageCacheService);
+			Utils.Calendar.ICalExtensions.SetCacheService(stringCacheService);
+			Utils.PdfRendererHelper.SetCacheService(imageCacheService);
+
 			//services.AddMvc().AddJsonOptions(options =>
 			//{
 			//    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());

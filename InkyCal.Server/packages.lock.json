@@ -997,6 +997,11 @@
         "resolved": "8.8.8",
         "contentHash": "/ycZJKKk+VV+BFtY6nwdVGG40nhrIJVfN+nC3oCz8htxFiIo24Xa7tOuL1ffOp5QmpOacvaEQ6whhp8uKR+mFQ=="
       },
+      "Pipelines.Sockets.Unofficial": {
+        "type": "Transitive",
+        "resolved": "2.2.8",
+        "contentHash": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ=="
+      },
       "Sentry": {
         "type": "Transitive",
         "resolved": "6.12.1",
@@ -1037,6 +1042,14 @@
         "type": "Transitive",
         "resolved": "1.0.2",
         "contentHash": "ORsCxzvHMtXv2VCN+Wl/XRetTRoXHIUWwzRVgcEToa75kMR9hDyTdBEal42z1RG1tXPNh3xUBWwBXlXKTXzLYQ=="
+      },
+      "StackExchange.Redis": {
+        "type": "Transitive",
+        "resolved": "2.8.29",
+        "contentHash": "0p/I/Wd5UW9ryAurUKrDnRziWFN8w2DG3leX+D6GVEnRLwMV2rRsJvAPWyeepI82Vbq4Nsden2o+gtNa3qA62Q==",
+        "dependencies": {
+          "Pipelines.Sockets.Unofficial": "2.2.8"
+        }
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
@@ -1198,6 +1211,7 @@
           "Sentry": "[6.12.1, )",
           "SixLabors.ImageSharp": "[4.1.3, )",
           "SixLabors.ImageSharp.Drawing": "[3.1.3, )",
+          "StackExchange.Redis": "[2.8.29, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )"
         }
       }
