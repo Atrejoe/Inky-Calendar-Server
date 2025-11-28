@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: inkycal
+  labels:
+    app: inkycal
+    component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inkycal
+      component: redis
+  template:
+    metadata:
+      labels:
+        app: inkycal
+        component: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        command:
+        - redis-server
+        - /usr/local/etc/redis/redis.conf
+        resources:
+          limits:
+            cpu: "1"
+            memory: "768Mi"
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+        volumeMounts:
+        - name: redis-config
+          mountPath: /usr/local/etc/redis
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 999
+      volumes:
+      - name: redis-config
+        configMap:
+          name: redis-config
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data-pvc
+      restartPolicy: Always
