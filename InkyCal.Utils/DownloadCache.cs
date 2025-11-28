@@ -41,32 +41,22 @@ namespace InkyCal.Utils
 		/// <exception cref="HttpRequestException">When download failed (non-200 response was returned))</exception>
 		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration, CancellationToken cancellationToken = default)
 		{
-			if (_cache == null)
-			{
-				// Fallback to in-memory cache if not initialized
-				_cache = new MemoryCacheService();
-			}
+			// Fallback to in-memory cache if not initialized
+			_cache ??= new MemoryCacheService();
 
 			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
-				var (found, cacheEntry) = await _cache.TryGetValueAsync(imageUrl);
-				
-				if (!found)
+				return await _cache.GetOrCreateAsync(imageUrl, async () =>
 				{
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))
 					{
 						var result = await client.GetAsync(imageUrl.ToString(), cancellationToken);
 						result.EnsureSuccessStatusCode();
-						cacheEntry = await result.Content.ReadAsByteArrayAsync(cancellationToken);
+						return await result.Content.ReadAsByteArrayAsync(cancellationToken);
 					}
-
-					// Save data in cache.
-					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
-						await _cache.SetAsync(imageUrl, cacheEntry, expiration);
-				}
-
-				return cacheEntry;
+				}, expiration
+				);
 			}
 		}
 	}
