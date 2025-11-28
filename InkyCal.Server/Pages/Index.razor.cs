@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using InkyCal.Models;
 using InkyCal.Utils;
@@ -16,10 +16,10 @@ namespace InkyCal.Server.Pages
 		private string NewsPaperId;
 
 		/// <summary>
-		/// The selected display panel
+		/// The selected display panel (as string for URL parameter)
 		/// </summary>
 		[Parameter]
-		[SuppressMessage("Usage", "BL0007:Component parameters should be auto properties", Justification = "<Pending>")]
+		[SuppressMessage("Usage", "BL0007:Component parameters should be auto properties", Justification = "Setter contains logic for parsing")]
 		public string modelAsString
 		{
 			get => model.ToString();
@@ -37,7 +37,7 @@ namespace InkyCal.Server.Pages
 		/// The selected display panel
 		/// </summary>
 		[Parameter]
-		[SuppressMessage("Usage", "BL0007:Component parameters should be auto properties", Justification = "<Pending>")]
+		[SuppressMessage("Usage", "BL0007:Component parameters should be auto properties", Justification = "Setter contains logic for navigation")]
 		public DisplayModel model
 		{
 			get => model1;
@@ -67,38 +67,24 @@ namespace InkyCal.Server.Pages
 			}
 		}
 
-		//private int modelColors
-		//{
-		//    get
-		//    {
-		//        model.GetSpecs(out var _, out var _, out var colors);
-		//        return colors.Length;
-		//    }
-		//}
-
 		string panelStyle => $"border:1px solid silver; width:{modelWidth}px; height:{modelHeight}px";
 
 		private bool _initialized;
 
 		/// <summary>
-		/// 
+		/// Component initialization
 		/// </summary>
 		protected override void OnInitialized()
 		{
 			base.OnInitialized();
 			_initialized = true;
 		}
+
 		internal void UpdateRoute()
 		{
-			// I'm a noob with navigation, this prevents navigation upon deeplinking
+			// Prevent navigation upon deep linking during initialization
 			if (_initialized)
 				navigationManager.NavigateTo($"/demo/{model}#demo");
 		}
-
-		//void UpdateRoute()
-		//{
-		//	// You can also change it to any url you want
-		//	navigationManager.NavigateTo($"/{model}/");
-		//}
 	}
 }
