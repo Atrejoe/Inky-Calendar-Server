@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -24,6 +25,13 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
+		public Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : ISerializable, IEquatable<T>
+		{
+			var found = _cache.TryGetValue(key, out byte[] value);
+			return Task.FromResult((found, value));
+		}
+
+		/// <inheritdoc/>
 		public Task<(bool Found, byte[] Value)> TryGetValueAsync(string key)
 		{
 			var found = _cache.TryGetValue(key, out byte[] value);
@@ -31,16 +39,44 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		public Task SetAsync(string key, byte[] value, TimeSpan expiration, long? size = null)
+		public Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : ISerializable, IEquatable<T>
 		{
 			var cacheEntryOptions = new MemoryCacheEntryOptions()
 				.SetAbsoluteExpiration(expiration);
 
-			if (size.HasValue)
-				cacheEntryOptions.SetSize(size.Value);
+				cacheEntryOptions.SetSize(value.Length);
 
 			_cache.Set(key, value, cacheEntryOptions);
 			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc/>
+		public Task SetAsync(string key, byte[] value, TimeSpan expiration)
+		{
+			var cacheEntryOptions = new MemoryCacheEntryOptions()
+				.SetAbsoluteExpiration(expiration);
+
+			cacheEntryOptions.SetSize(value.Length);
+
+			_cache.Set(key, value, cacheEntryOptions);
+			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc/>
+		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : ISerializable, IEquatable<T>
+		{
+			ArgumentNullException.ThrowIfNull(factory);
+
+			return await _cache.GetOrCreateAsync(key, async entry =>
+			{
+				entry.SetAbsoluteExpiration(expiration);
+				
+				var value = await factory();
+
+				entry.SetSize(value.LongLength);
+
+				return value;
+			});
 		}
 
 		/// <inheritdoc/>

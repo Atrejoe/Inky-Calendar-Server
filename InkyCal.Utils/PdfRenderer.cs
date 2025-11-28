@@ -123,7 +123,7 @@ namespace InkyCal.Utils
 
 						// Save data in cache.
 						using (MiniProfiler.Current.Step($"Storing converted Pdf ({imageBytes.Length:n0} bytes) in cache until {DateTime.Now.Add(CacheKey.Expiration)}"))
-							await cache.SetAsync(cacheKeyString, imageBytes, CacheKey.Expiration, imageBytes.Length);
+							await cache.SetAsync(cacheKeyString, imageBytes, CacheKey.Expiration);
 					}
 				}
 			}
