@@ -20,16 +20,19 @@ It also allows to reduce power-consumption, making a battery-operated panel a mo
 
 <h2>Demo time!</h2>
 
-Given a selected display panel:
+<p>Given a selected display panel:</p>
 
 <EditForm Model="@this">
-	<InputSelect class="form-control" id="@nameof(model)" @bind-Value="@model" @onselectionchange="UpdateRoute" @onselect="UpdateRoute" @onchange="UpdateRoute">
-		@foreach (DisplayModel displayModel in Enum.GetValues(typeof(DisplayModel)))
-		{
-			<option value="@displayModel" @onselect="UpdateRoute">@displayModel</option>
-		}
-	</InputSelect>
-	@(specs.Width)px x @(specs.Height)px, @(specs.Colors.Count) colors:
+	<div class="form-group">
+		<label for="displayModelSelect" class="font-weight-bold">Display Model</label>
+		<InputSelect id="displayModelSelect" class="form-control custom-select" @bind-Value="@model" @onselectionchange="UpdateRoute" @onselect="UpdateRoute" @onchange="UpdateRoute" aria-label="Select display model">
+			@foreach (DisplayModel displayModel in Enum.GetValues(typeof(DisplayModel)))
+			{
+				<option value="@displayModel" @onselect="UpdateRoute">@displayModel</option>
+			}
+		</InputSelect>
+		<small class="form-text text-muted">@(specs.Width)px x @(specs.Height)px, @(specs.Colors.Count) colors</small>
+	</div>
 
 	<PanelColors Specs="@specs" />
 </EditForm>

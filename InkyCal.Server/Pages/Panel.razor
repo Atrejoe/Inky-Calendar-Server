@@ -61,8 +61,8 @@
 								}
 							</div>
 							<div class="form-group">
-								<label>Model</label>
-								<InputSelect class="form-control" id="@nameof(_Panel.Model)" @bind-Value="@_Panel.Model">
+								<label for="@nameof(_Panel.Model)">Display Model</label>
+								<InputSelect id="@nameof(_Panel.Model)" class="form-control custom-select" @bind-Value="@_Panel.Model" aria-label="Select display model">
 									@foreach (var displayModel in Enum.GetValues(typeof(DisplayModel)).Cast<DisplayModel>())
 										{
 										<option value="@displayModel">@displayModel.Humanize()</option>
@@ -70,20 +70,20 @@
 								</InputSelect>
 							</div>
 							<div class="form-group">
-								<label for="@nameof(_Panel.Name)">Name</label>
+								<label for="@nameof(_Panel.Name)">Panel Name</label>
 								<InputText class="form-control" id="@nameof(_Panel.Name)" @bind-Value="@_Panel.Name" />
 							</div>
 							<div class="form-group">
-								<label>Width:</label>
+								<label for="width">Width (pixels)</label>
 								<InputNumber PlaceHolder="@Specs.Width.ToString()" class="form-control" id="width" @bind-Value="_Panel.Width" />
 							</div>
 							<div class="form-group">
-								<label>Height</label>
+								<label for="height">Height (pixels)</label>
 								<InputNumber PlaceHolder="@Specs.Height.ToString()" class="form-control" id="height" @bind-Value="_Panel.Height" />
 							</div>
 							<div class="form-group">
-								<label>Orientation</label>
-								<InputSelect class="form-control" id="@nameof(_Panel.Rotation)" @bind-Value="@_Panel.Rotation">
+								<label for="@nameof(_Panel.Rotation)">Orientation</label>
+								<InputSelect id="@nameof(_Panel.Rotation)" class="form-control custom-select" @bind-Value="@_Panel.Rotation" aria-label="Select panel orientation">
 									@foreach (var rotation in Enum.GetValues(typeof(Rotation)).Cast<Rotation>().ToHashSet())
 										{
 										<option value="@rotation">@rotation.Humanize()</option>
