@@ -1,10 +1,13 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using ImageMagick;
 using InkyCal.Models;
 using InkyCal.Utils.Caching;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 
@@ -12,7 +15,7 @@ namespace InkyCal.Utils
 {
 
 	/// <summary>
-	/// 
+	/// Image settings for cache key generation
 	/// </summary>
 	/// <remarks>
 	/// Initializes a new instance of the <see cref="ImageSettings"/> class.
@@ -21,7 +24,8 @@ namespace InkyCal.Utils
 	/// <param name="height">The height.</param>
 	/// <param name="colors">The colors.</param>
 	/// <exception cref="ArgumentNullException">colors</exception>
-	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>
+	[Serializable]
+	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>, ISerializable
 	{
 		/// <summary>
 		/// Gets the width of an image
@@ -46,6 +50,47 @@ namespace InkyCal.Utils
 		/// The colors.
 		/// </value>
 		public Color[] Colors { get; } = colors ?? throw new ArgumentNullException(nameof(colors));
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The serialization info</param>
+		/// <param name="context">The streaming context</param>
+		private ImageSettings(SerializationInfo info, StreamingContext context)
+			: this(
+				info.GetInt32(nameof(Width)),
+				info.GetInt32(nameof(Height)),
+				DeserializeColors(info))
+		{
+		}
+
+		private static Color[] DeserializeColors(SerializationInfo info)
+		{
+			var count = info.GetInt32("ColorsCount");
+			var colors = new Color[count];
+			for (int i = 0; i < count; i++)
+			{
+				var pixel = Rgba32.ParseHex(info.GetString($"Color_{i}"));
+
+				colors[i] = Color.FromPixel<SixLabors.ImageSharp.PixelFormats.Rgba32>(pixel);
+			}
+			return colors;
+		}
+
+		/// <inheritdoc/>
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+
+			info.AddValue(nameof(Width), Width);
+			info.AddValue(nameof(Height), Height);
+			info.AddValue("ColorsCount", Colors.Length);
+			for (int i = 0; i < Colors.Length; i++)
+			{
+				var rgba32 = Colors[i].ToPixel<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+				info.AddValue($"Color_{i}", rgba32.ToHex());
+			}
+		}
 
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -152,6 +197,9 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
+			var cacheKey = new ImageCacheKey(
+									panelCacheKey: renderer.CacheKey,
+									imageSettings: new ImageSettings(width, height, colors));
 			if (_cache == null)
 			{
 				// Fallback to in-memory cache if not initialized
@@ -160,18 +208,19 @@ namespace InkyCal.Utils
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
-				byte[] result;
-				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
-				//{
-				// Key not in cache, so get data.
-				using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-				{
-					var image = await renderer.GetImage(width, height, colors, log);
-					using var stream = new MemoryStream();
-					await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
-					result = stream.ToArray();
-				}
-
+				var result = await _cache.GetOrCreateAsync(
+					key: cacheKey,
+					factory: async () =>
+					{
+						// Key not in cache, so get data.
+						using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+						{
+							var image = await renderer.GetImage(width, height, colors, log);
+							using var stream = new MemoryStream();
+							await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are changed during saving as gif :|
+							return stream.ToArray();
+						}
+					}, expiration: cacheKey.PanelCacheKey.Expiration);
 				//	// Save data in cache.
 				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
 				//	{

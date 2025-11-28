@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
 	/// <summary>
-	/// 
+	/// Cache key combining panel and image settings
 	/// </summary>
 	/// <seealso cref="IEquatable{ImageCacheKey}" />
 	/// <remarks>
@@ -17,7 +18,8 @@ namespace InkyCal.Utils
 	/// or
 	/// imageSettings
 	/// </exception>
-	public sealed class ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings) : IEquatable<ImageCacheKey>
+	[Serializable]
+	public sealed class ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings) : IEquatable<ImageCacheKey>, ISerializable
 	{
 		/// <summary>
 		/// Gets the image settings.
@@ -33,6 +35,27 @@ namespace InkyCal.Utils
 		/// The panel cache key.
 		/// </value>
 		public PanelCacheKey PanelCacheKey { get; } = panelCacheKey ?? throw new ArgumentNullException(nameof(panelCacheKey));
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The serialization info</param>
+		/// <param name="context">The streaming context</param>
+		private ImageCacheKey(SerializationInfo info, StreamingContext context)
+			: this(
+				(PanelCacheKey)info.GetValue(nameof(PanelCacheKey), typeof(PanelCacheKey)),
+				(ImageSettings)info.GetValue(nameof(ImageSettings), typeof(ImageSettings)))
+		{
+		}
+
+		/// <inheritdoc/>
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+
+			info.AddValue(nameof(PanelCacheKey), PanelCacheKey, typeof(PanelCacheKey));
+			info.AddValue(nameof(ImageSettings), ImageSettings, typeof(ImageSettings));
+		}
 
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -67,5 +90,6 @@ namespace InkyCal.Utils
 												ImageSettings.GetHashCode(),
 												PanelCacheKey.GetHashCode()
 											);
+
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace InkyCal.Models
 {
@@ -94,6 +95,7 @@ namespace InkyCal.Models
 	/// A cache keys for panels that need to be individually cached
 	/// </summary>
 	/// <seealso cref="PanelCacheKey" />
+	[Serializable]
 	public class PanelInstanceCacheKey : PanelCacheKey
 	{
 		/// <summary>
@@ -112,12 +114,31 @@ namespace InkyCal.Models
 		}
 
 		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The serialization info</param>
+		/// <param name="context">The streaming context</param>
+		protected PanelInstanceCacheKey(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+			Guid = new Guid(info.GetString(nameof(Guid)));
+		}
+
+		/// <summary>
 		/// Gets the unique identifier for this panel
 		/// </summary>
 		/// <value>
 		/// The unique identifier.
 		/// </value>
 		public Guid Guid { get; }
+
+		/// <inheritdoc/>
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+			base.GetObjectData(info, context);
+			info.AddValue(nameof(Guid), Guid.ToString());
+		}
 
 		/// <inhgeritdoc/>
 		public override int GetHashCode()
@@ -134,10 +155,11 @@ namespace InkyCal.Models
 	}
 
 	/// <summary>
-	/// 
+	/// Base class for panel cache keys
 	/// </summary>
 	/// <seealso cref="IEquatable{PanelCacheKey}" />
-	public abstract class PanelCacheKey : IEquatable<PanelCacheKey>
+	[Serializable]
+	public abstract class PanelCacheKey : IEquatable<PanelCacheKey>, ISerializable
 	{
 		/// <summary>
 		/// Gets the expiration.
@@ -154,6 +176,24 @@ namespace InkyCal.Models
 		protected PanelCacheKey(TimeSpan expiration)
 		{
 			Expiration = expiration;
+		}
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The serialization info</param>
+		/// <param name="context">The streaming context</param>
+		protected PanelCacheKey(SerializationInfo info, StreamingContext context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+			Expiration = TimeSpan.FromTicks(info.GetInt64(nameof(Expiration)));
+		}
+
+		/// <inheritdoc/>
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			ArgumentNullException.ThrowIfNull(info);
+			info.AddValue(nameof(Expiration), Expiration.Ticks);
 		}
 
 		bool IEquatable<PanelCacheKey>.Equals(PanelCacheKey other)
