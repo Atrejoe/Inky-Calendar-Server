@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
+using InkyCal.Utils.Caching;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -16,11 +16,16 @@ namespace InkyCal.Utils
 
 		private static readonly HttpClient client = new HttpClient();
 
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
-		{
-			SizeLimit = 1024 * 1024 * 500,
-		});
+		private static IImageCacheService _cache;
 
+		/// <summary>
+		/// Sets the cache service to use. Must be called before using LoadCachedContent.
+		/// </summary>
+		/// <param name="cacheService">The cache service to use.</param>
+		public static void SetCacheService(IImageCacheService cacheService)
+		{
+			_cache = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+		}
 
 		/// <summary>
 		/// Returns a (10-minute) cached image
@@ -36,10 +41,17 @@ namespace InkyCal.Utils
 		/// <exception cref="HttpRequestException">When download failed (non-200 response was returned))</exception>
 		internal static async Task<byte[]> LoadCachedContent(this Uri imageUrl, TimeSpan expiration, CancellationToken cancellationToken = default)
 		{
+			if (_cache == null)
+			{
+				// Fallback to in-memory cache if not initialized
+				_cache = new MemoryCacheService();
+			}
 
 			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
-				if (!_cache.TryGetValue(imageUrl.ToString(), out byte[] cacheEntry))// Look for cache key.
+				var (found, cacheEntry) = await _cache.TryGetValueAsync(imageUrl.ToString());
+				
+				if (!found)
 				{
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))
@@ -49,14 +61,9 @@ namespace InkyCal.Utils
 						cacheEntry = await result.Content.ReadAsByteArrayAsync(cancellationToken);
 					}
 
-					var cacheEntryOptions = new MemoryCacheEntryOptions()
-						.SetSize(cacheEntry.Length)
-						// Remove from cache after this time, regardless of sliding expiration
-						.SetAbsoluteExpiration(expiration);
-
 					// Save data in cache.
 					using (MiniProfiler.Current.Step($"Storing response content ({cacheEntry.Length:n0} bytes) in cache"))
-						_cache.Set(imageUrl.ToString(), cacheEntry, cacheEntryOptions);
+						await _cache.SetAsync(imageUrl.ToString(), cacheEntry, expiration, cacheEntry.Length);
 				}
 
 				return cacheEntry;

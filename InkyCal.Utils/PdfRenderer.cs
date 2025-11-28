@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using ImageMagick;
 using InkyCal.Models;
-using Microsoft.Extensions.Caching.Memory;
+using InkyCal.Utils.Caching;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -47,10 +47,16 @@ namespace InkyCal.Utils
 		/// <param name="panel"></param>
 		protected PdfRenderer(T panel) : base(panel) { }
 
-		private static readonly MemoryCache _cache = new(new MemoryCacheOptions()
+		private static IImageCacheService _cache;
+
+		/// <summary>
+		/// Sets the cache service to use. Must be called before using GetImage.
+		/// </summary>
+		/// <param name="cacheService">The cache service to use.</param>
+		public static void SetCacheService(IImageCacheService cacheService)
 		{
-			SizeLimit = 1024 * 1024 * 500,
-		});
+			_cache = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+		}
 
 		/// <summary>
 		/// </summary>
@@ -62,16 +68,25 @@ namespace InkyCal.Utils
 		/// <inheritdoc />
 		public override async Task<Image> GetImage(int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
+			var cache = _cache;
+			if (cache == null)
+			{
+				// Fallback to in-memory cache if not initialized
+				cache = new MemoryCacheService();
+			}
+
 			//Get pdf as byte array
 			var pdf = await GetPDF();
 
 			Image<Rgba32> image;
 
 			using (MiniProfiler.Current.Step($"Loading converted Pdf from cache"))
-
-				if (_cache.TryGetValue(CacheKey, out byte[] bytes))
+			{
+				var cacheKeyString = CacheKey.GetHashCode().ToString();
+				var (found, bytes) = await cache.TryGetValueAsync(cacheKeyString);
+				
+				if (found)
 					image = Image.Load<Rgba32>(bytes);
-
 				else
 				{
 					using (MiniProfiler.Current.Step($"Converted pdf not in cache, generating"))
@@ -104,16 +119,14 @@ namespace InkyCal.Utils
 						//Load PNG
 						image = await Image.LoadAsync<Rgba32>(ms);
 
-						var cacheEntryOptions = new MemoryCacheEntryOptions()
-							.SetSize(ms.Length)
-							// Remove from cache after this time, regardless of sliding expiration
-							.SetAbsoluteExpiration(CacheKey.Expiration);
+						var imageBytes = ms.ToArray();
 
 						// Save data in cache.
-						using (MiniProfiler.Current.Step($"Storing converted Pdf ({ms.Length:n0} bytes) in cache until {DateTime.Now.Add(CacheKey.Expiration)}"))
-							_cache.Set(CacheKey, ms.ToArray(), cacheEntryOptions);
+						using (MiniProfiler.Current.Step($"Storing converted Pdf ({imageBytes.Length:n0} bytes) in cache until {DateTime.Now.Add(CacheKey.Expiration)}"))
+							await cache.SetAsync(cacheKeyString, imageBytes, CacheKey.Expiration, imageBytes.Length);
 					}
 				}
+			}
 
 			using (MiniProfiler.Current.Step($"Converting hi-res image to correct resolution and color palette"))
 				image.Mutate(x => x

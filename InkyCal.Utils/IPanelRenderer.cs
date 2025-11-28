@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
-using Microsoft.Extensions.Caching.Memory;
+using InkyCal.Utils.Caching;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
@@ -124,16 +124,22 @@ namespace InkyCal.Utils
 	/// </summary>
 	public static class IPanelRendererExtensions
 	{
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
+		private static IImageCacheService _cache;
+
+		/// <summary>
+		/// Sets the cache service to use. Must be called before using GetCachedImage.
+		/// </summary>
+		/// <param name="cacheService">The cache service to use.</param>
+		public static void SetCacheService(IImageCacheService cacheService)
 		{
-			SizeLimit = 1024 * 1024 * 500,
-		});
+			_cache = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+		}
 
 		/// <summary>
 		/// Returns the number of cached images
 		/// </summary>
 		/// <returns></returns>
-		public static int CacheEntries() => _cache.Count;
+		public static int CacheEntries() => _cache?.Count() ?? -1;
 
 		/// <summary>
 		/// Gets the cached image.
@@ -146,14 +152,14 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
-
-			//var cachekey = new ImageCacheKey(
-			//						panelCacheKey: renderer.CacheKey,
-			//						imageSettings: new ImageSettings(width, height, colors));
+			if (_cache == null)
+			{
+				// Fallback to in-memory cache if not initialized
+				_cache = new MemoryCacheService();
+			}
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
-
 				byte[] result;
 				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
 				//{

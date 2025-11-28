@@ -28,5 +28,19 @@ namespace InkyCal.Server.Config
 		public static string OpenAIAPIKey => configuration.Value.GetValue(nameof(OpenAIAPIKey), string.Empty);
 		public static string OpenWeatherAPIKey => configuration.Value.GetValue(nameof(OpenWeatherAPIKey), string.Empty);
 
+		/// <summary>
+		/// Gets the cache type (Memory or Redis). Default is Memory.
+		/// </summary>
+		public static CacheType CacheType => configuration.Value.GetValue("Cache:Type", CacheType.Memory);
+
+		/// <summary>
+		/// Gets the Redis connection string for caching.
+		/// </summary>
+		public static string RedisCacheConnectionString => configuration.Value.GetValue("Cache:Redis:ConnectionString", string.Empty);
+
+		/// <summary>
+		/// Gets the memory cache size limit in bytes. Default is 500 MB.
+		/// </summary>
+		public static long MemoryCacheSizeLimit => configuration.Value.GetValue("Cache:Memory:SizeLimit", 1024L * 1024 * 500);
 	}
 }

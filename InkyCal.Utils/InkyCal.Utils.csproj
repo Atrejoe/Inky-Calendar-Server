@@ -50,6 +50,7 @@
 
 
 	</PackageReference>
+	<PackageReference Include="StackExchange.Redis" Version="2.8.29" />
 	<PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
 	<PackageReference Include="System.Threading.RateLimiting" Version="10.0.10" />
   </ItemGroup>
