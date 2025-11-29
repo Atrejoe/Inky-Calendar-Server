@@ -4,7 +4,7 @@ metadata:
   name: web
   namespace: inkycal
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: inkycal
@@ -144,8 +144,8 @@ spec:
           runAsUser: 1000
         resources:
           limits:
-            cpu: "2"
-            memory: "4Gi"
+            cpu: "4"
+            memory: "6Gi"
           requests:
             memory: "512Mi"
             cpu: "100m"
