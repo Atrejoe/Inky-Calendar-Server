@@ -57,7 +57,7 @@ namespace InkyCal.Models
 		/// <summary>
 		/// 4.2" black-white
 		/// </summary>
-		[DisplayResolution(400, 300, KnownColor.Red)]
+		[DisplayResolution(400, 300)]
 		epd_4_in_2,
 
 		/// <summary>
