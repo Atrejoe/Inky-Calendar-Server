@@ -46,7 +46,7 @@ namespace InkyCal.Utils
 
 			using (MiniProfiler.Current.Step($"Loading url results from cache"))
 			{
-				return await _cache.GetOrCreateAsync(imageUrl, async () =>
+				return await _cache.GetOrCreateAsync(imageUrl.ToString(), async () =>
 				{
 					// Key not in cache, so get data.
 					using (MiniProfiler.Current.Step($"Response content not in cache, loading from URL"))

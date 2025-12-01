@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -34,14 +33,14 @@ namespace InkyCal.Utils.Caching
 		}
 		
 		/// <inheritdoc/>
-		public Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>, ISerializable
+		public Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>, IJsonSerializable
 		{
 			var found = _cache.TryGetValue(key, out byte[] value);
 			return Task.FromResult((found, value));
 		}
 
 		/// <inheritdoc/>
-		public Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IEquatable<T>, ISerializable
+		public Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IEquatable<T>, IJsonSerializable
 		{
 			var actualSize = value?.Length ?? 0;
 
@@ -91,7 +90,25 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>, ISerializable
+		public async Task<byte[]> GetOrCreateAsync(string key, Func<Task<byte[]>> factory, TimeSpan expiration)
+		{
+			ArgumentNullException.ThrowIfNull(factory);
+
+			var (found, value) = await TryGetValueAsync(key);
+			if (found)
+				return value;
+
+			// Create the value
+			value = await factory();
+
+			// Cache it
+			await SetAsync(key, value, expiration);
+
+			return value;
+		}
+
+		/// <inheritdoc/>
+		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>, IJsonSerializable
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 

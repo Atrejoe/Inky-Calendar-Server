@@ -18,8 +18,7 @@ namespace InkyCal.Utils
 	/// or
 	/// imageSettings
 	/// </exception>
-	[Serializable]
-	public sealed class ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings) : IEquatable<ImageCacheKey>, ISerializable
+	public sealed class ImageCacheKey(PanelCacheKey panelCacheKey, ImageSettings imageSettings) : IEquatable<ImageCacheKey>, IJsonSerializable
 	{
 		/// <summary>
 		/// Gets the image settings.

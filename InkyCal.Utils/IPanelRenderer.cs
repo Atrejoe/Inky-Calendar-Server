@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ImageMagick;
 using InkyCal.Models;
 using InkyCal.Utils.Caching;
+using InkyCal.Utils.Caching.Serialization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
@@ -24,8 +26,7 @@ namespace InkyCal.Utils
 	/// <param name="height">The height.</param>
 	/// <param name="colors">The colors.</param>
 	/// <exception cref="ArgumentNullException">colors</exception>
-	[Serializable]
-	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>, ISerializable
+	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>, IJsonSerializable
 	{
 		/// <summary>
 		/// Gets the width of an image
@@ -49,48 +50,8 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The colors.
 		/// </value>
+		[JsonConverter(typeof(ColorJsonSerializer))]
 		public Color[] Colors { get; } = colors ?? throw new ArgumentNullException(nameof(colors));
-
-		/// <summary>
-		/// Deserialization constructor
-		/// </summary>
-		/// <param name="info">The serialization info</param>
-		/// <param name="context">The streaming context</param>
-		private ImageSettings(SerializationInfo info, StreamingContext context)
-			: this(
-				info.GetInt32(nameof(Width)),
-				info.GetInt32(nameof(Height)),
-				DeserializeColors(info))
-		{
-		}
-
-		private static Color[] DeserializeColors(SerializationInfo info)
-		{
-			var count = info.GetInt32("ColorsCount");
-			var colors = new Color[count];
-			for (int i = 0; i < count; i++)
-			{
-				var pixel = Rgba32.ParseHex(info.GetString($"Color_{i}"));
-
-				colors[i] = Color.FromPixel<SixLabors.ImageSharp.PixelFormats.Rgba32>(pixel);
-			}
-			return colors;
-		}
-
-		/// <inheritdoc/>
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			ArgumentNullException.ThrowIfNull(info);
-
-			info.AddValue(nameof(Width), Width);
-			info.AddValue(nameof(Height), Height);
-			info.AddValue("ColorsCount", Colors.Length);
-			for (int i = 0; i < Colors.Length; i++)
-			{
-				var rgba32 = Colors[i].ToPixel<SixLabors.ImageSharp.PixelFormats.Rgba32>();
-				info.AddValue($"Color_{i}", rgba32.ToHex());
-			}
-		}
 
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
