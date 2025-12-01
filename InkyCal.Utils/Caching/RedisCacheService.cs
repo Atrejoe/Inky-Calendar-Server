@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
@@ -37,9 +36,9 @@ namespace InkyCal.Utils.Caching
 
 		/// <inheritdoc/>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : ISerializable, IEquatable<T>
+		public async Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IJsonSerializable, IEquatable<T>
 		{
-			return await TryGetValueAsync(key.ToString());
+			return await TryGetValueAsync(key.SerializeToJson());
 		}
 
 		/// <inheritdoc/>
@@ -63,9 +62,9 @@ namespace InkyCal.Utils.Caching
 
 		/// <inheritdoc/>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : ISerializable, IEquatable<T>
+		public async Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IJsonSerializable, IEquatable<T>
 		{
-			await SetAsync(key.ToString(), value, expiration);
+			await SetAsync(key.SerializeToJson(), value, expiration);
 		}
 
 		/// <inheritdoc/>
@@ -84,7 +83,7 @@ namespace InkyCal.Utils.Caching
 
 		/// <inheritdoc/>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : ISerializable, IEquatable<T>
+		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IJsonSerializable, IEquatable<T>
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 
