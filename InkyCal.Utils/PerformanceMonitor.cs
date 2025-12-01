@@ -38,7 +38,7 @@ namespace InkyCal.Utils
 							}
 							catch (System.Exception ex)
 							{
-								return $"Failed to obtaiConsole.Writen value: {ex.Message}";
+								return $"Failed to obtain value: {ex.Message}";
 							}
 						});
 
