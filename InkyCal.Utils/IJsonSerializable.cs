@@ -19,14 +19,14 @@ namespace InkyCal.Utils
 		/// </summary>
 		/// <param name="subject"></param>
 		/// <returns></returns>
-		public static string SerializeToJson<T>(this T subject) where T : IJsonSerializable 
+		public static string SerializeToJson<T>(this T subject) 
 			=> JsonSerializer.Serialize(subject);
 
 		/// <summary>
 		/// Serializes from json.
 		/// </summary>
 		/// <returns></returns>
-		public static T Deserialize<T>(string json) where T : IJsonSerializable 
+		public static T Deserialize<T>(string json)
 			=> JsonSerializer.Deserialize<T>(json);
 	}
 }

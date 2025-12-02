@@ -429,17 +429,23 @@
       },
       "StackExchange.Redis": {
         "type": "Transitive",
-        "resolved": "2.8.29",
-        "contentHash": "0p/I/Wd5UW9ryAurUKrDnRziWFN8w2DG3leX+D6GVEnRLwMV2rRsJvAPWyeepI82Vbq4Nsden2o+gtNa3qA62Q==",
+        "resolved": "2.10.1",
+        "contentHash": "se08WZvD42H3bV4XBW07pupTiE2/72qStKyi/lRqqcijksFWfRtwLTuhFtZ4OX19f4+we/2qruFZBXYJBFc8PQ==",
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
-          "Pipelines.Sockets.Unofficial": "2.2.8"
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Pipelines.Sockets.Unofficial": "2.2.8",
+          "System.IO.Hashing": "9.0.10"
         }
       },
       "System.CodeDom": {
         "type": "Transitive",
         "resolved": "7.0.0",
         "contentHash": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A=="
+      },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "9.0.10",
+        "contentHash": "9gv5z71xaWWmcGEs4bXdreIhKp2kYLK2fvPK5gQkgnWMYvZ8ieaxKofDjxL3scZiEYfi/yW2nJTiKV2awcWEdA=="
       },
       "System.Management": {
         "type": "Transitive",
@@ -528,7 +534,7 @@
           "Sentry": "[6.8.0, )",
           "SixLabors.ImageSharp": "[3.1.12, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.7, )",
-          "StackExchange.Redis": "[2.8.29, )",
+          "StackExchange.Redis": "[2.10.1, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Threading.RateLimiting": "[10.0.10, )"
         }

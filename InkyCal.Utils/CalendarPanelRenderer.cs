@@ -46,7 +46,7 @@ namespace InkyCal.Utils
 		/// <summary>
 		/// Get the subscribed Google calenders
 		/// </summary>
-		public ReadOnlyCollection<SubscribedGoogleCalender> SubscribedGoogleCalenders { get; } = (subscribedCalenders?.OrderBy(x => x.IdAccessToken).ThenBy(x => x.Calender).ToArray() ?? Array.Empty<SubscribedGoogleCalender>()).ToList().AsReadOnly();
+		public ReadOnlyCollection<string> SubscribedGoogleCalenders { get; } = (subscribedCalenders?.Select(x => x.Calender).Distinct().OrderBy(x=>x).ToArray() ?? Array.Empty<string>()).ToList().AsReadOnly();
 
 		/// <summary>
 		/// Draw mode
