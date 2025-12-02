@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace InkyCal.Models
 {
 	/// <summary>
 	/// 
 	/// </summary>
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public enum CalenderDrawMode : byte
 	{
 		/// <summary>
