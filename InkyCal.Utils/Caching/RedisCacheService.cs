@@ -11,6 +11,8 @@ namespace InkyCal.Utils.Caching
 	public class RedisCacheService : IImageCacheService
 	{
 		private readonly IDatabase _database;
+		private static readonly TimeSpan DefaultLockTimeout = TimeSpan.FromSeconds(30);
+		private static readonly TimeSpan LockRetryDelay = TimeSpan.FromMilliseconds(100);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RedisCacheService"/> class.
@@ -87,19 +89,56 @@ namespace InkyCal.Utils.Caching
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 
+			var stringKey = key.SerializeToJson();
+			var lockKey = $"lock:{stringKey}";
+			var lockValue = Guid.NewGuid().ToString();
+
 			try
 			{
-				var (found, value) = await TryGetValueAsync(key);
+				// Try to get from cache first (no lock needed for reads)
+				var (found, value) = await TryGetValueAsync(stringKey);
 				if (found)
 					return value;
 
-				// Create the value
-				value = await factory();
+				// Acquire distributed lock
+				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout);
+				
+				if (lockAcquired)
+				{
+					try
+					{
+						// Double-check if value was created while waiting for lock
+						(found, value) = await TryGetValueAsync(stringKey);
+						if (found)
+							return value;
 
-				// Cache it
-				await SetAsync(key, value, expiration);
+						// Create the value
+						value = await factory();
 
-				return value;
+						// Cache it
+						await SetAsync(stringKey, value, expiration);
+
+						return value;
+					}
+					finally
+					{
+						// Always release the lock
+						await _database.LockReleaseAsync(lockKey, lockValue);
+					}
+				}
+				else
+				{
+;
+					// Could not acquire lock, wait and retry getting from cache
+					await Task.Delay(LockRetryDelay);
+					
+					(found, value) = await TryGetValueAsync(stringKey);
+					if (found)
+						return value;
+
+					// If still not found, create without lock (fallback)
+					return await factory();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -115,19 +154,54 @@ namespace InkyCal.Utils.Caching
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 
+			var lockKey = $"lock:{key}";
+			var lockValue = Guid.NewGuid().ToString();
+
 			try
 			{
+				// Try to get from cache first (no lock needed for reads)
 				var (found, value) = await TryGetValueAsync(key);
 				if (found)
 					return value;
 
-				// Create the value
-				value = await factory();
+				// Acquire distributed lock
+				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout);
+				
+				if (lockAcquired)
+				{
+					try
+					{
+						// Double-check if value was created while waiting for lock
+						(found, value) = await TryGetValueAsync(key);
+						if (found)
+							return value;
 
-				// Cache it
-				await SetAsync(key, value, expiration);
+						// Create the value
+						value = await factory();
 
-				return value;
+						// Cache it
+						await SetAsync(key, value, expiration);
+
+						return value;
+					}
+					finally
+					{
+						// Always release the lock
+						await _database.LockReleaseAsync(lockKey, lockValue);
+					}
+				}
+				else
+				{
+					// Could not acquire lock, wait and retry getting from cache
+					await Task.Delay(LockRetryDelay);
+					
+					(found, value) = await TryGetValueAsync(key);
+					if (found)
+						return value;
+
+					// If still not found, create without lock (fallback)
+					return await factory();
+				}
 			}
 			catch (Exception ex)
 			{
