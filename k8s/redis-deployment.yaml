@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis
   namespace: inkycal
@@ -7,7 +7,8 @@ metadata:
     app: inkycal
     component: redis
 spec:
-  replicas: 1
+  serviceName: redis-headless
+  replicas: 3 # High availability with 3 replicas
   selector:
     matchLabels:
       app: inkycal
@@ -24,9 +25,40 @@ spec:
         ports:
         - containerPort: 6379
           protocol: TCP
+          name: redis
         command:
         - redis-server
         - /usr/local/etc/redis/redis.conf
+        - --replica-announce-ip
+        - $(POD_IP)
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                # Wait for Redis to be ready
+                until redis-cli ping > /dev/null 2>&1; do
+                  sleep 1
+                done
+                
+                # Get pod ordinal from pod name (e.g., redis-1 -> 1)
+                ORDINAL=$(echo $POD_NAME | awk -F'-' '{print $NF}')
+                
+                # If not redis-0, configure as replica of redis-0
+                if [ "$ORDINAL" != "0" ]; then
+                  redis-cli REPLICAOF redis-0.redis-headless.inkycal.svc.cluster.local 6379
+                fi
         resources:
           limits:
             cpu: "1"
@@ -64,7 +96,17 @@ spec:
       - name: redis-config
         configMap:
           name: redis-config
-      - name: redis-data
-        persistentVolumeClaim:
-          claimName: redis-data-pvc
       restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+      labels:
+        app: inkycal
+        component: redis
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: "nfs-readwriteonce"

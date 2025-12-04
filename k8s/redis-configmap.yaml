@@ -5,8 +5,32 @@ metadata:
   namespace: inkycal
 data:
   redis.conf: |
-    # Redis configuration for InkyCal caching
+    # Redis configuration for InkyCal caching with HA support
+    
+    # Memory settings
     maxmemory 512mb
     maxmemory-policy allkeys-lru
+    
+    # Persistence (disabled for cache workload)
     save ""
     appendonly no
+    
+    # Replication settings
+    replica-read-only yes
+    repl-diskless-sync yes
+    repl-diskless-sync-delay 5
+    
+    # Automatic failover
+    min-replicas-to-write 1
+    min-replicas-max-lag 10
+    
+    # Network
+    tcp-backlog 511
+    timeout 0
+    tcp-keepalive 300
+    
+    # Performance
+    lazyfree-lazy-eviction yes
+    lazyfree-lazy-expire yes
+    lazyfree-lazy-server-del yes
+    replica-lazy-flush yes
