@@ -28,7 +28,7 @@ metadata:
   labels:
     app: redisinsight #deployment label
 spec:
-  replicas: 1 #a single replica pod
+  replicas: 1 #a single replica pod (sufficient for management UI)
   selector:
     matchLabels:
       app: redisinsight #which pods is the deployment managing, as defined by the pod template
