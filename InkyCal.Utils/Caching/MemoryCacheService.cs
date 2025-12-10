@@ -33,14 +33,14 @@ namespace InkyCal.Utils.Caching
 		}
 		
 		/// <inheritdoc/>
-		public Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>, IJsonSerializable
+		public Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>
 		{
 			var found = _cache.TryGetValue(key, out byte[] value);
 			return Task.FromResult((found, value));
 		}
 
 		/// <inheritdoc/>
-		public Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IEquatable<T>, IJsonSerializable
+		public Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IEquatable<T>
 		{
 			var actualSize = value?.Length ?? 0;
 
@@ -108,7 +108,7 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>, IJsonSerializable
+		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 

@@ -3,16 +3,9 @@
 namespace InkyCal.Utils
 {
 	/// <summary>
-	/// Marker interface, indicates that the class can be serialized to JSON, and therefore can use attributes that control, serialization
-	/// </summary>
-	public interface IJsonSerializable
-	{
-	}
-
-	/// <summary>
 	/// 
 	/// </summary>
-	public static class IJsonSerializableHelper
+	public static class JsonSerializationHelper
 	{
 		/// <summary>
 		/// Serializes to json.

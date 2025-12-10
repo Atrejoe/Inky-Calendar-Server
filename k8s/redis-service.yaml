@@ -21,6 +21,26 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: redis-master
+  namespace: inkycal
+  labels:
+    app: inkycal
+    component: redis
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+  selector:
+    app: inkycal
+    component: redis
+    statefulset.kubernetes.io/pod-name: redis-0  # Only route to master pod
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: redis
   namespace: inkycal
   labels:
