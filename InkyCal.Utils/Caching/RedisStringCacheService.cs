@@ -40,7 +40,9 @@ namespace InkyCal.Utils.Caching
 		{
 			try
 			{
-				var value = await _database.StringGetAsync(key);
+				// Use CommandFlags.PreferReplica to allow reading from replicas
+				// This distributes read load across master and replicas
+				var value = await _database.StringGetAsync(key, CommandFlags.PreferReplica);
 				if (value.HasValue)
 					return (true, value.ToString());
 
@@ -59,7 +61,8 @@ namespace InkyCal.Utils.Caching
 		{
 			try
 			{
-				await _database.StringSetAsync(key, value, expiration);
+				// Write operations always go to master
+				await _database.StringSetAsync(key, value, expiration, flags: CommandFlags.PreferMaster);
 			}
 			catch (Exception ex)
 			{
@@ -75,6 +78,7 @@ namespace InkyCal.Utils.Caching
 
 			try
 			{
+				// Try to get from cache first (prefer replica for read load distribution)
 				var (found, value) = await TryGetValueAsync(key);
 				if (found)
 					return value;
@@ -82,7 +86,7 @@ namespace InkyCal.Utils.Caching
 				// Create the value
 				value = await factory();
 
-				// Cache it
+				// Cache it (write to master)
 				await SetAsync(key, value, expiration);
 
 				return value;
