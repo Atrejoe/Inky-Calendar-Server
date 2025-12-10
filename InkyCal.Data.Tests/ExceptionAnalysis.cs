@@ -13,6 +13,8 @@ namespace InkyCal.Data.Tests
 				&& (
 					sqlEx.Number == 53
 					||
+					(sqlEx.Number == 11002 && sqlEx.ErrorCode == -2146232060 && sqlEx.InnerException is System.Net.Sockets.SocketException)
+					||
 					(sqlEx.Number == 0 && sqlEx.ErrorCode == -2146232060 && sqlEx.InnerException is System.Net.Sockets.SocketException)
 				))
 				return true;
