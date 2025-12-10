@@ -26,7 +26,7 @@ namespace InkyCal.Utils
 	/// <param name="height">The height.</param>
 	/// <param name="colors">The colors.</param>
 	/// <exception cref="ArgumentNullException">colors</exception>
-	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>, IJsonSerializable
+	public sealed class ImageSettings(int width, int height, Color[] colors) : IEquatable<ImageSettings>
 	{
 		/// <summary>
 		/// Gets the width of an image

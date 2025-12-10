@@ -17,18 +17,6 @@ namespace InkyCal.Utils.Caching
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RedisCacheService"/> class.
 		/// </summary>
-		/// <param name="connectionString">The Redis connection string.</param>
-		public RedisCacheService(string connectionString)
-		{
-			ArgumentNullException.ThrowIfNull(connectionString);
-
-			var redis = ConnectionMultiplexer.Connect(connectionString);
-			_database = redis.GetDatabase();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RedisCacheService"/> class.
-		/// </summary>
 		/// <param name="redis">The Redis connection multiplexer.</param>
 		public RedisCacheService(IConnectionMultiplexer redis)
 		{
@@ -37,8 +25,7 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IJsonSerializable, IEquatable<T>
+		public async Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>
 		{
 			return await TryGetValueAsync(key.SerializeToJson());
 		}
@@ -49,7 +36,9 @@ namespace InkyCal.Utils.Caching
 		{
 			try
 			{
-				var value = await _database.StringGetAsync(key);
+				// Use CommandFlags.PreferReplica to allow reading from replicas
+				// This distributes read load across master and replicas
+				var value = await _database.StringGetAsync(key, CommandFlags.PreferReplica);
 				if (value.HasValue)
 					return (true, (byte[])value);
 
@@ -64,7 +53,7 @@ namespace InkyCal.Utils.Caching
 
 		/// <inheritdoc/>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IJsonSerializable, IEquatable<T>
+		public async Task SetAsync<T>(T key, byte[] value, TimeSpan expiration) where T : IEquatable<T>
 		{
 			await SetAsync(key.SerializeToJson(), value, expiration);
 		}
@@ -75,7 +64,9 @@ namespace InkyCal.Utils.Caching
 		{
 			try
 			{
-				await _database.StringSetAsync(key, value, expiration);
+				// Write operations always go to master (PreferMaster is more resilient than DemandMaster)
+				// PreferMaster will use master if available, but won't fail if temporarily unavailable
+				await _database.StringSetAsync(key, value, expiration, flags: CommandFlags.PreferMaster);
 			}
 			catch (Exception ex)
 			{
@@ -85,7 +76,7 @@ namespace InkyCal.Utils.Caching
 
 		/// <inheritdoc/>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IJsonSerializable, IEquatable<T>
+		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 
@@ -95,19 +86,27 @@ namespace InkyCal.Utils.Caching
 
 			try
 			{
-				// Try to get from cache first (no lock needed for reads)
+				// Try to get from cache first (prefer replica for read load distribution)
 				var (found, value) = await TryGetValueAsync(stringKey);
 				if (found)
 					return value;
 
-				// Acquire distributed lock
-				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout);
+				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
+				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
+				
+				while (lockAcquired) {
+					// Could not acquire lock, wait and retry getting from cache
+					await Task.Delay(LockRetryDelay);
+
+					lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
+				}
 				
 				if (lockAcquired)
 				{
 					try
 					{
 						// Double-check if value was created while waiting for lock
+						// This read can come from replica
 						(found, value) = await TryGetValueAsync(stringKey);
 						if (found)
 							return value;
@@ -115,22 +114,19 @@ namespace InkyCal.Utils.Caching
 						// Create the value
 						value = await factory();
 
-						// Cache it
+						// Cache it (write to master)
 						await SetAsync(stringKey, value, expiration);
 
 						return value;
 					}
 					finally
 					{
-						// Always release the lock
-						await _database.LockReleaseAsync(lockKey, lockValue);
+						// Always release the lock (must go to master)
+						await _database.LockReleaseAsync(lockKey, lockValue, CommandFlags.PreferMaster);
 					}
 				}
 				else
 				{
-;
-					// Could not acquire lock, wait and retry getting from cache
-					await Task.Delay(LockRetryDelay);
 					
 					(found, value) = await TryGetValueAsync(stringKey);
 					if (found)
@@ -159,19 +155,20 @@ namespace InkyCal.Utils.Caching
 
 			try
 			{
-				// Try to get from cache first (no lock needed for reads)
+				// Try to get from cache first (prefer replica for read load distribution)
 				var (found, value) = await TryGetValueAsync(key);
 				if (found)
 					return value;
 
-				// Acquire distributed lock
-				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout);
+				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
+				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
 				
 				if (lockAcquired)
 				{
 					try
 					{
 						// Double-check if value was created while waiting for lock
+						// This read can come from replica
 						(found, value) = await TryGetValueAsync(key);
 						if (found)
 							return value;
@@ -179,15 +176,15 @@ namespace InkyCal.Utils.Caching
 						// Create the value
 						value = await factory();
 
-						// Cache it
+						// Cache it (write to master)
 						await SetAsync(key, value, expiration);
 
 						return value;
 					}
 					finally
 					{
-						// Always release the lock
-						await _database.LockReleaseAsync(lockKey, lockValue);
+						// Always release the lock (must go to master)
+						await _database.LockReleaseAsync(lockKey, lockValue, CommandFlags.PreferMaster);
 					}
 				}
 				else
