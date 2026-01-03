@@ -1027,8 +1027,8 @@
       },
       "OpenAI-DotNet": {
         "type": "Transitive",
-        "resolved": "8.8.7",
-        "contentHash": "8Bq2tLoMLz6KROLAZI+OUddd2v/d6f/lgxM3QT4gH5WIkk6Lfu6uZiGaVJrNR98r1GU/lh83srmTzkicPu5nUA=="
+        "resolved": "8.8.8",
+        "contentHash": "/ycZJKKk+VV+BFtY6nwdVGG40nhrIJVfN+nC3oCz8htxFiIo24Xa7tOuL1ffOp5QmpOacvaEQ6whhp8uKR+mFQ=="
       },
       "Sentry": {
         "type": "Transitive",
@@ -1248,7 +1248,7 @@
           "Magick.NET-Q16-AnyCPU": "[14.10.1, )",
           "Magick.NET.Core": "[14.10.1, )",
           "MiniProfiler.Shared": "[4.5.4, )",
-          "OpenAI-DotNet": "[8.8.7, )",
+          "OpenAI-DotNet": "[8.8.8, )",
           "Sentry": "[5.16.2, )",
           "SixLabors.ImageSharp": "[3.1.12, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.7, )",
