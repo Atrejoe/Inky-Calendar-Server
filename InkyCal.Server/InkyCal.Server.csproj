@@ -12,7 +12,7 @@
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup> 
 	<Compile Remove="Controllers\GoogleController.cs" />
   </ItemGroup>
 
@@ -42,7 +42,7 @@
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.5.4" />
 	<PackageReference Include="Sentry.AspNetCore" Version="5.16.2" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.0.128591">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.17.0.131074">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
