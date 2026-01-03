@@ -81,8 +81,6 @@ namespace InkyCal.Utils.Caching
 			ArgumentNullException.ThrowIfNull(factory);
 
 			var stringKey = key.SerializeToJson();
-			var lockKey = $"lock:{stringKey}";
-			var lockValue = Guid.NewGuid().ToString();
 
 			try
 			{
@@ -91,16 +89,19 @@ namespace InkyCal.Utils.Caching
 				if (found)
 					return value;
 
+				var lockKey = $"lock:{stringKey}";
+				var lockValue = Guid.NewGuid().ToString();
 				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
 				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
-				
-				while (lockAcquired) {
+
+				while (lockAcquired)
+				{
 					// Could not acquire lock, wait and retry getting from cache
 					await Task.Delay(LockRetryDelay);
 
 					lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
 				}
-				
+
 				if (lockAcquired)
 				{
 					try
@@ -127,7 +128,7 @@ namespace InkyCal.Utils.Caching
 				}
 				else
 				{
-					
+
 					(found, value) = await TryGetValueAsync(stringKey);
 					if (found)
 						return value;
@@ -162,7 +163,7 @@ namespace InkyCal.Utils.Caching
 
 				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
 				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
-				
+
 				if (lockAcquired)
 				{
 					try
@@ -191,7 +192,7 @@ namespace InkyCal.Utils.Caching
 				{
 					// Could not acquire lock, wait and retry getting from cache
 					await Task.Delay(LockRetryDelay);
-					
+
 					(found, value) = await TryGetValueAsync(key);
 					if (found)
 						return value;
