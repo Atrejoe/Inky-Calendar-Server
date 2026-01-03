@@ -13,7 +13,6 @@
 		<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-q3hc-j9x5-mp9m" />
 	</ItemGroup>
 
 	<ItemGroup>
