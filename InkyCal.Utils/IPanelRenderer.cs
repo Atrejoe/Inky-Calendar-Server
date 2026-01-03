@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ImageMagick;
@@ -147,6 +148,11 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static int CacheEntries() => _cache?.Count() ?? -1;
 
+		private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+		{
+			WriteIndented = true
+		};
+
 		/// <summary>
 		/// Gets the cached image.
 		/// </summary>
@@ -170,14 +176,16 @@ namespace InkyCal.Utils
 				imageSettings: new ImageSettings(width, height, colors));
 			
 
-			using (MiniProfiler.Current.Step($"Loading image from cache"))
+			using (PerformanceMonitor.Span($"Loading image from cache"))
 			{
+				PerformanceMonitor.Trace($"Image cache key: {JsonSerializer.Serialize(imageCacheKey, options: _jsonOptions)}");
+
 				var result = await _cache.GetOrCreateAsync(
 					key: imageCacheKey,
 					factory: async () =>
 					{
 						// Key not in cache, so get data.
-						using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+						using (PerformanceMonitor.Span($"Image not in cache, generating"))
 						{
 							var image = await renderer.GetImage(width, height, colors, log);
 							using var stream = new MemoryStream();
