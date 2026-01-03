@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -12,6 +12,26 @@ using StackExchange.Profiling;
 
 namespace InkyCal.Utils
 {
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="System.IDisposable" />
+	internal sealed class SpanContainer(params IDisposable[] disposables) : IDisposable
+	{
+		public void Dispose()
+		{
+			foreach (var d in disposables)
+				d?.Dispose();
+		}
+	}
+
+	internal sealed class SpanDisposer(ISpan span) : IDisposable{
+		public void Dispose()
+		{
+			span?.Finish();
+		}
+	}
 
 	/// <summary>
 	/// A helper class for logging and tracing
@@ -110,13 +130,29 @@ namespace InkyCal.Utils
 			else
 				Console.WriteLine($"{message} : {JsonConvert.SerializeObject(metaData, Formatting.Indented)}");
 
-			//Write as BugSnag breadcurmbs
+			//Write as BugSnag breadcrumbs
 			BugsnagClient?.Breadcrumbs
 					.Leave(message, BreadcrumbType.Process, metaData);
 
 			//Write as Sentry breadcrumb, attached to subsequent events (capturing it as a message would create an issue per trace)
 			if (SentrySdk.IsEnabled && !string.IsNullOrWhiteSpace(message))
 				SentrySdk.AddBreadcrumb(message, category: "trace", data: metaData);
+		}
+
+		/// <summary>
+		/// Adds span logging to multiple platforms
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public static IDisposable Span(string name)
+		{
+			BugsnagClient?.Breadcrumbs.Leave(new Bugsnag.Payload.Breadcrumb(name, BreadcrumbType.Process));
+
+			return new SpanContainer(
+					MiniProfiler.Current.Step(name),
+					SentrySdk.IsEnabled
+						? new SpanDisposer(SentrySdk.StartSpan(name,""))
+						: null);
 		}
 
 		/// <summary>
