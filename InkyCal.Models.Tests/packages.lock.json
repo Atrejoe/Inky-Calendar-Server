@@ -75,9 +75,9 @@
       },
       "XunitXml.TestLogger": {
         "type": "Direct",
-        "requested": "[7.1.0, )",
-        "resolved": "7.1.0",
-        "contentHash": "SquCOw2HZdDX/OGz+P7cmKlMJa05NGD0+K/7UqfwSXQ1wXzOlSvWlt0oCR2GnySugLVCOh9MNF34oHbBK5nMMg=="
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "EW3niiLvcX5MnN435KNnMZXl/RJgBDjNhn8ZoF4QP9WimfrGsI3btd7R4M2gqBUz/nvuCSzw5RA8ps/bfMqJLg=="
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
