@@ -12,7 +12,7 @@ metadata:
     # variables `RI_APP_HOST` and
     # `RI_APP_PORT`
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 80
     targetPort: 5540
