@@ -30,11 +30,11 @@
       },
       "Ical.Net": {
         "type": "Direct",
-        "requested": "[4.3.1, )",
-        "resolved": "4.3.1",
-        "contentHash": "ZQHNJAy26XeW0OnVRxyHW1xNWkLdueIInPCo76sdNCC0Sr8dAfBzN3DApWWk2r0nwCU0oJIGsrFHdCcQu5RWag==",
+        "requested": "[5.2.0, )",
+        "resolved": "5.2.0",
+        "contentHash": "19UKfqV87yewhwGrSqiySwqcY7//R6VQmDaer/Qe3bWqyR9JP8A1jtb2j7JhKCFP4ycQmO0ZaWIEasIjZdwF4Q==",
         "dependencies": {
-          "NodaTime": "3.2.0"
+          "NodaTime": "3.2.2"
         }
       },
       "Magick.NET-Q16-AnyCPU": {
@@ -286,8 +286,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.2.0",
-        "contentHash": "yoRA3jEJn8NM0/rQm78zuDNPA3DonNSZdsorMUj+dltc1D+/Lc5h9YXGqbEEZozMGr37lAoYkcSM/KjTVqD0ow=="
+        "resolved": "3.2.2",
+        "contentHash": "dmju5W0UYC3QP/UJM0juKAZkH0HSDMp0gH91A0+mT9M0kgyM2Jm67hUZPl/WRQLq8Lijjqmdk8kyAViWFWM7dA=="
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
