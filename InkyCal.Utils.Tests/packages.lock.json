@@ -81,9 +81,9 @@
       },
       "xunit.analyzers": {
         "type": "Direct",
-        "requested": "[1.26.0, )",
-        "resolved": "1.26.0",
-        "contentHash": "YrWZOfuU1Scg4iGizAlMNALOxVS+HPSVilfscNDEJAyrTIVdF4c+8o+Aerw2RYnrJxafj/F56YkJOKCURUWQmA=="
+        "requested": "[1.27.0, )",
+        "resolved": "1.27.0",
+        "contentHash": "y/pxIQaLvk/kxAoDkZW9GnHLCEqzwl5TW0vtX3pweyQpjizB9y3DXhb9pkw2dGeUqhLjsxvvJM1k89JowU6z3g=="
       },
       "xunit.runner.console": {
         "type": "Direct",
