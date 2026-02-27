@@ -14,7 +14,8 @@ RUN adduser -D $USER \
         && chmod 0440 /etc/sudoers.d/$USER
 
 # Required for Pdf renderer
-RUN apk --no-cache add ghostscript
+RUN apk info ghostscript
+RUN apk --no-cache add ghostscript=10.05.0
 
 # Required for Time zone information
 # https://github.com/dotnet/dotnet-docker/issues/1366#issuecomment-601888662
