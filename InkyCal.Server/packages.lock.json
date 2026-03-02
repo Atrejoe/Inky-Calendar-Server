@@ -89,15 +89,15 @@
       },
       "Markdig.Signed": {
         "type": "Direct",
-        "requested": "[1.0.0, )",
-        "resolved": "1.0.0",
-        "contentHash": "6C+jTHNSWY3usY/4sIhyTsx7TJg94P1JUS08+Fcp8oX6aEGkmWMXbv3yBtbAKgf2IufrIyU8R8zRIgyh1twRng=="
+        "requested": "[1.1.0, )",
+        "resolved": "1.1.0",
+        "contentHash": "CO3oBlKyyPqTSjvxFybj+k/XqYv4SmZG6C/N0AP0Rr7yGoB87J2FpTLRXyiMgyYo+mnx+djUqhwp74G+VYq/Dw=="
       },
       "Microsoft.AspNetCore.App.Internal.Assets": {
         "type": "Direct",
-        "requested": "[10.0.2, )",
-        "resolved": "10.0.2",
-        "contentHash": "fMAqrUm+aspxRAsCJ6Hlgs96XSHwNIr9HBNt7wyBAzQkPlfE7w+0C4NzDoJnso5YZyDI0VcRtEXxG9odt3KiZA=="
+        "requested": "[10.0.3, )",
+        "resolved": "10.0.3",
+        "contentHash": "mr3Zn+ht8lijYvlMIasftw9opU9hsLKDdnOgQMmYI3RjWPJLOF9l8+YHDseRkTs97wOrULmJgo/NDCmzL/EGDg=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
