@@ -45,12 +45,14 @@ namespace InkyCal.Utils.Calendar
 			{
 				List<Occurrence> occurrences;
 				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and "))
-					occurrences = calendars.SelectMany(x =>
-							x.GetOccurrences(date, DateTime.Now.AddYears(2))).ToList();
+					occurrences = calendars
+						.GetOccurrences(new CalDateTime(DateTime.SpecifyKind(date, DateTimeKind.Unspecified), null, false))
+						.TakeWhileBefore(new CalDateTime(DateTime.SpecifyKind(DateTime.Now.AddYears(2), DateTimeKind.Unspecified)))
+						.ToList();
 
 				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, maxEvents):n0} events"))
 					items.AddRange(occurrences
-								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
+								.OrderBy(x => x.Period.StartTime.AsUtc)
 								.SelectMany(x =>
 								{
 									//For multi-day periods, list each day within the period separately
@@ -62,11 +64,11 @@ namespace InkyCal.Utils.Calendar
 									var result = new List<Event>();
 
 									while (result.Count < maxEvents
-									&& thisDate < x.Period.EndTime.AsSystemLocal)
+									&& thisDate < ToSystemLocal(x.Period.EndTime))
 									{
 
-										var hasOverlap = thisDate < x.Period.EndTime.AsSystemLocal
-										&& thisDate >= x.Period.StartTime.AsSystemLocal.Date;
+										var hasOverlap = thisDate < ToSystemLocal(x.Period.EndTime)
+										&& thisDate >= ToSystemLocal(x.Period.StartTime).Date;
 
 										if (!hasOverlap)
 										{
@@ -75,26 +77,26 @@ namespace InkyCal.Utils.Calendar
 										}
 
 										var isAllDay = calendarEvent.IsAllDay
-										|| (x.Period.StartTime.AsSystemLocal <= thisDate
-										 && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+										|| (ToSystemLocal(x.Period.StartTime) <= thisDate
+										 && ToSystemLocal(x.Period.EndTime) >= thisDate.AddDays(1)
 										 );
 
 										var start = isAllDay
 														? (TimeSpan?)null
-														: x.Period.StartTime.AsSystemLocal < thisDate
+														: ToSystemLocal(x.Period.StartTime) < thisDate
 															? TimeSpan.FromHours(0)
 															: (x.Period.StartTime.IsUtc
-																? x.Period.StartTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.StartTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+																? TimeZoneInfo.ConvertTimeFromUtc(x.Period.StartTime.AsUtc, TimeZoneInfo.Local) //Convert UTC to local, todo: make timezone of panel configurable?
+																: x.Period.StartTime.Value                                                       //When timezone has been specified show as local time, do not touch
 																)
 																.TimeOfDay;
 										var end = isAllDay
 														? (TimeSpan?)null
-														: x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+														: ToSystemLocal(x.Period.EndTime) >= thisDate.AddDays(1)
 															? TimeSpan.FromHours(24)
 															: (x.Period.EndTime.IsUtc
-																? x.Period.EndTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.EndTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+																? TimeZoneInfo.ConvertTimeFromUtc(x.Period.EndTime.AsUtc, TimeZoneInfo.Local) //Convert UTC to local, todo: make timezone of panel configurable?
+																: x.Period.EndTime.Value                                                       //When timezone has been specified show as local time, do not touch
 																).TimeOfDay;
 
 
@@ -238,6 +240,18 @@ namespace InkyCal.Utils.Calendar
 			request.EnsureSuccessStatusCode();
 
 			return await request.Content.ReadAsStringAsync();
+		}
+
+		/// <summary>
+		/// Converts a <see cref="CalDateTime"/> to the local system time as a <see cref="DateTime"/>.
+		/// </summary>
+		private static DateTime ToSystemLocal(CalDateTime dt)
+		{
+			if (dt.IsUtc)
+				return TimeZoneInfo.ConvertTimeFromUtc(dt.AsUtc, TimeZoneInfo.Local);
+			if (dt.IsFloating)
+				return dt.Value;
+			return dt.ToTimeZone(TimeZoneInfo.Local.Id).Value;
 		}
 	}
 }

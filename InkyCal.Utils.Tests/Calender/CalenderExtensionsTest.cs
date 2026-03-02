@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 using InkyCal.Utils.Calendar;
 using Xunit;
 
@@ -146,7 +149,155 @@ END:VCALENDAR
 			calendars.Add(actual);
 
 			//assert
-			Assert.NotNull(calendars.GetOccurrences(DateTime.Now.Date));
+			Assert.NotNull(calendars.GetOccurrences(new CalDateTime(DateTime.SpecifyKind(DateTime.Now.Date, DateTimeKind.Unspecified), null, false)));
+		}
+
+		/// <summary>
+		/// A test calendar with known future-dated events for verifying occurrence retrieval.
+		/// Events are placed far in the future to remain valid for testing indefinitely.
+		/// </summary>
+		internal const string futureEventCalendar = @"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Test-future-calendar
+X-WR-TIMEZONE:Europe/Berlin
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART:20500101T140000Z
+DTEND:20500101T150000Z
+DTSTAMP:20240101T000000Z
+UID:utc-event-1@test
+SUMMARY:UTC event 14:00-15:00
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Berlin:20500102T150000
+DTEND;TZID=Europe/Berlin:20500102T160000
+DTSTAMP:20240101T000000Z
+UID:berlin-event-1@test
+SUMMARY:Berlin TZ event 15:00-16:00
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20500103
+DTEND;VALUE=DATE:20500104
+DTSTAMP:20240101T000000Z
+UID:allday-event-1@test
+SUMMARY:All-day event on Jan 3
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20500105
+DTEND;VALUE=DATE:20500108
+DTSTAMP:20240101T000000Z
+UID:multiday-event-1@test
+SUMMARY:Multi-day event 5-7 Jan
+END:VEVENT
+END:VCALENDAR
+";
+
+		[Fact]
+		public void LoadCalendar_ParsesSuccessfully()
+		{
+			// Verify calendar loads without exceptions
+			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
+
+			Assert.NotNull(calendar);
+			Assert.Equal(4, calendar.Events.Count);
+		}
+
+		[Fact]
+		public void GetOccurrences_InRange_ReturnsExpectedCount()
+		{
+			// Arrange
+			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
+			var calendars = new CalendarCollection();
+			calendars.Add(calendar);
+
+			var startDate = new DateTime(2050, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+			var endDate = new DateTime(2050, 1, 8, 0, 0, 0, DateTimeKind.Unspecified);
+
+			// Act
+			var occurrences = calendars.GetOccurrences(new CalDateTime(startDate, null, false)).TakeWhileBefore(new CalDateTime(endDate, null, false)).ToList();
+
+			// Assert: 1 UTC event + 1 Berlin TZ event + 1 all-day + 1 multi-day (whole period) = 4
+			Assert.Equal(4, occurrences.Count);
+		}
+
+		[Fact]
+		public void GetOccurrences_UtcEvent_HasCorrectProperties()
+		{
+			// Arrange
+			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
+			var calendars = new CalendarCollection();
+			calendars.Add(calendar);
+
+			// Act
+			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 2, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
+
+			// Assert: UTC event at 14:00-15:00 UTC
+			Assert.Single(occurrences);
+			var o = occurrences[0];
+			var src = Assert.IsType<CalendarEvent>(o.Source);
+			Assert.Equal("UTC event 14:00-15:00", src.Summary);
+			Assert.True(o.Period.StartTime.IsUtc, "Start time should be UTC");
+			Assert.Equal(new TimeSpan(14, 0, 0), o.Period.StartTime.Value.TimeOfDay);
+		}
+
+		[Fact]
+		public void GetOccurrences_NamedTimezoneEvent_HasCorrectProperties()
+		{
+			// Arrange
+			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
+			var calendars = new CalendarCollection();
+			calendars.Add(calendar);
+
+			// Act
+			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 2, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
+
+			// Assert: Berlin TZ event at 15:00-16:00 local time
+			Assert.Single(occurrences);
+			var o = occurrences[0];
+			var src = Assert.IsType<CalendarEvent>(o.Source);
+			Assert.Equal("Berlin TZ event 15:00-16:00", src.Summary);
+			Assert.False(o.Period.StartTime.IsUtc, "Start time should not be UTC");
+			// Value holds the local time in the named timezone
+			Assert.Equal(new TimeSpan(15, 0, 0), o.Period.StartTime.Value.TimeOfDay);
+		}
+
+		[Fact]
+		public void GetOccurrences_AllDayEvent_HasNoTime()
+		{
+			// Arrange
+			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
+			var calendars = new CalendarCollection();
+			calendars.Add(calendar);
+
+			// Act
+			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 4, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
+
+			// Assert: all-day event should have no time component
+			Assert.Single(occurrences);
+			var o = occurrences[0];
+			var src = Assert.IsType<CalendarEvent>(o.Source);
+			Assert.Equal("All-day event on Jan 3", src.Summary);
+			Assert.True(src.IsAllDay, "Event should be all-day");
+			Assert.False(o.Period.StartTime.HasTime, "Start time should have no time component");
 		}
 
 	}
