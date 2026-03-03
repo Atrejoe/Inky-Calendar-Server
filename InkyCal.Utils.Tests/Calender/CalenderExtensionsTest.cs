@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -135,18 +132,14 @@ END:VCALENDAR
 		public void TestCalender()
 		{
 
-			//arrange
-			var calendars = new CalendarCollection();
-
-			//act
+			//arrange & act
 			var actual = ICalExtensions
 							.LoadCalendar(demoCalender);
-			calendars.Add(actual);
 
-			actual = ICalExtensions
-							.LoadCalendar(demoCalender);
-
-			calendars.Add(actual);
+			var calendars = new CalendarCollection
+			{
+				actual
+			};
 
 			//assert
 			Assert.NotNull(calendars.GetOccurrences(new CalDateTime(DateTime.SpecifyKind(DateTime.Now.Date, DateTimeKind.Unspecified), null, false)));
@@ -163,6 +156,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:Test-future-calendar
 X-WR-TIMEZONE:Europe/Berlin
+
 BEGIN:VTIMEZONE
 TZID:Europe/Berlin
 BEGIN:DAYLIGHT
@@ -180,6 +174,7 @@ DTSTART:19701025T030000
 RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
+
 BEGIN:VEVENT
 DTSTART:20500101T140000Z
 DTEND:20500101T150000Z
@@ -194,6 +189,7 @@ DTSTAMP:20240101T000000Z
 UID:berlin-event-1@test
 SUMMARY:Berlin TZ event 15:00-16:00
 END:VEVENT
+
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20500103
 DTEND;VALUE=DATE:20500104
@@ -208,6 +204,7 @@ DTSTAMP:20240101T000000Z
 UID:multiday-event-1@test
 SUMMARY:Multi-day event 5-7 Jan
 END:VEVENT
+
 END:VCALENDAR
 ";
 
@@ -226,8 +223,10 @@ END:VCALENDAR
 		{
 			// Arrange
 			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
-			var calendars = new CalendarCollection();
-			calendars.Add(calendar);
+			var calendars = new CalendarCollection
+			{
+				calendar
+			};
 
 			var startDate = new DateTime(2050, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 			var endDate = new DateTime(2050, 1, 8, 0, 0, 0, DateTimeKind.Unspecified);
@@ -244,8 +243,10 @@ END:VCALENDAR
 		{
 			// Arrange
 			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
-			var calendars = new CalendarCollection();
-			calendars.Add(calendar);
+			var calendars = new CalendarCollection
+			{
+				calendar
+			};
 
 			// Act
 			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 2, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
@@ -264,11 +265,16 @@ END:VCALENDAR
 		{
 			// Arrange
 			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
-			var calendars = new CalendarCollection();
-			calendars.Add(calendar);
+			var calendars = new CalendarCollection
+			{
+				calendar
+			};
 
 			// Act
-			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 2, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
+			var occurrences = calendars
+								.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 2, 0, 0, 0, DateTimeKind.Unspecified), null, false))
+								.TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false))
+								.ToList();
 
 			// Assert: Berlin TZ event at 15:00-16:00 local time
 			Assert.Single(occurrences);
@@ -285,11 +291,16 @@ END:VCALENDAR
 		{
 			// Arrange
 			var calendar = ICalExtensions.LoadCalendar(futureEventCalendar);
-			var calendars = new CalendarCollection();
-			calendars.Add(calendar);
+			var calendars = new CalendarCollection
+			{
+				calendar
+			};
 
 			// Act
-			var occurrences = calendars.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false)).TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 4, 0, 0, 0, DateTimeKind.Unspecified), null, false)).ToList();
+			var occurrences = calendars
+								.GetOccurrences(new CalDateTime(new DateTime(2050, 1, 3, 0, 0, 0, DateTimeKind.Unspecified), null, false))
+								.TakeWhileBefore(new CalDateTime(new DateTime(2050, 1, 4, 0, 0, 0, DateTimeKind.Unspecified), null, false))
+								.ToList();
 
 			// Assert: all-day event should have no time component
 			Assert.Single(occurrences);
