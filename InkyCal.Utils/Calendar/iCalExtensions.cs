@@ -64,11 +64,11 @@ namespace InkyCal.Utils.Calendar
 									var result = new List<Event>();
 
 									while (result.Count < maxEvents
-									&& thisDate < ToSystemLocal(x.Period.EndTime))
+									&& (x.Period.EndTime is null || thisDate < ToSystemLocal(x.Period.EndTime)))
 									{
 
-										var hasOverlap = thisDate < ToSystemLocal(x.Period.EndTime)
-										&& thisDate >= ToSystemLocal(x.Period.StartTime).Date;
+										var hasOverlap = (x.Period.EndTime is null || thisDate < ToSystemLocal(x.Period.EndTime))
+										&& (x.Period.StartTime is null || thisDate >= ToSystemLocal(x.Period.StartTime).Date);
 
 										if (!hasOverlap)
 										{
@@ -126,12 +126,10 @@ namespace InkyCal.Utils.Calendar
 			}
 
 
-#pragma warning disable S2583 // Conditionally executed code should be reachable
 			// Below condition should mostly be true, but it is possible that all calendars are empty
 			// I do not yet have looked into the SonarQube rule to see if it is applicable here
 			if (items.Count == 0)
 				sbErrors.AppendLine($"No events in {urls.Length:n0} calendars");
-#pragma warning restore S2583 // Conditionally executed code should be reachable
 
 			return items.Distinct().ToList();
 		}
@@ -245,8 +243,10 @@ namespace InkyCal.Utils.Calendar
 		/// <summary>
 		/// Converts a <see cref="CalDateTime"/> to the local system time as a <see cref="DateTime"/>.
 		/// </summary>
-		private static DateTime ToSystemLocal(CalDateTime dt)
+		private static DateTime ToSystemLocal(this CalDateTime dt)
 		{
+			ArgumentNullException.ThrowIfNull(dt);
+
 			if (dt.IsUtc)
 				return TimeZoneInfo.ConvertTimeFromUtc(dt.AsUtc, TimeZoneInfo.Local);
 			if (dt.IsFloating)
