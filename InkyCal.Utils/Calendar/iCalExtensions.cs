@@ -23,34 +23,48 @@ namespace InkyCal.Utils.Calendar
 	{
 		private static readonly HttpClient client = new HttpClient();
 
-		internal static async Task<List<Event>> GetEvents(StringBuilder sbErrors, IEnumerable<Uri> ICalUrls)
+		internal static async Task<List<Event>> GetEvents(IEnumerable<Uri> ICalUrls, StringBuilder sbErrors)
 		{
 			sbErrors ??= new StringBuilder();
 
 			var urls = ICalUrls.ToArray();
-			var items = new List<Event>();
 
-			if (!urls.Any())
-				return items;
+			if (urls.Length == 0)
+				return [];
 
 			CalendarCollection calendars;
 			using (MiniProfiler.Current.Step($"Gather {urls.Length:n0} calendars"))
 				calendars = await urls.GetCalendars(sbErrors);
 
 			var date = DateTime.Now.Date;
+			return GetEvents(calendars, date, sbErrors);
+		}
 
+		/// <summary>
+		/// Method for obtaining events, without external, data-obtaining logic, making
+		/// </summary>
+		/// <param name="calendars">The calendars.</param>
+		/// <param name="date">The date.</param>
+		/// <param name="sbErrors">The sb errors.</param>
+		/// <returns></returns>
+		internal static List<Event> GetEvents(CalendarCollection calendars, DateTime date, StringBuilder sbErrors)
+		{
 			const int maxEvents = 60;
+
+			var items = new List<Event>();
 
 			using (MiniProfiler.Current.Step($"Gathering at most {maxEvents} events within 2 years"))
 			{
 				List<Occurrence> occurrences;
-				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and "))
-					occurrences = calendars.SelectMany(x =>
-							x.GetOccurrences(date, DateTime.Now.AddYears(2))).ToList();
+				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and {DateTime.Now.AddYears(2):d}"))
+					occurrences = calendars
+						.GetOccurrences(new CalDateTime(DateTime.SpecifyKind(date, DateTimeKind.Unspecified), null, false))
+						.TakeWhileBefore(new CalDateTime(DateTime.SpecifyKind(DateTime.Now.AddYears(2), DateTimeKind.Unspecified)))
+						.ToList();
 
 				using (MiniProfiler.Current.Step($"Converting {Math.Min(occurrences.Count, maxEvents):n0} events"))
 					items.AddRange(occurrences
-								.OrderBy(x => x.Period.StartTime.AsDateTimeOffset)
+								.OrderBy(x => x.Period.StartTime?.AsUtc)
 								.SelectMany(x =>
 								{
 									//For multi-day periods, list each day within the period separately
@@ -61,12 +75,17 @@ namespace InkyCal.Utils.Calendar
 									var thisDate = date;
 									var result = new List<Event>();
 
+									var startLocal = x.Period.StartTime.ToSystemLocal();
+									// Period.EndTime is null in Ical.Net v5; compute it from StartTime + EffectiveDuration
+									var endCalDt = x.Period.EffectiveDuration.HasValue ? x.Period.StartTime?.Add(x.Period.EffectiveDuration.Value) : null;
+									var endLocal = endCalDt.ToSystemLocal();
+
 									while (result.Count < maxEvents
-									&& thisDate < x.Period.EndTime.AsSystemLocal)
+									&& (endLocal is null || thisDate < endLocal))
 									{
 
-										var hasOverlap = thisDate < x.Period.EndTime.AsSystemLocal
-										&& thisDate >= x.Period.StartTime.AsSystemLocal.Date;
+										var hasOverlap = (endLocal is null || thisDate < endLocal)
+										&& (startLocal is null || thisDate >= startLocal.Value.Date);
 
 										if (!hasOverlap)
 										{
@@ -75,26 +94,26 @@ namespace InkyCal.Utils.Calendar
 										}
 
 										var isAllDay = calendarEvent.IsAllDay
-										|| (x.Period.StartTime.AsSystemLocal <= thisDate
-										 && x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+										|| (startLocal <= thisDate
+										 && endLocal >= thisDate.AddDays(1)
 										 );
 
 										var start = isAllDay
 														? (TimeSpan?)null
-														: x.Period.StartTime.AsSystemLocal < thisDate
+														: startLocal < thisDate
 															? TimeSpan.FromHours(0)
-															: (x.Period.StartTime.IsUtc
-																? x.Period.StartTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.StartTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+															: (x.Period.StartTime?.IsUtc == true
+																? TimeZoneInfo.ConvertTimeFromUtc(x.Period.StartTime.AsUtc, TimeZoneInfo.Local) //Convert UTC to local, todo: make timezone of panel configurable?
+																: x.Period.StartTime?.Value ?? thisDate                                          //When timezone has been specified show as local time, do not touch
 																)
 																.TimeOfDay;
 										var end = isAllDay
 														? (TimeSpan?)null
-														: x.Period.EndTime.AsSystemLocal >= thisDate.AddDays(1)
+														: endLocal >= thisDate.AddDays(1)
 															? TimeSpan.FromHours(24)
-															: (x.Period.EndTime.IsUtc
-																? x.Period.EndTime.AsDateTimeOffset.LocalDateTime //Convert UTC to local, todo: make timezone of panel configurable?
-																: x.Period.EndTime.AsDateTimeOffset               //When timezone has been specified show as local time, do not touch
+															: (endCalDt?.IsUtc == true
+																? TimeZoneInfo.ConvertTimeFromUtc(endCalDt.AsUtc, TimeZoneInfo.Local) //Convert UTC to local, todo: make timezone of panel configurable?
+																: endCalDt?.Value ?? thisDate.AddDays(1)                               //When timezone has been specified show as local time, do not touch
 																).TimeOfDay;
 
 
@@ -124,12 +143,10 @@ namespace InkyCal.Utils.Calendar
 			}
 
 
-#pragma warning disable S2583 // Conditionally executed code should be reachable
 			// Below condition should mostly be true, but it is possible that all calendars are empty
 			// I do not yet have looked into the SonarQube rule to see if it is applicable here
 			if (items.Count == 0)
-				sbErrors.AppendLine($"No events in {urls.Length:n0} calendars");
-#pragma warning restore S2583 // Conditionally executed code should be reachable
+				sbErrors.AppendLine($"No events in {calendars.Count:n0} calendars");
 
 			return items.Distinct().ToList();
 		}
@@ -238,6 +255,22 @@ namespace InkyCal.Utils.Calendar
 			request.EnsureSuccessStatusCode();
 
 			return await request.Content.ReadAsStringAsync();
+		}
+
+		/// <summary>
+		/// Converts a <see cref="CalDateTime"/> to the local system time as a <see cref="DateTime"/>.
+		/// Returns <see langword="null"/> when <paramref name="dt"/> is <see langword="null"/>.
+		/// </summary>
+		private static DateTime? ToSystemLocal(this CalDateTime dt)
+		{
+			if (dt is null) return null;
+
+			if (dt.IsUtc)
+				return TimeZoneInfo.ConvertTimeFromUtc(dt.AsUtc, TimeZoneInfo.Local);
+			if (dt.IsFloating)
+				return dt.Value;
+
+			return dt.ToTimeZone(TimeZoneInfo.Local.Id).Value;
 		}
 	}
 }

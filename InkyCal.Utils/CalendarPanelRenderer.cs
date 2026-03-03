@@ -558,7 +558,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 			//Get iCal-based events
 			if ((ICalUrls?.Any()).GetValueOrDefault())
 				using (MiniProfiler.Current.Step($"Gather events for {ICalUrls.Count} iCal based calendars"))
-					result.AddRange(await ICalExtensions.GetEvents(sbErrors, ICalUrls));
+					result.AddRange(await ICalExtensions.GetEvents(ICalUrls, sbErrors));
 
 			//Get Google Calender-based events
 			if (InkyCal.Server.Config.GoogleOAuth.Enabled
