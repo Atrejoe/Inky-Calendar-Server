@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -309,6 +310,192 @@ END:VCALENDAR
 			Assert.Equal("All-day event on Jan 3", src.Summary);
 			Assert.True(src.IsAllDay, "Event should be all-day");
 			Assert.False(o.Period.StartTime.HasTime, "Start time should have no time component");
+		}
+
+		// ---------------------------------------------------------------------------
+		// Helpers for building inline iCal strings with dates relative to a given day
+		// ---------------------------------------------------------------------------
+
+		private static string BuildTimedUtcEventCalendar(DateTime eventDate, string summary, string calendarName = null)
+		{
+			var startUtc = new DateTime(eventDate.Year, eventDate.Month, eventDate.Day, 14, 0, 0, DateTimeKind.Utc);
+			var endUtc = startUtc.AddHours(1);
+			var calNameLine = calendarName != null ? $"\r\nX-WR-CALNAME:{calendarName}" : string.Empty;
+			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0{calNameLine}\r\nBEGIN:VEVENT\r\nDTSTART:{startUtc:yyyyMMdd'T'HHmmss'Z'}\r\nDTEND:{endUtc:yyyyMMdd'T'HHmmss'Z'}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-utc@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+		}
+
+		private static string BuildTimedBerlinEventCalendar(DateTime eventDate, string summary)
+		{
+			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VTIMEZONE\r\nTZID:Europe/Berlin\r\nBEGIN:STANDARD\r\nTZOFFSETFROM:+0200\r\nTZOFFSETTO:+0100\r\nTZNAME:CET\r\nDTSTART:19701025T030000\r\nRRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\r\nEND:STANDARD\r\nBEGIN:DAYLIGHT\r\nTZOFFSETFROM:+0100\r\nTZOFFSETTO:+0200\r\nTZNAME:CEST\r\nDTSTART:19700329T020000\r\nRRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\r\nEND:DAYLIGHT\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nDTSTART;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}150000\r\nDTEND;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}160000\r\nDTSTAMP:20240101T000000Z\r\nUID:test-berlin@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+		}
+
+		private static string BuildAllDayEventCalendar(DateTime eventDate, string summary)
+		{
+			var nextDay = eventDate.AddDays(1);
+			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:{eventDate:yyyyMMdd}\r\nDTEND;VALUE=DATE:{nextDay:yyyyMMdd}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-allday@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+		}
+
+		private static string BuildMultiDayEventCalendar(DateTime startDate, int durationDays, string summary)
+		{
+			var endDate = startDate.AddDays(durationDays);
+			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:{startDate:yyyyMMdd}\r\nDTEND;VALUE=DATE:{endDate:yyyyMMdd}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-multiday@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+		}
+
+		// ---------------------------------------------------------------------------
+		// Tests for GetEvents(StringBuilder, Uri[], CalendarCollection, DateTime)
+		// ---------------------------------------------------------------------------
+
+		[Fact]
+		public void GetEvents_WithSingleUtcEvent_ReturnsOneEvent()
+		{
+			// Arrange
+			var today = DateTime.Today;
+			var eventDate = today.AddDays(1); // tomorrow, safely within the 2-year window
+			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "UTC timed event"));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert
+			Assert.Single(events);
+			Assert.Equal("UTC timed event", events[0].Summary);
+			Assert.Equal(eventDate.Date, events[0].Date);
+			Assert.False(events[0].IsAllDay, "Timed event should not be all-day");
+			Assert.True(events[0].Start.HasValue, "Timed event should have a start time");
+			Assert.True(events[0].End.HasValue, "Timed event should have an end time");
+		}
+
+		[Fact]
+		public void GetEvents_WithNamedTimezoneEvent_ReturnsOneEvent()
+		{
+			// Arrange
+			var today = DateTime.Today;
+			var eventDate = today.AddDays(1);
+			var calendar = ICalExtensions.LoadCalendar(BuildTimedBerlinEventCalendar(eventDate, "Berlin TZ event"));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert
+			Assert.Single(events);
+			Assert.Equal("Berlin TZ event", events[0].Summary);
+			Assert.Equal(eventDate.Date, events[0].Date);
+			Assert.False(events[0].IsAllDay, "Timed event should not be all-day");
+			Assert.True(events[0].Start.HasValue, "Timed event should have a start time");
+			Assert.True(events[0].End.HasValue, "Timed event should have an end time");
+		}
+
+		[Fact]
+		public void GetEvents_WithAllDayEvent_ReturnsAllDayEvent()
+		{
+			// Arrange
+			var today = DateTime.Today;
+			var eventDate = today.AddDays(1);
+			var calendar = ICalExtensions.LoadCalendar(BuildAllDayEventCalendar(eventDate, "All-day event"));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert
+			Assert.Single(events);
+			Assert.Equal("All-day event", events[0].Summary);
+			Assert.Equal(eventDate.Date, events[0].Date);
+			Assert.True(events[0].IsAllDay, "Event should be all-day");
+			Assert.False(events[0].Start.HasValue, "All-day event should have no start time");
+			Assert.False(events[0].End.HasValue, "All-day event should have no end time");
+		}
+
+		[Fact]
+		public void GetEvents_WithMultiDayEvent_ReturnsOneEventPerDay()
+		{
+			// Arrange
+			var today = DateTime.Today;
+			var eventStart = today.AddDays(1);
+			const int durationDays = 3;
+			var calendar = ICalExtensions.LoadCalendar(BuildMultiDayEventCalendar(eventStart, durationDays, "Multi-day event"));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert: one Event entry per day
+			Assert.Equal(durationDays, events.Count);
+			for (var i = 0; i < durationDays; i++)
+			{
+				Assert.Equal("Multi-day event", events[i].Summary);
+				Assert.Equal(eventStart.AddDays(i).Date, events[i].Date);
+				Assert.True(events[i].IsAllDay, $"Day {i + 1} of multi-day event should be all-day");
+			}
+		}
+
+		[Fact]
+		public void GetEvents_WithEmptyCalendar_ReturnsEmptyListAndPopulatesError()
+		{
+			// Arrange
+			var today = DateTime.Today;
+			var emptyCalendarContent = "BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nEND:VCALENDAR";
+			var calendar = ICalExtensions.LoadCalendar(emptyCalendarContent);
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert
+			Assert.Empty(events);
+			Assert.Contains("No events", sbErrors.ToString());
+		}
+
+		[Fact]
+		public void GetEvents_EventBeforeDate_IsNotReturned()
+		{
+			// Arrange – event is yesterday, date is today
+			var today = DateTime.Today;
+			var eventDate = today.AddDays(-1); // yesterday
+			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "Past event"));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert: past event is not in the results
+			Assert.DoesNotContain(events, e => e.Summary == "Past event");
+		}
+
+		[Fact]
+		public void GetEvents_WithCalendarName_CalendarNameIsNull()
+		{
+			// X-WR-CALNAME is a VCALENDAR-level property; the Event.CalendarName field
+			// uses calendarEvent.Properties["X-WR-CALNAME"] which reads from VEVENT properties,
+			// so it is always null unless explicitly set on each individual VEVENT.
+			var today = DateTime.Today;
+			var eventDate = today.AddDays(1);
+			const string calendarName = "My Test Calendar";
+			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "Named calendar event", calendarName));
+			var calendars = new CalendarCollection { calendar };
+			var urls = new[] { new Uri("http://test/calendar.ics") };
+			var sbErrors = new StringBuilder();
+
+			// Act
+			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+
+			// Assert
+			Assert.Single(events);
+			Assert.Null(events[0].CalendarName);
 		}
 
 	}
