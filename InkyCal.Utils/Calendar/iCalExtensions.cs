@@ -23,7 +23,7 @@ namespace InkyCal.Utils.Calendar
 	{
 		private static readonly HttpClient client = new HttpClient();
 
-		internal static async Task<List<Event>> GetEvents(StringBuilder sbErrors, IEnumerable<Uri> ICalUrls)
+		internal static async Task<List<Event>> GetEvents(IEnumerable<Uri> ICalUrls, StringBuilder sbErrors)
 		{
 			sbErrors ??= new StringBuilder();
 
@@ -37,18 +37,17 @@ namespace InkyCal.Utils.Calendar
 				calendars = await urls.GetCalendars(sbErrors);
 
 			var date = DateTime.Now.Date;
-			return GetEvents(sbErrors, urls, calendars, date);
+			return GetEvents(calendars, date, sbErrors);
 		}
 
 		/// <summary>
 		/// Method for obtaining events, without external, data-obtaining logic, making
 		/// </summary>
-		/// <param name="sbErrors">The sb errors.</param>
-		/// <param name="urls">The urls.</param>
 		/// <param name="calendars">The calendars.</param>
 		/// <param name="date">The date.</param>
+		/// <param name="sbErrors">The sb errors.</param>
 		/// <returns></returns>
-		internal static List<Event> GetEvents(StringBuilder sbErrors, Uri[] urls, CalendarCollection calendars, DateTime date)
+		internal static List<Event> GetEvents(CalendarCollection calendars, DateTime date, StringBuilder sbErrors)
 		{
 			const int maxEvents = 60;
 
@@ -57,7 +56,7 @@ namespace InkyCal.Utils.Calendar
 			using (MiniProfiler.Current.Step($"Gathering at most {maxEvents} events within 2 years"))
 			{
 				List<Occurrence> occurrences;
-				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and "))
+				using (MiniProfiler.Current.Step($"Gathering occurrences between {date:d} and {DateTime.Now.AddYears(2):d}"))
 					occurrences = calendars
 						.GetOccurrences(new CalDateTime(DateTime.SpecifyKind(date, DateTimeKind.Unspecified), null, false))
 						.TakeWhileBefore(new CalDateTime(DateTime.SpecifyKind(DateTime.Now.AddYears(2), DateTimeKind.Unspecified)))
@@ -147,7 +146,7 @@ namespace InkyCal.Utils.Calendar
 			// Below condition should mostly be true, but it is possible that all calendars are empty
 			// I do not yet have looked into the SonarQube rule to see if it is applicable here
 			if (items.Count == 0)
-				sbErrors.AppendLine($"No events in {urls.Length:n0} calendars");
+				sbErrors.AppendLine($"No events in {calendars.Count:n0} calendars");
 
 			return items.Distinct().ToList();
 		}
@@ -270,6 +269,7 @@ namespace InkyCal.Utils.Calendar
 				return TimeZoneInfo.ConvertTimeFromUtc(dt.AsUtc, TimeZoneInfo.Local);
 			if (dt.IsFloating)
 				return dt.Value;
+
 			return dt.ToTimeZone(TimeZoneInfo.Local.Id).Value;
 		}
 	}

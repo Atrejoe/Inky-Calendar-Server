@@ -342,7 +342,7 @@ END:VCALENDAR
 		}
 
 		// ---------------------------------------------------------------------------
-		// Tests for GetEvents(StringBuilder, Uri[], CalendarCollection, DateTime)
+		// Tests for GetEvents(StringBuilder, CalendarCollection, DateTime)
 		// ---------------------------------------------------------------------------
 
 		[Fact]
@@ -353,11 +353,10 @@ END:VCALENDAR
 			var eventDate = today.AddDays(1); // tomorrow, safely within the 2-year window
 			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "UTC timed event"));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert
 			Assert.Single(events);
@@ -376,11 +375,10 @@ END:VCALENDAR
 			var eventDate = today.AddDays(1);
 			var calendar = ICalExtensions.LoadCalendar(BuildTimedBerlinEventCalendar(eventDate, "Berlin TZ event"));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert
 			Assert.Single(events);
@@ -399,11 +397,10 @@ END:VCALENDAR
 			var eventDate = today.AddDays(1);
 			var calendar = ICalExtensions.LoadCalendar(BuildAllDayEventCalendar(eventDate, "All-day event"));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert
 			Assert.Single(events);
@@ -423,11 +420,10 @@ END:VCALENDAR
 			const int durationDays = 3;
 			var calendar = ICalExtensions.LoadCalendar(BuildMultiDayEventCalendar(eventStart, durationDays, "Multi-day event"));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert: one Event entry per day
 			Assert.Equal(durationDays, events.Count);
@@ -447,11 +443,10 @@ END:VCALENDAR
 			var emptyCalendarContent = "BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nEND:VCALENDAR";
 			var calendar = ICalExtensions.LoadCalendar(emptyCalendarContent);
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert
 			Assert.Empty(events);
@@ -466,11 +461,10 @@ END:VCALENDAR
 			var eventDate = today.AddDays(-1); // yesterday
 			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "Past event"));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert: past event is not in the results
 			Assert.DoesNotContain(events, e => e.Summary == "Past event");
@@ -487,11 +481,10 @@ END:VCALENDAR
 			const string calendarName = "My Test Calendar";
 			var calendar = ICalExtensions.LoadCalendar(BuildTimedUtcEventCalendar(eventDate, "Named calendar event", calendarName));
 			var calendars = new CalendarCollection { calendar };
-			var urls = new[] { new Uri("http://test/calendar.ics") };
 			var sbErrors = new StringBuilder();
 
 			// Act
-			var events = ICalExtensions.GetEvents(sbErrors, urls, calendars, today);
+			var events = ICalExtensions.GetEvents(calendars, today, sbErrors);
 
 			// Assert
 			Assert.Single(events);
