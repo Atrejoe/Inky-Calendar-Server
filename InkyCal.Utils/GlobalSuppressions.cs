@@ -10,7 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Major Code Smell", "S125:Sections of code should not be commented out", Justification = "I'm allowing commented code", Scope = "module")]
 [assembly: SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags", Justification = "I'm allowing todo's", Scope = "module")]
-[assembly: SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Yes this needs clarification", Scope = "member", Target = "~M:InkyCal.Utils.Calendar.ICalExtensions.GetEvents(System.Text.StringBuilder,System.Collections.Generic.IEnumerable{System.Uri})~System.Threading.Tasks.Task{System.Collections.Generic.List{InkyCal.Utils.Calendar.Event}}")]
+[assembly: SuppressMessage("Major Code Smell", "S3358:Ternary operators should not be nested", Justification = "Yes this needs clarification", Scope = "member", Target = "~M:InkyCal.Utils.Calendar.ICalExtensions.GetEvents(System.Text.StringBuilder,System.Uri[],Ical.Net.CalendarCollection,System.DateTime)~System.Collections.Generic.List{InkyCal.Utils.Calendar.Event}")]
+
 [assembly: SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Two Test-calender urls are hardcoded for now", Scope = "member", Target = "~F:InkyCal.Utils.TestCalendarPanelRenderer.PublicHolidayCalenderUrl")]
 [assembly: SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Two Test-calender urls are hardcoded for now", Scope = "member", Target = "~F:InkyCal.Utils.TestCalendarPanelRenderer.PhasesOfTheMoonCalenderUrl")]
 [assembly: SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Two Test-calender urls are hardcoded for now", Scope = "member", Target = "~F:InkyCal.Utils.TestCalendarImagePanelRenderer.PublicHolidayCalenderUrl")]

@@ -28,18 +28,31 @@ namespace InkyCal.Utils.Calendar
 			sbErrors ??= new StringBuilder();
 
 			var urls = ICalUrls.ToArray();
-			var items = new List<Event>();
 
-			if (!urls.Any())
-				return items;
+			if (urls.Length == 0)
+				return [];
 
 			CalendarCollection calendars;
 			using (MiniProfiler.Current.Step($"Gather {urls.Length:n0} calendars"))
 				calendars = await urls.GetCalendars(sbErrors);
 
 			var date = DateTime.Now.Date;
+			return GetEvents(sbErrors, urls, calendars, date);
+		}
 
+		/// <summary>
+		/// Method for obtaining events, without external, data-obtaining logic, making
+		/// </summary>
+		/// <param name="sbErrors">The sb errors.</param>
+		/// <param name="urls">The urls.</param>
+		/// <param name="calendars">The calendars.</param>
+		/// <param name="date">The date.</param>
+		/// <returns></returns>
+		internal static List<Event> GetEvents(StringBuilder sbErrors, Uri[] urls, CalendarCollection calendars, DateTime date)
+		{
 			const int maxEvents = 60;
+
+			var items = new List<Event>();
 
 			using (MiniProfiler.Current.Step($"Gathering at most {maxEvents} events within 2 years"))
 			{
