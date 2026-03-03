@@ -320,25 +320,84 @@ END:VCALENDAR
 		{
 			var startUtc = new DateTime(eventDate.Year, eventDate.Month, eventDate.Day, 14, 0, 0, DateTimeKind.Utc);
 			var endUtc = startUtc.AddHours(1);
-			var calNameLine = calendarName != null ? $"\r\nX-WR-CALNAME:{calendarName}" : string.Empty;
-			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0{calNameLine}\r\nBEGIN:VEVENT\r\nDTSTART:{startUtc:yyyyMMdd'T'HHmmss'Z'}\r\nDTEND:{endUtc:yyyyMMdd'T'HHmmss'Z'}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-utc@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+			var calNameLine = calendarName != null ? $@"
+X-WR-CALNAME:{calendarName}" : string.Empty;
+
+			return @$"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0{calNameLine}
+BEGIN:VEVENT
+DTSTART:{startUtc:yyyyMMdd'T'HHmmss'Z'}
+DTEND:{endUtc:yyyyMMdd'T'HHmmss'Z'}
+DTSTAMP:20240101T000000Z
+UID:test-utc@test
+SUMMARY:{summary}
+END:VEVENT
+END:VCALENDAR";
 		}
 
 		private static string BuildTimedBerlinEventCalendar(DateTime eventDate, string summary)
 		{
-			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VTIMEZONE\r\nTZID:Europe/Berlin\r\nBEGIN:STANDARD\r\nTZOFFSETFROM:+0200\r\nTZOFFSETTO:+0100\r\nTZNAME:CET\r\nDTSTART:19701025T030000\r\nRRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\r\nEND:STANDARD\r\nBEGIN:DAYLIGHT\r\nTZOFFSETFROM:+0100\r\nTZOFFSETTO:+0200\r\nTZNAME:CEST\r\nDTSTART:19700329T020000\r\nRRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\r\nEND:DAYLIGHT\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nDTSTART;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}150000\r\nDTEND;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}160000\r\nDTSTAMP:20240101T000000Z\r\nUID:test-berlin@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+			return @$"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}150000
+DTEND;TZID=Europe/Berlin:{eventDate:yyyyMMdd'T'}160000
+DTSTAMP:20240101T000000Z
+UID:test-berlin@test
+SUMMARY:{summary}
+END:VEVENT
+END:VCALENDAR";
 		}
 
 		private static string BuildAllDayEventCalendar(DateTime eventDate, string summary)
 		{
 			var nextDay = eventDate.AddDays(1);
-			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:{eventDate:yyyyMMdd}\r\nDTEND;VALUE=DATE:{nextDay:yyyyMMdd}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-allday@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+			return @$"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:{eventDate:yyyyMMdd}
+DTEND;VALUE=DATE:{nextDay:yyyyMMdd}
+DTSTAMP:20240101T000000Z
+UID:test-allday@test
+SUMMARY:{summary}
+END:VEVENT
+END:VCALENDAR";
 		}
 
 		private static string BuildMultiDayEventCalendar(DateTime startDate, int durationDays, string summary)
 		{
 			var endDate = startDate.AddDays(durationDays);
-			return $"BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:{startDate:yyyyMMdd}\r\nDTEND;VALUE=DATE:{endDate:yyyyMMdd}\r\nDTSTAMP:20240101T000000Z\r\nUID:test-multiday@test\r\nSUMMARY:{summary}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+			return @$"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:{startDate:yyyyMMdd}
+DTEND;VALUE=DATE:{endDate:yyyyMMdd}
+DTSTAMP:20240101T000000Z
+UID:test-multiday@test
+SUMMARY:{summary}
+END:VEVENT
+END:VCALENDAR";
 		}
 
 		// ---------------------------------------------------------------------------
@@ -440,7 +499,10 @@ END:VCALENDAR
 		{
 			// Arrange
 			var today = DateTime.Today;
-			var emptyCalendarContent = "BEGIN:VCALENDAR\r\nPRODID:-//Test//Test//EN\r\nVERSION:2.0\r\nEND:VCALENDAR";
+			var emptyCalendarContent = @"BEGIN:VCALENDAR
+PRODID:-//Test//Test//EN
+VERSION:2.0
+END:VCALENDAR";
 			var calendar = ICalExtensions.LoadCalendar(emptyCalendarContent);
 			var calendars = new CalendarCollection { calendar };
 			var sbErrors = new StringBuilder();
