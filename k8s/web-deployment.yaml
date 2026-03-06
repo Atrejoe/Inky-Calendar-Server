@@ -3,6 +3,12 @@ kind: Deployment
 metadata:
   name: web
   namespace: inkycal
+  annotations:
+    keel.sh/approvals: '1'
+    keel.sh/match-tag: 'true'
+    keel.sh/policy: force
+    keel.sh/pollSchedule: '@every 1m'
+    keel.sh/trigger: poll
 spec:
   replicas: 2
   selector:
