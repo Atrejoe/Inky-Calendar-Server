@@ -133,7 +133,7 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
-        image: atreyu/inkycal.server:redis
+        image: docker.io/atreyu/inkycal.server:redis
         imagePullPolicy: Always
         name: web
         ports:
