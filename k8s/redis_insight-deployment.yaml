@@ -63,6 +63,22 @@ spec:
   selector:
     app: redisinsight
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: inkycal-redisinsight-ingress-tailscale
+  namespace: inkycal
+spec:
+  defaultBackend:
+    service:
+      name: redisinsight-service
+      port:
+        number: 80
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+    - inkycal-redisinsight
+---
 # Redis Insight deployment with name 'redisinsight'
 apiVersion: apps/v1
 kind: Deployment
