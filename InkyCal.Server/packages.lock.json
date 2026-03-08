@@ -1045,11 +1045,11 @@
       },
       "StackExchange.Redis": {
         "type": "Transitive",
-        "resolved": "2.10.1",
-        "contentHash": "se08WZvD42H3bV4XBW07pupTiE2/72qStKyi/lRqqcijksFWfRtwLTuhFtZ4OX19f4+we/2qruFZBXYJBFc8PQ==",
+        "resolved": "2.11.8",
+        "contentHash": "25UL0tkhQo3ATT+DAu9OyaPhyWRvJIYcID/iNM8gNWqapJCX4dB/Q2RBBHjv6rQ1utp92pUoxgtZdX25ZNLC6Q==",
         "dependencies": {
           "Pipelines.Sockets.Unofficial": "2.2.8",
-          "System.IO.Hashing": "9.0.10"
+          "System.IO.Hashing": "10.0.2"
         }
       },
       "Swashbuckle.AspNetCore.Swagger": {
@@ -1212,7 +1212,7 @@
           "Sentry": "[6.12.1, )",
           "SixLabors.ImageSharp": "[4.1.3, )",
           "SixLabors.ImageSharp.Drawing": "[3.1.3, )",
-          "StackExchange.Redis": "[2.10.1, )",
+          "StackExchange.Redis": "[2.11.8, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Threading.RateLimiting": "[10.0.3, )"
         }
