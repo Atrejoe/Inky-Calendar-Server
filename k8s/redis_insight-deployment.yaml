@@ -1,3 +1,47 @@
+# ConfigMap with pre-configured Redis connections
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redisinsight-config
+  namespace: inkycal
+  labels:
+    app: redisinsight
+data:
+  # Pre-configure Redis connections for all cluster instances
+  databases.json: |
+    [
+      {
+        "id": "inkycal-redis-master",
+        "name": "InkyCal Redis Master",
+        "host": "redis-0.redis-headless.inkycal.svc.cluster.local",
+        "port": 6379,
+        "connectionType": "STANDALONE",
+        "nameFromProvider": "redis-0 (Master)",
+        "db": 0,
+        "timeout": 30000
+      },
+      {
+        "id": "inkycal-redis-replica-1",
+        "name": "InkyCal Redis Replica 1",
+        "host": "redis-1.redis-headless.inkycal.svc.cluster.local",
+        "port": 6379,
+        "connectionType": "STANDALONE",
+        "nameFromProvider": "redis-1 (Replica)",
+        "db": 0,
+        "timeout": 30000
+      },
+      {
+        "id": "inkycal-redis-replica-2",
+        "name": "InkyCal Redis Replica 2",
+        "host": "redis-2.redis-headless.inkycal.svc.cluster.local",
+        "port": 6379,
+        "connectionType": "STANDALONE",
+        "nameFromProvider": "redis-2 (Replica)",
+        "db": 0,
+        "timeout": 30000
+      }
+    ]
+---
 # Redis Insight service with name 'redisinsight-service'
 apiVersion: v1
 kind: Service
@@ -38,6 +82,26 @@ spec:
       labels:
         app: redisinsight #label for pod/s
     spec:
+      initContainers:
+      - name: config-init
+        image: busybox:latest
+        command: ['sh', '-c']
+        args:
+        - |
+          # Copy pre-configured databases if they don't exist
+          if [ ! -f /data/databases.json ]; then
+            echo "Copying pre-configured Redis connections..."
+            cp /config/databases.json /data/databases.json
+          fi
+        volumeMounts:
+        - name: redisinsight-config
+          mountPath: /config
+        - name: redisinsight
+          mountPath: /data
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          allowPrivilegeEscalation: false
       containers:
       - name: redisinsight #Container name (DNS_LABEL, unique)
         image: redis/redisinsight:latest #repo/image
@@ -48,6 +112,25 @@ spec:
         ports:
         - containerPort: 5540 #exposed container port and protocol
           protocol: TCP
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 5540
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 5540
+          initialDelaySeconds: 10
+          periodSeconds: 5
         securityContext:
           capabilities:
             drop:
@@ -60,3 +143,6 @@ spec:
       volumes:
       - name: redisinsight
         emptyDir: {} # node-ephemeral volume https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+      - name: redisinsight-config
+        configMap:
+          name: redisinsight-config
