@@ -12,7 +12,7 @@ namespace InkyCal.Models
 		/// <summary>
 		/// The default expiration in seconds
 		/// </summary>
-		public const int DefaultExpirationInSeconds = 30;
+		public const int DefaultExpirationInSeconds = 5*60;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="PanelInstanceCacheKey"/> for JSON deserialization.
