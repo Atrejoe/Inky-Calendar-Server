@@ -82,9 +82,9 @@
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.10.3, )",
-        "resolved": "14.10.3",
-        "contentHash": "Shb3KrAMFB49+j7nJ2uVbNBuGg+rEAoOpIDmR2A/sSbQ21l4vrPY8Py90chcndGcjzvhqZWk69SMmb8v5esOjA=="
+        "requested": "[14.10.4, )",
+        "resolved": "14.10.4",
+        "contentHash": "2OvmKkpHoe3f8LlhngRSrRb2f4uB2AAc5MNT0aDW97SMdpkpWYnKG1zaeCaU0dmBp4FaZ0/FawhcalaOOlgbng=="
       },
       "Markdig.Signed": {
         "type": "Direct",
@@ -94,9 +94,9 @@
       },
       "Microsoft.AspNetCore.App.Internal.Assets": {
         "type": "Direct",
-        "requested": "[10.0.3, )",
-        "resolved": "10.0.3",
-        "contentHash": "mr3Zn+ht8lijYvlMIasftw9opU9hsLKDdnOgQMmYI3RjWPJLOF9l8+YHDseRkTs97wOrULmJgo/NDCmzL/EGDg=="
+        "requested": "[10.0.2, )",
+        "resolved": "10.0.2",
+        "contentHash": "fMAqrUm+aspxRAsCJ6Hlgs96XSHwNIr9HBNt7wyBAzQkPlfE7w+0C4NzDoJnso5YZyDI0VcRtEXxG9odt3KiZA=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
@@ -684,10 +684,10 @@
       },
       "Magick.NET-Q16-AnyCPU": {
         "type": "Transitive",
-        "resolved": "14.10.3",
-        "contentHash": "kSMjee72iMUxoZJrEO0hnNTBYXrBBAO0sauVjK2p92gRFO5v6sWUCuSIUruRAd6OBOm3vlFHbrx2uQkA/EJMwQ==",
+        "resolved": "14.10.4",
+        "contentHash": "7mUlRYYP4lsJk7UjtMZinjBewgl47SK8xRdZG2ObK2KhwFpgM55N6urPcaLOB12qWBdhkqu1nGwP+EBQuzj01Q==",
         "dependencies": {
-          "Magick.NET.Core": "14.10.3"
+          "Magick.NET.Core": "14.10.4"
         }
       },
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
@@ -1164,8 +1164,7 @@
           "Ical.Net": "[5.2.1, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
-          "Magick.NET-Q16-AnyCPU": "[14.10.3, )",
-          "Magick.NET.Core": "[14.10.3, )",
+          "Magick.NET.Core": "[14.10.4, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.8, )",
           "Sentry": "[6.1.0, )",
