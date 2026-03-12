@@ -6,7 +6,7 @@ on:
     workflows: [Build Docker image]
     types:
       - completed
-    branches: [develop, main, master]
+    branches: [develop, main, master, feature/redis]
 
 jobs:
   on-failure:
@@ -50,4 +50,4 @@ jobs:
         # file: ../Dockerfile
         sbom: true
         push: true
-        tags: atreyu/inkycal.server:latest
+        tags: ${{ github.event.workflow_run.head_branch == 'feature/redis' && 'atreyu/inkycal.server:redis' || 'atreyu/inkycal.server:latest' }}
