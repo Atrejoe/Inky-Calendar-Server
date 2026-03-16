@@ -158,11 +158,11 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "s7xrGaZ2ZrDsi4miBHSWqa1CFIfWDn4+tzl0LGP/7g9mhAE+56iMCbz5+dmywDKEkdUnZrLl3MV290aQVfCU3g==",
+        "requested": "[6.2.0, )",
+        "resolved": "6.2.0",
+        "contentHash": "vXY3kBhPlFuXrCkkyILnHnzxYlqvF0ijmRYFMQ/XzaUDhsmH0/QFLhUA36zPay6OEyK7kjHXs1zzVu7U6+hdfg==",
         "dependencies": {
-          "Sentry.Extensions.Logging": "6.1.0"
+          "Sentry.Extensions.Logging": "6.2.0"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -982,15 +982,15 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "6.1.0",
-        "contentHash": "8d0ql+JAjVMo3WG+MHj62oh3jZVZrwWa/ExVcT0NIRcf6Qsig7wsagwaumWvlXj9F850V+YSyNHWyNNrAipFeA=="
+        "resolved": "6.2.0",
+        "contentHash": "kZkHnj9NvQTjf5e8VmVQUT2HdVSmph9MhSm6U+vGoB4vq2uR1a+ZRHpAksNJNl7EjaGbYp55cOWqx5Nh0jQc8w=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "6.1.0",
-        "contentHash": "qo0uZbR8w8Xb6K2YN94ShYh4gTitdmg9o6QL0ZKKVGGrqZxAnDVGQw8d7JS51xLomBkp1HEIJUA3kBMWeQJ/zA==",
+        "resolved": "6.2.0",
+        "contentHash": "8DLncLmwyBHjG7JSeyn5OGR5vBJPxAe22FkJjTX86vCA7cmmDQ8a79bhLiJUDe6lnT22XniqQWYu18iCbezdRA==",
         "dependencies": {
-          "Sentry": "6.1.0"
+          "Sentry": "6.2.0"
         }
       },
       "SixLabors.Fonts": {
@@ -1168,7 +1168,7 @@
           "Magick.NET.Core": "[14.10.4, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.8, )",
-          "Sentry": "[6.1.0, )",
+          "Sentry": "[6.2.0, )",
           "SixLabors.ImageSharp": "[3.1.12, )",
           "SixLabors.ImageSharp.Drawing": "[2.1.7, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )"
