@@ -1,51 +1,49 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
+  <PropertyGroup>
+	<TargetFramework>net10.0</TargetFramework>
 
-		<IsPackable>false</IsPackable>
-		<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	</PropertyGroup>
+	<IsPackable>false</IsPackable>
+	<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<OutputType>Exe</OutputType>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+  <ItemGroup>
+	<Content Include="..\InkyCal.Server\appsettings.json" Link="appsettings.json">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Magick.NET.Core" Version="14.11.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="4.1.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
-		<PackageReference Include="coverlet.collector" Version="8.0.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.21.0.135717">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit.v3" Version="3.2.2" />
-		<PackageReference Include="XunitXml.TestLogger" Version="8.0.0" />
-	</ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Magick.NET.Core" Version="14.11.1" />
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
+	<PackageReference Include="coverlet.collector" Version="8.0.1">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.21.0.135717">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="xunit.v3" Version="3.2.2" />
+	<PackageReference Include="XunitXml.TestLogger" Version="8.0.0" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\InkyCal.Utils\InkyCal.Utils.csproj">
-			<IncludeAssets></IncludeAssets>
-			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-		</ProjectReference>
-	</ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\InkyCal.Utils\InkyCal.Utils.csproj">
+	  <IncludeAssets></IncludeAssets>
+	  <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+	</ProjectReference>
+  </ItemGroup>
 
 </Project>

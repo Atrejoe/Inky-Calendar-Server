@@ -1,5 +1,3 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xunit;
+﻿using Xunit;
 
-[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
 [assembly: CaptureConsole]
