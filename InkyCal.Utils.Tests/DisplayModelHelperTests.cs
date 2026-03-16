@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using InkyCal.Models;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
 	public class DisplayModelHelperTests
 	{
-		protected readonly ITestOutputHelper output;
-
-		public DisplayModelHelperTests(ITestOutputHelper output)
-		{
-			this.output = output;
-		}
 
 		[Theory()]
 		[MemberData(nameof(DisplayModels))]

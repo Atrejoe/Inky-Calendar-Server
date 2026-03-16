@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using InkyCal.Models;
 using StackExchange.Profiling;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InkyCal.Data.Tests
 {
@@ -12,11 +11,11 @@ namespace InkyCal.Data.Tests
 	public class PanelRepositoryTests : RepositoryTestBase
 	{
 
-		public PanelRepositoryTests(ITestOutputHelper output) : base(output)
+		public PanelRepositoryTests() : base()
 		{
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task ToggleStarTest()
 		{
 			//Arrange
@@ -47,7 +46,7 @@ namespace InkyCal.Data.Tests
 
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task PanelAccessTest()
 		{
 			//Arrange
@@ -86,12 +85,12 @@ namespace InkyCal.Data.Tests
 
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task TaskUpdateCalendarPanelTest()
 		{
 			//Arrange
 			var panel = await PanelRepository.GetRandom<CalendarPanel>().SkipConnectionException();
-			Skip.If(panel is null);
+			Assert.SkipWhen(panel is null, "Panel is null");
 			var previousDateModified = panel.Modified;
 
 			//Act
@@ -102,12 +101,12 @@ namespace InkyCal.Data.Tests
 			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task TaskUpdateGoogleCalendarPanelTest()
 		{
 			//Arrange
 			var panel = await PanelRepository.GetRandomGoogleCalendarPanel().SkipConnectionException();
-			Skip.If(panel is null);
+			Assert.SkipWhen(panel is null, "panel is null");
 			Assert.DoesNotContain(panel.SubscribedGoogleCalenders, x => x.AccessToken is null);
 
 			//Act
@@ -116,12 +115,12 @@ namespace InkyCal.Data.Tests
 			//Assert
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task TaskUpdatePanelOfPanelsTest()
 		{
 			//Arrange
 			var panel = await PanelRepository.GetRandom<PanelOfPanels>().SkipConnectionException();
-			Skip.If(panel is null);
+			Assert.SkipWhen(panel is null, "Panel is null");
 			var previousDateModified = panel.Modified;
 
 			//Act
@@ -135,12 +134,12 @@ namespace InkyCal.Data.Tests
 			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task TaskUpdateImagePanelTest()
 		{
 			//Arrange
 			var panel = await PanelRepository.GetRandom<ImagePanel>().SkipConnectionException();
-			Skip.If(panel is null);
+			Assert.SkipWhen(panel is null, "Panel is null");
 			var previousDateModified = panel.Modified;
 
 			//Act
@@ -151,7 +150,7 @@ namespace InkyCal.Data.Tests
 			Assert.NotEqual(previousDateModified, actual.Modified);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task ListTest()
 		{
 			//Arrange
@@ -165,12 +164,12 @@ namespace InkyCal.Data.Tests
 			Assert.Equal(user.Panels.Count, actual.Length);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task DeleteTest()
 		{
 			//Arrange
 			var panel = (await PanelRepository.All().SkipConnectionException()).LastOrDefault(x => x is PanelOfPanels);
-			Skip.If(panel == null);
+			Assert.SkipWhen(panel == null, "Panel is null");
 
 			//Act
 
@@ -180,7 +179,7 @@ namespace InkyCal.Data.Tests
 			Assert.NotNull(panel);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task DeleteInvalidTest()
 		{
 			await Assert.ThrowsAsync<DalException>(async () =>

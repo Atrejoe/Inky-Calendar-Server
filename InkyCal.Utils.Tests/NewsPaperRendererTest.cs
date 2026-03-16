@@ -1,25 +1,25 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.NewPaperRenderer.FreedomForum;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace InkyCal.Utils.Tests
 {
 	/// <summary>
 	/// Tests <see creaf="NewYorkTimesRenderer"/>
 	/// </summary>
-	public sealed class NewsPaperRendererTest(ITestOutputHelper output) : IPanelTests<NewsPaperRenderer>(output)
+	public sealed class NewsPaperRendererTest() : IPanelTests<NewsPaperRenderer>()
 	{
 		protected override NewsPaperRenderer GetRenderer()
 		{
 			var client = new ApiClient();
 			var newsPaper = client.GetNewsPapers().Result.FirstOrDefault().Value;
 
-			output.WriteLine($"Returning renderer for newspaper : {newsPaper.PaperId} (url: \"{newsPaper.PDFUrl(DateTime.UtcNow)}\")");
+			Console.WriteLine($"Returning renderer for newspaper : {newsPaper.PaperId} (url: \"{newsPaper.PDFUrl(DateTime.UtcNow)}\")");
 
 			return new(newsPaper.PaperId);
 		}
@@ -32,7 +32,8 @@ namespace InkyCal.Utils.Tests
 			}
 			catch (HttpRequestException ex)
 			{
-				throw new SkipException($"Http request failed, result inconclusive: {ex.Message}", ex);
+				await Console.Error.WriteLineAsync(ex.ToString());
+				throw SkipException.ForSkip($"Http request failed");
 			}
 		}
 	}

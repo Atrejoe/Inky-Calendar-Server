@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
 	public class CalendarPanelRendererTests
 	{
 
-		protected readonly ITestOutputHelper output;
-
-
 		private readonly CultureInfo parseCulture = new CultureInfo("en-US");
 
-		public CalendarPanelRendererTests(ITestOutputHelper output)
+		public CalendarPanelRendererTests()
 		{
-			this.output = output;
 		}
 
 		[Theory()]
@@ -53,7 +48,7 @@ namespace InkyCal.Utils.Tests
 			Assert.NotNull(actual);
 			Assert.NotEmpty(actual);
 
-			output.WriteLine(actual);
+			Console.WriteLine(actual);
 
 		}
 
@@ -89,7 +84,7 @@ namespace InkyCal.Utils.Tests
 			//assert
 			Assert.Equal(expectation, actual);
 
-			output.WriteLine(actual);
+			Console.WriteLine(actual);
 		}
 	}
 }

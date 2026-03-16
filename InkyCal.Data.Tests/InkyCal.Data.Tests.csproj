@@ -6,6 +6,7 @@
 	<UserSecretsId>ef330956-86ef-4986-bab6-740de0fbd262</UserSecretsId>
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	<OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,11 +20,9 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+	<PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.9.1" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.5.4" />
 	<PackageReference Include="MiniProfiler.Shared" Version="4.5.4" />
-	<PackageReference Include="MSTest.TestAdapter" Version="4.1.0" />
-	<PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
 	<PackageReference Include="coverlet.collector" Version="8.0.1">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -32,17 +31,11 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="xunit" Version="2.9.3" />
-	<PackageReference Include="xunit.analyzers" Version="1.27.0">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
 	<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Xunit.SkippableFact" Version="1.5.61" />
-	<PackageReference Include="XunitXml.TestLogger" Version="8.0.0" />
+	<PackageReference Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>

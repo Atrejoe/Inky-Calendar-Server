@@ -2,18 +2,15 @@
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Profiling;
-using Xunit.Abstractions;
 
 namespace InkyCal.Data.Tests
 {
 	public abstract class RepositoryTestBase : IDisposable
 	{
-
-		protected readonly ITestOutputHelper output;
 		private readonly TransactionScope _t;
 		private bool disposedValue;
 
-		protected RepositoryTestBase(ITestOutputHelper output)
+		protected RepositoryTestBase()
 		{
 			var options = MiniProfiler.DefaultOptions;
 			options.AddEntityFramework();
@@ -25,12 +22,10 @@ namespace InkyCal.Data.Tests
 				.EnableSensitiveDataLogging();
 
 			_t = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-			this.output = output;
 		}
 
 		protected virtual void Dispose(bool disposing)
 		{
-			output.WriteLine(MiniProfiler.Current.RenderPlainText());
 
 			if (!disposedValue)
 			{

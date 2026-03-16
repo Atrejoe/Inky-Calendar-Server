@@ -51,19 +51,18 @@ jobs:
     - name: Test
       env: # Or as an environment variable
         OpenWeatherAPIKey: ${{ secrets.OpenWeatherAPIKey }}
-      run: dotnet test InkyCal.sln --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v4
-      with:
-        name: testresults
-        path: '**/*.trx'
-        retention-days: 1
+      # xunit.v3 uses the Microsoft Testing Platform (MTP) runner. Enable MTP support in
+      # dotnet test via TestingPlatformDotnetTestSupport, then pass --report-trx through
+      # to the MTP runner to produce TRX files that GitHub can interpret.
+      run: >
+        dotnet test InkyCal.sln --no-build --configuration Release
+        -p:TestingPlatformDotnetTestSupport=true
+        -- --report-trx --results-directory $GITHUB_WORKSPACE/TestResults
 
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
       with:
           name: Dotnet testresult # Name of the check run which will be created
-          path: '**/*.trx'        # All test results
+          path: 'TestResults/*.trx' # All test results
           reporter: dotnet-trx    # Format of test results

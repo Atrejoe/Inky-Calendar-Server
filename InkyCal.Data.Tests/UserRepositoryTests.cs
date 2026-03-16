@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Runner.InProc.SystemConsole;
 
 namespace InkyCal.Data.Tests
 {
@@ -10,12 +10,12 @@ namespace InkyCal.Data.Tests
 	public class UserRepositoryTests : RepositoryTestBase
 	{
 
-		public UserRepositoryTests(ITestOutputHelper output) : base(output)
+		public UserRepositoryTests()
 		{
 		}
 
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task GetUserTest()
 		{
 			//arrange
@@ -26,7 +26,7 @@ namespace InkyCal.Data.Tests
 			Assert.NotNull(actual);
 		}
 
-		[SkippableFact()]
+		[Fact()]
 		public async Task GetAllTest()
 		{
 			//arrange
@@ -36,7 +36,7 @@ namespace InkyCal.Data.Tests
 
 			//assert
 			Assert.NotNull(actual);
-			output.WriteLine(string.Join(Environment.NewLine, actual.Select(x => x.Id)));
+			Console.WriteLine(string.Join(Environment.NewLine, actual.Select(x => x.Id)));
 
 		}
 	}
