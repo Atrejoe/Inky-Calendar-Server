@@ -7,7 +7,7 @@ using InkyCal.Models;
 using InkyCal.Utils.Calendar;
 using SixLabors.ImageSharp.Formats.Png;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace InkyCal.Utils.Tests
 {
@@ -41,7 +41,7 @@ namespace InkyCal.Utils.Tests
 	/// <summary>
 	/// Tests <see creaf="TestCalendarPanel"/> / <see cref="CalendarPanelRenderer"/>
 	/// </summary>
-	public sealed class TestCalendarPanelTests(ITestOutputHelper output) : IPanelTests<TestCalendarPanelRenderer>(output)
+	public sealed class TestCalendarPanelTests() : IPanelTests<TestCalendarPanelRenderer>()
 	{
 		protected override TestCalendarPanelRenderer GetRenderer()
 		{

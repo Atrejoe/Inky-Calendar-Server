@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Xunit;
+using Xunit.Sdk;
 
 namespace InkyCal.Data.Tests
 {
@@ -17,11 +17,13 @@ namespace InkyCal.Data.Tests
 			}
 			catch (SqlException ex) when (ex.IsMissingSQLServerException()) //https://learn.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-ver16
 			{
-				throw new SkipException("Connection timeout", ex);
+				await Console.Error.WriteLineAsync(ex.ToString())
+	;			throw SkipException.ForSkip("Connection timeout");
 			}
 			catch (Xunit.Sdk.ThrowsException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.IsMissingSQLServerException())
 			{
-				throw new SkipException("Connection timeout (handled ThrowsException)", ex);
+				await Console.Error.WriteLineAsync(ex.ToString());
+				throw SkipException.ForSkip("Connection timeout (handled ThrowsException)");
 			}
 			catch (SqlException ex)
 			{
@@ -38,11 +40,13 @@ namespace InkyCal.Data.Tests
 			}
 			catch (SqlException ex) when (ex.IsMissingSQLServerException()) //https://learn.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-ver16
 			{
-				throw new SkipException("Connection timeout", ex);
+				await Console.Error.WriteLineAsync(ex.ToString());
+				throw SkipException.ForSkip("Connection timeout");
 			}
-			catch (Xunit.Sdk.ThrowsException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.IsMissingSQLServerException())
+			catch (ThrowsException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.IsMissingSQLServerException())
 			{
-				throw new SkipException("Connection timeout", ex);
+				await Console.Error.WriteLineAsync(ex.ToString());
+				throw SkipException.ForSkip("Connection timeout");
 			}
 			catch (SqlException ex)
 			{

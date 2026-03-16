@@ -4,21 +4,20 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using InkyCal.Utils.NewPaperRenderer.FreedomForum;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests.NewPaperRenderer.FreedomForum
 {
 	/// <summary>
 	/// Tests <see cref="ApiClient"/>
 	/// </summary>
-	public class ApiClientTests(ITestOutputHelper output)
+	public class ApiClientTests()
 	{
-		[SkippableFact(typeof(HttpRequestException))]
+		[Fact(SkipExceptions = new[] { typeof(HttpRequestException) })]
 		public async Task GetNewsPapersTests()
 		{
 
 			var client = new ApiClient();
-			var actual = await client.GetNewsPapers();
+			var actual = await client.GetNewsPapers(TestContext.Current.CancellationToken);
 
 			Assert.NotNull(actual);
 			Assert.NotEmpty(actual);
@@ -38,12 +37,12 @@ namespace InkyCal.Utils.Tests.NewPaperRenderer.FreedomForum
 			var client = new ApiClient();
 
 			//act
-			var actual = await client.GetNewsPapers();
+			var actual = await client.GetNewsPapers(TestContext.Current.CancellationToken);
 
 			//assert
 			Assert.NotEmpty(actual);
 
-			output.WriteLine(string.Join("\n - ",
+			TestContext.Current.TestOutputHelper.WriteLine(string.Join("\n - ",
 				actual.Values.OrderBy(x => x.Country)
 				.ThenBy(x => x.State)
 				.ThenBy(x => x.City)

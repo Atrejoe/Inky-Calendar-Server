@@ -4,13 +4,11 @@ using System.Linq;
 using System.Reflection;
 using InkyCal.Models;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
-	public class PanelRenderHelperTests(ITestOutputHelper output)
+	public class PanelRenderHelperTests()
 	{
-		private readonly ITestOutputHelper output = output;
 
 		[Fact()]
 		public void GetRendererTest()
@@ -26,7 +24,7 @@ namespace InkyCal.Utils.Tests
 														return x.GetTypes();
 													}
 													catch (ReflectionTypeLoadException ex) {
-														output.WriteLine($"Warning: Error while loading types from assembly: {x.FullName} => {ex}");
+														Console.WriteLine($"Warning: Error while loading types from assembly: {x.FullName} => {ex}");
 														return Type.EmptyTypes;
 													}
 												})

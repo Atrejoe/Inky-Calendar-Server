@@ -1,18 +1,17 @@
 ﻿using InkyCal.Server.Config;
-using Xunit;
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace InkyCal.Utils.Tests
 {
 	/// <summary>
 	/// Tests <see creaf="TestCalendarPanel"/>
 	/// </summary>
-	public sealed class WeatherPanelRendererTests(ITestOutputHelper output) : IPanelTests<WeatherPanelRenderer>(output)
+	public sealed class WeatherPanelRendererTests() : IPanelTests<WeatherPanelRenderer>()
 	{
 		protected override WeatherPanelRenderer GetRenderer()
 		{
 			if (string.IsNullOrWhiteSpace(Config.OpenWeatherAPIKey))
-				throw new SkipException("OpenWeather API keys has not been configured, skipping tests.");
+				throw SkipException.ForSkip("OpenWeather API keys has not been configured, skipping tests.");
 
 			return new WeatherPanelRenderer(
 				InkyCal.Server.Config.Config.OpenWeatherAPIKey,
