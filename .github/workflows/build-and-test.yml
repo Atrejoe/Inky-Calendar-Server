@@ -51,13 +51,23 @@ jobs:
     - name: Test
       env: # Or as an environment variable
         OpenWeatherAPIKey: ${{ secrets.OpenWeatherAPIKey }}
-      run: dotnet test InkyCal.sln --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      run: |
+        # xunit.v3 test projects compile to executables (OutputType=Exe) and use the
+        # xUnit in-process runner, which does not integrate with `dotnet test` via VSTest.
+        # Run each test executable directly, passing -trx to generate TRX report files.
+        EXIT_CODE=0
+        mkdir -p TestResults
+        for testExe in $(find . -path "*/bin/Release/net10.0/*.Tests" -type f -executable); do
+          projectName=$(basename "$testExe")
+          "$testExe" -trx "TestResults/${projectName}.trx" || EXIT_CODE=$?
+        done
+        exit $EXIT_CODE
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v4
       with:
         name: testresults
-        path: '**/*.trx'
+        path: 'TestResults/*.trx'
         retention-days: 1
 
     - name: Test Report
@@ -65,5 +75,5 @@ jobs:
       if: success() || failure()    # run this step even if previous step failed
       with:
           name: Dotnet testresult # Name of the check run which will be created
-          path: '**/*.trx'        # All test results
+          path: 'TestResults/*.trx' # All test results
           reporter: dotnet-trx    # Format of test results
