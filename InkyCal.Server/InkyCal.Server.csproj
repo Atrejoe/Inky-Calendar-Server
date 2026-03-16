@@ -30,7 +30,7 @@
 	<PackageReference Include="Markdig.Signed" Version="1.1.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.5" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.5" />
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
