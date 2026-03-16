@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Azure.Identity" Version="1.18.0" />
+	<PackageReference Include="Azure.Identity" Version="1.19.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
 	  <PrivateAssets>all</PrivateAssets>
