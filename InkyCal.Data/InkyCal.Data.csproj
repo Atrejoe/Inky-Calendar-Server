@@ -27,12 +27,12 @@
 
   <ItemGroup>
 	<PackageReference Include="Azure.Identity" Version="1.18.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
 	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.20.0.135146">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
