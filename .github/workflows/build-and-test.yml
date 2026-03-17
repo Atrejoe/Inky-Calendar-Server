@@ -57,7 +57,7 @@ jobs:
       run: >
         dotnet test InkyCal.sln --no-build --configuration Release
         -p:TestingPlatformDotnetTestSupport=true
-        -- --report-trx --results-directory TestResults
+        -- --report-trx --results-directory $GITHUB_WORKSPACE/TestResults
 
     - name: Test Report
       uses: dorny/test-reporter@v1
