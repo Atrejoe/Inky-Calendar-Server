@@ -82,9 +82,9 @@
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.11.0, )",
-        "resolved": "14.11.0",
-        "contentHash": "MdNdyZJ7CjTV0zc4G1dGz8RIis5ZizYOMRrQ4+WghHYq5Hn151VNPPFpRsZ3fw61klegTFbzYRyMQjfl/sYW3w=="
+        "requested": "[14.11.1, )",
+        "resolved": "14.11.1",
+        "contentHash": "e9ejYUe6+GgbB6KBOpMp0jVDS72u0siDBz0RKSjBAEIZcigKDXDsOcoPLmLJJJqhorx3C4soRak2hCL/gaKdcg=="
       },
       "Markdig.Signed": {
         "type": "Direct",
@@ -94,9 +94,9 @@
       },
       "Microsoft.AspNetCore.App.Internal.Assets": {
         "type": "Direct",
-        "requested": "[10.0.4, )",
-        "resolved": "10.0.4",
-        "contentHash": "M942X5Vy726SlvFBuoAC4cDczEMlPAFt1mmyFlrkw/QcpdVwVU0DkF4P9JabxX6eWNm9RvaYZHe25FN7oXoxpQ=="
+        "requested": "[10.0.3, )",
+        "resolved": "10.0.3",
+        "contentHash": "mr3Zn+ht8lijYvlMIasftw9opU9hsLKDdnOgQMmYI3RjWPJLOF9l8+YHDseRkTs97wOrULmJgo/NDCmzL/EGDg=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
@@ -1165,7 +1165,7 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[14.11.0, )",
-          "Magick.NET.Core": "[14.11.0, )",
+          "Magick.NET.Core": "[14.11.1, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.8, )",
           "Sentry": "[6.2.0, )",
