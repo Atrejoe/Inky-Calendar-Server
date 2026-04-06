@@ -69,6 +69,12 @@
           "xunit.v3.mtp-v1": "[3.2.2]"
         }
       },
+      "XunitXml.TestLogger": {
+        "type": "Direct",
+        "requested": "[8.0.0, )",
+        "resolved": "8.0.0",
+        "contentHash": "EW3niiLvcX5MnN435KNnMZXl/RJgBDjNhn8ZoF4QP9WimfrGsI3btd7R4M2gqBUz/nvuCSzw5RA8ps/bfMqJLg=="
+      },
       "Bugsnag": {
         "type": "Transitive",
         "resolved": "4.1.0",
