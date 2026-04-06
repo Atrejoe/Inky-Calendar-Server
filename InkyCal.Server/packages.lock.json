@@ -94,9 +94,9 @@
       },
       "Microsoft.AspNetCore.App.Internal.Assets": {
         "type": "Direct",
-        "requested": "[10.0.5, )",
-        "resolved": "10.0.5",
-        "contentHash": "Oxw9Ps1/nd6c/EMCAI13AeJFEqXezAvCEOshMjUWmL7LeGirHJNzytR2e/3jINYg0j2TmPvNUowGHf+gp8zDSQ=="
+        "requested": "[10.0.3, )",
+        "resolved": "10.0.3",
+        "contentHash": "mr3Zn+ht8lijYvlMIasftw9opU9hsLKDdnOgQMmYI3RjWPJLOF9l8+YHDseRkTs97wOrULmJgo/NDCmzL/EGDg=="
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
@@ -158,11 +158,11 @@
       },
       "Sentry.AspNetCore": {
         "type": "Direct",
-        "requested": "[6.2.0, )",
-        "resolved": "6.2.0",
-        "contentHash": "vXY3kBhPlFuXrCkkyILnHnzxYlqvF0ijmRYFMQ/XzaUDhsmH0/QFLhUA36zPay6OEyK7kjHXs1zzVu7U6+hdfg==",
+        "requested": "[6.3.0, )",
+        "resolved": "6.3.0",
+        "contentHash": "0SfIEd6emJdwnORqeyCUYjqWNPwcj3mXnho7Lq32h00+wxws8jVexpqsCesorYZClkzMNrO29q4sCBfJnEl7oA==",
         "dependencies": {
-          "Sentry.Extensions.Logging": "6.2.0"
+          "Sentry.Extensions.Logging": "6.3.0"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -982,15 +982,15 @@
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "6.2.0",
-        "contentHash": "kZkHnj9NvQTjf5e8VmVQUT2HdVSmph9MhSm6U+vGoB4vq2uR1a+ZRHpAksNJNl7EjaGbYp55cOWqx5Nh0jQc8w=="
+        "resolved": "6.3.0",
+        "contentHash": "PwcF5yIzcKuhd/3BOxU3QHJA5/xYiuSNSaSpXi2kR3x7ONKel73xi49GfYvRg4mbMN1gRjxduqxQL6iRNNWqBA=="
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "6.2.0",
-        "contentHash": "8DLncLmwyBHjG7JSeyn5OGR5vBJPxAe22FkJjTX86vCA7cmmDQ8a79bhLiJUDe6lnT22XniqQWYu18iCbezdRA==",
+        "resolved": "6.3.0",
+        "contentHash": "ktCsDYeM1lygBvJ9nMuNgwGuXAsjTx3Nzz9togTrgwU00p4IWdZyy0+hI1GbQTqyXjd3L6VszawqUa9Bq+3Pvg==",
         "dependencies": {
-          "Sentry": "6.2.0"
+          "Sentry": "6.3.0"
         }
       },
       "SixLabors.Fonts": {
