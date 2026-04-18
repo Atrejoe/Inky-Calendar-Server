@@ -13,10 +13,10 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.5" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.5" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.5" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.6" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.6" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.6" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.21.0.135717">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
