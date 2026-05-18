@@ -39,18 +39,18 @@
       },
       "Magick.NET-Q16-AnyCPU": {
         "type": "Direct",
-        "requested": "[14.12.0, )",
-        "resolved": "14.12.0",
-        "contentHash": "Mv46dZE40RkUOpBeL/621oTQXWCjD1MCQIIx1tjejG+Ya3Mlc1WWTNRIUlNamecaTTgN1TBxbJaNRMnQncL9dA==",
+        "requested": "[14.13.1, )",
+        "resolved": "14.13.1",
+        "contentHash": "MMm+DmIAHEiszedXRs5e2lBlXn1QzYDIkVzWXnlfyNRi+0nzdRBJ3WJ/zszqGRpvrkmlxeaKG+FwiCmAibMKgg==",
         "dependencies": {
-          "Magick.NET.Core": "14.12.0"
+          "Magick.NET.Core": "14.13.1"
         }
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.12.0, )",
-        "resolved": "14.12.0",
-        "contentHash": "QPyuk1Lxp1xgSTP8xomnoZjeOtUeTSoeSuEckhGaUAi6GdZ5d2PmZqzr0O4m/zPbC4So/yg5rr2QO4vYD6fB5g=="
+        "requested": "[14.13.1, )",
+        "resolved": "14.13.1",
+        "contentHash": "BhqOKCLixvj/Ofwe+aRPHqoGdWekvKavsQrivBSuUq0zzzijnIF/OxqVA+GCd6WP46C4PaIfGhR65BPi2M0cKg=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
