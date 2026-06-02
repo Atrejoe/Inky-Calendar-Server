@@ -22,7 +22,7 @@ namespace InkyCal.Server.Controllers
 	/// <seealso cref="ControllerBase" />
 	[Route("panel")]
 	[ApiController]
-	public class PanelController : ControllerBase
+	public class PanelController(IOpenAIService openAIService) : ControllerBase
 	{
 		/// <summary>
 		/// Returns a demo image, mapped for <paramref name="model"/>.
@@ -83,7 +83,7 @@ namespace InkyCal.Server.Controllers
 		[ResponseCache(NoStore = true)]
 		public async Task<ActionResult> TestCalendarImage(DisplayModel model, CancellationToken cancellationToken, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
-			return await this.Image(new TestCalendarImagePanelRenderer(), model, cancellationToken, width, height);
+			return await this.Image(new TestCalendarImagePanelRenderer(openAIService), model, cancellationToken, width, height);
 		}
 
 		/// <summary>
@@ -152,7 +152,7 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> TestPanelOfPanels(DisplayModel model, CancellationToken cancellationToken, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 
-			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken);
+			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken, openAIService);
 			var panels = (new Panel[] {
 								new WeatherPanel() { Token = Config.Config.OpenWeatherAPIKey, Location = "Rotterdam, NL" },
 								new NewYorkTimesPanel() { },
@@ -280,7 +280,8 @@ namespace InkyCal.Server.Controllers
 			return await this.Image(
 							renderer: new CalendarPanelRenderer(
 								saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken,
-								iCalUrl: calendar),
+								iCalUrl: calendar,
+								openAIService: openAIService),
 							model: model,
 							cancellationToken: cancellationToken,
 							requestedWidth: width,
@@ -315,7 +316,8 @@ namespace InkyCal.Server.Controllers
 					saveToken: new Data.GoogleOAuthRepository().UpdateAccessToken,
 					iCalUrls: calendars,
 					calendars: [],
-					drawMode: CalenderDrawMode.List), // Draw mode "AI generated image" is only available for authenticated users
+					drawMode: CalenderDrawMode.List, // Draw mode "AI generated image" is only available for authenticated users
+					openAIService: openAIService),
 				model, cancellationToken, width, height);
 		}
 
@@ -368,7 +370,7 @@ namespace InkyCal.Server.Controllers
 
 			model ??= panel.Model;
 
-			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken);
+			var helper = new PanelRenderHelper(new Data.GoogleOAuthRepository().UpdateAccessToken, openAIService);
 			var renderer = helper.GetRenderer(panel);
 
 			PerformanceMonitor.Trace($"Rendering panel {id}");

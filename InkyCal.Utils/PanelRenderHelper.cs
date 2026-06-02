@@ -21,7 +21,7 @@ namespace InkyCal.Utils
 	/// <remarks>
 	/// 
 	/// </remarks>
-	public class PanelRenderHelper(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken)
+	public class PanelRenderHelper(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IOpenAIService openAIService = null)
 	{
 
 		/// <summary>
@@ -46,7 +46,8 @@ namespace InkyCal.Utils
 									saveToken,
 									iCalUrls: urls.ToArray(),
 									cp.SubscribedGoogleCalenders?.ToArray(),
-									cp.DrawMode
+									cp.DrawMode,
+									openAIService
 									);
 
 					break;
