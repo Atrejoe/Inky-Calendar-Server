@@ -30,7 +30,6 @@ namespace InkyCal.Utils
 			const int size = 1000;
 			const int padding = 50;
 			const float textWidth = size - padding * 2f;
-			const float centerX = size / 2f;
 
 			var titleFont = NotoSans.CreateFont(48);
 			var subtitleFont = NotoSans.CreateFont(28);
@@ -45,13 +44,14 @@ namespace InkyCal.Utils
 			{
 				float y = padding;
 
-				// Title — measure actual rendered height before advancing y
+				// Title — Origin.X is the LEFT edge of the text area; Center alignment
+				// then centres each line within [padding, padding+textWidth].
 				var titleOptions = new RichTextOptions(titleFont)
 				{
 					HorizontalAlignment = HorizontalAlignment.Center,
 					VerticalAlignment = VerticalAlignment.Top,
 					Dpi = 96,
-					Origin = new PointF(centerX, y),
+					Origin = new PointF(padding, y),
 					WrappingLength = textWidth
 				};
 				ctx.DrawText(titleOptions, titleText, Color.DarkGray);
@@ -63,7 +63,7 @@ namespace InkyCal.Utils
 					HorizontalAlignment = HorizontalAlignment.Center,
 					VerticalAlignment = VerticalAlignment.Top,
 					Dpi = 96,
-					Origin = new PointF(centerX, y),
+					Origin = new PointF(padding, y),
 					WrappingLength = textWidth
 				};
 				ctx.DrawText(subtitleOptions, subtitleText, Color.Gray);
