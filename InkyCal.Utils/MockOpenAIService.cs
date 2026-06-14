@@ -29,14 +29,18 @@ namespace InkyCal.Utils
 		{
 			const int size = 1000;
 			const int padding = 50;
+			// Text area: x = [padding, size-padding] = [50, 950]
 			const float textWidth = size - padding * 2f;
 
-			var titleFont = NotoSans.CreateFont(48);
-			var subtitleFont = NotoSans.CreateFont(28);
-			var promptFont = NotoSans.CreateFont(20);
+			// Font sizes chosen so rendered text stays comfortably within textWidth.
+			// Dpi=96 matches CalendarPanelRenderer; Left alignment mirrors its pattern so
+			// Origin.X is the left edge of the text block (not the centre).
+			var titleFont = NotoSans.CreateFont(24);
+			var subtitleFont = NotoSans.CreateFont(14);
+			var promptFont = NotoSans.CreateFont(10);
 
 			const string titleText = "Mock OpenAI Service";
-			const string subtitleText = "No OpenAI API key configured — placeholder image";
+			const string subtitleText = "No OpenAI API key configured - placeholder image";
 
 			using var image = new Image<Rgba32>(size, size, Color.White);
 
@@ -44,30 +48,27 @@ namespace InkyCal.Utils
 			{
 				float y = padding;
 
-				// Title — Origin.X is the LEFT edge of the text area; Center alignment
-				// then centres each line within [padding, padding+textWidth].
 				var titleOptions = new RichTextOptions(titleFont)
 				{
-					HorizontalAlignment = HorizontalAlignment.Center,
+					HorizontalAlignment = HorizontalAlignment.Left,
 					VerticalAlignment = VerticalAlignment.Top,
 					Dpi = 96,
 					Origin = new PointF(padding, y),
 					WrappingLength = textWidth
 				};
 				ctx.DrawText(titleOptions, titleText, Color.DarkGray);
-				y += TextMeasurer.MeasureBounds(titleText, titleOptions).Height + 20f;
+				y += TextMeasurer.MeasureBounds(titleText, titleOptions).Height + 10f;
 
-				// Subtitle
 				var subtitleOptions = new RichTextOptions(subtitleFont)
 				{
-					HorizontalAlignment = HorizontalAlignment.Center,
+					HorizontalAlignment = HorizontalAlignment.Left,
 					VerticalAlignment = VerticalAlignment.Top,
 					Dpi = 96,
 					Origin = new PointF(padding, y),
 					WrappingLength = textWidth
 				};
 				ctx.DrawText(subtitleOptions, subtitleText, Color.Gray);
-				y += TextMeasurer.MeasureBounds(subtitleText, subtitleOptions).Height + 30f;
+				y += TextMeasurer.MeasureBounds(subtitleText, subtitleOptions).Height + 15f;
 
 				// Prompt — shrink text until it fits in whatever vertical space is left
 				var available = size - padding - y;
