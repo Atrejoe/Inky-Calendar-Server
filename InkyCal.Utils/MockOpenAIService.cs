@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +19,14 @@ namespace InkyCal.Utils
 	{
 		/// <inheritdoc/>
 		public bool IsAvailable => true;
+
+		/// <summary>
+		/// Returns <see cref="ResizeMode.Pad"/>, which fits the entire generated image (text) inside the target bounding box,
+		/// </summary>
+		/// <value>
+		/// The resize mode.
+		/// </value>
+		public ResizeMode ResizeMode => ResizeMode.Pad;
 
 		/// <inheritdoc/>
 		public Task<string> GetChatCompletionAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken)

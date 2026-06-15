@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +10,7 @@ using OpenAI;
 using OpenAI.Chat;
 using OpenAI.Images;
 using OpenAI.Models;
+using SixLabors.ImageSharp.Processing;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils
@@ -20,6 +21,14 @@ namespace InkyCal.Utils
 	public sealed class OpenAIService : IOpenAIService
 	{
 		private readonly string _apiKey;
+
+		/// <summary>
+		/// Returns <see cref="ResizeMode.Crop"/>, which fits the entire generated image (text) inside the target bounding box,
+		/// </summary>
+		/// <value>
+		/// The resize mode.
+		/// </value>
+		public ResizeMode ResizeMode => ResizeMode.Crop;
 
 		// Serialises the full chat→image pipeline so at most one request is in-flight at a time.
 		private static readonly SemaphoreSlim _semaphore = new(initialCount: 1, maxCount: 1);

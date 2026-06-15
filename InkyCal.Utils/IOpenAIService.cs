@@ -1,6 +1,7 @@
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp.Processing;
 
 namespace InkyCal.Utils
 {
@@ -11,6 +12,14 @@ namespace InkyCal.Utils
 	{
 		/// <summary>Whether the service is configured and able to make API calls.</summary>
 		bool IsAvailable { get; }
+
+		/// <summary>
+		/// Gets the resize mode, how the generated image should fit inside the target bounding box
+		/// </summary>
+		/// <value>
+		/// The resize mode.
+		/// </value>
+		ResizeMode ResizeMode { get; }
 
 		/// <summary>
 		/// Returns the text content of a chat completion response for the given system and user prompts.

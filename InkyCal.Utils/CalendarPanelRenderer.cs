@@ -440,7 +440,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 			result.Mutate(x => x
 						.EntropyCrop()
-						.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.Center })
+						.Resize(new ResizeOptions() { Mode = openAIService.ResizeMode, Size = new Size(width, height), Position = AnchorPositionMode.Center })
 						.BackgroundColor(Color.Transparent)
 						.Quantize(new PaletteQuantizer(colors))
 						);
