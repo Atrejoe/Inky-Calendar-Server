@@ -408,6 +408,8 @@ namespace InkyCal.Utils
 			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x => x).FirstOrDefault(DateTime.Now);
 			events = events.Where(x => x.Date.Date == day).ToList();
 
+			var backgroundColor = colors.Skip(1).FirstOrDefault();
+
 			var userPrompt = $@"This is todays calendar:
 - {string.Join($"{Environment.NewLine}- ", events.Select(x => x.Summary))}
 Use the following colors:
@@ -440,7 +442,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 			result.Mutate(x => x
 						.EntropyCrop()
-						.Resize(new ResizeOptions() { Mode = openAIService.ResizeMode, Size = new Size(width, height), Position = AnchorPositionMode.Center, PadColor = Color.Transparent })
+						.Resize(new ResizeOptions() { Mode = openAIService.ResizeMode, Size = new Size(width, height), Position = AnchorPositionMode.Center, PadColor = backgroundColor })
 						.BackgroundColor(Color.Transparent)
 						.Quantize(new PaletteQuantizer(colors))
 						);
