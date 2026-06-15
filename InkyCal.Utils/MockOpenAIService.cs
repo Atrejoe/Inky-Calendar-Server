@@ -35,10 +35,9 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		public async Task<Stream> GenerateImageAsync(string prompt, CancellationToken cancellationToken)
 		{
-			// 1024×1024 matches DALL-E 3's default output size. The renderer crop-resizes every
-			// image to fit the panel (ResizeMode.Crop, AnchorPositionMode.Center), so text must
+			// The renderer crop-resizes every image to fit the panel (ResizeMode.Crop, AnchorPositionMode.Center), so text must
 			// be centered in the canvas to survive any panel aspect ratio.
-			const int size = 1024;
+			const int size = 1024 * 4;
 			const float cx = size / 2f;
 			const float textWidth = 900f;
 			const float lineGap = 12f;
