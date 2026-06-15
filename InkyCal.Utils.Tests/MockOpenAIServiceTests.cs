@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
@@ -33,7 +33,7 @@ namespace InkyCal.Utils.Tests
 		[InlineData("a very long prompt with many calendar events and various colors specified")]
 		[InlineData("")]
 		[InlineData("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.")]
-		public async Task GenerateImageAsync_Returns1024x1024Image(string prompt)
+		public async Task GenerateImageAsync_Returns1024x1024x4Image(string prompt)
 		{
 			using var stream = await _sut.GenerateImageAsync(prompt, CancellationToken.None);
 
@@ -43,8 +43,8 @@ namespace InkyCal.Utils.Tests
 			using var image = await Image.LoadAsync<Rgba32>(stream);
 
 			output.WriteLine($"Image size: {image.Width}×{image.Height}");
-			Assert.Equal(1024, image.Width);
-			Assert.Equal(1024, image.Height);
+			Assert.Equal(1024*4, image.Width);
+			Assert.Equal(1024 * 4, image.Height);
 		}
 
 		[Fact]
@@ -62,14 +62,14 @@ namespace InkyCal.Utils.Tests
 		}
 
 		[Fact]
-		public async Task GenerateImageAsync_LongPromptStillFitsIn1024x1024()
+		public async Task GenerateImageAsync_LongPromptStillFitsIn1024x1024x4()
 		{
 			using var stream = await _sut.GenerateImageAsync(new string('A', 2000), CancellationToken.None);
 			using var image = await Image.LoadAsync<Rgba32>(stream);
 
 			output.WriteLine($"Image size: {image.Width}×{image.Height}");
-			Assert.Equal(1024, image.Width);
-			Assert.Equal(1024, image.Height);
+			Assert.Equal(1024*4, image.Width);
+			Assert.Equal(1024*4, image.Height);
 		}
 	}
 }
