@@ -18,10 +18,8 @@ namespace InkyCal.Utils
 		/// </summary>
 		public const string PhasesOfTheMoonCalenderUrl = @"https://calendar.google.com/calendar/ical/ht3jlfaac5lfd6263ulfh4tql8%40group.calendar.google.com/public/basic.ics";
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public TestCalendarImagePanelRenderer() : base(
+		/// <param name="openAIService">OpenAI service to inject; pass a mock in tests.</param>
+		public TestCalendarImagePanelRenderer(IOpenAIService openAIService) : base(
 			async (token, cancellationToken) =>
 			{
 				await System.Threading.Tasks.Task.CompletedTask;
@@ -31,7 +29,8 @@ namespace InkyCal.Utils
 				new Uri(PhasesOfTheMoonCalenderUrl)
 			],
 			[],
-			drawMode: CalenderDrawMode.AIImage)
+			drawMode: CalenderDrawMode.AIImage,
+			openAIService: openAIService)
 		{
 		}
 	}

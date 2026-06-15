@@ -40,6 +40,12 @@ namespace InkyCal.Server
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public static void ConfigureServices(IServiceCollection services)
 		{
+			IOpenAIService openAIService = !string.IsNullOrEmpty(Config.Config.OpenAIAPIKey)
+				? new OpenAIService(Config.Config.OpenAIAPIKey)
+				: new MockOpenAIService();
+
+			services.AddSingleton<IOpenAIService>(openAIService);
+
 			services.AddControllers();
 			services.AddHealthChecks()
 				.AddSqlServer(Config.Config.ConnectionString, failureStatus: HealthStatus.Degraded); // Some functions may work, non-user configured (or otherwise cached) methods

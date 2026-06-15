@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
-using System.Threading.RateLimiting;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils.Calendar;
-using OpenAI;
-using OpenAI.Chat;
-using OpenAI.Images;
-using OpenAI.Models;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -79,12 +72,15 @@ namespace InkyCal.Utils
 	public class CalendarPanelRenderer : IPanelRenderer
 	{
 		private readonly SubscribedGoogleCalender[] Calendars;
+		private readonly IOpenAIService _openAIService;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="saveToken"></param>
-		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken) => SaveToken = saveToken;
+		/// <param name="openAIService">OpenAI service used for AI-image draw mode.</param>
+		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IOpenAIService openAIService)
+		{
+			SaveToken = saveToken;
+			_openAIService = openAIService ?? new OpenAIService(Server.Config.Config.OpenAIAPIKey);
+		}
 
 		/// <summary>
 		/// Shows a single calendar
@@ -92,7 +88,8 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List) : this(saveToken, [iCalUrl], [], drawMode)
+		/// <param name="openAIService">OpenAI service used for AI-image draw mode; defaults to the configured <see cref="OpenAIService"/>.</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List, IOpenAIService openAIService = null) : this(saveToken, [iCalUrl], [], drawMode, openAIService)
 			=> ArgumentNullException.ThrowIfNull(iCalUrl);
 
 		/// <summary>
@@ -102,7 +99,8 @@ namespace InkyCal.Utils
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode) : this(saveToken)
+		/// <param name="openAIService">OpenAI service used for AI-image draw mode; defaults to the configured <see cref="OpenAIService"/>.</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode, IOpenAIService openAIService = null) : this(saveToken, openAIService)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
 
@@ -116,9 +114,9 @@ namespace InkyCal.Utils
 
 			CacheKey = new CalendarPanelCacheKey(cacheExpiration, iCalUrls, calendars, drawMode);
 			Calendars = calendars?.ToArray();
-			DrawMode = string.IsNullOrEmpty(Server.Config.Config.OpenAIAPIKey)
-						? CalenderDrawMode.List //OpenAPI has not been configured
-						: drawMode;
+			DrawMode = _openAIService.IsAvailable
+						? drawMode
+						: CalenderDrawMode.List; //OpenAI has not been configured
 		}
 
 		/// <summary>
@@ -171,7 +169,7 @@ namespace InkyCal.Utils
 			using (MiniProfiler.Current.Step($"Rendering image for draw mode: {DrawMode}"))
 				return DrawMode switch
 				{
-					CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, sbErrors.ToString(), log),
+					CalenderDrawMode.AIImage => await DrawDallEImage(width, height, colors, events, log, _openAIService, cancellationToken),
 					CalenderDrawMode.List => DrawImage(width, height, colors, events, sbErrors.ToString(), log),
 					_ => throw new NotImplementedException($"DrawMode {DrawMode} is not implemented"),
 				};
@@ -392,136 +390,46 @@ namespace InkyCal.Utils
 		}
 
 
-		private static readonly SemaphoreSlim semaphoreOpenAIAPI = new(initialCount: 1, maxCount: 1); //Make rate limits configurable
-
-		[SuppressMessage("Major Code Smell", "S112:General or reserved exceptions should never be thrown", Justification = "<Pending>")]
-		private static async Task WaitForImageGenerationSlot()
-		{
-			var lease = await limiter.AcquireAsync();
-			if (!lease.IsAcquired)
-				throw new Exception("Could not acquire slot");
-		}
-
-		private static readonly RateLimiter limiter =
-			new SlidingWindowRateLimiter(
-				new SlidingWindowRateLimiterOptions()
-				{
-					Window = TimeSpan.FromSeconds(30),
-					PermitLimit = 2,
-					QueueLimit = 100,
-					QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-					SegmentsPerWindow = 60
-				});
-
-
 		/// <summary>
 		/// AI-powered image describing events, ported from https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/
 		/// </summary>
-		/// <returns></returns>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all")]
 		internal static async Task<Image<Rgba32>> DrawDallEImage(
 			int width,
 			int height,
 			Color[] colors,
 			List<Event> events,
-			string calenderParseErrors,
 			IPanelRenderer.Log log,
+			IOpenAIService openAIService,
 			CancellationToken token = default)
 		{
-
-
 			colors ??= [Color.Black, Color.White];
 
-			var key = Server.Config.Config.OpenAIAPIKey;
-
-			using var api = new OpenAIClient(key);
-
-			//events = new List<Event>(new[] {
-			//	new Event() { Summary = "All day : Work" },
-			//	new Event() { Summary = "15:30 Pick up kids from school, shop for presents" },
-			//	new Event() { Summary = "17:00 Robert cooks dinner" },
-			//	new Event() { Summary = "20:00 Robert climbing" }
-			//});
-
 			var day = events.Select(x => x.Date.Date).Distinct().OrderBy(x => x).FirstOrDefault(DateTime.Now);
-
 			events = events.Where(x => x.Date.Date == day).ToList();
 
-			var prompt = $@"This is todays calendar:
+			var backgroundColor = colors.Skip(1).FirstOrDefault();
+
+			var userPrompt = $@"This is todays calendar:
 - {string.Join($"{Environment.NewLine}- ", events.Select(x => x.Summary))}
-Use the following colors: 
+Use the following colors:
 - {string.Join($"{Environment.NewLine}- ", colors.Select(x => x.ColorName()))}";
 
-			var messages = new List<Message>(new[] {
-				new Message(Role.System, @$"You are a master prompt maker for Dalle.
+			var systemPrompt = @$"You are a master prompt maker for Dalle.
 You specialize in creating 19th century metal litograph images in the style of a vintage engraving, caravaggesque, flickr, ultrafine detail, neoclassicism based on my calendar entries.
 You are creative, hide allegories and details. You provide prompts based on the calender events provided, which all are on {day:D}.
-The image should be in a style of 19th century litograph or metal plate print as would be seen in an old book or newspaper and include the colors requested by the user."),
-				new Message(Role.User, prompt)
-			});
+The image should be in a style of 19th century litograph or metal plate print as would be seen in an old book or newspaper and include the colors requested by the user.";
 
-			ImageResult imageResult;
+			var imagePrompt = await openAIService.GetChatCompletionAsync(systemPrompt, userPrompt, token);
 
-			await semaphoreOpenAIAPI.WaitAsync(token); //Respect rate limits for concurrent access
-			try
-			{
-				var chatRequest = new ChatRequest(messages);
-
-				ChatResponse response;
-				try
-				{
-					using (MiniProfiler.Current.Step($"Getting prompt for image generation"))
-						response = await api.ChatEndpoint.GetCompletionAsync(chatRequest, token);
-				}
-				catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-				{
-					Trace.TraceError("Too many requests to OpenAI");
-					throw;
-				}
-
-				var imagePrompt = response.FirstChoice.Message;
-
-				Trace.TraceInformation(prompt);
-				Trace.TraceInformation(imagePrompt);
-
-				//var imageResult = await api.ImageGenerations.CreateImageAsync(
-				//	new ImageGenerationRequest(
-				//		prompt: imagePrompt,
-				//		numOfImages: 1,
-				//		size: ImageSize._1024,
-				//		responseFormat: ImageResponseFormat.B64_json));
-
-				var request = new ImageGenerationRequest(imagePrompt, Model.DallE_3, responseFormat: ImageResponseFormat.Url);
-
-				using (MiniProfiler.Current.Step($"Waiting for image generation slot"))
-					await WaitForImageGenerationSlot();
-				using (MiniProfiler.Current.Step($"Generating image"))
-					imageResult = (await api.ImagesEndPoint.GenerateImageAsync(request, token))[0];
-
-
-			}
-			finally
-			{
-				semaphoreOpenAIAPI.Release();
-			}
+			Trace.TraceInformation(userPrompt);
+			Trace.TraceInformation(imagePrompt);
 
 			Image<Rgba32> result;
 			try
 			{
-				using var client = new System.Net.Http.HttpClient();
-				var url = imageResult.Url;
-				using var ms = new MemoryStream();
-				using (MiniProfiler.Current.Step($"Downloading image url: {url}"))
-				{
-					using var s = await client.GetStreamAsync(url, token);
-					await s.CopyToAsync(ms, token);
-				}
-
-				//var i = Image.Load(ms);
-				//Console.WriteLine(i.Metadata.ToString());
-				//byte[] data = Convert.FromBase64String(imageResult);
-				ms.Position = 0;
-				result = await Image.LoadAsync<Rgba32>(ms);
+				using var imageStream = await openAIService.GenerateImageAsync(imagePrompt, token);
+				result = await Image.LoadAsync<Rgba32>(imageStream);
 			}
 			catch (Exception ex)
 			{
@@ -534,7 +442,7 @@ The image should be in a style of 19th century litograph or metal plate print as
 
 			result.Mutate(x => x
 						.EntropyCrop()
-						.Resize(new ResizeOptions() { Mode = ResizeMode.Crop, Size = new Size(width, height), Position = AnchorPositionMode.Center })
+						.Resize(new ResizeOptions() { Mode = openAIService.ResizeMode, Size = new Size(width, height), Position = AnchorPositionMode.Center, PadColor = backgroundColor })
 						.BackgroundColor(Color.Transparent)
 						.Quantize(new PaletteQuantizer(colors))
 						);
