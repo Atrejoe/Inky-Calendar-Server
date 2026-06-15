@@ -27,61 +27,65 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		public async Task<Stream> GenerateImageAsync(string prompt, CancellationToken cancellationToken)
 		{
-			const int padding = 20;
-			const int maxTextWidth = 800;
-			const float lineGap = 8f;
+			// 1024×1024 matches DALL-E 3's default output size. The renderer crop-resizes every
+			// image to fit the panel (ResizeMode.Crop, AnchorPositionMode.Center), so text must
+			// be centered in the canvas to survive any panel aspect ratio.
+			const int size = 1024;
+			const float cx = size / 2f;
+			const float textWidth = 900f;
+			const float lineGap = 12f;
 
-			var titleFont = NotoSans.CreateFont(24);
-			var subtitleFont = NotoSans.CreateFont(14);
-			var promptFont = NotoSans.CreateFont(12);
+			var titleFont = NotoSans.CreateFont(36);
+			var subtitleFont = NotoSans.CreateFont(20);
+			var promptFont = NotoSans.CreateFont(14);
 
 			const string titleText = "Mock OpenAI Service";
 			const string subtitleText = "No OpenAI API key configured — placeholder image";
 			var promptText = string.IsNullOrEmpty(prompt) ? "(no prompt)" : $"Prompt:\n{prompt}";
 
-			// Measure each block at its draw position before creating the image,
-			// so the canvas is sized to exactly contain the text.
-			float y = padding;
+			// Pass 1: measure at y=0 to compute total block height for vertical centering.
+			var titleH = TextMeasurer.MeasureBounds(titleText, new RichTextOptions(titleFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, 0), WrappingLength = textWidth
+			}).Height;
+			var subtitleH = TextMeasurer.MeasureBounds(subtitleText, new RichTextOptions(subtitleFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, 0), WrappingLength = textWidth
+			}).Height;
+			var promptH = TextMeasurer.MeasureBounds(promptText, new RichTextOptions(promptFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, 0), WrappingLength = textWidth
+			}).Height;
+
+			var totalH = titleH + lineGap + subtitleH + lineGap * 2 + promptH;
+
+			// Pass 2: place blocks centered vertically within the canvas.
+			float y = (size - totalH) / 2f;
 
 			var titleOptions = new RichTextOptions(titleFont)
 			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				Dpi = 96,
-				Origin = new PointF(padding, y),
-				WrappingLength = maxTextWidth
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, y), WrappingLength = textWidth
 			};
-			var titleBounds = TextMeasurer.MeasureBounds(titleText, titleOptions);
-			y += titleBounds.Height + lineGap;
+			y += titleH + lineGap;
 
 			var subtitleOptions = new RichTextOptions(subtitleFont)
 			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				Dpi = 96,
-				Origin = new PointF(padding, y),
-				WrappingLength = maxTextWidth
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, y), WrappingLength = textWidth
 			};
-			var subtitleBounds = TextMeasurer.MeasureBounds(subtitleText, subtitleOptions);
-			y += subtitleBounds.Height + lineGap * 2;
+			y += subtitleH + lineGap * 2;
 
 			var promptOptions = new RichTextOptions(promptFont)
 			{
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				Dpi = 96,
-				Origin = new PointF(padding, y),
-				WrappingLength = maxTextWidth
+				HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96, Origin = new PointF(cx, y), WrappingLength = textWidth
 			};
-			var promptBounds = TextMeasurer.MeasureBounds(promptText, promptOptions);
-			y += promptBounds.Height;
 
-			var canvasWidth = (int)Math.Ceiling(Math.Max(
-				titleBounds.X + titleBounds.Width,
-				Math.Max(subtitleBounds.X + subtitleBounds.Width, promptBounds.X + promptBounds.Width))) + padding;
-			var canvasHeight = (int)(y + padding);
-
-			using var image = new Image<Rgba32>(canvasWidth, canvasHeight, Color.White);
+			using var image = new Image<Rgba32>(size, size, Color.White);
 			image.Mutate(ctx =>
 			{
 				ctx.DrawText(titleOptions, titleText, Color.DarkGray);

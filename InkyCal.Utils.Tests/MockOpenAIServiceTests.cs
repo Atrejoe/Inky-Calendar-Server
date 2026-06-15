@@ -33,7 +33,7 @@ namespace InkyCal.Utils.Tests
 		[InlineData("a very long prompt with many calendar events and various colors specified")]
 		[InlineData("")]
 		[InlineData("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.")]
-		public async Task GenerateImageAsync_ReturnsValidImage(string prompt)
+		public async Task GenerateImageAsync_Returns1024x1024Image(string prompt)
 		{
 			using var stream = await _sut.GenerateImageAsync(prompt, CancellationToken.None);
 
@@ -43,8 +43,8 @@ namespace InkyCal.Utils.Tests
 			using var image = await Image.LoadAsync<Rgba32>(stream);
 
 			output.WriteLine($"Image size: {image.Width}×{image.Height}");
-			Assert.True(image.Width > 0);
-			Assert.True(image.Height > 0);
+			Assert.Equal(1024, image.Width);
+			Assert.Equal(1024, image.Height);
 		}
 
 		[Fact]
@@ -62,19 +62,14 @@ namespace InkyCal.Utils.Tests
 		}
 
 		[Fact]
-		public async Task GenerateImageAsync_LongPromptProducesTallerImage()
+		public async Task GenerateImageAsync_LongPromptStillFitsIn1024x1024()
 		{
-			using var shortStream = await _sut.GenerateImageAsync("hi", CancellationToken.None);
-			using var longStream = await _sut.GenerateImageAsync(new string('A', 2000), CancellationToken.None);
+			using var stream = await _sut.GenerateImageAsync(new string('A', 2000), CancellationToken.None);
+			using var image = await Image.LoadAsync<Rgba32>(stream);
 
-			using var shortImage = await Image.LoadAsync<Rgba32>(shortStream);
-			using var longImage = await Image.LoadAsync<Rgba32>(longStream);
-
-			output.WriteLine($"Short prompt → {shortImage.Width}×{shortImage.Height}");
-			output.WriteLine($"Long prompt  → {longImage.Width}×{longImage.Height}");
-
-			Assert.True(longImage.Height > shortImage.Height,
-				"A longer prompt should produce a taller image.");
+			output.WriteLine($"Image size: {image.Width}×{image.Height}");
+			Assert.Equal(1024, image.Width);
+			Assert.Equal(1024, image.Height);
 		}
 	}
 }
