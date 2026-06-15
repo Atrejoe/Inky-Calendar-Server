@@ -27,70 +27,65 @@ namespace InkyCal.Utils
 		/// <inheritdoc/>
 		public async Task<Stream> GenerateImageAsync(string prompt, CancellationToken cancellationToken)
 		{
-			const int size = 1000;
-			const int padding = 50;
-			// Text area: x = [padding, size-padding] = [50, 950]
-			const float textWidth = size - padding * 2f;
+			const int padding = 20;
+			const int maxTextWidth = 800;
+			const float lineGap = 8f;
 
-			// Font sizes chosen so rendered text stays comfortably within textWidth.
-			// Dpi=96 matches CalendarPanelRenderer; Left alignment mirrors its pattern so
-			// Origin.X is the left edge of the text block (not the centre).
 			var titleFont = NotoSans.CreateFont(24);
 			var subtitleFont = NotoSans.CreateFont(14);
-			var promptFont = NotoSans.CreateFont(10);
+			var promptFont = NotoSans.CreateFont(12);
 
 			const string titleText = "Mock OpenAI Service";
-			const string subtitleText = "No OpenAI API key configured - placeholder image";
+			const string subtitleText = "No OpenAI API key configured — placeholder image";
+			var promptText = string.IsNullOrEmpty(prompt) ? "(no prompt)" : $"Prompt:\n{prompt}";
 
-			using var image = new Image<Rgba32>(size, size, Color.White);
+			// Measure each block at its draw position before creating the image,
+			// so the canvas is sized to exactly contain the text.
+			float y = padding;
 
+			var titleOptions = new RichTextOptions(titleFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96,
+				Origin = new PointF(padding, y),
+				WrappingLength = maxTextWidth
+			};
+			var titleBounds = TextMeasurer.MeasureBounds(titleText, titleOptions);
+			y += titleBounds.Height + lineGap;
+
+			var subtitleOptions = new RichTextOptions(subtitleFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96,
+				Origin = new PointF(padding, y),
+				WrappingLength = maxTextWidth
+			};
+			var subtitleBounds = TextMeasurer.MeasureBounds(subtitleText, subtitleOptions);
+			y += subtitleBounds.Height + lineGap * 2;
+
+			var promptOptions = new RichTextOptions(promptFont)
+			{
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Top,
+				Dpi = 96,
+				Origin = new PointF(padding, y),
+				WrappingLength = maxTextWidth
+			};
+			var promptBounds = TextMeasurer.MeasureBounds(promptText, promptOptions);
+			y += promptBounds.Height;
+
+			var canvasWidth = (int)Math.Ceiling(Math.Max(
+				titleBounds.X + titleBounds.Width,
+				Math.Max(subtitleBounds.X + subtitleBounds.Width, promptBounds.X + promptBounds.Width))) + padding;
+			var canvasHeight = (int)(y + padding);
+
+			using var image = new Image<Rgba32>(canvasWidth, canvasHeight, Color.White);
 			image.Mutate(ctx =>
 			{
-				float y = padding;
-
-				var titleOptions = new RichTextOptions(titleFont)
-				{
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Top,
-					Dpi = 96,
-					Origin = new PointF(padding, y),
-					WrappingLength = textWidth
-				};
 				ctx.DrawText(titleOptions, titleText, Color.DarkGray);
-				y += TextMeasurer.MeasureBounds(titleText, titleOptions).Height + 10f;
-
-				var subtitleOptions = new RichTextOptions(subtitleFont)
-				{
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Top,
-					Dpi = 96,
-					Origin = new PointF(padding, y),
-					WrappingLength = textWidth
-				};
 				ctx.DrawText(subtitleOptions, subtitleText, Color.Gray);
-				y += TextMeasurer.MeasureBounds(subtitleText, subtitleOptions).Height + 15f;
-
-				// Prompt — shrink text until it fits in whatever vertical space is left
-				var available = size - padding - y;
-				if (available <= 0)
-					return;
-
-				var promptText = $"Prompt:\n{prompt}";
-				var promptOptions = new RichTextOptions(promptFont)
-				{
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Top,
-					Dpi = 96,
-					Origin = new PointF(padding, y),
-					WrappingLength = textWidth
-				};
-
-				while (promptText.Length > 3
-					&& TextMeasurer.MeasureBounds(promptText, promptOptions).Height > available)
-				{
-					promptText = promptText.Limit(Math.Max(3, (int)(promptText.Length * 0.9f)), "...");
-				}
-
 				ctx.DrawText(promptOptions, promptText, Color.Gray);
 			});
 

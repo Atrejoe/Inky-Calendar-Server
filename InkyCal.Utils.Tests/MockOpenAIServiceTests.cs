@@ -33,7 +33,7 @@ namespace InkyCal.Utils.Tests
 		[InlineData("a very long prompt with many calendar events and various colors specified")]
 		[InlineData("")]
 		[InlineData("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.")]
-		public async Task GenerateImageAsync_Returns1000x1000Image(string prompt)
+		public async Task GenerateImageAsync_ReturnsValidImage(string prompt)
 		{
 			using var stream = await _sut.GenerateImageAsync(prompt, CancellationToken.None);
 
@@ -43,8 +43,8 @@ namespace InkyCal.Utils.Tests
 			using var image = await Image.LoadAsync<Rgba32>(stream);
 
 			output.WriteLine($"Image size: {image.Width}×{image.Height}");
-			Assert.Equal(1000, image.Width);
-			Assert.Equal(1000, image.Height);
+			Assert.True(image.Width > 0);
+			Assert.True(image.Height > 0);
 		}
 
 		[Fact]
@@ -62,20 +62,19 @@ namespace InkyCal.Utils.Tests
 		}
 
 		[Fact]
-		public async Task GenerateImageAsync_LongPromptFitsWithinImageBounds()
+		public async Task GenerateImageAsync_LongPromptProducesTallerImage()
 		{
-			var longPrompt = new string('A', 2000);
+			using var shortStream = await _sut.GenerateImageAsync("hi", CancellationToken.None);
+			using var longStream = await _sut.GenerateImageAsync(new string('A', 2000), CancellationToken.None);
 
-			using var stream = await _sut.GenerateImageAsync(longPrompt, CancellationToken.None);
-			using var image = await Image.LoadAsync<Rgba32>(stream);
+			using var shortImage = await Image.LoadAsync<Rgba32>(shortStream);
+			using var longImage = await Image.LoadAsync<Rgba32>(longStream);
 
-			// Bottom padding row must be all-white — text was truncated before it could overflow
-			const int bottomPaddingY = 999;
-			var bottomRowHasText = Enumerable.Range(0, image.Width)
-				.Select(x => image[x, bottomPaddingY])
-				.Any(p => p.R < 255 || p.G < 255 || p.B < 255);
+			output.WriteLine($"Short prompt → {shortImage.Width}×{shortImage.Height}");
+			output.WriteLine($"Long prompt  → {longImage.Width}×{longImage.Height}");
 
-			Assert.False(bottomRowHasText, "Text should not reach the bottom edge of the image.");
+			Assert.True(longImage.Height > shortImage.Height,
+				"A longer prompt should produce a taller image.");
 		}
 	}
 }
