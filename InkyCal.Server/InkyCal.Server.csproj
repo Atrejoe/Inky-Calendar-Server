@@ -42,7 +42,7 @@
 	<PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.5.4" />
 	<PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.5.4" />
 	<PackageReference Include="Sentry.AspNetCore" Version="6.4.0" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.23.0.137933">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.27.0.140913">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
