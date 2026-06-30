@@ -676,8 +676,8 @@
       },
       "Ical.Net": {
         "type": "Transitive",
-        "resolved": "5.2.1",
-        "contentHash": "zHjl8M24IX1kNlB2zX7c2clyTdD5C+PplmyiMHJ0kMlt0ng2TMfNNKO4u7hNV86oITujLiJ6y/+ATcI7bbmjAw==",
+        "resolved": "5.2.3",
+        "contentHash": "zROvmrRPKqND0e0Bt/wSY+d8iYtL4+sP9mORyjT/ySBiIDfik4iovTjS+L9PFg+zoXfkJ5eBTHK2lX9c7lganw==",
         "dependencies": {
           "NodaTime": "3.2.2"
         }
@@ -1130,7 +1130,7 @@
           "Bugsnag": "[4.1.0, )",
           "Google.Apis.Calendar.v3": "[1.73.0.4073, )",
           "Google.Apis.Oauth2.v2": "[1.68.0.1869, )",
-          "Ical.Net": "[5.2.1, )",
+          "Ical.Net": "[5.2.3, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[14.14.0, )",
