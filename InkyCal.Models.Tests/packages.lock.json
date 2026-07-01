@@ -10,9 +10,9 @@
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
-        "requested": "[10.0.202, )",
-        "resolved": "10.0.202",
-        "contentHash": "ZC4WsiOnzyUHIZ3uGN4popaYPh2NgYcXZ/CpMpAb3mVF/HvBGlBtlredzZMKgcHqlm+ygqJh6qfhUSc/OJ0hWQ=="
+        "requested": "[10.0.301, )",
+        "resolved": "10.0.301",
+        "contentHash": "QAHyooyQN0JB95pI8q/N/eAH7Bb0OWSDSSNFGlmuxC+b/fXUVQJJChOBE6ygJFNkRj42u7rCHCSCPQC5n30tNg=="
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
