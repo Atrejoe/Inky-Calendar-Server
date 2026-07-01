@@ -115,8 +115,8 @@
       },
       "Bugsnag": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "ILuC9EbEMRv+7p0Kf5BJp7smyKVerOlunRTlycUuzGrZM050jwSMpQIMlNo9THc6+Z68leJQuqXufcfDJ+K37g=="
+        "resolved": "4.1.1",
+        "contentHash": "6vn4sZcjzS7bAgLJXY6yEtg2Gp9a7pUB8A6mhq7BT+8RtY2W62Gl8Gbsqfurs/jckzijSrqnMot90J+aFNI0Nw=="
       },
       "Google.Apis": {
         "type": "Transitive",
@@ -501,7 +501,7 @@
       "inkycal.utils": {
         "type": "Project",
         "dependencies": {
-          "Bugsnag": "[4.1.0, )",
+          "Bugsnag": "[4.1.1, )",
           "Google.Apis.Calendar.v3": "[1.73.0.4073, )",
           "Google.Apis.Oauth2.v2": "[1.68.0.1869, )",
           "Ical.Net": "[5.2.3, )",
