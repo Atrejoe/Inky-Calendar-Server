@@ -61,7 +61,7 @@ jobs:
         retention-days: 1
 
     - name: Test Report
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v3
       if: success() || failure()    # run this step even if previous step failed
       with:
           name: Dotnet testresult # Name of the check run which will be created
