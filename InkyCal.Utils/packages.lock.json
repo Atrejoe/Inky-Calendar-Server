@@ -39,11 +39,11 @@
       },
       "Magick.NET-Q16-AnyCPU": {
         "type": "Direct",
-        "requested": "[14.14.0, )",
-        "resolved": "14.14.0",
-        "contentHash": "fj6KqdjMRp58cw0oWtRS5eu+sKqn6ztpLt3UXcioL4AF0r4T9VPBTh9b24EUbhlp5pgETbagLh7/bsDbWjFnwA==",
+        "requested": "[14.15.0, )",
+        "resolved": "14.15.0",
+        "contentHash": "TB1Wc2hojzOMJ4tkBcXubASgtYSjEovoFpOjnfTjJXKVtKHGaN60juR+5YWFFhch1UUENcThaRWUXOWRcoGKkQ==",
         "dependencies": {
-          "Magick.NET.Core": "14.14.0"
+          "Magick.NET.Core": "14.15.0"
         }
       },
       "Magick.NET.Core": {
