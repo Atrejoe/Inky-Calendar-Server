@@ -237,8 +237,8 @@
       },
       "Google.Apis.Calendar.v3": {
         "type": "Transitive",
-        "resolved": "1.75.0.4182",
-        "contentHash": "i225LDth54jyZd19uSXY6cUgvA7J0fVmzS9OYRBXtbZR/3dOF3zTaaxYQCbvlRyilCCg6b17IZmWZo+HdWgTRw==",
+        "resolved": "1.75.0.4206",
+        "contentHash": "cmO57WIZbu1azbmPi+6ak7oOMVitehx/WrcUIp97t6ZLlkXZz/zcsZInrYPcdS6maSQPvncy98gHqN7dSPHSmQ==",
         "dependencies": {
           "Google.Apis": "1.75.0",
           "Google.Apis.Auth": "1.75.0"
@@ -1159,7 +1159,7 @@
         "type": "Project",
         "dependencies": {
           "Bugsnag": "[4.1.1, )",
-          "Google.Apis.Calendar.v3": "[1.75.0.4182, )",
+          "Google.Apis.Calendar.v3": "[1.75.0.4206, )",
           "Google.Apis.Oauth2.v2": "[1.74.0.1869, )",
           "Ical.Net": "[5.2.3, )",
           "InkyCal.Models": "[1.0.0, )",
