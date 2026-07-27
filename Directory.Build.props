@@ -1,0 +1,24 @@
+<Project>
+
+  <!--
+    Six Labors (ImageSharp) v4+ license enforcement.
+
+    ImageSharp 4.0 requires a Six Labors license *at build time*. The license is
+    baked into the compiled assemblies, so it is NOT needed by the running app
+    (the Kubernetes pod never reads it). See https://sixlabors.com/pricing/ and
+    the migration notes at https://docs.sixlabors.com/.
+
+    Supply the license to the build in one of these ways:
+      * Set the SIXLABORS_LICENSE_KEY environment variable (used below), or
+      * Pass it explicitly:   dotnet build -p:SixLaborsLicenseKey="<key>", or
+      * Set $(SixLaborsLicenseFile) / drop a 'sixlabors.lic' file in the workspace.
+
+    The value is a secret. It is provided to CI via the SIXLABORS_LICENSE_KEY
+    GitHub Actions secret, to the Docker build via a BuildKit secret, and is also
+    stored in the 'inkycal-secrets' Kubernetes secret (see k8s/secrets.env.template).
+  -->
+  <PropertyGroup>
+    <SixLaborsLicenseKey Condition="'$(SixLaborsLicenseKey)' == '' AND '$(SIXLABORS_LICENSE_KEY)' != ''">$(SIXLABORS_LICENSE_KEY)</SixLaborsLicenseKey>
+  </PropertyGroup>
+
+</Project>

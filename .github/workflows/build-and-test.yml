@@ -21,6 +21,12 @@ jobs:
     name: Builds and tests libraries & app
     runs-on: ubuntu-latest
 
+    # Six Labors (ImageSharp v4+) requires a license key at build time.
+    # Provided via the SIXLABORS_LICENSE_KEY GitHub Actions secret and picked up
+    # by Directory.Build.props (maps it to the SixLaborsLicenseKey MSBuild property).
+    env:
+      SIXLABORS_LICENSE_KEY: ${{ secrets.SIXLABORS_LICENSE_KEY }}
+
     steps:
     - uses: actions/checkout@v7
     - name: Setup dotnet

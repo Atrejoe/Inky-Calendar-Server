@@ -35,6 +35,21 @@ There are a few good reasons to want to run this small server by yourself:
 
 ## How to run
 
+### Build prerequisite: Six Labors (ImageSharp) license
+
+Since the upgrade to `SixLabors.ImageSharp` v4, a Six Labors license key is required **at build time** (see [Six Labors pricing](https://sixlabors.com/pricing/)). The key is compiled into the assemblies, so it is only needed when building — the running container/pod does not read it.
+
+Supply the key in whichever way suits your build:
+
+- **Local / `dotnet build`:** set the `SIXLABORS_LICENSE_KEY` environment variable (mapped to the `SixLaborsLicenseKey` MSBuild property by `Directory.Build.props`), or pass it directly with `dotnet build -p:SixLaborsLicenseKey="<key>"`.
+- **Docker:** pass it as a BuildKit secret so it is not baked into an image layer:
+  ```bash
+  SIXLABORS_LICENSE_KEY=<key> docker build \
+    --secret id=sixlabors_license,env=SIXLABORS_LICENSE_KEY .
+  ```
+- **GitHub Actions:** add a repository secret named `SIXLABORS_LICENSE_KEY`; the build, test and image workflows already consume it.
+- **Kubernetes:** the key is stored in the `inkycal-secrets` secret via `k8s/secrets.env.template` (applied by `k8s/apply-secrets.ps1`) so the same value can be reused for builds. It is intentionally *not* injected into the pod, as it is not needed at runtime.
+
 ### Option 1: With .Net Core
 
 *Recommended for development*

@@ -51,3 +51,7 @@ jobs:
         sbom: true
         push: true
         tags: ${{ github.event.workflow_run.head_branch == 'feature/redis' && 'atreyu/inkycal.server:redis' || 'atreyu/inkycal.server:latest' }}
+        # Six Labors (ImageSharp v4+) build-time license, passed as a BuildKit
+        # secret so it is not baked into any image layer.
+        secrets: |
+          sixlabors_license=${{ secrets.SIXLABORS_LICENSE_KEY }}

@@ -45,7 +45,14 @@ COPY ["InkyCal.Data/."         , "InkyCal.Data/."         ]
 RUN dotnet restore "InkyCal.Server/InkyCal.Server.csproj"
 COPY . .
 WORKDIR "/src/InkyCal.Server"
-RUN dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish --no-self-contained -r linux-musl-x64
+# Six Labors (ImageSharp v4+) requires a license key at build time. It is passed
+# in as a BuildKit secret (id=sixlabors_license) so it never lands in an image
+# layer, and mapped to the SixLaborsLicenseKey MSBuild property via the env var
+# (see Directory.Build.props). Build with:
+#   docker build --secret id=sixlabors_license,env=SIXLABORS_LICENSE_KEY .
+RUN --mount=type=secret,id=sixlabors_license \
+    SIXLABORS_LICENSE_KEY="$(cat /run/secrets/sixlabors_license 2>/dev/null)" \
+    dotnet publish "InkyCal.Server.csproj" -c Release -o /app/publish --no-self-contained -r linux-musl-x64
 
 FROM base AS final
 COPY --from=build /app/publish .
