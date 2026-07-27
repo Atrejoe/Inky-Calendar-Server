@@ -429,14 +429,15 @@ The image should be in a style of 19th century litograph or metal plate print as
 			try
 			{
 				using var imageStream = await openAIService.GenerateImageAsync(imagePrompt, token);
-				result = await Image.LoadAsync<Rgba32>(imageStream);
+				result = await Image.LoadAsync<Rgba32>(imageStream, token);
 			}
 			catch (Exception ex)
 			{
+				// Do not cancel writing to the console, as this is a background task and we want to log the error
 				await Console.Error.WriteLineAsync(ex.Message)
-						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.StackTrace))
-						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.Message))
-						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.StackTrace));
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.StackTrace), CancellationToken.None)
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.Message), CancellationToken.None)
+						.ContinueWith(async x => await Console.Error.WriteLineAsync(ex.InnerException?.StackTrace), CancellationToken.None);
 				throw;
 			}
 

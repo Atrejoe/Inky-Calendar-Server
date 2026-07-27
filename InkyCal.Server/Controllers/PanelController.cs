@@ -125,7 +125,7 @@ namespace InkyCal.Server.Controllers
 		public async Task<ActionResult> TestNewsPaper(DisplayModel model, CancellationToken cancellationToken, string newsPaperId = null, [Range(0, 1200)] int? width = null, [Range(0, 1200)] int? height = null)
 		{
 			if (string.IsNullOrEmpty(newsPaperId)) {
-				var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers()).Values.ToArray();
+				var newsPapers = (await new Utils.NewPaperRenderer.FreedomForum.ApiClient().GetNewsPapers(cancellationToken)).Values.ToArray();
 		 		var r = RandomNumberGenerator.GetInt32(0, newsPapers.Length);
 				var randomNewsPaper = newsPapers[r];
 				newsPaperId = randomNewsPaper.PaperId;

@@ -25,7 +25,7 @@ namespace InkyCal.Utils.NewPaperRenderer.FreedomForum
 		[SuppressMessage("Minor Code Smell", "S1075:URIs should not be hard coded", Justification = "API url is hardcoded (just like the contents of the response)")]
 		public async Task<Dictionary<string, NewsPaper>> GetNewsPapers(CancellationToken token = default)
 		{
-			var response = await _client.GetAsync("https://api.freedomforum.org/cache/papers.js");
+			var response = await _client.GetAsync("https://api.freedomforum.org/cache/papers.js", token);
 			response.EnsureSuccessStatusCode();
 			return (await response.Content.ReadFromJsonAsync<NewsPaper[]>(token)).ToDictionary(x => x.PaperId);
 		}
