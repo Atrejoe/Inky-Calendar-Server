@@ -48,7 +48,7 @@ Supply the key in whichever way suits your build:
     --secret id=sixlabors_license,env=SIXLABORS_LICENSE_KEY .
   ```
 - **GitHub Actions:** add a repository secret named `SIXLABORS_LICENSE_KEY`; the build, test and image workflows already consume it.
-- **Kubernetes:** the key is stored in the `inkycal-secrets` secret via `k8s/secrets.env.template` (applied by `k8s/apply-secrets.ps1`) so the same value can be reused for builds. It is intentionally *not* injected into the pod, as it is not needed at runtime.
+- **Kubernetes:** the key is stored in the `inkycal-secrets` secret via `k8s/secrets.env.template` so the same value can be reused for builds. It is intentionally *not* injected into the pod, as it is not needed at runtime. Apply the secrets either directly with `k8s/apply-secrets.ps1`, or as a GitOps-friendly [SealedSecret](https://github.com/bitnami-labs/sealed-secrets) with `k8s/seal-secrets.ps1` (which produces an encrypted `k8s/sealed-secrets.yaml` that is safe to commit).
 
 ### Option 1: With .Net Core
 
