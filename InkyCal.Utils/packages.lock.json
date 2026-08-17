@@ -94,18 +94,22 @@
       },
       "SixLabors.ImageSharp": {
         "type": "Direct",
-        "requested": "[3.1.12, )",
-        "resolved": "3.1.12",
-        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "7PfVxHQsa77VmO+ZcnkrcwsjZHs4ZIdAYkjKesf71glMlrAwKjjSh5Nz5F5rwfVEOF5eAh/F7k6Fel8CK3V1YA==",
+        "dependencies": {
+          "System.IO.Hashing": "8.0.0"
+        }
       },
       "SixLabors.ImageSharp.Drawing": {
         "type": "Direct",
-        "requested": "[2.1.7, )",
-        "resolved": "2.1.7",
-        "contentHash": "9KwCo9Fa350cx6ckpsy8NqXQZKwir4RQ8Kj0sdCmJA7wsK9FMyfgC527Sn4l/D6bj2ditSHlhS7dGzcgGszvSQ==",
+        "requested": "[3.1.0, )",
+        "resolved": "3.1.0",
+        "contentHash": "rXAHrV4/lWU+ZJY2TWPrstzKAOn58s0VS+E47MVcwe4zmaCoG1nWqxjs4EPZIfRggjNz3TWG1GUoQrUbvdhYYQ==",
         "dependencies": {
-          "SixLabors.Fonts": "2.1.3",
-          "SixLabors.ImageSharp": "3.1.11"
+          "SixLabors.Fonts": "3.1.0",
+          "SixLabors.ImageSharp": "4.1.0",
+          "SixLabors.PolygonClipper": "1.0.1"
         }
       },
       "SonarAnalyzer.CSharp": {
@@ -291,13 +295,23 @@
       },
       "SixLabors.Fonts": {
         "type": "Transitive",
-        "resolved": "2.1.3",
-        "contentHash": "ORWbZ5BHrC/LZvo+Y09MnoJq5VUKD85LsYALk+YI7CHFra+m5arCkz00IntDM6SrAiB22bvSdKtKmuCyHOKlqg=="
+        "resolved": "3.1.0",
+        "contentHash": "dqH/VwLesAuRulzoV3M6jixzetrjDHcU/0LIXj+ijED/Fjdfam1MEYRTMyGzX00vyK79zI4fPp/snqTxOPbzVw=="
+      },
+      "SixLabors.PolygonClipper": {
+        "type": "Transitive",
+        "resolved": "1.0.1",
+        "contentHash": "kUJ9mbpsiwEwSk679PobFmQ9UHqvH6QmwBnmbpCAq+P0yPGahQNDgu+/SVjdxJhoe/9d0UwgDvhTcSIWWS4lKg=="
       },
       "System.CodeDom": {
         "type": "Transitive",
         "resolved": "7.0.0",
         "contentHash": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A=="
+      },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA=="
       },
       "System.Management": {
         "type": "Transitive",
