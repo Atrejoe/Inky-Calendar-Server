@@ -82,9 +82,9 @@
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.16.0, )",
-        "resolved": "14.16.0",
-        "contentHash": "ddBX/Zb0sCsX4agqHdHeqUx+grfw8I7GFU+lgut3mtNl7roxbxemSQFGLIJXtzwPuAHxbaMtkXA+ijVl02EUhQ=="
+        "requested": "[14.17.1, )",
+        "resolved": "14.17.1",
+        "contentHash": "4BBbU5l5DmdT9isSNGrIE/0VwAh29SoKMSDMiIvFBDqz6vQfG6EYBFJQOemdCH3xkMfesSzImOVPjnyMf/PIqA=="
       },
       "Markdig.Signed": {
         "type": "Direct",
@@ -1176,7 +1176,7 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[14.16.0, )",
-          "Magick.NET.Core": "[14.16.0, )",
+          "Magick.NET.Core": "[14.17.1, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.8, )",
           "Sentry": "[6.10.0, )",
