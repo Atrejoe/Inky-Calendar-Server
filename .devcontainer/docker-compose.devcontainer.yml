@@ -1,0 +1,16 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    environment:
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5000/
+      - ConnectionStrings__DefaultConnection=Server=db;Database=InkyCal.Server;User=sa;Password=${DB_SA_PASSWORD};MultipleActiveResultSets=true;Encrypt=False;
+    command: sleep infinity
+    restart: "no"
