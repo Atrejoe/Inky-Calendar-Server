@@ -109,11 +109,11 @@
       },
       "Microsoft.AspNetCore.Identity.UI": {
         "type": "Direct",
-        "requested": "[10.0.11, )",
-        "resolved": "10.0.11",
-        "contentHash": "WuuUxX3OixfBtb8wpYmkBNLPs+kB57xPQ1bNWwIf/5OQi7fanvJyqoZP7X4NOlkwvbQ4cX6U4p3EW1eLhylyww==",
+        "requested": "[10.0.12, )",
+        "resolved": "10.0.12",
+        "contentHash": "Idj+I+siXCFza3XU48d0P8e0IwRPRKvevp9HbA31AJsof51mH+qhgwtfkyEDXNpgA5ODdEMSw9fQahvot0G7cg==",
         "dependencies": {
-          "Microsoft.Extensions.FileProviders.Embedded": "10.0.11"
+          "Microsoft.Extensions.FileProviders.Embedded": "10.0.12"
         }
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
@@ -860,8 +860,8 @@
       },
       "Microsoft.Extensions.FileProviders.Embedded": {
         "type": "Transitive",
-        "resolved": "10.0.11",
-        "contentHash": "x1wiStyE0RsviK1jdE7a6ua7jIhA0xPXOq5YMfWCWN7RJ9D4Q70oSD9ZVEzHBvovB+f1YQFdPU4036Act442Ow=="
+        "resolved": "10.0.12",
+        "contentHash": "u9y/tTPnkv+lsIqN4NRjhzh5XGv7pPCXjPEdbYVK9daidg+xFFEHv//gTlrjZJAKLMcHbArnCU/wVl0KrPJEJA=="
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
