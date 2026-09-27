@@ -48,9 +48,9 @@
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.17.1, )",
-        "resolved": "14.17.1",
-        "contentHash": "4BBbU5l5DmdT9isSNGrIE/0VwAh29SoKMSDMiIvFBDqz6vQfG6EYBFJQOemdCH3xkMfesSzImOVPjnyMf/PIqA=="
+        "requested": "[14.17.2, )",
+        "resolved": "14.17.2",
+        "contentHash": "KKvR6eBUcfgkZpfHfN/UKRcK/FjHW6NXXoRRf5HJdhFk5bYLEEFuKu6op0zfNo6Msah51Yw42p599pz3A0CDQQ=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
