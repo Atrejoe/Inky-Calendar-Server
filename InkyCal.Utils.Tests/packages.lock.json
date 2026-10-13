@@ -10,9 +10,9 @@
       },
       "Magick.NET.Core": {
         "type": "Direct",
-        "requested": "[14.17.2, )",
-        "resolved": "14.17.2",
-        "contentHash": "KKvR6eBUcfgkZpfHfN/UKRcK/FjHW6NXXoRRf5HJdhFk5bYLEEFuKu6op0zfNo6Msah51Yw42p599pz3A0CDQQ=="
+        "requested": "[15.0.0, )",
+        "resolved": "15.0.0",
+        "contentHash": "mP/VovMRuXBX2Rcnn1wWu0Zur6cjsf8IQhmTUCrasEk8cyAtN5sjHE7NxiH88whw8/2mjRvuphKUwj6bAZslpQ=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
@@ -498,7 +498,7 @@
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
           "Magick.NET-Q16-AnyCPU": "[14.17.2, )",
-          "Magick.NET.Core": "[14.17.2, )",
+          "Magick.NET.Core": "[15.0.0, )",
           "Microsoft.Extensions.Caching.Memory": "[10.0.12, )",
           "MiniProfiler.Shared": "[4.5.4, )",
           "OpenAI-DotNet": "[8.8.8, )",
