@@ -48,6 +48,7 @@
 	</PackageReference>
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="10.3.0" />
 	<PackageReference Include="System.Runtime.Caching" Version="10.0.12" />
+	<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>
