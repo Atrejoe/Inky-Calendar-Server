@@ -154,7 +154,7 @@ namespace InkyCal.Utils
 		/// <param name="height"></param>
 		/// <param name="backgroundColor"></param>
 		/// <returns></returns>
-		public static Image<Rgba32> CreateImage(int width, int height, Color? backgroundColor = null) => new Image<Rgba32>(width, height, backgroundColor.GetValueOrDefault(Color.White));
+		public static Image<Rgba32> CreateImage(int width, int height, Color? backgroundColor = null) => new Image<Rgba32>(width, height, backgroundColor.GetValueOrDefault(Color.White).ToPixel<Rgba32>());
 
 		internal static void RenderErrorMessage(
 			this IImageProcessingContext canvas,

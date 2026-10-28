@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,7 +94,7 @@ namespace InkyCal.Utils
 				Dpi = 96, Origin = new PointF(cx, y), WrappingLength = textWidth
 			};
 
-			using var image = new Image<Rgba32>(size, size, Color.White);
+			using var image = new Image<Rgba32>(size, size, Color.White.ToPixel<Rgba32>());
 			image.Mutate(ctx =>
 			{
 				ctx.DrawText(titleOptions, titleText, Color.DarkGray);

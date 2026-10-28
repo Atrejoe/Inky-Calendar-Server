@@ -1,8 +1,11 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using InkyCal.Models;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace InkyCal.Utils
 {
@@ -56,7 +59,7 @@ namespace InkyCal.Utils
 
 			width = attr.Width;
 			height = attr.Height;
-			colors = attr.Colors.Select(x => Color.FromRgba(r: x.R, g: x.G, b: x.B, a: x.A)).ToArray();
+			colors = attr.Colors.Select(x => Color.FromPixel(new Rgba32(x.R, x.G, x.B, x.A))).ToArray();
 		}
 
 		/// <summary>
