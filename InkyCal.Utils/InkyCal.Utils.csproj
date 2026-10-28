@@ -8,6 +8,7 @@
 	<WarningsAsErrors />
 	<NoWarn />
 	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	<SixLaborsLicenseFile>..\sixlabors.lic</SixLaborsLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
