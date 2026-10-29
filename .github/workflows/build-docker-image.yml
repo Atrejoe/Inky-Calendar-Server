@@ -34,6 +34,20 @@ jobs:
         push: false
         tags: atreyu/inkycal.server:latest
 
+    - name: Load Docker image for smoke test
+      # Reuses the layers of the previous build; loaded separately because SBOM attestations can't be loaded into the local image store
+      uses: docker/build-push-action@v7
+      with:
+        load: true
+        push: false
+        tags: inkycal.server:smoke-test
+
+    - name: Checkout (for smoke test script)
+      uses: actions/checkout@v7
+
+    - name: Smoke test - container starts and reports healthy
+      run: ./scripts/smoke-test.sh inkycal.server:smoke-test 180
+
     # - name: Container Scan
     #   id: scan
     #   # You may pin to the exact commit or the version.
