@@ -37,7 +37,7 @@ namespace InkyCal.Utils.Caching.Serialization
 					if (reader.TokenType == JsonTokenType.EndArray)
 						break;
 
-					colorsAsStrings.Add(new Color(Rgba32.ParseHex(reader.GetString())));
+					colorsAsStrings.Add(Color.ParseHex(reader.GetString()));
 				}
 
 				return colorsAsStrings.ToArray();
