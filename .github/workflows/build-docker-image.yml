@@ -34,31 +34,20 @@ jobs:
         push: false
         tags: atreyu/inkycal.server:latest
 
-    - name: Load Docker image for smoke test
-      # Reuses the layers of the previous build; loaded separately because SBOM attestations can't be loaded into the local image store
+    - name: Export Docker image for smoke test
+      # Reuses the layers of the previous build; exported separately because SBOM attestations can't be exported as a plain image
       uses: docker/build-push-action@v7
       with:
-        load: true
         push: false
         tags: inkycal.server:smoke-test
+        outputs: type=docker,dest=${{ runner.temp }}/inkycal-server.tar
 
-    - name: Checkout (for smoke test compose file)
-      uses: actions/checkout@v7
-
-    - name: Smoke test - container starts and reports healthy
-      id: smoke-test
-      run: docker compose -f smoke-test/compose.yml up --wait --wait-timeout 180
-
-    - name: Smoke test - explain failure
-      if: failure() && steps.smoke-test.outcome == 'failure'
-      run: |
-        compose="docker compose -f smoke-test/compose.yml"
-        $compose ps --all
-        $compose logs app
-
-        last_health_check=$(docker inspect --format '{{json .State.Health.Log}}' "$($compose ps --all -q app)" | jq -r '.[-1].Output // "none"' | tr '\n' ' ')
-        first_error=$($compose logs --no-log-prefix app | grep -m1 -E 'Unhandled exception|fail:|crit:')
-        echo "::error title=Smoke test failed::The container did not become healthy.%0ALast health check: ${last_health_check}%0AFirst error in log: ${first_error:-none}"
+    - name: Upload Docker image for smoke test
+      uses: actions/upload-artifact@v7
+      with:
+        name: docker-image
+        path: ${{ runner.temp }}/inkycal-server.tar
+        retention-days: 1
 
     # - name: Container Scan
     #   id: scan
@@ -80,3 +69,35 @@ jobs:
     #   uses: github/codeql-action/upload-sarif@v3
     #   with:
     #     sarif_file: ${{ steps.scan.outputs.sarif }}
+
+  smoke-test:
+    name: Smoke test
+    needs: build-docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Download Docker image
+      uses: actions/download-artifact@v7
+      with:
+        name: docker-image
+        path: ${{ runner.temp }}
+
+    - name: Load Docker image
+      run: docker load --input ${{ runner.temp }}/inkycal-server.tar
+
+    - name: Start container and wait until healthy
+      id: smoke-test
+      run: docker compose -f smoke-test/compose.yml up --wait --wait-timeout 180
+
+    - name: Explain failure
+      if: failure() && steps.smoke-test.outcome == 'failure'
+      run: |
+        compose="docker compose -f smoke-test/compose.yml"
+        $compose ps --all
+        $compose logs app
+
+        last_health_check=$(docker inspect --format '{{json .State.Health.Log}}' "$($compose ps --all -q app)" | jq -r '.[-1].Output // "none"' | tr '\n' ' ')
+        first_error=$($compose logs --no-log-prefix app | grep -m1 -E 'Unhandled exception|fail:|crit:')
+        echo "::error title=Smoke test failed::The container did not become healthy.%0ALast health check: ${last_health_check}%0AFirst error in log: ${first_error:-none}"
