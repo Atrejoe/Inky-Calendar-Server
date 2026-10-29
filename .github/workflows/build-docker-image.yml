@@ -42,11 +42,20 @@ jobs:
         push: false
         tags: inkycal.server:smoke-test
 
-    - name: Checkout (for smoke test script)
+    - name: Checkout (for smoke test compose file)
       uses: actions/checkout@v7
 
     - name: Smoke test - container starts and reports healthy
-      run: ./scripts/smoke-test.sh inkycal.server:smoke-test 180
+      id: smoke-test
+      run: docker compose -f smoke-test/compose.yml up --wait --wait-timeout 180
+
+    - name: Smoke test - explain failure
+      if: failure() && steps.smoke-test.outcome == 'failure'
+      run: |
+        docker compose -f smoke-test/compose.yml ps --all
+        docker compose -f smoke-test/compose.yml logs app
+        first_error=$(docker compose -f smoke-test/compose.yml logs --no-log-prefix app | grep -m1 Exception)
+        echo "::error title=Smoke test failed::The container did not start or did not become healthy. First error: ${first_error:-none logged}"
 
     # - name: Container Scan
     #   id: scan
