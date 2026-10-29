@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -18,6 +18,9 @@ using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 using static InkyCal.Utils.FontHelper;
 using Event = InkyCal.Utils.Calendar.Event;
+using SixLabors.ImageSharp.Drawing;
+
+// Ignore Spelling: Utils
 
 namespace InkyCal.Utils
 {
@@ -219,7 +222,7 @@ namespace InkyCal.Utils
 
 			//var textRendererOptions_Date = options_Date.ToRendererOptions(font);
 
-			var result = new Image<Rgba32>(width, height, backgroundColor);
+			var result = new Image<Rgba32>(width, height, backgroundColor.ToPixel<Rgba32>());
 
 			//Keep track of vertical position
 			var y = 0;

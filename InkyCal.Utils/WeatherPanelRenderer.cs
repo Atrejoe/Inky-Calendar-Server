@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utils
+
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -211,7 +213,7 @@ namespace InkyCal.Utils
 				var locationInfo = $"{station?.name},{station?.country}";
 				context.DrawText(
 					new(textOptions) { Origin = new PointF(5, y) }, locationInfo.ToSafeChars(textFont), primaryColor);
-				y += (int)Math.Ceiling(TextMeasurer.MeasureSize(locationInfo, textOptions).Height);
+				y += (int)Math.Ceiling(TextMeasurer.MeasureBounds(locationInfo, textOptions).Height);
 
 				try
 				{
@@ -220,10 +222,10 @@ namespace InkyCal.Utils
 					else
 					{
 						var firstIcon = (weather.list.OrderBy(l => l.dt).FirstOrDefault()?.weather.FirstOrDefault())?.icon;
-						var weatherIconDimensions = TextMeasurer.MeasureSize(firstIcon, weatherTextOptions);
+						var weatherIconDimensions = TextMeasurer.MeasureBounds(firstIcon ?? string.Empty, weatherTextOptions);
 
 						var allIcons = string.Join("", FontHelper.WeatherIconsMap.Values);
-						var weatherIconLineDimensions = TextMeasurer.MeasureSize(allIcons, weatherTextOptions);
+						var weatherIconLineDimensions = TextMeasurer.MeasureBounds(allIcons, weatherTextOptions);
 
 						var widthPerIcon = (int)Math.Ceiling(weatherIconDimensions.Width);
 						var heightPerIcon = (int)Math.Ceiling(weatherIconLineDimensions.Height);

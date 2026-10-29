@@ -156,15 +156,16 @@ namespace InkyCal.Server.Controllers
 						//var errorMessageRenderOptions = errorTextOptions.ToRendererOptions(messageFont);
 						var errorMessage = ex.Message.ToSafeChars(FontHelper.NotoSans).Trim();
 
-						x.DrawText(textOption, errorMessage, errorColor);
+						x.Paint(canvas => canvas.DrawText(textOption, errorMessage, Brushes.Solid(errorColor), pen: null));
 
 						var start = (int)TextMeasurer.MeasureBounds(errorMessage, textOption).Height
 						+ 10;
 
-						x.DrawText(
+						x.Paint(canvas => canvas.DrawText(
 							textOptions: new(textOption) { Origin = new(x: 0, y: start) },
 							text: ex.StackTrace,
-							color: primaryColor);
+							brush: Brushes.Solid(primaryColor),
+							pen: null));
 					});
 				return await controller.Image(image, colors, cancellationToken);
 			}

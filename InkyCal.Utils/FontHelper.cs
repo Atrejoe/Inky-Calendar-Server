@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Noto Utils
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -127,16 +129,16 @@ namespace InkyCal.Utils
 			var assembly = typeof(CalendarPanelRenderer).GetTypeInfo().Assembly;
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.NotoSans-SemiCondensed.ttf"))
-				NotoSans = fonts.Add(resource, new CultureInfo("de-DE"));
+				NotoSans = fonts.Add(resource);
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.MonteCarloFixed12.ttf"))
-				MonteCarlo = fonts.Add(resource, new CultureInfo("de-DE"));
+				MonteCarlo = fonts.Add(resource);
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.weathericons-regular-webfont.ttf"))
-				WeatherIcons = fonts.Add(resource, new CultureInfo("de-DE"));
+				WeatherIcons = fonts.Add(resource);
 
 			using (var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.fonts.ProFontWindows.ttf"))
-				ProFont = fonts.Add(resource, new CultureInfo("de-DE"));
+				ProFont = fonts.Add(resource);
 		}
 
 		/// <summary>
