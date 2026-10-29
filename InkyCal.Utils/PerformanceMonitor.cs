@@ -114,9 +114,9 @@ namespace InkyCal.Utils
 			BugsnagClient?.Breadcrumbs
 					.Leave(message, BreadcrumbType.Process, metaData);
 
-			//Write as Sentry message (without metaData)
-			if (SentrySdk.IsEnabled)
-				SentrySdk.CaptureMessage(message);
+			//Write as Sentry breadcrumb, attached to subsequent events (capturing it as a message would create an issue per trace)
+			if (SentrySdk.IsEnabled && !string.IsNullOrWhiteSpace(message))
+				SentrySdk.AddBreadcrumb(message, category: "trace", data: metaData);
 		}
 
 		/// <summary>

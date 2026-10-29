@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
+using Sentry;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -135,45 +136,66 @@ namespace InkyCal.Utils
 
 				var quantizer = new PaletteQuantizer(colors);
 
-				foreach (var parameter in renderParameters.AsParallel())
-				{
-
-					var panel = parameter.Panel;
-					var renderer = panelRenderHelper.GetRenderer(panel);
-
-					try
+				// Render all sub-panels concurrently: most of their time is spent waiting on I/O (calendars, weather, images),
+				// while the CPU-bound part (drawing, GIF encoding) benefits from the available cores.
+				// NB: 'foreach (... in x.AsParallel())' with an await inside does not run in parallel, it enumerates sequentially.
+				var parentSpan = SentrySdk.GetSpan();
+				var rendered = await Task.WhenAll(renderParameters // Enumerated once (by WhenAll), the projection keeps track of y
+					.Select(parameter => Task.Run(async () =>
 					{
-						using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})"))
+						var panel = parameter.Panel;
+						var span = parentSpan?.StartChild("panel.render.subpanel", $"{panel.GetType().Name} '{panel.Name}' ({width}x{parameter.subPanelHeight})");
+						try
 						{
-
-							var bytes = await renderer.GetCachedImage(width, parameter.subPanelHeight, colors, log);
-							var subImage = Image.Load<Rgba32>(bytes);
-
-							result.Mutate(
-								operation =>
-									operation
-										.DrawImage(subImage, new Point(0, parameter.y), opacity: 1)
-										.Quantize(quantizer) //when overlaying there is a slight color degradation even when opacity = 1, quantizing corrects it.
-										);
+							using (MiniProfiler.Current.Step($"Render panel '{panel.Name}' ({panel.GetType().Name})"))
+							{
+								var renderer = panelRenderHelper.GetRenderer(panel);
+								var bytes = await renderer.GetCachedImage(width, parameter.subPanelHeight, colors, log);
+								span?.Finish(SpanStatus.Ok);
+								return (parameter.y, bytes, error: (Exception)null);
+							}
 						}
-					}
-					catch (Exception ex)
-					{
-						ex.Data["PanelType"] = panel.GetType().Name;
-						ex.Data["PanelId"] = panel.Id;
-						ex.Log();
-						result.Mutate(x =>
+						catch (Exception ex)
 						{
-							x.DrawText(
-								textOptions: new RichTextOptions(new Font(FontHelper.NotoSans, 16))
-								{
-									WrappingLength = width,
-									Origin = new(0, y)
-								},
-								ex.Message,
-								errorColor);
-						});
+							span?.Finish(ex);
+							ex.Data["PanelType"] = panel.GetType().Name;
+							ex.Data["PanelId"] = panel.Id;
+							ex.Log();
+							return (parameter.y, bytes: (byte[])null, error: ex);
+						}
+					})));
+
+				// Compose sequentially, in sort order
+				using (MiniProfiler.Current.Step("Composing sub-panels"))
+				{
+					var composeSpan = parentSpan?.StartChild("panel.render.compose", $"{rendered.Length:n0} sub-panels");
+
+					foreach (var (subPanelY, bytes, error) in rendered)
+					{
+						if (error is null)
+						{
+							using var subImage = Image.Load<Rgba32>(bytes);
+							result.Mutate(operation => operation.DrawImage(subImage, new Point(0, subPanelY), opacity: 1));
+						}
+						else
+							result.Mutate(x =>
+							{
+								x.DrawText(
+									textOptions: new RichTextOptions(new Font(FontHelper.NotoSans, 16))
+									{
+										WrappingLength = width,
+										Origin = new(0, subPanelY)
+									},
+									error.Message,
+									errorColor);
+							});
 					}
+
+					//when overlaying there is a slight color degradation even when opacity = 1, quantizing corrects it.
+					//Quantizing once, after all sub-panels have been drawn, suffices.
+					result.Mutate(operation => operation.Quantize(quantizer));
+
+					composeSpan?.Finish(SpanStatus.Ok);
 				}
 			}
 

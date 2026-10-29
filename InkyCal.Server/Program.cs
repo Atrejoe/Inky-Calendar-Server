@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Sentry.AspNetCore;
 
 namespace InkyCal.Server
 {
@@ -22,9 +23,12 @@ namespace InkyCal.Server
 						webBuilder.UseSentry(o =>
 						{
 							o.Dsn = Config.Config.SentryDSN;
-							// Set TracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-							// We recommend adjusting this value in production.
-							o.TracesSampleRate = 0.01;
+							// Panel rendering is low-volume and the part we want to see, sample it (much) more than the rest,
+							// which is mostly page views and vulnerability scanners.
+							o.TracesSampler = context =>
+								context.TryGetHttpPath()?.StartsWith("/panel", StringComparison.OrdinalIgnoreCase) == true
+									? Config.Config.SentryPanelTracesSampleRate
+									: Config.Config.SentryTracesSampleRate;
 						});
 					}
 

@@ -22,6 +22,8 @@ namespace InkyCal.Server.Config
 
 		public static string ConnectionString => configuration.Value.GetConnectionString("DefaultConnection");
 		public static string SentryDSN => configuration.Value.GetValue(nameof(SentryDSN), string.Empty);
+		public static double SentryTracesSampleRate => configuration.Value.GetValue(nameof(SentryTracesSampleRate), 0.01);
+		public static double SentryPanelTracesSampleRate => configuration.Value.GetValue(nameof(SentryPanelTracesSampleRate), 1.0);
 		public static string BugSnagAPIKey => configuration.Value.GetValue(nameof(BugSnagAPIKey), string.Empty);
 		public static bool TraceQueries => configuration.Value.GetValue(nameof(TraceQueries), false);
 
