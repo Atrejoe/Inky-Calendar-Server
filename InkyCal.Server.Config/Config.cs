@@ -28,6 +28,8 @@ namespace InkyCal.Server.Config
 		public static bool TraceQueries => configuration.Value.GetValue(nameof(TraceQueries), false);
 
 		public static string OpenAIAPIKey => configuration.Value.GetValue(nameof(OpenAIAPIKey), string.Empty);
+		public static int OpenAIImagePermitLimit => configuration.Value.GetValue(nameof(OpenAIImagePermitLimit), 2);
+		public static int OpenAIImageRateLimitWindowSeconds => configuration.Value.GetValue(nameof(OpenAIImageRateLimitWindowSeconds), 30);
 		public static string OpenWeatherAPIKey => configuration.Value.GetValue(nameof(OpenWeatherAPIKey), string.Empty);
 
 	}

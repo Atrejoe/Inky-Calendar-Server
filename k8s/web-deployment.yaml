@@ -109,6 +109,11 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
+        # The image generation rate limit is per pod: 2 images per (30s x replicas) keeps the overall rate at 2 per 30s
+        - name: OpenAIImagePermitLimit
+          value: "2"
+        - name: OpenAIImageRateLimitWindowSeconds
+          value: "120"
         image: atreyu/inkycal.server:latest
         imagePullPolicy: Always
         name: web
