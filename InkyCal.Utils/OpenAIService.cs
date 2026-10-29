@@ -91,21 +91,19 @@ namespace InkyCal.Utils
 				}
 
 				using var client = new OpenAIClient(_apiKey);
-				var request = new ImageGenerationRequest(prompt, Model.DallE_3, responseFormat: ImageResponseFormat.Url);
+				// The API no longer accepts 'response_format' for dall-e-3 ("Unknown parameter: 'response_format'").
+				// gpt-image-1 always returns the image base64-encoded, which also saves downloading it from a url.
+				// Low quality suffices, the image is dithered down to the few colors of an e-ink display, and generates faster.
+				var request = new ImageGenerationRequest(prompt, Model.GPT_Image_1, quality: "low");
 
 				ImageResult imageResult;
 				using (MiniProfiler.Current.Step("Generating image"))
 					imageResult = (await client.ImagesEndPoint.GenerateImageAsync(request, cancellationToken))[0];
 
-				var ms = new MemoryStream();
-				using var http = new HttpClient();
-				using (MiniProfiler.Current.Step($"Downloading image url: {imageResult.Url}"))
-				{
-					using var s = await http.GetStreamAsync(imageResult.Url, cancellationToken);
-					await s.CopyToAsync(ms, cancellationToken);
-				}
-				ms.Position = 0;
-				return ms;
+				if (string.IsNullOrEmpty(imageResult.B64_Json))
+					throw new InvalidOperationException("Image generation did not return image data.");
+
+				return new MemoryStream(Convert.FromBase64String(imageResult.B64_Json));
 			}
 			finally
 			{
