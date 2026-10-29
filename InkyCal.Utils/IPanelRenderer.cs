@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Sentry;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
@@ -160,10 +161,24 @@ namespace InkyCal.Utils
 				// Key not in cache, so get data.
 				using (MiniProfiler.Current.Step($"Image not in cache, generating"))
 				{
-					var image = await renderer.GetImage(width, height, colors, log);
-					using var stream = new MemoryStream();
-					await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
-					result = stream.ToArray();
+					var span = SentrySdk.GetSpan()?.StartChild("panel.render", $"{renderer.GetType().Name} ({width}x{height}, {colors.Length} colors)");
+					try
+					{
+						using var image = await renderer.GetImage(width, height, colors, log);
+
+						var encodeSpan = span?.StartChild("panel.encode", "gif");
+						using var stream = new MemoryStream();
+						await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
+						result = stream.ToArray();
+						encodeSpan?.Finish(SpanStatus.Ok);
+
+						span?.Finish(SpanStatus.Ok);
+					}
+					catch (Exception ex)
+					{
+						span?.Finish(ex);
+						throw;
+					}
 				}
 
 				//	// Save data in cache.

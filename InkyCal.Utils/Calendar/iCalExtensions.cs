@@ -11,6 +11,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Microsoft.Extensions.Caching.Memory;
+using Sentry;
 using StackExchange.Profiling;
 
 namespace InkyCal.Utils.Calendar
@@ -161,15 +162,15 @@ namespace InkyCal.Utils.Calendar
 		public static async Task<CalendarCollection> GetCalendars(this IEnumerable<Uri> ICalUrls, StringBuilder errors)
 		{
 			var sw = Stopwatch.StartNew();
+			var span = SentrySdk.GetSpan()?.StartChild("calendar.fetch", "iCal");
 
-			var calendars = new CalendarCollection();
-
-			var tasks = ICalUrls.AsParallel().Select((iCalUrl, index) =>
+			// CalendarCollection is not thread-safe: load concurrently, add afterwards (which also keeps the order deterministic)
+			var tasks = ICalUrls.Select((iCalUrl, index) =>
 				Task.Run(async () =>
 				{
 					try
 					{
-						calendars.Add(await LoadCachedCalendar(iCalUrl));
+						return await LoadCachedCalendar(iCalUrl);
 					}
 					catch (HttpRequestException ex)
 					{
@@ -192,10 +193,16 @@ namespace InkyCal.Utils.Calendar
 						ex.Data.Add("Message displayed", messageDisplayed);
 						ex.Log();
 					}
+					return null;
 				})
 			);
 
-			await Task.WhenAll(tasks);
+			var calendars = new CalendarCollection();
+			foreach (var calendar in await Task.WhenAll(tasks))
+				if (calendar is not null)
+					calendars.Add(calendar);
+
+			span?.Finish(SpanStatus.Ok);
 
 			PerformanceMonitor.Trace($"Obtained calendars in {sw.Elapsed}");
 			PerformanceMonitor.Trace(errors?.ToString());
