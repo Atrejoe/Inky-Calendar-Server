@@ -1,0 +1,31 @@
+# Smoke test: verifies the server image starts and reports healthy.
+#
+# Run locally with:
+#   IMAGE=<image> docker compose -f smoke-test/compose.yml up --wait
+#   docker compose -f smoke-test/compose.yml down
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      MSSQL_SA_PASSWORD: Smoke-Test-Passw0rd
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P Smoke-Test-Passw0rd -Q "SELECT 1"
+      interval: 5s
+      retries: 24 # up to 2 minutes
+
+  app:
+    image: ${IMAGE:-inkycal.server:smoke-test}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:8080/
+      ConnectionStrings__DefaultConnection: Server=db;Database=InkyCal.Server;User=sa;Password=Smoke-Test-Passw0rd;Encrypt=False;
+    healthcheck:
+      # 127.0.0.1 rather than localhost: localhost may resolve to IPv6 (::1), which the server doesn't listen on
+      test: wget -q --spider http://127.0.0.1:8080/health
+      interval: 5s
+      retries: 36 # up to 3 minutes
