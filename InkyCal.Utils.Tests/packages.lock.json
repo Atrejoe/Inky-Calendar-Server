@@ -389,10 +389,10 @@
         "resolved": "8.8.8",
         "contentHash": "/ycZJKKk+VV+BFtY6nwdVGG40nhrIJVfN+nC3oCz8htxFiIo24Xa7tOuL1ffOp5QmpOacvaEQ6whhp8uKR+mFQ=="
       },
-      "Pipelines.Sockets.Unofficial": {
+      "RESPite": {
         "type": "Transitive",
-        "resolved": "2.2.8",
-        "contentHash": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ=="
+        "resolved": "3.4.20",
+        "contentHash": "MRBfXbMStwHGzM2UsbWsmh7mF/WDh4kNonrhOj5HLfkVp+PIstu4MuElusyJLHu5MkOIQj9+u1xWQ5YeJTveHQ=="
       },
       "Sentry": {
         "type": "Transitive",
@@ -429,12 +429,12 @@
       },
       "StackExchange.Redis": {
         "type": "Transitive",
-        "resolved": "2.11.8",
-        "contentHash": "25UL0tkhQo3ATT+DAu9OyaPhyWRvJIYcID/iNM8gNWqapJCX4dB/Q2RBBHjv6rQ1utp92pUoxgtZdX25ZNLC6Q==",
+        "resolved": "3.4.20",
+        "contentHash": "eIPMxCzqw3BMWp1GOOcafs7RPrScSHiCT9b1DIEJ49h9b7tHBw21+rN6gLWdQmJzvR+Wzwx3obmCp3FpgKuUSg==",
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "Pipelines.Sockets.Unofficial": "2.2.8",
-          "System.IO.Hashing": "10.0.2"
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.13",
+          "RESPite": "3.4.20",
+          "System.IO.Hashing": "10.0.13"
         }
       },
       "System.CodeDom": {
@@ -444,8 +444,8 @@
       },
       "System.IO.Hashing": {
         "type": "Transitive",
-        "resolved": "10.0.2",
-        "contentHash": "AKJknIFi9O3+rGExxTry188JPvUoZAPcCtS2qdqyFhIzsxQ1Ap94BeGDG0VzVEHakhmRxmJtVih6TsHoghIt/g=="
+        "resolved": "10.0.13",
+        "contentHash": "ZlcywyQ7FJmgOV2nctdfOEPGS0kRK8T2CdOoPr6F4HPYpmjSo6GQfj3yTyOzNO6B+2U84/JKSPkJJMWqLmVsMw=="
       },
       "System.Management": {
         "type": "Transitive",
@@ -534,7 +534,7 @@
           "Sentry": "[6.12.1, )",
           "SixLabors.ImageSharp": "[4.1.3, )",
           "SixLabors.ImageSharp.Drawing": "[3.1.3, )",
-          "StackExchange.Redis": "[2.11.8, )",
+          "StackExchange.Redis": "[3.4.20, )",
           "System.Reflection.TypeExtensions": "[4.7.0, )",
           "System.Threading.RateLimiting": "[10.0.14, )"
         }
