@@ -52,10 +52,13 @@ jobs:
     - name: Smoke test - explain failure
       if: failure() && steps.smoke-test.outcome == 'failure'
       run: |
-        docker compose -f smoke-test/compose.yml ps --all
-        docker compose -f smoke-test/compose.yml logs app
-        first_error=$(docker compose -f smoke-test/compose.yml logs --no-log-prefix app | grep -m1 Exception)
-        echo "::error title=Smoke test failed::The container did not start or did not become healthy. First error: ${first_error:-none logged}"
+        compose="docker compose -f smoke-test/compose.yml"
+        $compose ps --all
+        $compose logs app
+
+        last_health_check=$(docker inspect --format '{{json .State.Health.Log}}' "$($compose ps --all -q app)" | jq -r '.[-1].Output // "none"' | tr '\n' ' ')
+        first_error=$($compose logs --no-log-prefix app | grep -m1 -E 'Unhandled exception|fail:|crit:')
+        echo "::error title=Smoke test failed::The container did not become healthy.%0ALast health check: ${last_health_check}%0AFirst error in log: ${first_error:-none}"
 
     # - name: Container Scan
     #   id: scan

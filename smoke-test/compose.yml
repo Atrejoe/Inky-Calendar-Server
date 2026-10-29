@@ -25,6 +25,7 @@ services:
       ASPNETCORE_URLS: http://0.0.0.0:8080/
       ConnectionStrings__DefaultConnection: Server=db;Database=InkyCal.Server;User=sa;Password=Smoke-Test-Passw0rd;Encrypt=False;
     healthcheck:
-      test: wget -q --spider http://localhost:8080/health
+      # 127.0.0.1 rather than localhost: localhost may resolve to IPv6 (::1), which the server doesn't listen on
+      test: wget -q --spider http://127.0.0.1:8080/health
       interval: 5s
       retries: 36 # up to 3 minutes
