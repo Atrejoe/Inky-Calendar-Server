@@ -130,7 +130,9 @@ spec:
             memory: "4Gi"
           requests:
             memory: "512Mi"
-            cpu: "100m"
+            # Panel rendering (drawing, quantizing, GIF encoding) is CPU-bound and sub-panels render in parallel:
+            # request enough CPU to not be throttled on a busy node
+            cpu: "500m"
         volumeMounts:
         - name: dataprotection-keys
           mountPath: /home/nonroot/.aspnet/DataProtection-Keys
