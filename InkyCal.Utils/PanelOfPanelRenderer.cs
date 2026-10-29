@@ -140,8 +140,7 @@ namespace InkyCal.Utils
 				// while the CPU-bound part (drawing, GIF encoding) benefits from the available cores.
 				// NB: 'foreach (... in x.AsParallel())' with an await inside does not run in parallel, it enumerates sequentially.
 				var parentSpan = SentrySdk.GetSpan();
-				var rendered = await Task.WhenAll(renderParameters
-					.ToArray() // Materialize once, the projection keeps track of y
+				var rendered = await Task.WhenAll(renderParameters // Enumerated once (by WhenAll), the projection keeps track of y
 					.Select(parameter => Task.Run(async () =>
 					{
 						var panel = parameter.Panel;

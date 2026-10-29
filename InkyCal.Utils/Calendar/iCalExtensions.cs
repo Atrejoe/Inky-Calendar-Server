@@ -198,9 +198,8 @@ namespace InkyCal.Utils.Calendar
 			);
 
 			var calendars = new CalendarCollection();
-			foreach (var calendar in await Task.WhenAll(tasks))
-				if (calendar is not null)
-					calendars.Add(calendar);
+			foreach (var calendar in (await Task.WhenAll(tasks)).Where(x => x is not null))
+				calendars.Add(calendar);
 
 			span?.Finish(SpanStatus.Ok);
 
