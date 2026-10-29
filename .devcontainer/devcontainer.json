@@ -1,0 +1,35 @@
+{
+    "name": "Inky Calendar Server",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.devcontainer.yml"
+    ],
+    "service": "web",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "ms-mssql.mssql"
+            ],
+            "settings": {
+                "editor.formatOnSave": true
+            }
+        }
+    },
+    "forwardPorts": [5000, 1433],
+    "portsAttributes": {
+        "5000": {
+            "label": "Web Application",
+            "onAutoForward": "notify"
+        },
+        "1433": {
+            "label": "SQL Server",
+            "onAutoForward": "silent"
+        }
+    },
+    "postCreateCommand": "dotnet restore InkyCal.sln",
+    "remoteUser": "vscode"
+}
