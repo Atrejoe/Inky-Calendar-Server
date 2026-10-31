@@ -93,8 +93,9 @@ namespace InkyCal.Utils
 				using var client = new OpenAIClient(_apiKey);
 				// The API no longer accepts 'response_format' for dall-e-3 ("Unknown parameter: 'response_format'").
 				// gpt-image-1 always returns the image base64-encoded, which also saves downloading it from a url.
-				// Low quality suffices, the image is dithered down to the few colors of an e-ink display, and generates faster.
-				var request = new ImageGenerationRequest(prompt, Model.GPT_Image_1, quality: "low");
+				// Medium quality: low quality yields noticeably rougher images, high quality is mostly lost when dithering down
+				// to the few colors of an e-ink display. Images are cached for hours, so generation time and cost matter little.
+				var request = new ImageGenerationRequest(prompt, Model.GPT_Image_1, quality: "medium");
 
 				ImageResult imageResult;
 				using (MiniProfiler.Current.Step("Generating image"))
