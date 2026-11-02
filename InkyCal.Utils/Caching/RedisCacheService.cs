@@ -24,6 +24,11 @@ namespace InkyCal.Utils.Caching
 			_database = redis.GetDatabase();
 		}
 
+		/// <summary>
+		/// Gets the Redis connection, for diagnostics (e.g. health checks).
+		/// </summary>
+		public IConnectionMultiplexer Multiplexer => _database.Multiplexer;
+
 		/// <inheritdoc/>
 		public async Task<(bool Found, byte[] Value)> TryGetValueAsync<T>(T key) where T : IEquatable<T>
 		{
@@ -75,77 +80,17 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
-		public async Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>
-		{
-			ArgumentNullException.ThrowIfNull(factory);
-
-			var stringKey = key.SerializeToJson();
-
-			try
-			{
-				// Try to get from cache first (prefer replica for read load distribution)
-				var (found, value) = await TryGetValueAsync(stringKey);
-				if (found)
-					return value;
-
-				var lockKey = $"lock:{stringKey}";
-				var lockValue = Guid.NewGuid().ToString();
-				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
-				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
-
-				while (lockAcquired)
-				{
-					// Could not acquire lock, wait and retry getting from cache
-					await Task.Delay(LockRetryDelay);
-
-					lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
-				}
-
-				if (lockAcquired)
-				{
-					try
-					{
-						// Double-check if value was created while waiting for lock
-						// This read can come from replica
-						(found, value) = await TryGetValueAsync(stringKey);
-						if (found)
-							return value;
-
-						// Create the value
-						value = await factory();
-
-						// Cache it (write to master)
-						await SetAsync(stringKey, value, expiration);
-
-						return value;
-					}
-					finally
-					{
-						// Always release the lock (must go to master)
-						await _database.LockReleaseAsync(lockKey, lockValue, CommandFlags.PreferMaster);
-					}
-				}
-				else
-				{
-
-					(found, value) = await TryGetValueAsync(stringKey);
-					if (found)
-						return value;
-
-					// If still not found, create without lock (fallback)
-					return await factory();
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.Log(severity: Severity.Warning);
-				// If Redis fails, still return the generated value
-				return await factory();
-			}
-		}
+		public Task<byte[]> GetOrCreateAsync<T>(T key, Func<Task<byte[]>> factory, TimeSpan expiration) where T : IEquatable<T>
+			=> GetOrCreateAsync(key.SerializeToJson(), factory, expiration);
 
 		/// <inheritdoc/>
+		/// <remarks>
+		/// Uses a distributed lock, so concurrent requests (across pods) for the same key create the value once.
+		/// Requests that do not get the lock wait for the value to appear in the cache, up to <see cref="DefaultLockTimeout"/>,
+		/// after which they create the value themselves.
+		/// When Redis is unavailable, the value is created without caching.
+		/// Exceptions thrown by <paramref name="factory"/> are not caught.
+		/// </remarks>
 		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
 		public async Task<byte[]> GetOrCreateAsync(string key, Func<Task<byte[]>> factory, TimeSpan expiration)
 		{
@@ -153,59 +98,68 @@ namespace InkyCal.Utils.Caching
 
 			var lockKey = $"lock:{key}";
 			var lockValue = Guid.NewGuid().ToString();
+			bool lockAcquired;
 
 			try
 			{
-				// Try to get from cache first (prefer replica for read load distribution)
-				var (found, value) = await TryGetValueAsync(key);
-				if (found)
-					return value;
-
-				// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
-				var lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
-
-				if (lockAcquired)
+				var waitUntil = DateTime.UtcNow + DefaultLockTimeout;
+				while (true)
 				{
-					try
-					{
-						// Double-check if value was created while waiting for lock
-						// This read can come from replica
-						(found, value) = await TryGetValueAsync(key);
-						if (found)
-							return value;
-
-						// Create the value
-						value = await factory();
-
-						// Cache it (write to master)
-						await SetAsync(key, value, expiration);
-
-						return value;
-					}
-					finally
-					{
-						// Always release the lock (must go to master)
-						await _database.LockReleaseAsync(lockKey, lockValue, CommandFlags.PreferMaster);
-					}
-				}
-				else
-				{
-					// Could not acquire lock, wait and retry getting from cache
-					await Task.Delay(LockRetryDelay);
-
-					(found, value) = await TryGetValueAsync(key);
+					// Prefer replica for read load distribution
+					var (found, value) = await TryGetValueAsync(key);
 					if (found)
 						return value;
 
-					// If still not found, create without lock (fallback)
-					return await factory();
+					// Acquire distributed lock (must go to master, but use PreferMaster for resilience)
+					lockAcquired = await _database.LockTakeAsync(lockKey, lockValue, DefaultLockTimeout, CommandFlags.PreferMaster);
+					if (lockAcquired || DateTime.UtcNow >= waitUntil)
+						break;
+
+					// Another request is creating the value, wait for it
+					await Task.Delay(LockRetryDelay);
 				}
 			}
 			catch (Exception ex)
 			{
-				ex.Log(severity: Severity.Warning);
 				// If Redis fails, still return the generated value
+				ex.Log(severity: Severity.Warning);
 				return await factory();
+			}
+
+			if (!lockAcquired)
+				return await factory(); // Waited long enough, create without lock (fallback)
+
+			try
+			{
+				// Double-check: the value may have been created between the cache read and taking the lock
+				var (found, value) = await TryGetValueAsync(key);
+				if (found)
+					return value;
+
+				value = await factory();
+
+				// Cache it (write to master)
+				await SetAsync(key, value, expiration);
+
+				return value;
+			}
+			finally
+			{
+				await ReleaseLockAsync(lockKey, lockValue);
+			}
+		}
+
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application, the lock expires anyway")]
+		private async Task ReleaseLockAsync(string lockKey, string lockValue)
+		{
+			try
+			{
+				// Must go to master
+				await _database.LockReleaseAsync(lockKey, lockValue, CommandFlags.PreferMaster);
+			}
+			catch (Exception ex)
+			{
+				ex.Log(severity: Severity.Warning);
 			}
 		}
 
