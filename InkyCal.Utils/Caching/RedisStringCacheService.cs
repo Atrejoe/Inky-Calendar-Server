@@ -71,32 +71,26 @@ namespace InkyCal.Utils.Caching
 		}
 
 		/// <inheritdoc/>
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Redis errors should not crash the application")]
+		/// <remarks>
+		/// Redis errors are handled by <see cref="TryGetValueAsync"/> and <see cref="SetAsync"/>: when Redis is unavailable,
+		/// the value is created without caching. Exceptions thrown by <paramref name="factory"/> are not caught.
+		/// </remarks>
 		public async Task<string> GetOrCreateAsync(string key, Func<Task<string>> factory, TimeSpan expiration)
 		{
 			ArgumentNullException.ThrowIfNull(factory);
 
-			try
-			{
-				// Try to get from cache first (prefer replica for read load distribution)
-				var (found, value) = await TryGetValueAsync(key);
-				if (found)
-					return value;
-
-				// Create the value
-				value = await factory();
-
-				// Cache it (write to master)
-				await SetAsync(key, value, expiration);
-
+			// Try to get from cache first (prefer replica for read load distribution)
+			var (found, value) = await TryGetValueAsync(key);
+			if (found)
 				return value;
-			}
-			catch (Exception ex)
-			{
-				ex.Log(severity: Severity.Warning);
-				// If Redis fails, still return the generated value
-				return await factory();
-			}
+
+			// Create the value
+			value = await factory();
+
+			// Cache it (write to master)
+			await SetAsync(key, value, expiration);
+
+			return value;
 		}
 
 		/// <inheritdoc/>
