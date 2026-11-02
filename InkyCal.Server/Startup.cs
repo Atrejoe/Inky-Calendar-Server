@@ -37,6 +37,60 @@ namespace InkyCal.Server
 
 		public static readonly string Intro = @"A web API for <a href=""https://github.com/aceisace/Inky-Calendar"" target=""github"">InkyCal</a>, allows to offload panel-generating complexity to an easier to maintain web service.";
 
+		private static (Utils.Caching.IImageCacheService, Utils.Caching.IStringCacheService) CreateCacheServices()
+		{
+			if (Config.Config.CacheType == Config.CacheType.Redis)
+			{
+				var redisConnectionString = Config.Config.RedisCacheConnectionString;
+				if (!string.IsNullOrWhiteSpace(redisConnectionString))
+				{
+					var redis = ConnectRedis(redisConnectionString);
+					return (new Utils.Caching.RedisCacheService(redis), new Utils.Caching.RedisStringCacheService(redis));
+				}
+
+				Console.WriteLine("Redis cache type selected but no connection string provided. Falling back to memory cache.");
+			}
+			else
+				Console.WriteLine($"Using in-memory cache with size limit: {Config.Config.MemoryCacheSizeLimit:n0} bytes");
+
+			return (new Utils.Caching.MemoryCacheService(Config.Config.MemoryCacheSizeLimit), new Utils.Caching.MemoryStringCacheService());
+		}
+
+		private static StackExchange.Redis.ConnectionMultiplexer ConnectRedis(string redisConnectionString)
+		{
+			Console.WriteLine($"Using Redis cache with connection string: {redisConnectionString.Split(',')[0]}...");
+
+			// Configure Redis connection options for master-replica read/write splitting
+			var configOptions = StackExchange.Redis.ConfigurationOptions.Parse(redisConnectionString);
+
+			// For read/write splitting, we need to configure endpoints properly
+			// The connection string should contain: redis-master:6379,redis-headless:6379
+			// This allows writes to go to master and reads to be distributed
+
+			// Configure connection behavior
+			configOptions.AllowAdmin = false; // Don't allow admin commands
+			configOptions.AbortOnConnectFail = false; // Don't fail immediately if connection fails
+
+			// Enable read-from-replica preference for GET operations
+			// Note: Writes (SET, lock operations) will always go to master
+			configOptions.CommandMap = StackExchange.Redis.CommandMap.Default;
+
+			Console.WriteLine($"Redis endpoints configured:");
+			foreach (var endpoint in configOptions.EndPoints)
+			{
+				Console.WriteLine($"  - {endpoint}");
+			}
+
+			var redis = StackExchange.Redis.ConnectionMultiplexer.Connect(configOptions);
+
+			// Log connection info
+			Console.WriteLine($"Redis connection established:");
+			Console.WriteLine($"  - Master: {redis.GetEndPoints()[0]}");
+			Console.WriteLine($"  - Total endpoints: {redis.GetEndPoints().Length}");
+
+			return redis;
+		}
+
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public static void ConfigureServices(IServiceCollection services)
 		{
@@ -52,61 +106,7 @@ namespace InkyCal.Server
 				.AddCheck<HealthChecks.CacheHealthCheck>("Cache", failureStatus: HealthStatus.Degraded, tags: new[] { "cache" });
 			
 			// Register cache service based on configuration
-			var cacheType = Config.Config.CacheType;
-			Utils.Caching.IImageCacheService imageCacheService;
-			Utils.Caching.IStringCacheService stringCacheService;
-			
-			if (cacheType == Config.CacheType.Redis)
-			{
-				var redisConnectionString = Config.Config.RedisCacheConnectionString;
-				if (string.IsNullOrWhiteSpace(redisConnectionString))
-				{
-					Console.WriteLine("Redis cache type selected but no connection string provided. Falling back to memory cache.");
-					imageCacheService = new Utils.Caching.MemoryCacheService(Config.Config.MemoryCacheSizeLimit);
-					stringCacheService = new Utils.Caching.MemoryStringCacheService();
-				}
-				else
-				{
-					Console.WriteLine($"Using Redis cache with connection string: {redisConnectionString.Split(',')[0]}...");
-					
-					// Configure Redis connection options for master-replica read/write splitting
-					var configOptions = StackExchange.Redis.ConfigurationOptions.Parse(redisConnectionString);
-					
-					// For read/write splitting, we need to configure endpoints properly
-					// The connection string should contain: redis-master:6379,redis-headless:6379
-					// This allows writes to go to master and reads to be distributed
-					
-					// Configure connection behavior
-					configOptions.AllowAdmin = false; // Don't allow admin commands
-					configOptions.AbortOnConnectFail = false; // Don't fail immediately if connection fails
-					
-					// Enable read-from-replica preference for GET operations
-					// Note: Writes (SET, lock operations) will always go to master
-					configOptions.CommandMap = StackExchange.Redis.CommandMap.Default;
-					
-					Console.WriteLine($"Redis endpoints configured:");
-					foreach (var endpoint in configOptions.EndPoints)
-					{
-						Console.WriteLine($"  - {endpoint}");
-					}
-					
-					var redis = StackExchange.Redis.ConnectionMultiplexer.Connect(configOptions);
-					
-					// Log connection info
-					Console.WriteLine($"Redis connection established:");
-					Console.WriteLine($"  - Master: {redis.GetEndPoints()[0]}");
-					Console.WriteLine($"  - Total endpoints: {redis.GetEndPoints().Length}");
-					
-					imageCacheService = new Utils.Caching.RedisCacheService(redis);
-					stringCacheService = new Utils.Caching.RedisStringCacheService(redis);
-				}
-			}
-			else
-			{
-				Console.WriteLine($"Using in-memory cache with size limit: {Config.Config.MemoryCacheSizeLimit:n0} bytes");
-				imageCacheService = new Utils.Caching.MemoryCacheService(Config.Config.MemoryCacheSizeLimit);
-				stringCacheService = new Utils.Caching.MemoryStringCacheService();
-			}
+			var (imageCacheService, stringCacheService) = CreateCacheServices();
 
 			// Register as singletons
 			services.AddSingleton(imageCacheService);
