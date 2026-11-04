@@ -225,19 +225,19 @@
       },
       "Google.Apis": {
         "type": "Transitive",
-        "resolved": "1.77.0",
-        "contentHash": "zj7MKdZz7lWRM7z2meqh5S9KSf83c1xY8Fa+b1KzYxw9xMugUxcQtwPoxJgFzxKJgLE64dAra0ze++P/Up4k6Q==",
+        "resolved": "1.78.0",
+        "contentHash": "pKMYqVircLwkdWwTIkNlwJ8FlUNuG9ZqkmnyJ03vJ51j/Ph59+C/Cp4XWLj0NeeTH6LmLaScweJ3kw+kjZ+clg==",
         "dependencies": {
-          "Google.Apis.Core": "1.77.0"
+          "Google.Apis.Core": "1.78.0"
         }
       },
       "Google.Apis.Auth": {
         "type": "Transitive",
-        "resolved": "1.77.0",
-        "contentHash": "lcgXlzM+JkX0nKKc7KBwTdiei2IbV20PuTe3cVQ2zOhq0j4IiS9I4xlRQY4igdCMLlmobthz5xtHiPr/wxl0Ew==",
+        "resolved": "1.78.0",
+        "contentHash": "C+Jzd1tTqZ3/2wVi5Tlkcvqt/+o67/JHvXSZCy89CfhSRwL5bm1HsKbk1KM0sBKGc/RKC8Pr/FsG6n6OZO/MFA==",
         "dependencies": {
-          "Google.Apis": "1.77.0",
-          "Google.Apis.Core": "1.77.0",
+          "Google.Apis": "1.78.0",
+          "Google.Apis.Core": "1.78.0",
           "System.Management": "7.0.2"
         }
       },
@@ -252,19 +252,19 @@
       },
       "Google.Apis.Core": {
         "type": "Transitive",
-        "resolved": "1.77.0",
-        "contentHash": "7Yj4dpbOLFbxct6x5AFHQEZ25E8/f+5zqW39Q8f/GZknLyuS+uhnt2DIcKQplBNJTK9WNXompbYLWsPRhO6Nmg==",
+        "resolved": "1.78.0",
+        "contentHash": "rkiq62czYwim6XtS4GEI80zQMOHZbB8UqP3oeFcjvj8x5bUmdWagcT7oHQeQhMR1eq9tbmpvYvNy490iDvk6bQ==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.4"
         }
       },
       "Google.Apis.Oauth2.v2": {
         "type": "Transitive",
-        "resolved": "1.74.0.1869",
-        "contentHash": "x8y/LDskJtCOupP9LXI0yOce4JFzk7P3f9TiCSseFik9MP9xe1Z12pOgtg9viTBzVjGYIbwXcT/z2DV4R91bYQ==",
+        "resolved": "1.78.0.1869",
+        "contentHash": "50/aOrwxozQ3wfqOdrlR/An7w0f2rSrEbNFVMN4WyABQ701hj9hlMqt01qcDgcBDjF4G/gwyf7iBEPcDwg+mZg==",
         "dependencies": {
-          "Google.Apis": "1.74.0",
-          "Google.Apis.Auth": "1.74.0"
+          "Google.Apis": "1.78.0",
+          "Google.Apis.Auth": "1.78.0"
         }
       },
       "Humanizer.Core": {
@@ -1187,7 +1187,7 @@
         "dependencies": {
           "Bugsnag": "[4.1.1, )",
           "Google.Apis.Calendar.v3": "[1.77.0.4285, )",
-          "Google.Apis.Oauth2.v2": "[1.74.0.1869, )",
+          "Google.Apis.Oauth2.v2": "[1.78.0.1869, )",
           "Ical.Net": "[5.2.4, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",
