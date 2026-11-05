@@ -109,6 +109,12 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
+        - name: OpenAIImageModel
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: OpenAIImageModel
+              optional: true # Defaults to gpt-image-2
         image: atreyu/inkycal.server:latest
         imagePullPolicy: Always
         name: web
