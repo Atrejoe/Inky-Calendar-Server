@@ -22,7 +22,7 @@ namespace InkyCal.Server.Controllers
 	/// <seealso cref="ControllerBase" />
 	[Route("panel")]
 	[ApiController]
-	public class PanelController(IOpenAIService openAIService) : ControllerBase
+	public class PanelController(IImageGenerationService openAIService) : ControllerBase
 	{
 		/// <summary>
 		/// Returns a demo image, mapped for <paramref name="model"/>.

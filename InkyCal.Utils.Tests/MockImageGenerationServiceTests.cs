@@ -8,9 +8,9 @@ using Xunit.Abstractions;
 
 namespace InkyCal.Utils.Tests
 {
-	public class MockOpenAIServiceTests(ITestOutputHelper output)
+	public class MockImageGenerationServiceTests(ITestOutputHelper output)
 	{
-		private readonly MockOpenAIService _sut = new();
+		private readonly MockImageGenerationService _sut = new();
 
 		[Fact]
 		public void IsAvailable_ReturnsTrue()

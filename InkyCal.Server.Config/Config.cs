@@ -27,7 +27,14 @@ namespace InkyCal.Server.Config
 		public static string BugSnagAPIKey => configuration.Value.GetValue(nameof(BugSnagAPIKey), string.Empty);
 		public static bool TraceQueries => configuration.Value.GetValue(nameof(TraceQueries), false);
 
+		/// <summary>
+		/// The image generation provider used for AI-image calendar panels, e.g. <c>OpenAI</c> (default) or <c>Mock</c>.
+		/// </summary>
+		public static string ImageGenerationProvider => configuration.Value.GetValue(nameof(ImageGenerationProvider), "OpenAI");
+
 		public static string OpenAIAPIKey => configuration.Value.GetValue(nameof(OpenAIAPIKey), string.Empty);
+		/// <summary>The OpenAI image model, e.g. <c>gpt-image-2</c>. Empty uses the default of the OpenAI image generation service.</summary>
+		public static string OpenAIImageModel => configuration.Value.GetValue(nameof(OpenAIImageModel), string.Empty);
 		public static string OpenWeatherAPIKey => configuration.Value.GetValue(nameof(OpenWeatherAPIKey), string.Empty);
 
 	}

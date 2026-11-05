@@ -14,10 +14,10 @@ using static InkyCal.Utils.FontHelper;
 namespace InkyCal.Utils
 {
 	/// <summary>
-	/// An <see cref="IOpenAIService"/> that returns deterministic placeholder results without making
-	/// any network calls. Registered automatically when no OpenAI API key is configured; also used in unit tests.
+	/// An <see cref="IImageGenerationService"/> that returns deterministic placeholder results without making
+	/// any network calls. Registered automatically when no image generation provider is configured; also used in unit tests.
 	/// </summary>
-	public sealed class MockOpenAIService : IOpenAIService
+	public sealed class MockImageGenerationService : IImageGenerationService
 	{
 		/// <inheritdoc/>
 		public bool IsAvailable => true;
@@ -32,7 +32,7 @@ namespace InkyCal.Utils
 
 		/// <inheritdoc/>
 		public Task<string> GetChatCompletionAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken)
-			=> Task.FromResult("A beautiful 19th century lithograph (mock — no API key configured)");
+			=> Task.FromResult("A beautiful 19th century lithograph (mock — no image generation provider configured)");
 
 		/// <inheritdoc/>
 		public async Task<Stream> GenerateImageAsync(string prompt, CancellationToken cancellationToken)
@@ -48,8 +48,8 @@ namespace InkyCal.Utils
 			var subtitleFont = NotoSans.CreateFont(20);
 			var promptFont = NotoSans.CreateFont(14);
 
-			const string titleText = "Mock OpenAI Service";
-			const string subtitleText = "No OpenAI API key configured — placeholder image";
+			const string titleText = "Mock image generation service";
+			const string subtitleText = "No image generation provider configured — placeholder image";
 			var promptText = string.IsNullOrEmpty(prompt) ? "(no prompt)" : $"Prompt:\n{prompt}";
 
 			// Pass 1: measure at y=0 to compute total block height for vertical centering.

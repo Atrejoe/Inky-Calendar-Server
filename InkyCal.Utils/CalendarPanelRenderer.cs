@@ -75,14 +75,14 @@ namespace InkyCal.Utils
 	public class CalendarPanelRenderer : IPanelRenderer
 	{
 		private readonly SubscribedGoogleCalender[] Calendars;
-		private readonly IOpenAIService _openAIService;
+		private readonly IImageGenerationService _openAIService;
 
 		/// <param name="saveToken"></param>
-		/// <param name="openAIService">OpenAI service used for AI-image draw mode.</param>
-		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IOpenAIService openAIService)
+		/// <param name="openAIService">Image generation service used for AI-image draw mode.</param>
+		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IImageGenerationService openAIService)
 		{
 			SaveToken = saveToken;
-			_openAIService = openAIService ?? new OpenAIService(Server.Config.Config.OpenAIAPIKey);
+			_openAIService = openAIService ?? ImageGenerationServiceFactory.Default;
 		}
 
 		/// <summary>
@@ -91,8 +91,8 @@ namespace InkyCal.Utils
 		/// <param name="saveToken"></param>
 		/// <param name="iCalUrl"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		/// <param name="openAIService">OpenAI service used for AI-image draw mode; defaults to the configured <see cref="OpenAIService"/>.</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List, IOpenAIService openAIService = null) : this(saveToken, [iCalUrl], [], drawMode, openAIService)
+		/// <param name="openAIService">Image generation service used for AI-image draw mode; defaults to <see cref="ImageGenerationServiceFactory.Default"/>.</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri iCalUrl, CalenderDrawMode drawMode = CalenderDrawMode.List, IImageGenerationService openAIService = null) : this(saveToken, [iCalUrl], [], drawMode, openAIService)
 			=> ArgumentNullException.ThrowIfNull(iCalUrl);
 
 		/// <summary>
@@ -102,8 +102,8 @@ namespace InkyCal.Utils
 		/// <param name="iCalUrls"></param>
 		/// <param name="calendars"></param>
 		/// <param name="drawMode">Indicates how the image should be drawn</param>
-		/// <param name="openAIService">OpenAI service used for AI-image draw mode; defaults to the configured <see cref="OpenAIService"/>.</param>
-		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode, IOpenAIService openAIService = null) : this(saveToken, openAIService)
+		/// <param name="openAIService">Image generation service used for AI-image draw mode; defaults to <see cref="ImageGenerationServiceFactory.Default"/>.</param>
+		public CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, Uri[] iCalUrls, SubscribedGoogleCalender[] calendars, CalenderDrawMode drawMode, IImageGenerationService openAIService = null) : this(saveToken, openAIService)
 		{
 			ICalUrls = new ReadOnlyCollection<Uri>(iCalUrls);
 
@@ -119,7 +119,7 @@ namespace InkyCal.Utils
 			Calendars = calendars?.ToArray();
 			DrawMode = _openAIService.IsAvailable
 						? drawMode
-						: CalenderDrawMode.List; //OpenAI has not been configured
+						: CalenderDrawMode.List; //Image generation has not been configured
 		}
 
 		/// <summary>
@@ -403,7 +403,7 @@ namespace InkyCal.Utils
 			Color[] colors,
 			List<Event> events,
 			IPanelRenderer.Log log,
-			IOpenAIService openAIService,
+			IImageGenerationService openAIService,
 			CancellationToken token = default)
 		{
 			colors ??= [Color.Black, Color.White];

@@ -21,7 +21,7 @@ namespace InkyCal.Utils
 	/// <remarks>
 	/// 
 	/// </remarks>
-	public class PanelRenderHelper(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IOpenAIService openAIService = null)
+	public class PanelRenderHelper(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IImageGenerationService openAIService = null)
 	{
 
 		/// <summary>
