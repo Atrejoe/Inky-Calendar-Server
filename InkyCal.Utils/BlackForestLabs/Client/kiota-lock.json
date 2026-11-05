@@ -1,0 +1,42 @@
+{
+  "descriptionHash": "9C1FCE9175155A82224E8863F751F3C4A5222892EC44A1106FBD67F16F843A5F8AF93D5CC9CAF0CEEE1F296B92228E57C3A9E564D7319D9DBDC5AC9E9C26128D",
+  "descriptionLocation": "../openapi.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.38.0",
+  "clientClassName": "BflApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "InkyCal.Utils.BlackForestLabs.Client",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/v1/flux-2-klein-4b",
+    "/v1/flux-2-klein-9b",
+    "/v1/flux-2-pro",
+    "/v1/flux-2-flex",
+    "/v1/flux-2-max",
+    "/v1/get_result"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": [],
+  "allowedExternalOrigins": []
+}

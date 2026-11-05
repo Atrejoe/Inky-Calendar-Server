@@ -33,9 +33,38 @@ namespace InkyCal.Utils
 			return (string.IsNullOrWhiteSpace(provider) ? "OpenAI" : provider.Trim()).ToUpperInvariant() switch
 			{
 				"OPENAI" => new OpenAIService(Server.Config.Config.OpenAIAPIKey, Server.Config.Config.OpenAIImageModel),
+				"BLACKFORESTLABS" or "BFL" or "FLUX" => CreateBlackForestLabs(),
 				"MOCK" => new MockImageGenerationService(),
 				_ => throw new NotSupportedException($"Unknown image generation provider '{provider}'."),
 			};
+		}
+
+		private static BlackForestLabsImageService CreateBlackForestLabs()
+		{
+			var promptProvider = Server.Config.Config.BlackForestLabsPromptProvider;
+			var size = ParseSize(Server.Config.Config.BlackForestLabsImageSize);
+			return new BlackForestLabsImageService(
+				Server.Config.Config.BlackForestLabsAPIKey,
+				Server.Config.Config.BlackForestLabsModel,
+				size?.Width,
+				size?.Height,
+				promptService: string.IsNullOrWhiteSpace(promptProvider) || promptProvider.Trim().ToUpperInvariant() is "BLACKFORESTLABS" or "BFL" or "FLUX" or "NONE"
+					? null
+					: Create(promptProvider));
+		}
+
+		/// <summary>
+		/// Parses a size like <c>1024x768</c>, returns <c>null</c> for empty or invalid input.
+		/// </summary>
+		internal static (int Width, int Height)? ParseSize(string size)
+		{
+			var parts = (size ?? string.Empty).Split('x', 'X', '×');
+			return parts.Length == 2
+				&& int.TryParse(parts[0], System.Globalization.CultureInfo.InvariantCulture, out var width)
+				&& int.TryParse(parts[1], System.Globalization.CultureInfo.InvariantCulture, out var height)
+				&& width > 0 && height > 0
+				? (width, height)
+				: null;
 		}
 	}
 }

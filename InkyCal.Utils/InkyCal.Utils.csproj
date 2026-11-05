@@ -38,6 +38,7 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
 	<PackageReference Include="MiniProfiler.Shared" Version="4.5.4" />
 	<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.14" />
 	<PackageReference Include="OpenAI-DotNet" Version="8.8.8" />

@@ -79,6 +79,7 @@ namespace InkyCal.Utils.Tests
 		[InlineData("mock", typeof(MockImageGenerationService))]
 		[InlineData("Mock", typeof(MockImageGenerationService))]
 		[InlineData("OpenAI", typeof(OpenAIService))]
+		[InlineData("BlackForestLabs", typeof(BlackForestLabsImageService))]
 		[InlineData("", typeof(OpenAIService))]
 		[InlineData(null, typeof(OpenAIService))]
 		public void Factory_CreatesConfiguredProvider(string provider, Type expected)
