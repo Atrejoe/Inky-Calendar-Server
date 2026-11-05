@@ -1,0 +1,24 @@
+# Optional: generate calendar images locally (no API costs) with LocalAI, an OpenAI-compatible server.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.localai.yml up
+#
+# The "all-in-one" image downloads a small text model (served as "gpt-4") and a Stable Diffusion
+# model (served as "stablediffusion") on first start. CPU generation takes minutes per image, which is
+# acceptable because panels are cached; use a GPU image (e.g. latest-aio-gpu-nvidia-cuda-12) for speed,
+# or install a FLUX model from the LocalAI gallery and set OpenAICompatibleImageModel accordingly.
+services:
+  web:
+    environment:
+      - ImageGenerationProvider=OpenAICompatible
+      - OpenAICompatibleEndpoint=http://localai:8080/v1
+      - OpenAICompatibleImageModel=stablediffusion
+      - OpenAICompatibleChatModel=gpt-4
+      - OpenAICompatibleImageSize=512x512
+      - OpenAICompatibleRequestBase64=true
+    depends_on:
+      - localai
+  localai:
+    image: localai/localai:latest-aio-cpu
+    volumes:
+      - ./localai-models:/models
+    restart: always
