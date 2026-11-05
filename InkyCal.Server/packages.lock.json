@@ -267,6 +267,16 @@
           "Google.Apis.Auth": "1.78.0"
         }
       },
+      "Google.GenAI": {
+        "type": "Transitive",
+        "resolved": "1.28.0",
+        "contentHash": "C7WPxdvdALpADeGpvhTotNGBOBxcuBYYaALTULYKPV1EUv9+nj3LMuK/Td7g9AyfMqj4pNomY0lbdee+RyjPaQ==",
+        "dependencies": {
+          "Google.Apis.Auth": "1.69.0",
+          "Microsoft.Extensions.AI.Abstractions": "10.6.0",
+          "MimeTypes": "2.5.2"
+        }
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "3.0.10",
@@ -849,6 +859,11 @@
           "Microsoft.EntityFrameworkCore.Relational": "10.0.14"
         }
       },
+      "Microsoft.Extensions.AI.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.6.0",
+        "contentHash": "JCkVoyqBqi9r3Vs5Qo5PfZobT0+CWeOx+9y9yggBxtW9s/X5CAoa7Iw/tP/rfUdz+nxRKMSBmrytYgwmu60lgA=="
+      },
       "Microsoft.Extensions.ApiDescription.Server": {
         "type": "Transitive",
         "resolved": "10.0.0",
@@ -960,6 +975,11 @@
         "type": "Transitive",
         "resolved": "1.0.52",
         "contentHash": "oNv2JtYXhpdJrX63nibx1JT3uCESOBQ1LAk7Dtz/sr0+laW0KRM6eKp4CZ3MHDR2siIkKsY8MmUkeP5DKkQQ5w=="
+      },
+      "MimeTypes": {
+        "type": "Transitive",
+        "resolved": "2.5.2",
+        "contentHash": "vm4xrNt+i6OVRQ8vhfCcmDIUg3qvjyCTkSTNVTDFohsG6CXEpMaVFkidECL6yRYpHDnz4TqXhDoEQAcnHCu/tw=="
       },
       "MiniProfiler.AspNetCore": {
         "type": "Transitive",
@@ -1188,6 +1208,7 @@
           "Bugsnag": "[4.1.1, )",
           "Google.Apis.Calendar.v3": "[1.78.0.4285, )",
           "Google.Apis.Oauth2.v2": "[1.78.0.1869, )",
+          "Google.GenAI": "[1.28.0, )",
           "Ical.Net": "[5.2.4, )",
           "InkyCal.Models": "[1.0.0, )",
           "InkyCal.Server.Config": "[1.0.0, )",

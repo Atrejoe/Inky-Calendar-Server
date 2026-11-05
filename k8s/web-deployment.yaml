@@ -109,6 +109,12 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
+        - name: GeminiAPIKey
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: gemini-api-key
+              optional: true
         image: atreyu/inkycal.server:latest
         imagePullPolicy: Always
         name: web

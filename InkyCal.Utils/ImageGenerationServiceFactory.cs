@@ -33,6 +33,11 @@ namespace InkyCal.Utils
 			return (string.IsNullOrWhiteSpace(provider) ? "OpenAI" : provider.Trim()).ToUpperInvariant() switch
 			{
 				"OPENAI" => new OpenAIService(Server.Config.Config.OpenAIAPIKey, Server.Config.Config.OpenAIImageModel),
+				"GEMINI" or "GOOGLE" => new GoogleGeminiImageService(
+					Server.Config.Config.GeminiAPIKey,
+					Server.Config.Config.GeminiImageModel,
+					Server.Config.Config.GeminiChatModel,
+					Server.Config.Config.GeminiAspectRatio),
 				"MOCK" => new MockImageGenerationService(),
 				_ => throw new NotSupportedException($"Unknown image generation provider '{provider}'."),
 			};
