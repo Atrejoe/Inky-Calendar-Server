@@ -55,15 +55,28 @@ jobs:
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v7
+      if: success() || failure()    # also keep the test results when tests fail
       with:
         name: testresults
         path: '**/*.trx'
         retention-days: 1
 
     - name: Test Report
+      id: test-report
       uses: dorny/test-reporter@v3
       if: success() || failure()    # run this step even if previous step failed
       with:
           name: Dotnet testresult # Name of the check run which will be created
           path: '**/*.trx'        # All test results
           reporter: dotnet-trx    # Format of test results
+          list-suites: failed     # Only list failing suites and tests, so failures aren't buried among passing tests
+          list-tests: failed
+          collapsed: never
+          max-annotations: 50     # Annotate each failure (up to the max) on the run and the source line
+
+    - name: Link test report on failure
+      if: failure() && steps.test-report.outputs.url_html != ''
+      run: |
+        echo "::error title=Tests failed::${{ steps.test-report.outputs.failed }} test(s) failed. Report: ${{ steps.test-report.outputs.url_html }}"
+        echo "Test report: ${{ steps.test-report.outputs.url_html }}"
+
