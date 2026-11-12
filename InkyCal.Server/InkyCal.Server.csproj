@@ -28,13 +28,13 @@
 	<PackageReference Include="Humanizer" Version="3.0.10" />
 	<PackageReference Include="Magick.NET.Core" Version="15.0.0" />
 	<PackageReference Include="Markdig.Signed" Version="1.6.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.14" />
-	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
-	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.403">
+	<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="11.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="11.0.0" />
+	<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
@@ -47,8 +47,8 @@
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="11.0.1" />
-	<PackageReference Include="System.Runtime.Caching" Version="10.0.14" />
-	<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
+	<PackageReference Include="System.Runtime.Caching" Version="11.0.0" />
+	<PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
