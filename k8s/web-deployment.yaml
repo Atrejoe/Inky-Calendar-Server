@@ -3,8 +3,14 @@ kind: Deployment
 metadata:
   name: web
   namespace: inkycal
+  annotations:
+    keel.sh/approvals: '1'
+    keel.sh/match-tag: 'true'
+    keel.sh/policy: force
+    keel.sh/pollSchedule: '@every 1m'
+    keel.sh/trigger: poll
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: inkycal
@@ -49,6 +55,24 @@ spec:
               key: db-password
         - name: "ConnectionStrings__DefaultConnection"
           value: "Server=$(DB_Server);Database=$(DB_Database);User=$(DB_User);Password=$(DB_Password);MultipleActiveResultSets=true;Connect Timeout=10;Encrypt=False;"
+        - name: "Cache:Type"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: Cache__Type
+              optional: true
+        - name: "Cache:Memory:SizeLimit"
+          valueFrom:
+            configMapKeyRef:
+              name: inkycal-config
+              key: Cache__Memory__SizeLimit
+              optional: true
+        - name: "Cache:Redis:ConnectionString"
+          valueFrom:
+            secretKeyRef:
+              name: inkycal-secrets
+              key: redis-connection-string
+              optional: true
         - name: BugSnagAPIKey
           valueFrom:
             secretKeyRef:
@@ -109,7 +133,7 @@ spec:
             secretKeyRef:
               name: inkycal-secrets
               key: openai-api-key
-        image: atreyu/inkycal.server:latest
+        image: docker.io/atreyu/inkycal.server:redis
         imagePullPolicy: Always
         name: web
         ports:
@@ -126,8 +150,8 @@ spec:
           runAsUser: 1000
         resources:
           limits:
-            cpu: "2"
-            memory: "4Gi"
+            cpu: "4"
+            memory: "6Gi"
           requests:
             memory: "512Mi"
             # Panel rendering (drawing, quantizing, GIF encoding) is CPU-bound and sub-panels render in parallel:

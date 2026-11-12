@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: inkycal
+  labels:
+    app: inkycal
+    component: redis
+spec:
+  serviceName: redis-headless
+  replicas: 3 # High availability with 3 replicas
+  selector:
+    matchLabels:
+      app: inkycal
+      component: redis
+  template:
+    metadata:
+      labels:
+        app: inkycal
+        component: redis
+    spec:
+      automountServiceAccountToken: false # Redis does not use the Kubernetes API
+      containers:
+      - name: redis
+        image: redis:8-alpine
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+          name: redis
+        command:
+        - redis-server
+        - /usr/local/etc/redis/redis.conf
+        - --replica-announce-ip
+        - $(POD_IP)
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                # Wait for Redis to be ready
+                until redis-cli ping > /dev/null 2>&1; do
+                  sleep 1
+                done
+                
+                # Get pod ordinal from pod name (e.g., redis-1 -> 1)
+                ORDINAL=$(echo $POD_NAME | awk -F'-' '{print $NF}')
+                
+                # If not redis-0, configure as replica of redis-0
+                if [ "$ORDINAL" != "0" ]; then
+                  redis-cli REPLICAOF redis-0.redis-headless.inkycal.svc.cluster.local 6379
+                fi
+        resources:
+          limits:
+            cpu: "1"
+            memory: "768Mi"
+            ephemeral-storage: "256Mi" # Data is on the persistent volume, this covers logs and the container layer
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+            ephemeral-storage: "64Mi"
+        volumeMounts:
+        - name: redis-config
+          mountPath: /usr/local/etc/redis
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 999
+      volumes:
+      - name: redis-config
+        configMap:
+          name: redis-config
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+      labels:
+        app: inkycal
+        component: redis
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+      storageClassName: "nfs-readwriteonce"
