@@ -1,11 +1,18 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using ImageMagick;
 using InkyCal.Models;
+using InkyCal.Utils.Caching;
+using InkyCal.Utils.Caching.Serialization;
 using Microsoft.Extensions.Caching.Memory;
 using Sentry;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
 using StackExchange.Profiling;
 
@@ -13,7 +20,7 @@ namespace InkyCal.Utils
 {
 
 	/// <summary>
-	/// 
+	/// Image settings for cache key generation
 	/// </summary>
 	/// <remarks>
 	/// Initializes a new instance of the <see cref="ImageSettings"/> class.
@@ -46,6 +53,7 @@ namespace InkyCal.Utils
 		/// <value>
 		/// The colors.
 		/// </value>
+		[JsonConverter(typeof(ColorJsonSerializer))]
 		public Color[] Colors { get; } = colors ?? throw new ArgumentNullException(nameof(colors));
 
 		/// <summary>
@@ -125,16 +133,27 @@ namespace InkyCal.Utils
 	/// </summary>
 	public static class IPanelRendererExtensions
 	{
-		private static readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions()
+		private static IImageCacheService _cache;
+
+		/// <summary>
+		/// Sets the cache service to use. Must be called before using GetCachedImage.
+		/// </summary>
+		/// <param name="cacheService">The cache service to use.</param>
+		public static void SetCacheService(IImageCacheService cacheService)
 		{
-			SizeLimit = 1024 * 1024 * 500,
-		});
+			_cache = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+		}
 
 		/// <summary>
 		/// Returns the number of cached images
 		/// </summary>
 		/// <returns></returns>
-		public static int CacheEntries() => _cache.Count;
+		public static int CacheEntries() => _cache?.Count() ?? -1;
+
+		private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+		{
+			WriteIndented = true
+		};
 
 		/// <summary>
 		/// Gets the cached image.
@@ -147,73 +166,53 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
-
-			//var cachekey = new ImageCacheKey(
-			//						panelCacheKey: renderer.CacheKey,
-			//						imageSettings: new ImageSettings(width, height, colors));
-
-			using (MiniProfiler.Current.Step($"Loading image from cache"))
+			if (_cache == null)
 			{
+				// Fallback to in-memory cache if not initialized
+				_cache = new MemoryCacheService();
+			}
 
-				byte[] result;
-				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
-				//{
-				// Key not in cache, so get data.
-				using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-				{
-					var span = SentrySdk.GetSpan()?.StartChild("panel.render", $"{renderer.GetType().Name} ({width}x{height}, {colors.Length} colors)");
-					try
+			// Create cache key as string
+			var imageCacheKey = new ImageCacheKey(
+				panelCacheKey: renderer.CacheKey,
+				imageSettings: new ImageSettings(width, height, colors));
+			
+
+			using (PerformanceMonitor.Span($"Loading image from cache"))
+			{
+				PerformanceMonitor.Trace($"Image cache key: {JsonSerializer.Serialize(imageCacheKey, options: _jsonOptions)}");
+
+				var result = await _cache.GetOrCreateAsync(
+					key: imageCacheKey,
+					factory: async () =>
 					{
-						using var image = await renderer.GetImage(width, height, colors, log);
+						// Key not in cache, so get data.
+						using (PerformanceMonitor.Span($"Image not in cache, generating"))
+						{
+							var span = SentrySdk.GetSpan()?.StartChild("panel.render", $"{renderer.GetType().Name} ({width}x{height}, {colors.Length} colors)");
+							try
+							{
+								using var image = await renderer.GetImage(width, height, colors, log);
 
-						var encodeSpan = span?.StartChild("panel.encode", "gif");
-						using var stream = new MemoryStream();
-						await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
-						result = stream.ToArray();
-						encodeSpan?.Finish(SpanStatus.Ok);
+								var encodeSpan = span?.StartChild("panel.encode", "gif");
+								using var stream = new MemoryStream();
+								await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are changed during saving as gif :|
+								var generatedResult = stream.ToArray();
+								encodeSpan?.Finish(SpanStatus.Ok);
 
-						span?.Finish(SpanStatus.Ok);
-					}
-					catch (Exception ex)
-					{
-						span?.Finish(ex);
-						throw;
-					}
-				}
+								span?.Finish(SpanStatus.Ok);
+								return generatedResult;
+							}
+							catch (Exception ex)
+							{
+								span?.Finish(ex);
+								throw;
+							}
+						}
+					},
+					expiration: imageCacheKey.PanelCacheKey.Expiration
+				);
 
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//	{
-				//		entry.SetSize(result.Length);
-				//		entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-				//	}
-
-				//	return result;
-				//});
-
-				//if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
-				//{
-				//	// Key not in cache, so get data.
-				//	using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-				//	{
-
-				//		var image = await renderer.GetImage(width, height, colors, log);
-				//		using var stream = new MemoryStream();
-				//		image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
-				//		result = stream.ToArray();
-
-				//	}
-
-				//	var cacheEntryOptions = new MemoryCacheEntryOptions()
-				//		.SetSize(result.Length)
-				//		// Remove from cache after this time, regardless of sliding expiration
-				//		.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//		_cache.Set(cachekey, result, cacheEntryOptions);
-
-				//}
 				return result;
 			}
 		}

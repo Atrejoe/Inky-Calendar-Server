@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using InkyCal.Models;
 using InkyCal.Utils;
-using InkyCal.Utils.NewPaperRenderer;
 using InkyCal.Utils.NewPaperRenderer.FreedomForum.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -386,7 +385,7 @@ namespace InkyCal.Server.Controllers
 		}
 
 		/// <summary>
-		/// Returns the nuber of items in the cahce
+		/// Returns the number of items in the cache
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("Cache")]
