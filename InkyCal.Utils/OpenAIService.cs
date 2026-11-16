@@ -48,7 +48,20 @@ namespace InkyCal.Utils
 		/// Initialises the service with the given API key.
 		/// When <paramref name="apiKey"/> is null or empty <see cref="IsAvailable"/> returns <c>false</c>.
 		/// </summary>
-		public OpenAIService(string apiKey) => _apiKey = apiKey;
+		/// <param name="apiKey">The OpenAI API key.</param>
+		/// <param name="imageModel">The image generation model id, see <see href="https://platform.openai.com/docs/models"/>.</param>
+		public OpenAIService(string apiKey, string imageModel = DefaultImageModel)
+		{
+			_apiKey = apiKey;
+			_imageModel = string.IsNullOrWhiteSpace(imageModel) ? DefaultImageModel : imageModel;
+		}
+
+		/// <summary>
+		/// The image generation model used when none is configured.
+		/// </summary>
+		public const string DefaultImageModel = "gpt-image-2";
+
+		private readonly string _imageModel;
 
 		/// <inheritdoc/>
 		public bool IsAvailable => !string.IsNullOrEmpty(_apiKey);
@@ -91,11 +104,12 @@ namespace InkyCal.Utils
 				}
 
 				using var client = new OpenAIClient(_apiKey);
-				// The API no longer accepts 'response_format' for dall-e-3 ("Unknown parameter: 'response_format'").
-				// gpt-image-1 always returns the image base64-encoded, which also saves downloading it from a url.
+				// OpenAI retires image models (dall-e-3, then gpt-image-1 in October 2026), so the model is configurable (OpenAIImageModel).
+				// The library passes the model id through as-is, newer models need no library update.
+				// GPT image models return the image base64-encoded, which also saves downloading it from a url.
 				// Medium quality: low quality yields noticeably rougher images, high quality is mostly lost when dithering down
 				// to the few colors of an e-ink display. Images are cached for hours, so generation time and cost matter little.
-				var request = new ImageGenerationRequest(prompt, Model.GPT_Image_1, quality: "medium");
+				var request = new ImageGenerationRequest(prompt, new Model(_imageModel, "openai"), quality: "medium");
 
 				ImageResult imageResult;
 				using (MiniProfiler.Current.Step("Generating image"))

@@ -82,7 +82,7 @@ namespace InkyCal.Utils
 		private CalendarPanelRenderer(Func<GoogleOAuthAccess, CancellationToken, Task> saveToken, IOpenAIService openAIService)
 		{
 			SaveToken = saveToken;
-			_openAIService = openAIService ?? new OpenAIService(Server.Config.Config.OpenAIAPIKey);
+			_openAIService = openAIService ?? new OpenAIService(Server.Config.Config.OpenAIAPIKey, Server.Config.Config.OpenAIImageModel);
 		}
 
 		/// <summary>
