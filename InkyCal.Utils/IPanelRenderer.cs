@@ -147,74 +147,59 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		public static async Task<byte[]> GetCachedImage(this IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
 		{
+			ArgumentNullException.ThrowIfNull(renderer);
 
-			//var cachekey = new ImageCacheKey(
-			//						panelCacheKey: renderer.CacheKey,
-			//						imageSettings: new ImageSettings(width, height, colors));
+			var cacheKey = new ImageCacheKey(
+									panelCacheKey: renderer.CacheKey,
+									imageSettings: new ImageSettings(width, height, colors));
 
 			using (MiniProfiler.Current.Step($"Loading image from cache"))
 			{
-
-				byte[] result;
-				//await _cache.GetOrCreateAsync(cachekey, async (entry) =>
-				//{
-				// Key not in cache, so get data.
-				using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+				// Cache the (lazy) rendering task rather than its result, so concurrent requests for the same image
+				// share a single rendering (expensive for AI-generated images), without holding a lock while rendering.
+				var rendering = _cache.GetOrCreate(cacheKey, entry =>
 				{
-					var span = SentrySdk.GetSpan()?.StartChild("panel.render", $"{renderer.GetType().Name} ({width}x{height}, {colors.Length} colors)");
-					try
-					{
-						using var image = await renderer.GetImage(width, height, colors, log);
+					entry.SetSize((long)width * height); // Estimate, an image takes less than a byte per pixel as GIF
+					entry.SetAbsoluteExpiration(cacheKey.PanelCacheKey.Expiration);
+					return new Lazy<Task<byte[]>>(() => Render(renderer, width, height, colors, log));
+				});
 
-						var encodeSpan = span?.StartChild("panel.encode", "gif");
-						using var stream = new MemoryStream();
-						await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
-						result = stream.ToArray();
-						encodeSpan?.Finish(SpanStatus.Ok);
-
-						span?.Finish(SpanStatus.Ok);
-					}
-					catch (Exception ex)
-					{
-						span?.Finish(ex);
-						throw;
-					}
+				try
+				{
+					return await rendering.Value;
 				}
+				catch
+				{
+					// Do not cache failures
+					if (_cache.TryGetValue(cacheKey, out Lazy<Task<byte[]>> cached) && ReferenceEquals(cached, rendering))
+						_cache.Remove(cacheKey);
+					throw;
+				}
+			}
+		}
 
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//	{
-				//		entry.SetSize(result.Length);
-				//		entry.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-				//	}
+		private static async Task<byte[]> Render(IPanelRenderer renderer, int width, int height, Color[] colors, IPanelRenderer.Log log)
+		{
+			using (MiniProfiler.Current.Step($"Image not in cache, generating"))
+			{
+				var span = SentrySdk.GetSpan()?.StartChild("panel.render", $"{renderer.GetType().Name} ({width}x{height}, {colors.Length} colors)");
+				try
+				{
+					using var image = await renderer.GetImage(width, height, colors, log);
 
-				//	return result;
-				//});
+					var encodeSpan = span?.StartChild("panel.encode", "gif");
+					using var stream = new MemoryStream();
+					await image.SaveAsGifAsync(stream, encoder: new() { Quantizer = new PaletteQuantizer(colors) }); // When quantizer is not specified, colors are chabnged during saving as gif :|
+					encodeSpan?.Finish(SpanStatus.Ok);
 
-				//if (!_cache.TryGetValue(cachekey, out byte[] result))// Look for cache key.
-				//{
-				//	// Key not in cache, so get data.
-				//	using (MiniProfiler.Current.Step($"Image not in cache, generating"))
-				//	{
-
-				//		var image = await renderer.GetImage(width, height, colors, log);
-				//		using var stream = new MemoryStream();
-				//		image.SaveAsGif(stream, new GifEncoder() { ColorTableMode = GifColorTableMode.Global });
-				//		result = stream.ToArray();
-
-				//	}
-
-				//	var cacheEntryOptions = new MemoryCacheEntryOptions()
-				//		.SetSize(result.Length)
-				//		// Remove from cache after this time, regardless of sliding expiration
-				//		.SetAbsoluteExpiration(cachekey.PanelCacheKey.Expiration);
-
-				//	// Save data in cache.
-				//	using (MiniProfiler.Current.Step($"Storing image ({result.Length:n0} bytes) in cache until {DateTime.Now.Add(cachekey.PanelCacheKey.Expiration)}"))
-				//		_cache.Set(cachekey, result, cacheEntryOptions);
-
-				//}
-				return result;
+					span?.Finish(SpanStatus.Ok);
+					return stream.ToArray();
+				}
+				catch (Exception ex)
+				{
+					span?.Finish(ex);
+					throw;
+				}
 			}
 		}
 	}
