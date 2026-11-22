@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using InkyCal.Models;
 
 namespace InkyCal.Utils
 {
 	/// <summary>
-	/// 
+	/// Cache key combining panel and image settings
 	/// </summary>
 	/// <seealso cref="IEquatable{ImageCacheKey}" />
 	/// <remarks>

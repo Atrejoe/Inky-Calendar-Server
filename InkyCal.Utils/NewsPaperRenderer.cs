@@ -19,22 +19,29 @@ namespace InkyCal.Utils
 	/// <param name="newspaperId">The newspaper identifier.</param>
 	public class NewsPaperPanelCacheKey(TimeSpan expiration, string newspaperId) : PanelCacheKey(expiration)
 	{
-		internal readonly string NewspaperId = newspaperId;
+		/// <summary>
+		/// Gets the news paper identifier.
+		/// </summary>
+		/// <value>
+		/// The news paper identifier.
+		/// </value>
+		public string NewsPaperId { get; } = newspaperId;
 
 		/// <summary>
-		/// Included <see cref="NewspaperId"/> in hashcode
+		/// Included <see cref="NewsPaperId"/> in hashcode
 		/// </summary>
 		/// <returns>
 		/// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
 		/// </returns>
-		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), NewspaperId.ToUpperInvariant());
+		public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), NewsPaperId.ToUpperInvariant());
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as NewsPaperPanelCacheKey);
+		public override bool Equals(object obj) 
+			=> Equals(obj as NewsPaperPanelCacheKey);
 
 		/// <summary>
 		/// 
@@ -43,7 +50,7 @@ namespace InkyCal.Utils
 		/// <returns></returns>
 		protected override bool Equals(PanelCacheKey other) => other is NewsPaperPanelCacheKey wpc
 				&& base.Equals(other)
-				&& NewspaperId == wpc.NewspaperId;
+				&& NewsPaperId == wpc.NewsPaperId;
 	}
 
 	/// <summary>
