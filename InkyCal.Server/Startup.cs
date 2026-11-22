@@ -41,7 +41,7 @@ namespace InkyCal.Server
 		public static void ConfigureServices(IServiceCollection services)
 		{
 			IOpenAIService openAIService = !string.IsNullOrEmpty(Config.Config.OpenAIAPIKey)
-				? new OpenAIService(Config.Config.OpenAIAPIKey)
+				? new OpenAIService(Config.Config.OpenAIAPIKey, Config.Config.OpenAIImageModel)
 				: new MockOpenAIService();
 
 			services.AddSingleton<IOpenAIService>(openAIService);
