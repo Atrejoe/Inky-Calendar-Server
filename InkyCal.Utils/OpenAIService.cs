@@ -33,12 +33,14 @@ namespace InkyCal.Utils
 		// Serialises the full chat→image pipeline so at most one request is in-flight at a time.
 		private static readonly SemaphoreSlim _semaphore = new(initialCount: 1, maxCount: 1);
 
-		// Limits image generation to 2 requests per 30-second window.
+		// Limits image generation to OpenAIImagePermitLimit (default 2) requests per OpenAIImageRateLimitWindowSeconds (default 30).
+		// NB: this limit applies per process (pod). When running multiple replicas, multiply the window by the number of replicas
+		//     to keep the overall rate the same.
 		private static readonly RateLimiter _rateLimiter = new SlidingWindowRateLimiter(
 			new SlidingWindowRateLimiterOptions
 			{
-				Window = TimeSpan.FromSeconds(30),
-				PermitLimit = 2,
+				Window = TimeSpan.FromSeconds(Server.Config.Config.OpenAIImageRateLimitWindowSeconds),
+				PermitLimit = Server.Config.Config.OpenAIImagePermitLimit,
 				QueueLimit = 100,
 				QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
 				SegmentsPerWindow = 60
